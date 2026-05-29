@@ -16,7 +16,9 @@
 
 package dev.ohs.fhir.codegen
 
+import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.FileSpec
 import dev.ohs.fhir.codegen.schema.StructureDefinition
 import dev.ohs.fhir.codegen.schema.capitalized
 import dev.ohs.fhir.codegen.schema.valueset.ValueSet
@@ -28,10 +30,34 @@ data class CodegenContext(
   val baseClassNameSet: HashSet<String>,
   val typeGraph: TypeGraphAnalyzer,
   val primitiveValueIsNonNull: Map<String, Boolean>,
+  val choiceRegistry: ChoiceTypeRegistry,
 ) {
   fun getModelClassName(structureDefinition: StructureDefinition) =
     ClassName(packageName, structureDefinition.name.capitalized())
 
   fun isBaseClass(structureDefinition: StructureDefinition) =
     baseClassNameSet.contains(structureDefinition.name.capitalized())
+}
+
+/**
+ * Adds a `@Suppress` annotation to the [FileSpec.Builder] to prevent warnings.
+ *
+ * This function adds the following suppressions:
+ * - `RedundantVisibilityModifier`: Suppresses warnings about redundant visibility modifiers (e.g.,
+ *   `public`) that KotlinPoet might generate.
+ * - `PropertyName`: Suppresses warnings about property names that start with an underscore (`_`),
+ *   which is a convention used in the generated code for JSON properties associated with FHIR
+ *   primitive types that may have extensions.
+ */
+fun FileSpec.Builder.addSuppressAnnotation() = apply {
+  addAnnotation(
+    AnnotationSpec.builder(Suppress::class)
+      // Suppresses warnings about redundant visibility modifiers (e.g., `public`) KotlinPoet
+      // might generate.
+      .addMember("%S", "RedundantVisibilityModifier")
+      // Suppress warnings about property names prefixed with an underscore `_` for FHIR primitive
+      // data types.
+      .addMember("%S", "PropertyName")
+      .build()
+  )
 }

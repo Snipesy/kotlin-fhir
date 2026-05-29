@@ -20,7 +20,6 @@ import dev.ohs.fhir.model.r4b.serializers.GuidanceResponseSerializer
 import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -135,8 +134,12 @@ public data class GuidanceResponse(
   public val requestIdentifier: Identifier? = null,
   /** Allows a service to provide unique, business identifiers for the response. */
   public val identifier: List<Identifier> = listOf(),
-  /** An identifier, CodeableConcept or canonical reference to the guidance that was requested. */
-  public val module: Module,
+  /**
+   * An identifier, CodeableConcept or canonical reference to the guidance that was requested.
+   *
+   * A FHIR choice type — one of: [CanonicalBox] | [CodeableConcept] | [UriBox]
+   */
+  public val module: GuidanceResponse.Module,
   /**
    * The status of the response. If the evaluation is completed successfully, the status will
    * indicate success. However, in order to complete the evaluation, the engine may require more
@@ -225,39 +228,13 @@ public data class GuidanceResponse(
       }
     }
 
-  public sealed interface Module {
-    public fun asUri(): Uri? = this as? Uri
-
-    public fun asCanonical(): Canonical? = this as? Canonical
-
-    public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-    @JvmInline public value class Uri(public val `value`: dev.ohs.fhir.model.r4b.Uri) : Module
-
-    @JvmInline
-    public value class Canonical(public val `value`: dev.ohs.fhir.model.r4b.Canonical) : Module
-
-    @JvmInline
-    public value class CodeableConcept(public val `value`: dev.ohs.fhir.model.r4b.CodeableConcept) :
-      Module
-
-    public companion object {
-      internal fun from(
-        uriValue: dev.ohs.fhir.model.r4b.Uri?,
-        canonicalValue: dev.ohs.fhir.model.r4b.Canonical?,
-        codeableConceptValue: dev.ohs.fhir.model.r4b.CodeableConcept?,
-      ): Module? {
-        if (uriValue != null) return Uri(uriValue)
-        if (canonicalValue != null) return Canonical(canonicalValue)
-        if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
-    /** An identifier, CodeableConcept or canonical reference to the guidance that was requested. */
-    public var module: Module,
+    /**
+     * An identifier, CodeableConcept or canonical reference to the guidance that was requested.
+     *
+     * A FHIR choice type — one of: [CanonicalBox] | [CodeableConcept] | [UriBox]
+     */
+    public var module: GuidanceResponse.Module,
     /**
      * The status of the response. If the evaluation is completed successfully, the status will
      * indicate success. However, in order to complete the evaluation, the engine may require more
@@ -516,4 +493,7 @@ public data class GuidanceResponse(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [CanonicalBox] | [CodeableConcept] | [UriBox] */
+  public typealias Module = FhirChoiceTypes.CanonicalOrCodeableConceptOrUri
 }

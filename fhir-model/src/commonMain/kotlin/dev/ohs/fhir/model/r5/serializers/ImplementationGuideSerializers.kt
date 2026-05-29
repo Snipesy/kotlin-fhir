@@ -33,11 +33,13 @@ import dev.ohs.fhir.model.r5.Id
 import dev.ohs.fhir.model.r5.Identifier
 import dev.ohs.fhir.model.r5.ImplementationGuide
 import dev.ohs.fhir.model.r5.Markdown
+import dev.ohs.fhir.model.r5.MarkdownBox
 import dev.ohs.fhir.model.r5.Meta
 import dev.ohs.fhir.model.r5.Narrative
 import dev.ohs.fhir.model.r5.Reference
 import dev.ohs.fhir.model.r5.Resource
 import dev.ohs.fhir.model.r5.String as R5String
+import dev.ohs.fhir.model.r5.StringBox
 import dev.ohs.fhir.model.r5.Uri
 import dev.ohs.fhir.model.r5.Url
 import dev.ohs.fhir.model.r5.UsageContext
@@ -865,11 +867,9 @@ internal object ImplementationGuideDefinitionPageSerializer :
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
       source =
-        ImplementationGuide.Definition.Page.Source.from(
-          Url.of(sourceUrl, _sourceUrl),
-          R5String.of(sourceString, _sourceString),
-          Markdown.of(sourceMarkdown, _sourceMarkdown),
-        ),
+        (Url.of(sourceUrl, _sourceUrl)
+          ?: (R5String.of(sourceString, _sourceString))?.let { StringBox(it) }
+          ?: (Markdown.of(sourceMarkdown, _sourceMarkdown))?.let { MarkdownBox(it) }),
       name = Url.of(name, _name)!!,
       title = R5String.of(title, _title)!!,
       generation =
@@ -894,19 +894,19 @@ internal object ImplementationGuideDefinitionPageSerializer :
       )
     when (val choice = value.source) {
       null -> {}
-      is ImplementationGuide.Definition.Page.Source.Url -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 3, it) }
-        (choice.value.toElement())?.let {
+      is Url -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 3, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 4, Hoisted.sourceUrlSer, it)
         }
       }
-      is ImplementationGuide.Definition.Page.Source.String -> {
+      is StringBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 6, Hoisted.sourceUrlSer, it)
         }
       }
-      is ImplementationGuide.Definition.Page.Source.Markdown -> {
+      is MarkdownBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 7, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 8, Hoisted.sourceUrlSer, it)
@@ -1913,10 +1913,7 @@ internal object ImplementationGuideSerializer : KSerializer<ImplementationGuide>
       identifier = identifier ?: listOf(),
       version = R5String.of(version, _version),
       versionAlgorithm =
-        ImplementationGuide.VersionAlgorithm.from(
-          R5String.of(versionAlgorithmString, _versionAlgorithmString),
-          versionAlgorithmCoding,
-        ),
+        (R5String.of(versionAlgorithmString, _versionAlgorithmString) ?: versionAlgorithmCoding),
       name = R5String.of(name, _name)!!,
       title = R5String.of(title, _title),
       status = Enumeration.of(PublicationStatus.fromCode(status!!), _status),
@@ -2032,11 +2029,9 @@ internal object ImplementationGuideSerializer : KSerializer<ImplementationGuide>
     }
     when (val choice = value.versionAlgorithm) {
       null -> {}
-      is ImplementationGuide.VersionAlgorithm.String -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 15 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is R5String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 15 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             16 + descriptorOffset,
@@ -2045,12 +2040,12 @@ internal object ImplementationGuideSerializer : KSerializer<ImplementationGuide>
           )
         }
       }
-      is ImplementationGuide.VersionAlgorithm.Coding -> {
+      is Coding -> {
         encoder.encodeSerializableElement(
           descriptor,
           17 + descriptorOffset,
           Hoisted.versionAlgorithmCodingSer,
-          choice.value,
+          choice,
         )
       }
     }

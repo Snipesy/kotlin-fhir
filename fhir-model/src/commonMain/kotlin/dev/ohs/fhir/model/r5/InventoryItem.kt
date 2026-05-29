@@ -25,7 +25,6 @@ import dev.ohs.fhir.model.r5.serializers.InventoryItemResponsibleOrganizationSer
 import dev.ohs.fhir.model.r5.serializers.InventoryItemSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -725,8 +724,12 @@ public data class InventoryItem(
      * The string value is used for characteristics that are descriptive and not codeable
      * information. CodeableConcept.text is used when the characteristic is discrete and could
      * otherwise be coded but for which there is no code available.
+     *
+     * A FHIR choice type — one of: [Address] | [Annotation] | [Boolean] | [CodeableConcept] |
+     * [DateTime] | [Decimal] | [DurationBox] | [Integer] | [QuantityBox] | [Range] | [Ratio] |
+     * [String] | [Url]
      */
-    public val `value`: Value,
+    public val `value`: Characteristic.Value,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -737,105 +740,6 @@ public data class InventoryItem(
         }
       }
 
-    public sealed interface Value {
-      public fun asString(): String? = this as? String
-
-      public fun asInteger(): Integer? = this as? Integer
-
-      public fun asDecimal(): Decimal? = this as? Decimal
-
-      public fun asBoolean(): Boolean? = this as? Boolean
-
-      public fun asUrl(): Url? = this as? Url
-
-      public fun asDateTime(): DateTime? = this as? DateTime
-
-      public fun asQuantity(): Quantity? = this as? Quantity
-
-      public fun asRange(): Range? = this as? Range
-
-      public fun asRatio(): Ratio? = this as? Ratio
-
-      public fun asAnnotation(): Annotation? = this as? Annotation
-
-      public fun asAddress(): Address? = this as? Address
-
-      public fun asDuration(): Duration? = this as? Duration
-
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      @JvmInline
-      public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : Value
-
-      @JvmInline
-      public value class Integer(public val `value`: dev.ohs.fhir.model.r5.Integer) : Value
-
-      @JvmInline
-      public value class Decimal(public val `value`: dev.ohs.fhir.model.r5.Decimal) : Value
-
-      @JvmInline
-      public value class Boolean(public val `value`: dev.ohs.fhir.model.r5.Boolean) : Value
-
-      @JvmInline public value class Url(public val `value`: dev.ohs.fhir.model.r5.Url) : Value
-
-      @JvmInline
-      public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) : Value
-
-      @JvmInline
-      public value class Quantity(public val `value`: dev.ohs.fhir.model.r5.Quantity) : Value
-
-      @JvmInline public value class Range(public val `value`: dev.ohs.fhir.model.r5.Range) : Value
-
-      @JvmInline public value class Ratio(public val `value`: dev.ohs.fhir.model.r5.Ratio) : Value
-
-      @JvmInline
-      public value class Annotation(public val `value`: dev.ohs.fhir.model.r5.Annotation) : Value
-
-      @JvmInline
-      public value class Address(public val `value`: dev.ohs.fhir.model.r5.Address) : Value
-
-      @JvmInline
-      public value class Duration(public val `value`: dev.ohs.fhir.model.r5.Duration) : Value
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r5.CodeableConcept
-      ) : Value
-
-      public companion object {
-        internal fun from(
-          stringValue: dev.ohs.fhir.model.r5.String?,
-          integerValue: dev.ohs.fhir.model.r5.Integer?,
-          decimalValue: dev.ohs.fhir.model.r5.Decimal?,
-          booleanValue: dev.ohs.fhir.model.r5.Boolean?,
-          urlValue: dev.ohs.fhir.model.r5.Url?,
-          dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-          quantityValue: dev.ohs.fhir.model.r5.Quantity?,
-          rangeValue: dev.ohs.fhir.model.r5.Range?,
-          ratioValue: dev.ohs.fhir.model.r5.Ratio?,
-          annotationValue: dev.ohs.fhir.model.r5.Annotation?,
-          addressValue: dev.ohs.fhir.model.r5.Address?,
-          durationValue: dev.ohs.fhir.model.r5.Duration?,
-          codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-        ): Value? {
-          if (stringValue != null) return String(stringValue)
-          if (integerValue != null) return Integer(integerValue)
-          if (decimalValue != null) return Decimal(decimalValue)
-          if (booleanValue != null) return Boolean(booleanValue)
-          if (urlValue != null) return Url(urlValue)
-          if (dateTimeValue != null) return DateTime(dateTimeValue)
-          if (quantityValue != null) return Quantity(quantityValue)
-          if (rangeValue != null) return Range(rangeValue)
-          if (ratioValue != null) return Ratio(ratioValue)
-          if (annotationValue != null) return Annotation(annotationValue)
-          if (addressValue != null) return Address(addressValue)
-          if (durationValue != null) return Duration(durationValue)
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          return null
-        }
-      }
-    }
-
     public class Builder(
       /** The type of characteristic that is being defined. */
       public var characteristicType: CodeableConcept.Builder,
@@ -845,8 +749,12 @@ public data class InventoryItem(
        * The string value is used for characteristics that are descriptive and not codeable
        * information. CodeableConcept.text is used when the characteristic is discrete and could
        * otherwise be coded but for which there is no code available.
+       *
+       * A FHIR choice type — one of: [Address] | [Annotation] | [Boolean] | [CodeableConcept] |
+       * [DateTime] | [Decimal] | [DurationBox] | [Integer] | [QuantityBox] | [Range] | [Ratio] |
+       * [String] | [Url]
        */
-      public var `value`: Value,
+      public var `value`: Characteristic.Value,
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -897,6 +805,13 @@ public data class InventoryItem(
           `value` = `value`,
         )
     }
+
+    /**
+     * A FHIR choice type — one of: [Address] | [Annotation] | [Boolean] | [CodeableConcept] |
+     * [DateTime] | [Decimal] | [DurationBox] | [Integer] | [QuantityBox] | [Range] | [Ratio] |
+     * [String] | [Url]
+     */
+    public typealias Value = FhirChoiceTypes.InventoryItemCharacteristicValueChoice
   }
 
   /** Instances or occurrences of the product. */

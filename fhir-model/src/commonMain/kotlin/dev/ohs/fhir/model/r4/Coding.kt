@@ -83,7 +83,7 @@ public data class Coding(
    * more completely.
    */
   public val userSelected: Boolean? = null,
-) : Element() {
+) : Element(), FhirChoiceParticipants.CodingChoices {
   public fun toBuilder(): Builder =
     with(this) {
       Builder().apply {

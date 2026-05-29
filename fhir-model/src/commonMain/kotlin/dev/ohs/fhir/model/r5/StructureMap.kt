@@ -29,7 +29,6 @@ import dev.ohs.fhir.model.r5.serializers.StructureMapStructureSerializer
 import dev.ohs.fhir.model.r5.terminologies.PublicationStatus
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -183,8 +182,10 @@ public data class StructureMap(
    * passed in - %version1 and %version2 and will return a negative number if version1 is newer, a
    * positive number if version2 and a 0 if the version ordering can't be successfully be
    * determined.
+   *
+   * A FHIR choice type — one of: [Coding] | [String]
    */
-  public val versionAlgorithm: VersionAlgorithm? = null,
+  public val versionAlgorithm: StructureMap.VersionAlgorithm? = null,
   /**
    * A natural language name identifying the structure map. This name should be usable as an
    * identifier for the module by machine processing applications such as code generation.
@@ -1220,8 +1221,13 @@ public data class StructureMap(
            * retain a core level of simplicity for everyone.
            */
           override val modifierExtension: List<Extension> = listOf(),
-          /** Parameter value - variable or literal. */
-          public val `value`: Value,
+          /**
+           * Parameter value - variable or literal.
+           *
+           * A FHIR choice type — one of: [Boolean] | [Date] | [DateTime] | [Decimal] | [IdBox] |
+           * [Integer] | [StringBox] | [Time]
+           */
+          public val `value`: Parameter.Value,
         ) : BackboneElement() {
           public fun toBuilder(): Builder =
             with(this) {
@@ -1233,73 +1239,14 @@ public data class StructureMap(
               }
             }
 
-          public sealed interface Value {
-            public fun asId(): Id? = this as? Id
-
-            public fun asString(): String? = this as? String
-
-            public fun asBoolean(): Boolean? = this as? Boolean
-
-            public fun asInteger(): Integer? = this as? Integer
-
-            public fun asDecimal(): Decimal? = this as? Decimal
-
-            public fun asDate(): Date? = this as? Date
-
-            public fun asTime(): Time? = this as? Time
-
-            public fun asDateTime(): DateTime? = this as? DateTime
-
-            @JvmInline public value class Id(public val `value`: dev.ohs.fhir.model.r5.Id) : Value
-
-            @JvmInline
-            public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : Value
-
-            @JvmInline
-            public value class Boolean(public val `value`: dev.ohs.fhir.model.r5.Boolean) : Value
-
-            @JvmInline
-            public value class Integer(public val `value`: dev.ohs.fhir.model.r5.Integer) : Value
-
-            @JvmInline
-            public value class Decimal(public val `value`: dev.ohs.fhir.model.r5.Decimal) : Value
-
-            @JvmInline
-            public value class Date(public val `value`: dev.ohs.fhir.model.r5.Date) : Value
-
-            @JvmInline
-            public value class Time(public val `value`: dev.ohs.fhir.model.r5.Time) : Value
-
-            @JvmInline
-            public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) : Value
-
-            public companion object {
-              internal fun from(
-                idValue: dev.ohs.fhir.model.r5.Id?,
-                stringValue: dev.ohs.fhir.model.r5.String?,
-                booleanValue: dev.ohs.fhir.model.r5.Boolean?,
-                integerValue: dev.ohs.fhir.model.r5.Integer?,
-                decimalValue: dev.ohs.fhir.model.r5.Decimal?,
-                dateValue: dev.ohs.fhir.model.r5.Date?,
-                timeValue: dev.ohs.fhir.model.r5.Time?,
-                dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-              ): Value? {
-                if (idValue != null) return Id(idValue)
-                if (stringValue != null) return String(stringValue)
-                if (booleanValue != null) return Boolean(booleanValue)
-                if (integerValue != null) return Integer(integerValue)
-                if (decimalValue != null) return Decimal(decimalValue)
-                if (dateValue != null) return Date(dateValue)
-                if (timeValue != null) return Time(timeValue)
-                if (dateTimeValue != null) return DateTime(dateTimeValue)
-                return null
-              }
-            }
-          }
-
           public class Builder(
-            /** Parameter value - variable or literal. */
-            public var `value`: Value
+            /**
+             * Parameter value - variable or literal.
+             *
+             * A FHIR choice type — one of: [Boolean] | [Date] | [DateTime] | [Decimal] | [IdBox] |
+             * [Integer] | [StringBox] | [Time]
+             */
+            public var `value`: Parameter.Value
           ) {
             /**
              * Unique id for the element within a resource (for internal references). This may be
@@ -1350,6 +1297,13 @@ public data class StructureMap(
                 `value` = `value`,
               )
           }
+
+          /**
+           * A FHIR choice type — one of: [Boolean] | [Date] | [DateTime] | [Decimal] | [IdBox] |
+           * [Integer] | [StringBox] | [Time]
+           */
+          public typealias Value =
+            FhirChoiceTypes.BooleanOrDateOrDateTimeOrDecimalOrIdOrIntegerOrStringOrTime
         }
 
         public class Builder() {
@@ -1702,29 +1656,6 @@ public data class StructureMap(
     }
   }
 
-  public sealed interface VersionAlgorithm {
-    public fun asString(): String? = this as? String
-
-    public fun asCoding(): Coding? = this as? Coding
-
-    @JvmInline
-    public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : VersionAlgorithm
-
-    @JvmInline
-    public value class Coding(public val `value`: dev.ohs.fhir.model.r5.Coding) : VersionAlgorithm
-
-    public companion object {
-      internal fun from(
-        stringValue: dev.ohs.fhir.model.r5.String?,
-        codingValue: dev.ohs.fhir.model.r5.Coding?,
-      ): VersionAlgorithm? {
-        if (stringValue != null) return String(stringValue)
-        if (codingValue != null) return Coding(codingValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
     /**
      * An absolute URI that is used to identify this structure map when it is referenced in a
@@ -1903,8 +1834,10 @@ public data class StructureMap(
      * passed in - %version1 and %version2 and will return a negative number if version1 is newer, a
      * positive number if version2 and a 0 if the version ordering can't be successfully be
      * determined.
+     *
+     * A FHIR choice type — one of: [Coding] | [String]
      */
-    public var versionAlgorithm: VersionAlgorithm? = null
+    public var versionAlgorithm: StructureMap.VersionAlgorithm? = null
 
     /**
      * A short, descriptive, user-friendly title for the structure map.
@@ -2291,4 +2224,7 @@ public data class StructureMap(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [Coding] | [String] */
+  public typealias VersionAlgorithm = FhirChoiceTypes.CodingOrString
 }

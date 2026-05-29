@@ -132,12 +132,7 @@ internal object CommunicationRequestPayloadSerializer : KSerializer<Communicatio
       id = id,
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
-      content =
-        CommunicationRequest.Payload.Content.from(
-          contentAttachment,
-          contentReference,
-          contentCodeableConcept,
-        )!!,
+      content = (contentAttachment ?: contentReference ?: contentCodeableConcept)!!,
     )
   }
 
@@ -153,19 +148,14 @@ internal object CommunicationRequestPayloadSerializer : KSerializer<Communicatio
         value.modifierExtension,
       )
     when (val choice = value.content) {
-      is CommunicationRequest.Payload.Content.Attachment -> {
-        encoder.encodeSerializableElement(descriptor, 3, Hoisted.contentAttachmentSer, choice.value)
+      is Attachment -> {
+        encoder.encodeSerializableElement(descriptor, 3, Hoisted.contentAttachmentSer, choice)
       }
-      is CommunicationRequest.Payload.Content.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 4, Hoisted.contentReferenceSer, choice.value)
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 4, Hoisted.contentReferenceSer, choice)
       }
-      is CommunicationRequest.Payload.Content.CodeableConcept -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          5,
-          Hoisted.contentCodeableConceptSer,
-          choice.value,
-        )
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 5, Hoisted.contentCodeableConceptSer, choice)
       }
     }
   }
@@ -469,10 +459,8 @@ internal object CommunicationRequestSerializer : KSerializer<CommunicationReques
       encounter = encounter,
       payload = payload ?: listOf(),
       occurrence =
-        CommunicationRequest.Occurrence.from(
-          DateTime.of(FhirDateTime.fromString(occurrenceDateTime), _occurrenceDateTime),
-          occurrencePeriod,
-        ),
+        (DateTime.of(FhirDateTime.fromString(occurrenceDateTime), _occurrenceDateTime)
+          ?: occurrencePeriod),
       authoredOn = DateTime.of(FhirDateTime.fromString(authoredOn), _authoredOn),
       requester = requester,
       recipient = recipient ?: listOf(),
@@ -665,11 +653,11 @@ internal object CommunicationRequestSerializer : KSerializer<CommunicationReques
       )
     when (val choice = value.occurrence) {
       null -> {}
-      is CommunicationRequest.Occurrence.DateTime -> {
-        ((choice.value.value?.toString()))?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let {
           encoder.encodeStringElement(descriptor, 29 + descriptorOffset, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             30 + descriptorOffset,
@@ -678,12 +666,12 @@ internal object CommunicationRequestSerializer : KSerializer<CommunicationReques
           )
         }
       }
-      is CommunicationRequest.Occurrence.Period -> {
+      is Period -> {
         encoder.encodeSerializableElement(
           descriptor,
           31 + descriptorOffset,
           Hoisted.occurrencePeriodSer,
-          choice.value,
+          choice,
         )
       }
     }

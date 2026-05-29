@@ -235,8 +235,7 @@ internal object InvoiceLineItemSerializer : KSerializer<Invoice.LineItem> {
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
       sequence = PositiveInt.of(sequence, _sequence),
-      chargeItem =
-        Invoice.LineItem.ChargeItem.from(chargeItemReference, chargeItemCodeableConcept)!!,
+      chargeItem = (chargeItemReference ?: chargeItemCodeableConcept)!!,
       priceComponent = priceComponent ?: listOf(),
     )
   }
@@ -257,20 +256,15 @@ internal object InvoiceLineItemSerializer : KSerializer<Invoice.LineItem> {
       encoder.encodeSerializableElement(descriptor, 4, Hoisted.sequenceSer, it)
     }
     when (val choice = value.chargeItem) {
-      is Invoice.LineItem.ChargeItem.Reference -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          5,
-          Hoisted.chargeItemReferenceSer,
-          choice.value,
-        )
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 5, Hoisted.chargeItemReferenceSer, choice)
       }
-      is Invoice.LineItem.ChargeItem.CodeableConcept -> {
+      is CodeableConcept -> {
         encoder.encodeSerializableElement(
           descriptor,
           6,
           Hoisted.chargeItemCodeableConceptSer,
-          choice.value,
+          choice,
         )
       }
     }

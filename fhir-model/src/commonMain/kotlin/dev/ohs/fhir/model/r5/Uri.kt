@@ -45,7 +45,7 @@ public open class Uri(
   open override val extension: List<Extension> = listOf(),
   /** The actual value */
   public open val `value`: String? = null,
-) : PrimitiveType() {
+) : PrimitiveType(), FhirChoiceParticipants.UriChoices {
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
     if (other !is Uri) return false

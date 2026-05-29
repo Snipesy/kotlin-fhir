@@ -816,10 +816,8 @@ internal object ImmunizationSerializer : KSerializer<Immunization> {
       encounter = encounter,
       supportingInformation = supportingInformation ?: listOf(),
       occurrence =
-        Immunization.Occurrence.from(
-          DateTime.of(FhirDateTime.fromString(occurrenceDateTime), _occurrenceDateTime),
-          R5String.of(occurrenceString, _occurrenceString),
-        )!!,
+        (DateTime.of(FhirDateTime.fromString(occurrenceDateTime), _occurrenceDateTime)
+          ?: R5String.of(occurrenceString, _occurrenceString))!!,
       primarySource = R5Boolean.of(primarySource, _primarySource),
       informationSource = informationSource,
       location = location,
@@ -993,11 +991,11 @@ internal object ImmunizationSerializer : KSerializer<Immunization> {
         value.supportingInformation,
       )
     when (val choice = value.occurrence) {
-      is Immunization.Occurrence.DateTime -> {
-        ((choice.value.value?.toString()))?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let {
           encoder.encodeStringElement(descriptor, 25 + descriptorOffset, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             26 + descriptorOffset,
@@ -1006,11 +1004,9 @@ internal object ImmunizationSerializer : KSerializer<Immunization> {
           )
         }
       }
-      is Immunization.Occurrence.String -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 27 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is R5String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 27 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             28 + descriptorOffset,

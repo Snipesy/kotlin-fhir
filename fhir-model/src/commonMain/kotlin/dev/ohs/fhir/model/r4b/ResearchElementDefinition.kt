@@ -21,7 +21,6 @@ import dev.ohs.fhir.model.r4b.serializers.ResearchElementDefinitionSerializer
 import dev.ohs.fhir.model.r4b.terminologies.PublicationStatus
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -221,8 +220,10 @@ public data class ResearchElementDefinition(
    * particular subject. This corresponds roughly to the notion of a Compartment in that it limits
    * what content is available based on its relationship to the subject. In CQL, this corresponds to
    * the context declaration.
+   *
+   * A FHIR choice type — one of: [CodeableConcept] | [Reference]
    */
-  public val subject: Subject? = null,
+  public val subject: ResearchElementDefinition.Subject? = null,
   /**
    * The date (and optionally time) when the research element definition was published. The date
    * must change when the business version changes and it must change if the status code changes. In
@@ -468,8 +469,11 @@ public data class ResearchElementDefinition(
      * Define members of the research element using Codes (such as condition, medication, or
      * observation), Expressions ( using an expression language such as FHIRPath or CQL) or
      * DataRequirements (such as Diabetes diagnosis onset in the last year).
+     *
+     * A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [DataRequirement] |
+     * [Expression]
      */
-    public val definition: Definition,
+    public val definition: Characteristic.Definition,
     /**
      * Use UsageContext to define the members of the population, such as Age Ranges, Genders,
      * Settings.
@@ -481,16 +485,24 @@ public data class ResearchElementDefinition(
     public val unitOfMeasure: CodeableConcept? = null,
     /** A narrative description of the time period the study covers. */
     public val studyEffectiveDescription: String? = null,
-    /** Indicates what effective period the study covers. */
-    public val studyEffective: StudyEffective? = null,
+    /**
+     * Indicates what effective period the study covers.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Duration] | [Period] | [Timing]
+     */
+    public val studyEffective: Characteristic.StudyEffective? = null,
     /** Indicates duration from the study initiation. */
     public val studyEffectiveTimeFromStart: Duration? = null,
     /** Indicates how elements are aggregated within the study effective period. */
     public val studyEffectiveGroupMeasure: Enumeration<GroupMeasure>? = null,
     /** A narrative description of the time period the study covers. */
     public val participantEffectiveDescription: String? = null,
-    /** Indicates what effective period the study covers. */
-    public val participantEffective: ParticipantEffective? = null,
+    /**
+     * Indicates what effective period the study covers.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Duration] | [Period] | [Timing]
+     */
+    public val participantEffective: Characteristic.ParticipantEffective? = null,
     /** Indicates duration from the participant's study entry. */
     public val participantEffectiveTimeFromStart: Duration? = null,
     /** Indicates how elements are aggregated within the study effective period. */
@@ -517,136 +529,16 @@ public data class ResearchElementDefinition(
         }
       }
 
-    public sealed interface Definition {
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asCanonical(): Canonical? = this as? Canonical
-
-      public fun asExpression(): Expression? = this as? Expression
-
-      public fun asDataRequirement(): DataRequirement? = this as? DataRequirement
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r4b.CodeableConcept
-      ) : Definition
-
-      @JvmInline
-      public value class Canonical(public val `value`: dev.ohs.fhir.model.r4b.Canonical) :
-        Definition
-
-      @JvmInline
-      public value class Expression(public val `value`: dev.ohs.fhir.model.r4b.Expression) :
-        Definition
-
-      @JvmInline
-      public value class DataRequirement(
-        public val `value`: dev.ohs.fhir.model.r4b.DataRequirement
-      ) : Definition
-
-      public companion object {
-        internal fun from(
-          codeableConceptValue: dev.ohs.fhir.model.r4b.CodeableConcept?,
-          canonicalValue: dev.ohs.fhir.model.r4b.Canonical?,
-          expressionValue: dev.ohs.fhir.model.r4b.Expression?,
-          dataRequirementValue: dev.ohs.fhir.model.r4b.DataRequirement?,
-        ): Definition? {
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (canonicalValue != null) return Canonical(canonicalValue)
-          if (expressionValue != null) return Expression(expressionValue)
-          if (dataRequirementValue != null) return DataRequirement(dataRequirementValue)
-          return null
-        }
-      }
-    }
-
-    public sealed interface StudyEffective {
-      public fun asDateTime(): DateTime? = this as? DateTime
-
-      public fun asPeriod(): Period? = this as? Period
-
-      public fun asDuration(): Duration? = this as? Duration
-
-      public fun asTiming(): Timing? = this as? Timing
-
-      @JvmInline
-      public value class DateTime(public val `value`: dev.ohs.fhir.model.r4b.DateTime) :
-        StudyEffective
-
-      @JvmInline
-      public value class Period(public val `value`: dev.ohs.fhir.model.r4b.Period) : StudyEffective
-
-      @JvmInline
-      public value class Duration(public val `value`: dev.ohs.fhir.model.r4b.Duration) :
-        StudyEffective
-
-      @JvmInline
-      public value class Timing(public val `value`: dev.ohs.fhir.model.r4b.Timing) : StudyEffective
-
-      public companion object {
-        internal fun from(
-          dateTimeValue: dev.ohs.fhir.model.r4b.DateTime?,
-          periodValue: dev.ohs.fhir.model.r4b.Period?,
-          durationValue: dev.ohs.fhir.model.r4b.Duration?,
-          timingValue: dev.ohs.fhir.model.r4b.Timing?,
-        ): StudyEffective? {
-          if (dateTimeValue != null) return DateTime(dateTimeValue)
-          if (periodValue != null) return Period(periodValue)
-          if (durationValue != null) return Duration(durationValue)
-          if (timingValue != null) return Timing(timingValue)
-          return null
-        }
-      }
-    }
-
-    public sealed interface ParticipantEffective {
-      public fun asDateTime(): DateTime? = this as? DateTime
-
-      public fun asPeriod(): Period? = this as? Period
-
-      public fun asDuration(): Duration? = this as? Duration
-
-      public fun asTiming(): Timing? = this as? Timing
-
-      @JvmInline
-      public value class DateTime(public val `value`: dev.ohs.fhir.model.r4b.DateTime) :
-        ParticipantEffective
-
-      @JvmInline
-      public value class Period(public val `value`: dev.ohs.fhir.model.r4b.Period) :
-        ParticipantEffective
-
-      @JvmInline
-      public value class Duration(public val `value`: dev.ohs.fhir.model.r4b.Duration) :
-        ParticipantEffective
-
-      @JvmInline
-      public value class Timing(public val `value`: dev.ohs.fhir.model.r4b.Timing) :
-        ParticipantEffective
-
-      public companion object {
-        internal fun from(
-          dateTimeValue: dev.ohs.fhir.model.r4b.DateTime?,
-          periodValue: dev.ohs.fhir.model.r4b.Period?,
-          durationValue: dev.ohs.fhir.model.r4b.Duration?,
-          timingValue: dev.ohs.fhir.model.r4b.Timing?,
-        ): ParticipantEffective? {
-          if (dateTimeValue != null) return DateTime(dateTimeValue)
-          if (periodValue != null) return Period(periodValue)
-          if (durationValue != null) return Duration(durationValue)
-          if (timingValue != null) return Timing(timingValue)
-          return null
-        }
-      }
-    }
-
     public class Builder(
       /**
        * Define members of the research element using Codes (such as condition, medication, or
        * observation), Expressions ( using an expression language such as FHIRPath or CQL) or
        * DataRequirements (such as Diabetes diagnosis onset in the last year).
+       *
+       * A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [DataRequirement] |
+       * [Expression]
        */
-      public var definition: Definition
+      public var definition: Characteristic.Definition
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -703,8 +595,12 @@ public data class ResearchElementDefinition(
       /** A narrative description of the time period the study covers. */
       public var studyEffectiveDescription: String.Builder? = null
 
-      /** Indicates what effective period the study covers. */
-      public var studyEffective: StudyEffective? = null
+      /**
+       * Indicates what effective period the study covers.
+       *
+       * A FHIR choice type — one of: [DateTime] | [Duration] | [Period] | [Timing]
+       */
+      public var studyEffective: Characteristic.StudyEffective? = null
 
       /** Indicates duration from the study initiation. */
       public var studyEffectiveTimeFromStart: Duration.Builder? = null
@@ -715,8 +611,12 @@ public data class ResearchElementDefinition(
       /** A narrative description of the time period the study covers. */
       public var participantEffectiveDescription: String.Builder? = null
 
-      /** Indicates what effective period the study covers. */
-      public var participantEffective: ParticipantEffective? = null
+      /**
+       * Indicates what effective period the study covers.
+       *
+       * A FHIR choice type — one of: [DateTime] | [Duration] | [Period] | [Timing]
+       */
+      public var participantEffective: Characteristic.ParticipantEffective? = null
 
       /** Indicates duration from the participant's study entry. */
       public var participantEffectiveTimeFromStart: Duration.Builder? = null
@@ -743,30 +643,19 @@ public data class ResearchElementDefinition(
           participantEffectiveGroupMeasure = participantEffectiveGroupMeasure,
         )
     }
-  }
 
-  public sealed interface Subject {
-    public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
+    /**
+     * A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [DataRequirement] |
+     * [Expression]
+     */
+    public typealias Definition =
+      FhirChoiceTypes.CanonicalOrCodeableConceptOrDataRequirementOrExpression
 
-    public fun asReference(): Reference? = this as? Reference
+    /** A FHIR choice type — one of: [DateTime] | [Duration] | [Period] | [Timing] */
+    public typealias StudyEffective = FhirChoiceTypes.DateTimeOrDurationOrPeriodOrTiming
 
-    @JvmInline
-    public value class CodeableConcept(public val `value`: dev.ohs.fhir.model.r4b.CodeableConcept) :
-      Subject
-
-    @JvmInline
-    public value class Reference(public val `value`: dev.ohs.fhir.model.r4b.Reference) : Subject
-
-    public companion object {
-      internal fun from(
-        codeableConceptValue: dev.ohs.fhir.model.r4b.CodeableConcept?,
-        referenceValue: dev.ohs.fhir.model.r4b.Reference?,
-      ): Subject? {
-        if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-        if (referenceValue != null) return Reference(referenceValue)
-        return null
-      }
-    }
+    /** A FHIR choice type — one of: [DateTime] | [Duration] | [Period] | [Timing] */
+    public typealias ParticipantEffective = FhirChoiceTypes.DateTimeOrDurationOrPeriodOrTiming
   }
 
   public class Builder(
@@ -991,8 +880,10 @@ public data class ResearchElementDefinition(
      * particular subject. This corresponds roughly to the notion of a Compartment in that it limits
      * what content is available based on its relationship to the subject. In CQL, this corresponds
      * to the context declaration.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public var subject: Subject? = null
+    public var subject: ResearchElementDefinition.Subject? = null
 
     /**
      * The date (and optionally time) when the research element definition was published. The date
@@ -1305,4 +1196,7 @@ public data class ResearchElementDefinition(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+  public typealias Subject = FhirChoiceTypes.CodeableConceptOrReference
 }

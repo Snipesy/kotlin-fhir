@@ -74,7 +74,7 @@ public open class Quantity(
    * for currency. The context of use may additionally require a code from a particular system.
    */
   public open val code: Code? = null,
-) : DataType() {
+) : DataType(), FhirChoiceParticipants.QuantityChoices {
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
     if (other !is Quantity) return false

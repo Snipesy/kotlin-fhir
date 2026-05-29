@@ -504,10 +504,8 @@ internal object DiagnosticReportSerializer : KSerializer<DiagnosticReport> {
       subject = subject,
       encounter = encounter,
       effective =
-        DiagnosticReport.Effective.from(
-          DateTime.of(FhirDateTime.fromString(effectiveDateTime), _effectiveDateTime),
-          effectivePeriod,
-        ),
+        (DateTime.of(FhirDateTime.fromString(effectiveDateTime), _effectiveDateTime)
+          ?: effectivePeriod),
       issued = Instant.of(FhirDateTime.fromString(issued), _issued),
       performer = performer ?: listOf(),
       resultsInterpreter = resultsInterpreter ?: listOf(),
@@ -636,11 +634,11 @@ internal object DiagnosticReportSerializer : KSerializer<DiagnosticReport> {
     }
     when (val choice = value.effective) {
       null -> {}
-      is DiagnosticReport.Effective.DateTime -> {
-        ((choice.value.value?.toString()))?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let {
           encoder.encodeStringElement(descriptor, 18 + descriptorOffset, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             19 + descriptorOffset,
@@ -649,12 +647,12 @@ internal object DiagnosticReportSerializer : KSerializer<DiagnosticReport> {
           )
         }
       }
-      is DiagnosticReport.Effective.Period -> {
+      is Period -> {
         encoder.encodeSerializableElement(
           descriptor,
           20 + descriptorOffset,
           Hoisted.effectivePeriodSer,
-          choice.value,
+          choice,
         )
       }
     }

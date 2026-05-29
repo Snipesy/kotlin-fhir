@@ -21,7 +21,6 @@ import dev.ohs.fhir.model.r5.serializers.DeviceRequestSerializer
 import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -198,8 +197,10 @@ public data class DeviceRequest(
    * The timing schedule for the use of the device. The Schedule data type allows many different
    * expressions, for example. "Every 8 hours"; "Three times a day"; "1/2 an hour before breakfast
    * for 10 days from 23-Dec 2011:"; "15 Oct 2013, 17 Oct 2013 and 1 Nov 2013".
+   *
+   * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
    */
-  public val occurrence: Occurrence? = null,
+  public val occurrence: DeviceRequest.Occurrence? = null,
   /** When the request transitioned to being actionable. */
   public val authoredOn: DateTime? = null,
   /**
@@ -330,8 +331,10 @@ public data class DeviceRequest(
      * The value of the device detail.
      *
      * Range means device should have a value that falls somewhere within the specified range.
+     *
+     * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range]
      */
-    public val `value`: Value? = null,
+    public val `value`: Parameter.Value? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -343,44 +346,6 @@ public data class DeviceRequest(
           `value` = this@with.`value`
         }
       }
-
-    public sealed interface Value {
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asQuantity(): Quantity? = this as? Quantity
-
-      public fun asRange(): Range? = this as? Range
-
-      public fun asBoolean(): Boolean? = this as? Boolean
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r5.CodeableConcept
-      ) : Value
-
-      @JvmInline
-      public value class Quantity(public val `value`: dev.ohs.fhir.model.r5.Quantity) : Value
-
-      @JvmInline public value class Range(public val `value`: dev.ohs.fhir.model.r5.Range) : Value
-
-      @JvmInline
-      public value class Boolean(public val `value`: dev.ohs.fhir.model.r5.Boolean) : Value
-
-      public companion object {
-        internal fun from(
-          codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-          quantityValue: dev.ohs.fhir.model.r5.Quantity?,
-          rangeValue: dev.ohs.fhir.model.r5.Range?,
-          booleanValue: dev.ohs.fhir.model.r5.Boolean?,
-        ): Value? {
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (quantityValue != null) return Quantity(quantityValue)
-          if (rangeValue != null) return Range(rangeValue)
-          if (booleanValue != null) return Boolean(booleanValue)
-          return null
-        }
-      }
-    }
 
     public class Builder() {
       /**
@@ -430,8 +395,10 @@ public data class DeviceRequest(
        * The value of the device detail.
        *
        * Range means device should have a value that falls somewhere within the specified range.
+       *
+       * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range]
        */
-      public var `value`: Value? = null
+      public var `value`: Parameter.Value? = null
 
       public fun build(): Parameter =
         Parameter(
@@ -442,36 +409,9 @@ public data class DeviceRequest(
           `value` = `value`,
         )
     }
-  }
 
-  public sealed interface Occurrence {
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    public fun asPeriod(): Period? = this as? Period
-
-    public fun asTiming(): Timing? = this as? Timing
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) : Occurrence
-
-    @JvmInline
-    public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) : Occurrence
-
-    @JvmInline
-    public value class Timing(public val `value`: dev.ohs.fhir.model.r5.Timing) : Occurrence
-
-    public companion object {
-      internal fun from(
-        dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-        periodValue: dev.ohs.fhir.model.r5.Period?,
-        timingValue: dev.ohs.fhir.model.r5.Timing?,
-      ): Occurrence? {
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        if (periodValue != null) return Period(periodValue)
-        if (timingValue != null) return Timing(timingValue)
-        return null
-      }
-    }
+    /** A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range] */
+    public typealias Value = FhirChoiceTypes.BooleanOrCodeableConceptOrQuantityOrRange
   }
 
   public class Builder(
@@ -664,8 +604,10 @@ public data class DeviceRequest(
      * The timing schedule for the use of the device. The Schedule data type allows many different
      * expressions, for example. "Every 8 hours"; "Three times a day"; "1/2 an hour before breakfast
      * for 10 days from 23-Dec 2011:"; "15 Oct 2013, 17 Oct 2013 and 1 Nov 2013".
+     *
+     * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
      */
-    public var occurrence: Occurrence? = null
+    public var occurrence: DeviceRequest.Occurrence? = null
 
     /** When the request transitioned to being actionable. */
     public var authoredOn: DateTime.Builder? = null
@@ -869,4 +811,7 @@ public data class DeviceRequest(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [DateTime] | [Period] | [Timing] */
+  public typealias Occurrence = FhirChoiceTypes.DateTimeOrPeriodOrTiming
 }

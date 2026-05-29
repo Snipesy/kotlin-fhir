@@ -409,10 +409,7 @@ internal object SpecimenDefinitionTypeTestedContainerSerializer :
       description = Markdown.of(description, _description),
       capacity = capacity,
       minimumVolume =
-        SpecimenDefinition.TypeTested.Container.MinimumVolume.from(
-          minimumVolumeQuantity,
-          R5String.of(minimumVolumeString, _minimumVolumeString),
-        ),
+        (minimumVolumeQuantity ?: R5String.of(minimumVolumeString, _minimumVolumeString)),
       additive = additive ?: listOf(),
       preparation = Markdown.of(preparation, _preparation),
     )
@@ -446,12 +443,12 @@ internal object SpecimenDefinitionTypeTestedContainerSerializer :
     }
     when (val choice = value.minimumVolume) {
       null -> {}
-      is SpecimenDefinition.TypeTested.Container.MinimumVolume.Quantity -> {
-        encoder.encodeSerializableElement(descriptor, 9, Hoisted.capacitySer, choice.value)
+      is Quantity -> {
+        encoder.encodeSerializableElement(descriptor, 9, Hoisted.capacitySer, choice)
       }
-      is SpecimenDefinition.TypeTested.Container.MinimumVolume.String -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 10, it) }
-        (choice.value.toElement())?.let {
+      is R5String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 10, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 11, Hoisted.descriptionSer, it)
         }
       }
@@ -554,11 +551,7 @@ internal object SpecimenDefinitionTypeTestedContainerAdditiveSerializer :
       id = id,
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
-      additive =
-        SpecimenDefinition.TypeTested.Container.Additive.Additive.from(
-          additiveCodeableConcept,
-          additiveReference,
-        )!!,
+      additive = (additiveCodeableConcept ?: additiveReference)!!,
     )
   }
 
@@ -577,16 +570,11 @@ internal object SpecimenDefinitionTypeTestedContainerAdditiveSerializer :
         value.modifierExtension,
       )
     when (val choice = value.additive) {
-      is SpecimenDefinition.TypeTested.Container.Additive.Additive.CodeableConcept -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          3,
-          Hoisted.additiveCodeableConceptSer,
-          choice.value,
-        )
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 3, Hoisted.additiveCodeableConceptSer, choice)
       }
-      is SpecimenDefinition.TypeTested.Container.Additive.Additive.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 4, Hoisted.additiveReferenceSer, choice.value)
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 4, Hoisted.additiveReferenceSer, choice)
       }
     }
   }
@@ -1129,10 +1117,7 @@ internal object SpecimenDefinitionSerializer : KSerializer<SpecimenDefinition> {
       identifier = identifier,
       version = R5String.of(version, _version),
       versionAlgorithm =
-        SpecimenDefinition.VersionAlgorithm.from(
-          R5String.of(versionAlgorithmString, _versionAlgorithmString),
-          versionAlgorithmCoding,
-        ),
+        (R5String.of(versionAlgorithmString, _versionAlgorithmString) ?: versionAlgorithmCoding),
       name = R5String.of(name, _name),
       title = R5String.of(title, _title),
       derivedFromCanonical =
@@ -1151,7 +1136,7 @@ internal object SpecimenDefinitionSerializer : KSerializer<SpecimenDefinition> {
         }),
       status = Enumeration.of(PublicationStatus.fromCode(status!!), _status),
       experimental = R5Boolean.of(experimental, _experimental),
-      subject = SpecimenDefinition.Subject.from(subjectCodeableConcept, subjectReference),
+      subject = (subjectCodeableConcept ?: subjectReference),
       date = DateTime.of(FhirDateTime.fromString(date), _date),
       publisher = R5String.of(publisher, _publisher),
       contact = contact ?: listOf(),
@@ -1258,11 +1243,9 @@ internal object SpecimenDefinitionSerializer : KSerializer<SpecimenDefinition> {
     }
     when (val choice = value.versionAlgorithm) {
       null -> {}
-      is SpecimenDefinition.VersionAlgorithm.String -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 15 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is R5String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 15 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             16 + descriptorOffset,
@@ -1271,12 +1254,12 @@ internal object SpecimenDefinitionSerializer : KSerializer<SpecimenDefinition> {
           )
         }
       }
-      is SpecimenDefinition.VersionAlgorithm.Coding -> {
+      is Coding -> {
         encoder.encodeSerializableElement(
           descriptor,
           17 + descriptorOffset,
           Hoisted.versionAlgorithmCodingSer,
-          choice.value,
+          choice,
         )
       }
     }
@@ -1358,20 +1341,20 @@ internal object SpecimenDefinitionSerializer : KSerializer<SpecimenDefinition> {
     }
     when (val choice = value.subject) {
       null -> {}
-      is SpecimenDefinition.Subject.CodeableConcept -> {
+      is CodeableConcept -> {
         encoder.encodeSerializableElement(
           descriptor,
           30 + descriptorOffset,
           Hoisted.subjectCodeableConceptSer,
-          choice.value,
+          choice,
         )
       }
-      is SpecimenDefinition.Subject.Reference -> {
+      is Reference -> {
         encoder.encodeSerializableElement(
           descriptor,
           31 + descriptorOffset,
           Hoisted.subjectReferenceSer,
-          choice.value,
+          choice,
         )
       }
     }

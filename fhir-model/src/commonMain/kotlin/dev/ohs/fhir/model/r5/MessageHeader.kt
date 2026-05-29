@@ -22,7 +22,6 @@ import dev.ohs.fhir.model.r5.serializers.MessageHeaderSerializer
 import dev.ohs.fhir.model.r5.serializers.MessageHeaderSourceSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -140,8 +139,10 @@ public data class MessageHeader(
    *
    * The time of the event will be found in the focus resource. The time of the message will be
    * found in [Bundle.timestamp](bundle-definitions.html#Bundle.timestamp).
+   *
+   * A FHIR choice type — one of: [Canonical] | [Coding]
    */
-  public val event: Event,
+  public val event: MessageHeader.Event,
   /**
    * The destination application which the message is intended for.
    *
@@ -267,8 +268,10 @@ public data class MessageHeader(
      *
      * The url may be a non-resolvable URI for systems that do not use standard network-based
      * addresses.
+     *
+     * A FHIR choice type — one of: [Reference] | [Url]
      */
-    public val endpoint: Endpoint? = null,
+    public val endpoint: FhirChoiceTypes.ReferenceOrUrl? = null,
     /** Human-readable name for the target system. */
     public val name: String? = null,
     /**
@@ -294,28 +297,6 @@ public data class MessageHeader(
           `receiver` = this@with.`receiver`?.toBuilder()
         }
       }
-
-    public sealed interface Endpoint {
-      public fun asUrl(): Url? = this as? Url
-
-      public fun asReference(): Reference? = this as? Reference
-
-      @JvmInline public value class Url(public val `value`: dev.ohs.fhir.model.r5.Url) : Endpoint
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : Endpoint
-
-      public companion object {
-        internal fun from(
-          urlValue: dev.ohs.fhir.model.r5.Url?,
-          referenceValue: dev.ohs.fhir.model.r5.Reference?,
-        ): Endpoint? {
-          if (urlValue != null) return Url(urlValue)
-          if (referenceValue != null) return Reference(referenceValue)
-          return null
-        }
-      }
-    }
 
     public class Builder() {
       /**
@@ -363,8 +344,10 @@ public data class MessageHeader(
        *
        * The url may be a non-resolvable URI for systems that do not use standard network-based
        * addresses.
+       *
+       * A FHIR choice type — one of: [Reference] | [Url]
        */
-      public var endpoint: Endpoint? = null
+      public var endpoint: FhirChoiceTypes.ReferenceOrUrl? = null
 
       /** Human-readable name for the target system. */
       public var name: String.Builder? = null
@@ -439,8 +422,10 @@ public data class MessageHeader(
      *
      * The url may be a non-resolvable URI for systems that do not use standard network-based
      * addresses.
+     *
+     * A FHIR choice type — one of: [Reference] | [Url]
      */
-    public val endpoint: Endpoint? = null,
+    public val endpoint: FhirChoiceTypes.ReferenceOrUrl? = null,
     /** Human-readable name for the source system. */
     public val name: String? = null,
     /** May include configuration or other information useful in debugging. */
@@ -469,28 +454,6 @@ public data class MessageHeader(
           contact = this@with.contact?.toBuilder()
         }
       }
-
-    public sealed interface Endpoint {
-      public fun asUrl(): Url? = this as? Url
-
-      public fun asReference(): Reference? = this as? Reference
-
-      @JvmInline public value class Url(public val `value`: dev.ohs.fhir.model.r5.Url) : Endpoint
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : Endpoint
-
-      public companion object {
-        internal fun from(
-          urlValue: dev.ohs.fhir.model.r5.Url?,
-          referenceValue: dev.ohs.fhir.model.r5.Reference?,
-        ): Endpoint? {
-          if (urlValue != null) return Url(urlValue)
-          if (referenceValue != null) return Reference(referenceValue)
-          return null
-        }
-      }
-    }
 
     public class Builder() {
       /**
@@ -538,8 +501,10 @@ public data class MessageHeader(
        *
        * The url may be a non-resolvable URI for systems that do not use standard network-based
        * addresses.
+       *
+       * A FHIR choice type — one of: [Reference] | [Url]
        */
-      public var endpoint: Endpoint? = null
+      public var endpoint: FhirChoiceTypes.ReferenceOrUrl? = null
 
       /** Human-readable name for the source system. */
       public var name: String.Builder? = null
@@ -716,28 +681,6 @@ public data class MessageHeader(
     }
   }
 
-  public sealed interface Event {
-    public fun asCoding(): Coding? = this as? Coding
-
-    public fun asCanonical(): Canonical? = this as? Canonical
-
-    @JvmInline public value class Coding(public val `value`: dev.ohs.fhir.model.r5.Coding) : Event
-
-    @JvmInline
-    public value class Canonical(public val `value`: dev.ohs.fhir.model.r5.Canonical) : Event
-
-    public companion object {
-      internal fun from(
-        codingValue: dev.ohs.fhir.model.r5.Coding?,
-        canonicalValue: dev.ohs.fhir.model.r5.Canonical?,
-      ): Event? {
-        if (codingValue != null) return Coding(codingValue)
-        if (canonicalValue != null) return Canonical(canonicalValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
     /**
      * Code that identifies the event this message represents and connects it with its definition.
@@ -746,8 +689,10 @@ public data class MessageHeader(
      *
      * The time of the event will be found in the focus resource. The time of the message will be
      * found in [Bundle.timestamp](bundle-definitions.html#Bundle.timestamp).
+     *
+     * A FHIR choice type — one of: [Canonical] | [Coding]
      */
-    public var event: Event,
+    public var event: MessageHeader.Event,
     /** The source application from which this message originated. */
     public var source: Source.Builder,
   ) : DomainResource.Builder() {
@@ -973,4 +918,7 @@ public data class MessageHeader(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [Canonical] | [Coding] */
+  public typealias Event = FhirChoiceTypes.CanonicalOrCoding
 }

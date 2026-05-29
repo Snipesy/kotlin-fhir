@@ -23,7 +23,6 @@ import dev.ohs.fhir.model.r4b.serializers.NutritionProductProductCharacteristicS
 import dev.ohs.fhir.model.r4b.serializers.NutritionProductSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -476,8 +475,11 @@ public data class NutritionProduct(
      *
      * The description should be provided as a CodeableConcept, SimpleQuantity or an image. The
      * description can be a string only when these others are not available.
+     *
+     * A FHIR choice type — one of: [Attachment] | [Base64Binary] | [Boolean] | [CodeableConcept] |
+     * [Quantity] | [String]
      */
-    public val `value`: Value,
+    public val `value`: ProductCharacteristic.Value,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -487,60 +489,6 @@ public data class NutritionProduct(
           modifierExtension = this@with.modifierExtension.map { it.toBuilder() }.toMutableList()
         }
       }
-
-    public sealed interface Value {
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asString(): String? = this as? String
-
-      public fun asQuantity(): Quantity? = this as? Quantity
-
-      public fun asBase64Binary(): Base64Binary? = this as? Base64Binary
-
-      public fun asAttachment(): Attachment? = this as? Attachment
-
-      public fun asBoolean(): Boolean? = this as? Boolean
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r4b.CodeableConcept
-      ) : Value
-
-      @JvmInline
-      public value class String(public val `value`: dev.ohs.fhir.model.r4b.String) : Value
-
-      @JvmInline
-      public value class Quantity(public val `value`: dev.ohs.fhir.model.r4b.Quantity) : Value
-
-      @JvmInline
-      public value class Base64Binary(public val `value`: dev.ohs.fhir.model.r4b.Base64Binary) :
-        Value
-
-      @JvmInline
-      public value class Attachment(public val `value`: dev.ohs.fhir.model.r4b.Attachment) : Value
-
-      @JvmInline
-      public value class Boolean(public val `value`: dev.ohs.fhir.model.r4b.Boolean) : Value
-
-      public companion object {
-        internal fun from(
-          codeableConceptValue: dev.ohs.fhir.model.r4b.CodeableConcept?,
-          stringValue: dev.ohs.fhir.model.r4b.String?,
-          quantityValue: dev.ohs.fhir.model.r4b.Quantity?,
-          base64BinaryValue: dev.ohs.fhir.model.r4b.Base64Binary?,
-          attachmentValue: dev.ohs.fhir.model.r4b.Attachment?,
-          booleanValue: dev.ohs.fhir.model.r4b.Boolean?,
-        ): Value? {
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (stringValue != null) return String(stringValue)
-          if (quantityValue != null) return Quantity(quantityValue)
-          if (base64BinaryValue != null) return Base64Binary(base64BinaryValue)
-          if (attachmentValue != null) return Attachment(attachmentValue)
-          if (booleanValue != null) return Boolean(booleanValue)
-          return null
-        }
-      }
-    }
 
     public class Builder(
       /**
@@ -553,8 +501,11 @@ public data class NutritionProduct(
        *
        * The description should be provided as a CodeableConcept, SimpleQuantity or an image. The
        * description can be a string only when these others are not available.
+       *
+       * A FHIR choice type — one of: [Attachment] | [Base64Binary] | [Boolean] | [CodeableConcept]
+       * | [Quantity] | [String]
        */
-      public var `value`: Value,
+      public var `value`: ProductCharacteristic.Value,
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -605,6 +556,12 @@ public data class NutritionProduct(
           `value` = `value`,
         )
     }
+
+    /**
+     * A FHIR choice type — one of: [Attachment] | [Base64Binary] | [Boolean] | [CodeableConcept] |
+     * [Quantity] | [String]
+     */
+    public typealias Value = FhirChoiceTypes.NutritionProductProductCharacteristicValueChoice
   }
 
   /**

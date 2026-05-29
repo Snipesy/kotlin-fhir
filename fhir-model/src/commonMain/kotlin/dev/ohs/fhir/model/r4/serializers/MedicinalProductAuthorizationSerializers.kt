@@ -283,11 +283,7 @@ internal object MedicinalProductAuthorizationProcedureSerializer :
       modifierExtension = modifierExtension ?: listOf(),
       identifier = identifier,
       type = type!!,
-      date =
-        MedicinalProductAuthorization.Procedure.Date.from(
-          datePeriod,
-          DateTime.of(FhirDateTime.fromString(dateDateTime), _dateDateTime),
-        ),
+      date = (datePeriod ?: DateTime.of(FhirDateTime.fromString(dateDateTime), _dateDateTime)),
       application = application ?: listOf(),
     )
   }
@@ -312,12 +308,12 @@ internal object MedicinalProductAuthorizationProcedureSerializer :
     encoder.encodeSerializableElement(descriptor, 4, Hoisted.typeSer, value.type)
     when (val choice = value.date) {
       null -> {}
-      is MedicinalProductAuthorization.Procedure.Date.Period -> {
-        encoder.encodeSerializableElement(descriptor, 5, Hoisted.datePeriodSer, choice.value)
+      is Period -> {
+        encoder.encodeSerializableElement(descriptor, 5, Hoisted.datePeriodSer, choice)
       }
-      is MedicinalProductAuthorization.Procedure.Date.DateTime -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 6, it) }
-        (choice.value.toElement())?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 6, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 7, Hoisted.dateDateTimeSer, it)
         }
       }

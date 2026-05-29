@@ -38,7 +38,6 @@ import dev.ohs.fhir.model.r5.serializers.TestScriptVariableSerializer
 import dev.ohs.fhir.model.r5.terminologies.PublicationStatus
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -195,8 +194,10 @@ public data class TestScript(
    * passed in - %version1 and %version2 and will return a negative number if version1 is newer, a
    * positive number if version2 and a 0 if the version ordering can't be successfully be
    * determined.
+   *
+   * A FHIR choice type — one of: [Coding] | [String]
    */
-  public val versionAlgorithm: VersionAlgorithm? = null,
+  public val versionAlgorithm: TestScript.VersionAlgorithm? = null,
   /**
    * A natural language name identifying the test script. This name should be usable as an
    * identifier for the module by machine processing applications such as code generation.
@@ -2792,8 +2793,12 @@ public data class TestScript(
            * retain a core level of simplicity for everyone.
            */
           override val modifierExtension: List<Extension> = listOf(),
-          /** Link or reference providing traceability to the testing requirement for this test. */
-          public val link: Link? = null,
+          /**
+           * Link or reference providing traceability to the testing requirement for this test.
+           *
+           * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
+           */
+          public val link: Requirement.Link? = null,
         ) : BackboneElement() {
           public fun toBuilder(): Builder =
             with(this) {
@@ -2805,29 +2810,6 @@ public data class TestScript(
                 link = this@with.link
               }
             }
-
-          public sealed interface Link {
-            public fun asUri(): Uri? = this as? Uri
-
-            public fun asCanonical(): Canonical? = this as? Canonical
-
-            @JvmInline public value class Uri(public val `value`: dev.ohs.fhir.model.r5.Uri) : Link
-
-            @JvmInline
-            public value class Canonical(public val `value`: dev.ohs.fhir.model.r5.Canonical) :
-              Link
-
-            public companion object {
-              internal fun from(
-                uriValue: dev.ohs.fhir.model.r5.Uri?,
-                canonicalValue: dev.ohs.fhir.model.r5.Canonical?,
-              ): Link? {
-                if (uriValue != null) return Uri(uriValue)
-                if (canonicalValue != null) return Canonical(canonicalValue)
-                return null
-              }
-            }
-          }
 
           public class Builder() {
             /**
@@ -2873,8 +2855,10 @@ public data class TestScript(
 
             /**
              * Link or reference providing traceability to the testing requirement for this test.
+             *
+             * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
              */
-            public var link: Link? = null
+            public var link: Requirement.Link? = null
 
             public fun build(): Requirement =
               Requirement(
@@ -2884,6 +2868,9 @@ public data class TestScript(
                 link = link,
               )
           }
+
+          /** A FHIR choice type — one of: [CanonicalBox] | [UriBox] */
+          public typealias Link = FhirChoiceTypes.CanonicalOrUri
         }
 
         public class Builder(
@@ -3814,29 +3801,6 @@ public data class TestScript(
     }
   }
 
-  public sealed interface VersionAlgorithm {
-    public fun asString(): String? = this as? String
-
-    public fun asCoding(): Coding? = this as? Coding
-
-    @JvmInline
-    public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : VersionAlgorithm
-
-    @JvmInline
-    public value class Coding(public val `value`: dev.ohs.fhir.model.r5.Coding) : VersionAlgorithm
-
-    public companion object {
-      internal fun from(
-        stringValue: dev.ohs.fhir.model.r5.String?,
-        codingValue: dev.ohs.fhir.model.r5.Coding?,
-      ): VersionAlgorithm? {
-        if (stringValue != null) return String(stringValue)
-        if (codingValue != null) return Coding(codingValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
     /**
      * A natural language name identifying the test script. This name should be usable as an
@@ -4014,8 +3978,10 @@ public data class TestScript(
      * passed in - %version1 and %version2 and will return a negative number if version1 is newer, a
      * positive number if version2 and a 0 if the version ordering can't be successfully be
      * determined.
+     *
+     * A FHIR choice type — one of: [Coding] | [String]
      */
-    public var versionAlgorithm: VersionAlgorithm? = null
+    public var versionAlgorithm: TestScript.VersionAlgorithm? = null
 
     /**
      * A short, descriptive, user-friendly title for the test script.
@@ -4613,4 +4579,7 @@ public data class TestScript(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [Coding] | [String] */
+  public typealias VersionAlgorithm = FhirChoiceTypes.CodingOrString
 }

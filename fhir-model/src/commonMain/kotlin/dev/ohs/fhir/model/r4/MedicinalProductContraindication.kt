@@ -21,7 +21,6 @@ import dev.ohs.fhir.model.r4.serializers.MedicinalProductContraindicationSeriali
 import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -222,8 +221,10 @@ public data class MedicinalProductContraindication(
     /**
      * Reference to a specific medication (active substance, medicinal product or class of products)
      * as part of an indication or contraindication.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public val medication: Medication,
+    public val medication: FhirChoiceTypes.CodeableConceptOrReference,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -234,32 +235,6 @@ public data class MedicinalProductContraindication(
         }
       }
 
-    public sealed interface Medication {
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asReference(): Reference? = this as? Reference
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r4.CodeableConcept
-      ) : Medication
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r4.Reference) :
-        Medication
-
-      public companion object {
-        internal fun from(
-          codeableConceptValue: dev.ohs.fhir.model.r4.CodeableConcept?,
-          referenceValue: dev.ohs.fhir.model.r4.Reference?,
-        ): Medication? {
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (referenceValue != null) return Reference(referenceValue)
-          return null
-        }
-      }
-    }
-
     public class Builder(
       /**
        * The type of relationship between the medicinal product indication or contraindication and
@@ -269,8 +244,10 @@ public data class MedicinalProductContraindication(
       /**
        * Reference to a specific medication (active substance, medicinal product or class of
        * products) as part of an indication or contraindication.
+       *
+       * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public var medication: Medication,
+      public var medication: FhirChoiceTypes.CodeableConceptOrReference,
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any

@@ -20,7 +20,6 @@ import dev.ohs.fhir.model.r4.serializers.SubstanceAmountReferenceRangeSerializer
 import dev.ohs.fhir.model.r4.serializers.SubstanceAmountSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.Serializable
 
 /**
@@ -74,8 +73,10 @@ public data class SubstanceAmount(
    * Used to capture quantitative values for a variety of elements. If only limits are given, the
    * arithmetic mean would be the average. If only a single definite value for a given element is
    * given, it would be captured in this field.
+   *
+   * A FHIR choice type — one of: [Quantity] | [Range] | [String]
    */
-  public val amount: Amount? = null,
+  public val amount: SubstanceAmount.Amount? = null,
   /**
    * Most elements that require a quantitative value will also have a field called amount type.
    * Amount type should always be specified because the actual value of the amount is often
@@ -176,34 +177,6 @@ public data class SubstanceAmount(
     }
   }
 
-  public sealed interface Amount {
-    public fun asQuantity(): Quantity? = this as? Quantity
-
-    public fun asRange(): Range? = this as? Range
-
-    public fun asString(): String? = this as? String
-
-    @JvmInline
-    public value class Quantity(public val `value`: dev.ohs.fhir.model.r4.Quantity) : Amount
-
-    @JvmInline public value class Range(public val `value`: dev.ohs.fhir.model.r4.Range) : Amount
-
-    @JvmInline public value class String(public val `value`: dev.ohs.fhir.model.r4.String) : Amount
-
-    public companion object {
-      internal fun from(
-        quantityValue: dev.ohs.fhir.model.r4.Quantity?,
-        rangeValue: dev.ohs.fhir.model.r4.Range?,
-        stringValue: dev.ohs.fhir.model.r4.String?,
-      ): Amount? {
-        if (quantityValue != null) return Quantity(quantityValue)
-        if (rangeValue != null) return Range(rangeValue)
-        if (stringValue != null) return String(stringValue)
-        return null
-      }
-    }
-  }
-
   public open class Builder() {
     /**
      * Unique id for the element within a resource (for internal references). This may be any string
@@ -249,8 +222,10 @@ public data class SubstanceAmount(
      * Used to capture quantitative values for a variety of elements. If only limits are given, the
      * arithmetic mean would be the average. If only a single definite value for a given element is
      * given, it would be captured in this field.
+     *
+     * A FHIR choice type — one of: [Quantity] | [Range] | [String]
      */
-    public open var amount: Amount? = null
+    public open var amount: SubstanceAmount.Amount? = null
 
     /**
      * Most elements that require a quantitative value will also have a field called amount type.
@@ -279,4 +254,7 @@ public data class SubstanceAmount(
         referenceRange = referenceRange?.build(),
       )
   }
+
+  /** A FHIR choice type — one of: [Quantity] | [Range] | [String] */
+  public typealias Amount = FhirChoiceTypes.QuantityOrRangeOrString
 }

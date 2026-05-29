@@ -120,7 +120,7 @@ internal object AnnotationSerializer : KSerializer<Annotation> {
     return Annotation(
       id = id,
       extension = extension ?: listOf(),
-      author = Annotation.Author.from(authorReference, R5String.of(authorString, _authorString)),
+      author = (authorReference ?: R5String.of(authorString, _authorString)),
       time = DateTime.of(FhirDateTime.fromString(time), _time),
       text = Markdown.of(text, _text)!!,
     )
@@ -132,12 +132,12 @@ internal object AnnotationSerializer : KSerializer<Annotation> {
       encoder.encodeSerializableElement(descriptor, 1, Hoisted.extensionSer, value.extension)
     when (val choice = value.author) {
       null -> {}
-      is Annotation.Author.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 2, Hoisted.authorReferenceSer, choice.value)
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 2, Hoisted.authorReferenceSer, choice)
       }
-      is Annotation.Author.String -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 3, it) }
-        (choice.value.toElement())?.let {
+      is R5String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 3, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 4, Hoisted.authorStringSer, it)
         }
       }

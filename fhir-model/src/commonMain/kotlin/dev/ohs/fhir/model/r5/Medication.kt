@@ -21,7 +21,6 @@ import dev.ohs.fhir.model.r5.serializers.MedicationIngredientSerializer
 import dev.ohs.fhir.model.r5.serializers.MedicationSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -276,8 +275,10 @@ public data class Medication(
      * mg per tablet. This is expressed as a ratio where the numerator is 250mg and the denominator
      * is 1 tablet but can also be expressed a quantity when the denominator is assumed to be 1
      * tablet.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Ratio]
      */
-    public val strength: Strength? = null,
+    public val strength: Ingredient.Strength? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -289,38 +290,6 @@ public data class Medication(
           strength = this@with.strength
         }
       }
-
-    public sealed interface Strength {
-      public fun asRatio(): Ratio? = this as? Ratio
-
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asQuantity(): Quantity? = this as? Quantity
-
-      @JvmInline
-      public value class Ratio(public val `value`: dev.ohs.fhir.model.r5.Ratio) : Strength
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r5.CodeableConcept
-      ) : Strength
-
-      @JvmInline
-      public value class Quantity(public val `value`: dev.ohs.fhir.model.r5.Quantity) : Strength
-
-      public companion object {
-        internal fun from(
-          ratioValue: dev.ohs.fhir.model.r5.Ratio?,
-          codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-          quantityValue: dev.ohs.fhir.model.r5.Quantity?,
-        ): Strength? {
-          if (ratioValue != null) return Ratio(ratioValue)
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (quantityValue != null) return Quantity(quantityValue)
-          return null
-        }
-      }
-    }
 
     public class Builder(
       /**
@@ -378,8 +347,10 @@ public data class Medication(
        * 250 mg per tablet. This is expressed as a ratio where the numerator is 250mg and the
        * denominator is 1 tablet but can also be expressed a quantity when the denominator is
        * assumed to be 1 tablet.
+       *
+       * A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Ratio]
        */
-      public var strength: Strength? = null
+      public var strength: Ingredient.Strength? = null
 
       public fun build(): Ingredient =
         Ingredient(
@@ -391,6 +362,9 @@ public data class Medication(
           strength = strength,
         )
     }
+
+    /** A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Ratio] */
+    public typealias Strength = FhirChoiceTypes.CodeableConceptOrQuantityOrRatio
   }
 
   /** Information that only applies to packages (not products). */

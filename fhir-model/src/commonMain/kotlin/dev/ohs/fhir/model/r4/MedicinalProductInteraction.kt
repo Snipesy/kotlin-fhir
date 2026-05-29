@@ -20,7 +20,6 @@ import dev.ohs.fhir.model.r4.serializers.MedicinalProductInteractionInteractantS
 import dev.ohs.fhir.model.r4.serializers.MedicinalProductInteractionSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -208,8 +207,12 @@ public data class MedicinalProductInteraction(
      * simplicity for everyone.
      */
     override val modifierExtension: List<Extension> = listOf(),
-    /** The specific medication, food or laboratory test that interacts. */
-    public val item: Item,
+    /**
+     * The specific medication, food or laboratory test that interacts.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Reference]
+     */
+    public val item: Interactant.Item,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -220,34 +223,13 @@ public data class MedicinalProductInteraction(
         }
       }
 
-    public sealed interface Item {
-      public fun asReference(): Reference? = this as? Reference
-
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r4.Reference) : Item
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r4.CodeableConcept
-      ) : Item
-
-      public companion object {
-        internal fun from(
-          referenceValue: dev.ohs.fhir.model.r4.Reference?,
-          codeableConceptValue: dev.ohs.fhir.model.r4.CodeableConcept?,
-        ): Item? {
-          if (referenceValue != null) return Reference(referenceValue)
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          return null
-        }
-      }
-    }
-
     public class Builder(
-      /** The specific medication, food or laboratory test that interacts. */
-      public var item: Item
+      /**
+       * The specific medication, food or laboratory test that interacts.
+       *
+       * A FHIR choice type — one of: [CodeableConcept] | [Reference]
+       */
+      public var item: Interactant.Item
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -297,6 +279,9 @@ public data class MedicinalProductInteraction(
           item = item,
         )
     }
+
+    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+    public typealias Item = FhirChoiceTypes.CodeableConceptOrReference
   }
 
   public class Builder() : DomainResource.Builder() {

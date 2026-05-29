@@ -29,7 +29,6 @@ import dev.ohs.fhir.model.r5.serializers.TestReportTestActionSerializer
 import dev.ohs.fhir.model.r5.serializers.TestReportTestSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -677,8 +676,12 @@ public data class TestReport(
            * retain a core level of simplicity for everyone.
            */
           override val modifierExtension: List<Extension> = listOf(),
-          /** Link or reference providing traceability to the testing requirement for this test. */
-          public val link: Link? = null,
+          /**
+           * Link or reference providing traceability to the testing requirement for this test.
+           *
+           * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
+           */
+          public val link: Requirement.Link? = null,
         ) : BackboneElement() {
           public fun toBuilder(): Builder =
             with(this) {
@@ -690,29 +693,6 @@ public data class TestReport(
                 link = this@with.link
               }
             }
-
-          public sealed interface Link {
-            public fun asUri(): Uri? = this as? Uri
-
-            public fun asCanonical(): Canonical? = this as? Canonical
-
-            @JvmInline public value class Uri(public val `value`: dev.ohs.fhir.model.r5.Uri) : Link
-
-            @JvmInline
-            public value class Canonical(public val `value`: dev.ohs.fhir.model.r5.Canonical) :
-              Link
-
-            public companion object {
-              internal fun from(
-                uriValue: dev.ohs.fhir.model.r5.Uri?,
-                canonicalValue: dev.ohs.fhir.model.r5.Canonical?,
-              ): Link? {
-                if (uriValue != null) return Uri(uriValue)
-                if (canonicalValue != null) return Canonical(canonicalValue)
-                return null
-              }
-            }
-          }
 
           public class Builder() {
             /**
@@ -758,8 +738,10 @@ public data class TestReport(
 
             /**
              * Link or reference providing traceability to the testing requirement for this test.
+             *
+             * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
              */
-            public var link: Link? = null
+            public var link: Requirement.Link? = null
 
             public fun build(): Requirement =
               Requirement(
@@ -769,6 +751,9 @@ public data class TestReport(
                 link = link,
               )
           }
+
+          /** A FHIR choice type — one of: [CanonicalBox] | [UriBox] */
+          public typealias Link = FhirChoiceTypes.CanonicalOrUri
         }
 
         public class Builder(

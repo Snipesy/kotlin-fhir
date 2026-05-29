@@ -570,7 +570,7 @@ internal object MessageHeaderSerializer : KSerializer<MessageHeader> {
       contained = contained ?: listOf(),
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
-      event = MessageHeader.Event.from(eventCoding, Uri.of(eventUri, _eventUri))!!,
+      event = (eventCoding ?: Uri.of(eventUri, _eventUri))!!,
       destination = destination ?: listOf(),
       sender = sender,
       enterer = enterer,
@@ -641,19 +641,17 @@ internal object MessageHeaderSerializer : KSerializer<MessageHeader> {
         value.modifierExtension,
       )
     when (val choice = value.event) {
-      is MessageHeader.Event.Coding -> {
+      is Coding -> {
         encoder.encodeSerializableElement(
           descriptor,
           10 + descriptorOffset,
           Hoisted.eventCodingSer,
-          choice.value,
+          choice,
         )
       }
-      is MessageHeader.Event.Uri -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 11 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is Uri -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 11 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             12 + descriptorOffset,

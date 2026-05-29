@@ -26,7 +26,6 @@ import dev.ohs.fhir.model.r5.serializers.MedicinalProductDefinitionOperationSeri
 import dev.ohs.fhir.model.r5.serializers.MedicinalProductDefinitionSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -1111,8 +1110,11 @@ public data class MedicinalProductDefinition(
      * Text, as markdown, is intended to be used only when the item cannot ever reasonably be coded.
      * Otherwise, for cases where a code is not available, but is feasible, use
      * CodeableConcept.text.
+     *
+     * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
+     * [Integer] | [Markdown] | [Quantity]
      */
-    public val `value`: Value? = null,
+    public val `value`: Characteristic.Value? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -1123,65 +1125,6 @@ public data class MedicinalProductDefinition(
           `value` = this@with.`value`
         }
       }
-
-    public sealed interface Value {
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asMarkdown(): Markdown? = this as? Markdown
-
-      public fun asQuantity(): Quantity? = this as? Quantity
-
-      public fun asInteger(): Integer? = this as? Integer
-
-      public fun asDate(): Date? = this as? Date
-
-      public fun asBoolean(): Boolean? = this as? Boolean
-
-      public fun asAttachment(): Attachment? = this as? Attachment
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r5.CodeableConcept
-      ) : Value
-
-      @JvmInline
-      public value class Markdown(public val `value`: dev.ohs.fhir.model.r5.Markdown) : Value
-
-      @JvmInline
-      public value class Quantity(public val `value`: dev.ohs.fhir.model.r5.Quantity) : Value
-
-      @JvmInline
-      public value class Integer(public val `value`: dev.ohs.fhir.model.r5.Integer) : Value
-
-      @JvmInline public value class Date(public val `value`: dev.ohs.fhir.model.r5.Date) : Value
-
-      @JvmInline
-      public value class Boolean(public val `value`: dev.ohs.fhir.model.r5.Boolean) : Value
-
-      @JvmInline
-      public value class Attachment(public val `value`: dev.ohs.fhir.model.r5.Attachment) : Value
-
-      public companion object {
-        internal fun from(
-          codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-          markdownValue: dev.ohs.fhir.model.r5.Markdown?,
-          quantityValue: dev.ohs.fhir.model.r5.Quantity?,
-          integerValue: dev.ohs.fhir.model.r5.Integer?,
-          dateValue: dev.ohs.fhir.model.r5.Date?,
-          booleanValue: dev.ohs.fhir.model.r5.Boolean?,
-          attachmentValue: dev.ohs.fhir.model.r5.Attachment?,
-        ): Value? {
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (markdownValue != null) return Markdown(markdownValue)
-          if (quantityValue != null) return Quantity(quantityValue)
-          if (integerValue != null) return Integer(integerValue)
-          if (dateValue != null) return Date(dateValue)
-          if (booleanValue != null) return Boolean(booleanValue)
-          if (attachmentValue != null) return Attachment(attachmentValue)
-          return null
-        }
-      }
-    }
 
     public class Builder(
       /** A code expressing the type of characteristic. */
@@ -1233,8 +1176,11 @@ public data class MedicinalProductDefinition(
        * Text, as markdown, is intended to be used only when the item cannot ever reasonably be
        * coded. Otherwise, for cases where a code is not available, but is feasible, use
        * CodeableConcept.text.
+       *
+       * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
+       * [Integer] | [Markdown] | [Quantity]
        */
-      public var `value`: Value? = null
+      public var `value`: Characteristic.Value? = null
 
       public fun build(): Characteristic =
         Characteristic(
@@ -1245,6 +1191,12 @@ public data class MedicinalProductDefinition(
           `value` = `value`,
         )
     }
+
+    /**
+     * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
+     * [Integer] | [Markdown] | [Quantity]
+     */
+    public typealias Value = FhirChoiceTypes.MedicinalProductDefinitionCharacteristicValueChoice
   }
 
   public class Builder(

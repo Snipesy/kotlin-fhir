@@ -60,7 +60,7 @@ public data class RatioRange(
   public val highNumerator: Quantity? = null,
   /** The value of the denominator. */
   public val denominator: Quantity? = null,
-) : Element() {
+) : Element(), FhirChoiceParticipants.RatioRangeChoices {
   public fun toBuilder(): Builder =
     with(this) {
       Builder().apply {

@@ -25,7 +25,6 @@ import dev.ohs.fhir.model.r5.serializers.CodeSystemSerializer
 import dev.ohs.fhir.model.r5.terminologies.PublicationStatus
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -185,8 +184,10 @@ public data class CodeSystem(
    * passed in - %version1 and %version2 and will return a negative number if version1 is newer, a
    * positive number if version2 and a 0 if the version ordering can't be successfully be
    * determined.
+   *
+   * A FHIR choice type — one of: [Coding] | [String]
    */
-  public val versionAlgorithm: VersionAlgorithm? = null,
+  public val versionAlgorithm: CodeSystem.VersionAlgorithm? = null,
   /**
    * A natural language name identifying the code system. This name should be usable as an
    * identifier for the module by machine processing applications such as code generation.
@@ -1098,8 +1099,13 @@ public data class CodeSystem(
       override val modifierExtension: List<Extension> = listOf(),
       /** A code that is a reference to CodeSystem.property.code. */
       public val code: Code,
-      /** The value of this property. */
-      public val `value`: Value,
+      /**
+       * The value of this property.
+       *
+       * A FHIR choice type — one of: [Boolean] | [CodeBox] | [Coding] | [DateTime] | [Decimal] |
+       * [Integer] | [StringBox]
+       */
+      public val `value`: Property.Value,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -1110,68 +1116,16 @@ public data class CodeSystem(
           }
         }
 
-      public sealed interface Value {
-        public fun asCode(): Code? = this as? Code
-
-        public fun asCoding(): Coding? = this as? Coding
-
-        public fun asString(): String? = this as? String
-
-        public fun asInteger(): Integer? = this as? Integer
-
-        public fun asBoolean(): Boolean? = this as? Boolean
-
-        public fun asDateTime(): DateTime? = this as? DateTime
-
-        public fun asDecimal(): Decimal? = this as? Decimal
-
-        @JvmInline public value class Code(public val `value`: dev.ohs.fhir.model.r5.Code) : Value
-
-        @JvmInline
-        public value class Coding(public val `value`: dev.ohs.fhir.model.r5.Coding) : Value
-
-        @JvmInline
-        public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : Value
-
-        @JvmInline
-        public value class Integer(public val `value`: dev.ohs.fhir.model.r5.Integer) : Value
-
-        @JvmInline
-        public value class Boolean(public val `value`: dev.ohs.fhir.model.r5.Boolean) : Value
-
-        @JvmInline
-        public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) : Value
-
-        @JvmInline
-        public value class Decimal(public val `value`: dev.ohs.fhir.model.r5.Decimal) : Value
-
-        public companion object {
-          internal fun from(
-            codeValue: dev.ohs.fhir.model.r5.Code?,
-            codingValue: dev.ohs.fhir.model.r5.Coding?,
-            stringValue: dev.ohs.fhir.model.r5.String?,
-            integerValue: dev.ohs.fhir.model.r5.Integer?,
-            booleanValue: dev.ohs.fhir.model.r5.Boolean?,
-            dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-            decimalValue: dev.ohs.fhir.model.r5.Decimal?,
-          ): Value? {
-            if (codeValue != null) return Code(codeValue)
-            if (codingValue != null) return Coding(codingValue)
-            if (stringValue != null) return String(stringValue)
-            if (integerValue != null) return Integer(integerValue)
-            if (booleanValue != null) return Boolean(booleanValue)
-            if (dateTimeValue != null) return DateTime(dateTimeValue)
-            if (decimalValue != null) return Decimal(decimalValue)
-            return null
-          }
-        }
-      }
-
       public class Builder(
         /** A code that is a reference to CodeSystem.property.code. */
         public var code: Code.Builder,
-        /** The value of this property. */
-        public var `value`: Value,
+        /**
+         * The value of this property.
+         *
+         * A FHIR choice type — one of: [Boolean] | [CodeBox] | [Coding] | [DateTime] | [Decimal] |
+         * [Integer] | [StringBox]
+         */
+        public var `value`: Property.Value,
       ) {
         /**
          * Unique id for the element within a resource (for internal references). This may be any
@@ -1222,6 +1176,13 @@ public data class CodeSystem(
             `value` = `value`,
           )
       }
+
+      /**
+       * A FHIR choice type — one of: [Boolean] | [CodeBox] | [Coding] | [DateTime] | [Decimal] |
+       * [Integer] | [StringBox]
+       */
+      public typealias Value =
+        FhirChoiceTypes.BooleanOrCodeOrCodingOrDateTimeOrDecimalOrIntegerOrString
     }
 
     public class Builder(
@@ -1312,29 +1273,6 @@ public data class CodeSystem(
           `property` = `property`.map { it.build() },
           concept = concept.map { it.build() },
         )
-    }
-  }
-
-  public sealed interface VersionAlgorithm {
-    public fun asString(): String? = this as? String
-
-    public fun asCoding(): Coding? = this as? Coding
-
-    @JvmInline
-    public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : VersionAlgorithm
-
-    @JvmInline
-    public value class Coding(public val `value`: dev.ohs.fhir.model.r5.Coding) : VersionAlgorithm
-
-    public companion object {
-      internal fun from(
-        stringValue: dev.ohs.fhir.model.r5.String?,
-        codingValue: dev.ohs.fhir.model.r5.Coding?,
-      ): VersionAlgorithm? {
-        if (stringValue != null) return String(stringValue)
-        if (codingValue != null) return Coding(codingValue)
-        return null
-      }
     }
   }
 
@@ -1516,8 +1454,10 @@ public data class CodeSystem(
      * passed in - %version1 and %version2 and will return a negative number if version1 is newer, a
      * positive number if version2 and a 0 if the version ordering can't be successfully be
      * determined.
+     *
+     * A FHIR choice type — one of: [Coding] | [String]
      */
-    public var versionAlgorithm: VersionAlgorithm? = null
+    public var versionAlgorithm: CodeSystem.VersionAlgorithm? = null
 
     /**
      * A natural language name identifying the code system. This name should be usable as an
@@ -2044,4 +1984,7 @@ public data class CodeSystem(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [Coding] | [String] */
+  public typealias VersionAlgorithm = FhirChoiceTypes.CodingOrString
 }

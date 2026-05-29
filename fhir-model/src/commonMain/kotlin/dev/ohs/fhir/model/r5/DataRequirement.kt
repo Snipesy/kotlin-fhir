@@ -24,7 +24,6 @@ import dev.ohs.fhir.model.r5.serializers.DataRequirementValueFilterSerializer
 import dev.ohs.fhir.model.r5.terminologies.FHIRTypes
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.Serializable
 
 /**
@@ -66,8 +65,10 @@ public data class DataRequirement(
    * respect to a particular subject. This corresponds roughly to the notion of a Compartment in
    * that it limits what data is available based on its relationship to the subject. In CQL, this
    * corresponds to the context declaration.
+   *
+   * A FHIR choice type — one of: [CodeableConcept] | [Reference]
    */
-  public val subject: Subject? = null,
+  public val subject: DataRequirement.Subject? = null,
   /**
    * Indicates that specific elements of the type are referenced by the knowledge module and must be
    * supported by the consumer in order to obtain an effective evaluation. This does not mean that a
@@ -112,7 +113,7 @@ public data class DataRequirement(
    * applied in the order they appear in the resource.
    */
   public val sort: List<Sort> = listOf(),
-) : DataType() {
+) : DataType(), FhirChoiceTypes.ElementDefinitionDefaultValueChoice {
   public fun toBuilder(): Builder =
     with(this) {
       Builder(type).apply {
@@ -316,8 +317,10 @@ public data class DataRequirement(
      * dateTime is specified, the filter will return only those data items that are equal to the
      * specified dateTime. If a Duration is specified, the filter will return only those data items
      * that fall within Duration before now.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Duration] | [Period]
      */
-    public val `value`: Value? = null,
+    public val `value`: DateFilter.Value? = null,
   ) : Element() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -329,36 +332,6 @@ public data class DataRequirement(
           `value` = this@with.`value`
         }
       }
-
-    public sealed interface Value {
-      public fun asDateTime(): DateTime? = this as? DateTime
-
-      public fun asPeriod(): Period? = this as? Period
-
-      public fun asDuration(): Duration? = this as? Duration
-
-      @JvmInline
-      public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) : Value
-
-      @JvmInline
-      public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) : Value
-
-      @JvmInline
-      public value class Duration(public val `value`: dev.ohs.fhir.model.r5.Duration) : Value
-
-      public companion object {
-        internal fun from(
-          dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-          periodValue: dev.ohs.fhir.model.r5.Period?,
-          durationValue: dev.ohs.fhir.model.r5.Duration?,
-        ): Value? {
-          if (dateTimeValue != null) return DateTime(dateTimeValue)
-          if (periodValue != null) return Period(periodValue)
-          if (durationValue != null) return Duration(durationValue)
-          return null
-        }
-      }
-    }
 
     public class Builder() {
       /**
@@ -408,8 +381,10 @@ public data class DataRequirement(
        * boundaries. If dateTime is specified, the filter will return only those data items that are
        * equal to the specified dateTime. If a Duration is specified, the filter will return only
        * those data items that fall within Duration before now.
+       *
+       * A FHIR choice type — one of: [DateTime] | [Duration] | [Period]
        */
-      public var `value`: Value? = null
+      public var `value`: DateFilter.Value? = null
 
       public fun build(): DateFilter =
         DateFilter(
@@ -420,6 +395,9 @@ public data class DataRequirement(
           `value` = `value`,
         )
     }
+
+    /** A FHIR choice type — one of: [DateTime] | [Duration] | [Period] */
+    public typealias Value = FhirChoiceTypes.DateTimeOrDurationOrPeriod
   }
 
   /**
@@ -467,8 +445,12 @@ public data class DataRequirement(
     public val searchParam: String? = null,
     /** The comparator to be used to determine whether the value is matching. */
     public val comparator: Enumeration<ValueFilterComparator>? = null,
-    /** The value of the filter. */
-    public val `value`: Value? = null,
+    /**
+     * The value of the filter.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Duration] | [Period]
+     */
+    public val `value`: ValueFilter.Value? = null,
   ) : Element() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -481,36 +463,6 @@ public data class DataRequirement(
           `value` = this@with.`value`
         }
       }
-
-    public sealed interface Value {
-      public fun asDateTime(): DateTime? = this as? DateTime
-
-      public fun asPeriod(): Period? = this as? Period
-
-      public fun asDuration(): Duration? = this as? Duration
-
-      @JvmInline
-      public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) : Value
-
-      @JvmInline
-      public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) : Value
-
-      @JvmInline
-      public value class Duration(public val `value`: dev.ohs.fhir.model.r5.Duration) : Value
-
-      public companion object {
-        internal fun from(
-          dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-          periodValue: dev.ohs.fhir.model.r5.Period?,
-          durationValue: dev.ohs.fhir.model.r5.Duration?,
-        ): Value? {
-          if (dateTimeValue != null) return DateTime(dateTimeValue)
-          if (periodValue != null) return Period(periodValue)
-          if (durationValue != null) return Duration(durationValue)
-          return null
-        }
-      }
-    }
 
     public class Builder() {
       /**
@@ -556,8 +508,12 @@ public data class DataRequirement(
       /** The comparator to be used to determine whether the value is matching. */
       public var comparator: Enumeration<ValueFilterComparator>? = null
 
-      /** The value of the filter. */
-      public var `value`: Value? = null
+      /**
+       * The value of the filter.
+       *
+       * A FHIR choice type — one of: [DateTime] | [Duration] | [Period]
+       */
+      public var `value`: ValueFilter.Value? = null
 
       public fun build(): ValueFilter =
         ValueFilter(
@@ -569,6 +525,9 @@ public data class DataRequirement(
           `value` = `value`,
         )
     }
+
+    /** A FHIR choice type — one of: [DateTime] | [Duration] | [Period] */
+    public typealias Value = FhirChoiceTypes.DateTimeOrDurationOrPeriod
   }
 
   /** Specifies the order of the results to be returned. */
@@ -651,30 +610,6 @@ public data class DataRequirement(
     }
   }
 
-  public sealed interface Subject {
-    public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-    public fun asReference(): Reference? = this as? Reference
-
-    @JvmInline
-    public value class CodeableConcept(public val `value`: dev.ohs.fhir.model.r5.CodeableConcept) :
-      Subject
-
-    @JvmInline
-    public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : Subject
-
-    public companion object {
-      internal fun from(
-        codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-        referenceValue: dev.ohs.fhir.model.r5.Reference?,
-      ): Subject? {
-        if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-        if (referenceValue != null) return Reference(referenceValue)
-        return null
-      }
-    }
-  }
-
   public open class Builder(
     /**
      * The type of the required data, specified as the type name of a resource. For profiles, this
@@ -713,8 +648,10 @@ public data class DataRequirement(
      * respect to a particular subject. This corresponds roughly to the notion of a Compartment in
      * that it limits what data is available based on its relationship to the subject. In CQL, this
      * corresponds to the context declaration.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public open var subject: Subject? = null
+    public open var subject: DataRequirement.Subject? = null
 
     /**
      * Indicates that specific elements of the type are referenced by the knowledge module and must
@@ -846,4 +783,7 @@ public data class DataRequirement(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+  public typealias Subject = FhirChoiceTypes.CodeableConceptOrReference
 }

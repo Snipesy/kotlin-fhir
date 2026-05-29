@@ -20,7 +20,6 @@ import dev.ohs.fhir.model.r4.serializers.UsageContextSerializer
 import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.Serializable
 
 /**
@@ -54,9 +53,11 @@ public data class UsageContext(
   /**
    * A value that defines the context specified in this context of use. The interpretation of the
    * value is defined by the code.
+   *
+   * A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Range] | [Reference]
    */
-  public val `value`: Value,
-) : Element() {
+  public val `value`: UsageContext.Value,
+) : Element(), FhirChoiceTypes.ElementDefinitionDefaultValueChoice {
   public fun toBuilder(): Builder =
     with(this) {
       Builder(code.toBuilder(), `value`).apply {
@@ -65,51 +66,16 @@ public data class UsageContext(
       }
     }
 
-  public sealed interface Value {
-    public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-    public fun asQuantity(): Quantity? = this as? Quantity
-
-    public fun asRange(): Range? = this as? Range
-
-    public fun asReference(): Reference? = this as? Reference
-
-    @JvmInline
-    public value class CodeableConcept(public val `value`: dev.ohs.fhir.model.r4.CodeableConcept) :
-      Value
-
-    @JvmInline
-    public value class Quantity(public val `value`: dev.ohs.fhir.model.r4.Quantity) : Value
-
-    @JvmInline public value class Range(public val `value`: dev.ohs.fhir.model.r4.Range) : Value
-
-    @JvmInline
-    public value class Reference(public val `value`: dev.ohs.fhir.model.r4.Reference) : Value
-
-    public companion object {
-      internal fun from(
-        codeableConceptValue: dev.ohs.fhir.model.r4.CodeableConcept?,
-        quantityValue: dev.ohs.fhir.model.r4.Quantity?,
-        rangeValue: dev.ohs.fhir.model.r4.Range?,
-        referenceValue: dev.ohs.fhir.model.r4.Reference?,
-      ): Value? {
-        if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-        if (quantityValue != null) return Quantity(quantityValue)
-        if (rangeValue != null) return Range(rangeValue)
-        if (referenceValue != null) return Reference(referenceValue)
-        return null
-      }
-    }
-  }
-
   public open class Builder(
     /** A code that identifies the type of context being specified by this usage context. */
     public open var code: Coding.Builder,
     /**
      * A value that defines the context specified in this context of use. The interpretation of the
      * value is defined by the code.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Range] | [Reference]
      */
-    public open var `value`: Value,
+    public open var `value`: UsageContext.Value,
   ) {
     /**
      * Unique id for the element within a resource (for internal references). This may be any string
@@ -139,4 +105,7 @@ public data class UsageContext(
         `value` = `value`,
       )
   }
+
+  /** A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Range] | [Reference] */
+  public typealias Value = FhirChoiceTypes.CodeableConceptOrQuantityOrRangeOrReference
 }

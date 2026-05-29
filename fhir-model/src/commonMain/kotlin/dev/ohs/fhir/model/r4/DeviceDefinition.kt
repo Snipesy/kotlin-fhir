@@ -25,7 +25,6 @@ import dev.ohs.fhir.model.r4.serializers.DeviceDefinitionSpecializationSerialize
 import dev.ohs.fhir.model.r4.serializers.DeviceDefinitionUdiDeviceIdentifierSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -143,8 +142,12 @@ public data class DeviceDefinition(
    * it is sold, or for multiple jurisdictions it could have been sold.
    */
   public val udiDeviceIdentifier: List<UdiDeviceIdentifier> = listOf(),
-  /** A name of the manufacturer. */
-  public val manufacturer: Manufacturer? = null,
+  /**
+   * A name of the manufacturer.
+   *
+   * A FHIR choice type — one of: [Reference] | [String]
+   */
+  public val manufacturer: DeviceDefinition.Manufacturer? = null,
   /** A name given to the device to identify it. */
   public val deviceName: List<DeviceName> = listOf(),
   /** The model number for the device. */
@@ -960,30 +963,6 @@ public data class DeviceDefinition(
     }
   }
 
-  public sealed interface Manufacturer {
-    public fun asString(): String? = this as? String
-
-    public fun asReference(): Reference? = this as? Reference
-
-    @JvmInline
-    public value class String(public val `value`: dev.ohs.fhir.model.r4.String) : Manufacturer
-
-    @JvmInline
-    public value class Reference(public val `value`: dev.ohs.fhir.model.r4.Reference) :
-      Manufacturer
-
-    public companion object {
-      internal fun from(
-        stringValue: dev.ohs.fhir.model.r4.String?,
-        referenceValue: dev.ohs.fhir.model.r4.Reference?,
-      ): Manufacturer? {
-        if (stringValue != null) return String(stringValue)
-        if (referenceValue != null) return Reference(referenceValue)
-        return null
-      }
-    }
-  }
-
   public class Builder() : DomainResource.Builder() {
     /**
      * The logical id of the resource, as used in the URL for the resource. Once assigned, this
@@ -1103,8 +1082,12 @@ public data class DeviceDefinition(
      */
     public var udiDeviceIdentifier: MutableList<UdiDeviceIdentifier.Builder> = mutableListOf()
 
-    /** A name of the manufacturer. */
-    public var manufacturer: Manufacturer? = null
+    /**
+     * A name of the manufacturer.
+     *
+     * A FHIR choice type — one of: [Reference] | [String]
+     */
+    public var manufacturer: DeviceDefinition.Manufacturer? = null
 
     /** A name given to the device to identify it. */
     public var deviceName: MutableList<DeviceName.Builder> = mutableListOf()
@@ -1267,4 +1250,7 @@ public data class DeviceDefinition(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [Reference] | [String] */
+  public typealias Manufacturer = FhirChoiceTypes.ReferenceOrString
 }

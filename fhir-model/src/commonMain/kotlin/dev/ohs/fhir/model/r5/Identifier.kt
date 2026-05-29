@@ -93,7 +93,7 @@ public data class Identifier(
    * reflecting the name or other textual information about the assigning organization.
    */
   public val assigner: Reference? = null,
-) : DataType() {
+) : DataType(), FhirChoiceParticipants.IdentifierChoices {
   public fun toBuilder(): Builder =
     with(this) {
       Builder().apply {

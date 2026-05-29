@@ -20,7 +20,6 @@ import dev.ohs.fhir.model.r5.serializers.RiskAssessmentPredictionSerializer
 import dev.ohs.fhir.model.r5.serializers.RiskAssessmentSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -145,8 +144,12 @@ public data class RiskAssessment(
   public val subject: Reference,
   /** The encounter where the assessment was performed. */
   public val encounter: Reference? = null,
-  /** The date (and possibly time) the risk assessment was performed. */
-  public val occurrence: Occurrence? = null,
+  /**
+   * The date (and possibly time) the risk assessment was performed.
+   *
+   * A FHIR choice type — one of: [DateTime] | [Period]
+   */
+  public val occurrence: RiskAssessment.Occurrence? = null,
   /**
    * For assessments or prognosis specific to a particular condition, indicates the condition being
    * assessed.
@@ -253,8 +256,10 @@ public data class RiskAssessment(
      *
      * If range is used, it represents the lower and upper bounds of certainty; e.g. 40-60% Decimal
      * values are expressed as percentages as well (max = 100).
+     *
+     * A FHIR choice type — one of: [Decimal] | [Range]
      */
-    public val probability: Probability? = null,
+    public val probability: Prediction.Probability? = null,
     /**
      * Indicates how likely the outcome is (in the specified timeframe), expressed as a qualitative
      * value (e.g. low, medium, or high).
@@ -271,8 +276,10 @@ public data class RiskAssessment(
      * applies.
      *
      * If not specified, the risk applies "over the subject's lifespan".
+     *
+     * A FHIR choice type — one of: [Period] | [Range]
      */
-    public val `when`: When? = null,
+    public val `when`: Prediction.When? = null,
     /** Additional information explaining the basis for the prediction. */
     public val rationale: String? = null,
   ) : BackboneElement() {
@@ -290,50 +297,6 @@ public data class RiskAssessment(
           rationale = this@with.rationale?.toBuilder()
         }
       }
-
-    public sealed interface Probability {
-      public fun asDecimal(): Decimal? = this as? Decimal
-
-      public fun asRange(): Range? = this as? Range
-
-      @JvmInline
-      public value class Decimal(public val `value`: dev.ohs.fhir.model.r5.Decimal) : Probability
-
-      @JvmInline
-      public value class Range(public val `value`: dev.ohs.fhir.model.r5.Range) : Probability
-
-      public companion object {
-        internal fun from(
-          decimalValue: dev.ohs.fhir.model.r5.Decimal?,
-          rangeValue: dev.ohs.fhir.model.r5.Range?,
-        ): Probability? {
-          if (decimalValue != null) return Decimal(decimalValue)
-          if (rangeValue != null) return Range(rangeValue)
-          return null
-        }
-      }
-    }
-
-    public sealed interface When {
-      public fun asPeriod(): Period? = this as? Period
-
-      public fun asRange(): Range? = this as? Range
-
-      @JvmInline public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) : When
-
-      @JvmInline public value class Range(public val `value`: dev.ohs.fhir.model.r5.Range) : When
-
-      public companion object {
-        internal fun from(
-          periodValue: dev.ohs.fhir.model.r5.Period?,
-          rangeValue: dev.ohs.fhir.model.r5.Range?,
-        ): When? {
-          if (periodValue != null) return Period(periodValue)
-          if (rangeValue != null) return Range(rangeValue)
-          return null
-        }
-      }
-    }
 
     public class Builder() {
       /**
@@ -387,8 +350,10 @@ public data class RiskAssessment(
        *
        * If range is used, it represents the lower and upper bounds of certainty; e.g. 40-60%
        * Decimal values are expressed as percentages as well (max = 100).
+       *
+       * A FHIR choice type — one of: [Decimal] | [Range]
        */
-      public var probability: Probability? = null
+      public var probability: Prediction.Probability? = null
 
       /**
        * Indicates how likely the outcome is (in the specified timeframe), expressed as a
@@ -408,8 +373,10 @@ public data class RiskAssessment(
        * applies.
        *
        * If not specified, the risk applies "over the subject's lifespan".
+       *
+       * A FHIR choice type — one of: [Period] | [Range]
        */
-      public var `when`: When? = null
+      public var `when`: Prediction.When? = null
 
       /** Additional information explaining the basis for the prediction. */
       public var rationale: String.Builder? = null
@@ -427,29 +394,12 @@ public data class RiskAssessment(
           rationale = rationale?.build(),
         )
     }
-  }
 
-  public sealed interface Occurrence {
-    public fun asDateTime(): DateTime? = this as? DateTime
+    /** A FHIR choice type — one of: [Decimal] | [Range] */
+    public typealias Probability = FhirChoiceTypes.DecimalOrRange
 
-    public fun asPeriod(): Period? = this as? Period
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) : Occurrence
-
-    @JvmInline
-    public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) : Occurrence
-
-    public companion object {
-      internal fun from(
-        dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-        periodValue: dev.ohs.fhir.model.r5.Period?,
-      ): Occurrence? {
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        if (periodValue != null) return Period(periodValue)
-        return null
-      }
-    }
+    /** A FHIR choice type — one of: [Period] | [Range] */
+    public typealias When = FhirChoiceTypes.PeriodOrRange
   }
 
   public class Builder(
@@ -583,8 +533,12 @@ public data class RiskAssessment(
     /** The encounter where the assessment was performed. */
     public var encounter: Reference.Builder? = null
 
-    /** The date (and possibly time) the risk assessment was performed. */
-    public var occurrence: Occurrence? = null
+    /**
+     * The date (and possibly time) the risk assessment was performed.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Period]
+     */
+    public var occurrence: RiskAssessment.Occurrence? = null
 
     /**
      * For assessments or prognosis specific to a particular condition, indicates the condition
@@ -691,4 +645,7 @@ public data class RiskAssessment(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [DateTime] | [Period] */
+  public typealias Occurrence = FhirChoiceTypes.DateTimeOrPeriod
 }

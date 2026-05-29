@@ -674,10 +674,8 @@ internal object ImplementationGuideDefinitionResourceSerializer :
       name = R4bString.of(name, _name),
       description = R4bString.of(description, _description),
       example =
-        ImplementationGuide.Definition.Resource.Example.from(
-          R4bBoolean.of(exampleBoolean, _exampleBoolean),
-          Canonical.of(exampleCanonical, _exampleCanonical),
-        ),
+        (R4bBoolean.of(exampleBoolean, _exampleBoolean)
+          ?: Canonical.of(exampleCanonical, _exampleCanonical)),
       groupingId = Id.of(groupingId, _groupingId),
     )
   }
@@ -713,15 +711,15 @@ internal object ImplementationGuideDefinitionResourceSerializer :
     }
     when (val choice = value.example) {
       null -> {}
-      is ImplementationGuide.Definition.Resource.Example.Boolean -> {
-        ((choice.value.value))?.let { encoder.encodeBooleanElement(descriptor, 10, it) }
-        (choice.value.toElement())?.let {
+      is R4bBoolean -> {
+        ((choice.value))?.let { encoder.encodeBooleanElement(descriptor, 10, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 11, Hoisted.fhirVersionSerInner2, it)
         }
       }
-      is ImplementationGuide.Definition.Resource.Example.Canonical -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 12, it) }
-        (choice.value.toElement())?.let {
+      is Canonical -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 12, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 13, Hoisted.fhirVersionSerInner2, it)
         }
       }
@@ -835,8 +833,7 @@ internal object ImplementationGuideDefinitionPageSerializer :
       id = id,
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
-      name =
-        ImplementationGuide.Definition.Page.Name.from(Url.of(nameUrl, _nameUrl), nameReference)!!,
+      name = (Url.of(nameUrl, _nameUrl) ?: nameReference)!!,
       title = R4bString.of(title, _title)!!,
       generation =
         Enumeration.of(ImplementationGuide.GuidePageGeneration.fromCode(generation!!), _generation),
@@ -859,14 +856,14 @@ internal object ImplementationGuideDefinitionPageSerializer :
         value.modifierExtension,
       )
     when (val choice = value.name) {
-      is ImplementationGuide.Definition.Page.Name.Url -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 3, it) }
-        (choice.value.toElement())?.let {
+      is Url -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 3, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 4, Hoisted.nameUrlSer, it)
         }
       }
-      is ImplementationGuide.Definition.Page.Name.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 5, Hoisted.nameReferenceSer, choice.value)
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 5, Hoisted.nameReferenceSer, choice)
       }
     }
     ((value.title.value))?.let { encoder.encodeStringElement(descriptor, 6, it) }
@@ -1375,10 +1372,8 @@ internal object ImplementationGuideManifestResourceSerializer :
       modifierExtension = modifierExtension ?: listOf(),
       reference = reference!!,
       example =
-        ImplementationGuide.Manifest.Resource.Example.from(
-          R4bBoolean.of(exampleBoolean, _exampleBoolean),
-          Canonical.of(exampleCanonical, _exampleCanonical),
-        ),
+        (R4bBoolean.of(exampleBoolean, _exampleBoolean)
+          ?: Canonical.of(exampleCanonical, _exampleCanonical)),
       relativePath = Url.of(relativePath, _relativePath),
     )
   }
@@ -1400,15 +1395,15 @@ internal object ImplementationGuideManifestResourceSerializer :
     encoder.encodeSerializableElement(descriptor, 3, Hoisted.referenceSer, value.reference)
     when (val choice = value.example) {
       null -> {}
-      is ImplementationGuide.Manifest.Resource.Example.Boolean -> {
-        ((choice.value.value))?.let { encoder.encodeBooleanElement(descriptor, 4, it) }
-        (choice.value.toElement())?.let {
+      is R4bBoolean -> {
+        ((choice.value))?.let { encoder.encodeBooleanElement(descriptor, 4, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 5, Hoisted.exampleBooleanSer, it)
         }
       }
-      is ImplementationGuide.Manifest.Resource.Example.Canonical -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 6, it) }
-        (choice.value.toElement())?.let {
+      is Canonical -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 6, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 7, Hoisted.exampleBooleanSer, it)
         }
       }

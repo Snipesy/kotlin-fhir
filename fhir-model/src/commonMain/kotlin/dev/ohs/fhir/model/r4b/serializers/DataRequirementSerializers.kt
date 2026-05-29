@@ -234,11 +234,9 @@ internal object DataRequirementDateFilterSerializer : KSerializer<DataRequiremen
       path = R4bString.of(path, _path),
       searchParam = R4bString.of(searchParam, _searchParam),
       `value` =
-        DataRequirement.DateFilter.Value.from(
-          DateTime.of(FhirDateTime.fromString(valueDateTime), _valueDateTime),
-          valuePeriod,
-          valueDuration,
-        ),
+        (DateTime.of(FhirDateTime.fromString(valueDateTime), _valueDateTime)
+          ?: valuePeriod
+          ?: valueDuration),
     )
   }
 
@@ -256,17 +254,17 @@ internal object DataRequirementDateFilterSerializer : KSerializer<DataRequiremen
     }
     when (val choice = value.`value`) {
       null -> {}
-      is DataRequirement.DateFilter.Value.DateTime -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 6, it) }
-        (choice.value.toElement())?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 6, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 7, Hoisted.pathSer, it)
         }
       }
-      is DataRequirement.DateFilter.Value.Period -> {
-        encoder.encodeSerializableElement(descriptor, 8, Hoisted.valuePeriodSer, choice.value)
+      is Period -> {
+        encoder.encodeSerializableElement(descriptor, 8, Hoisted.valuePeriodSer, choice)
       }
-      is DataRequirement.DateFilter.Value.Duration -> {
-        encoder.encodeSerializableElement(descriptor, 9, Hoisted.valueDurationSer, choice.value)
+      is Duration -> {
+        encoder.encodeSerializableElement(descriptor, 9, Hoisted.valueDurationSer, choice)
       }
     }
   }
@@ -503,7 +501,7 @@ internal object DataRequirementSerializer : KSerializer<DataRequirement> {
         (kotlin.collections.List(maxOf(profile?.size ?: 0, _profile?.size ?: 0)) { index ->
           Canonical.of(profile?.getOrNull(index)?.let { it }, _profile?.getOrNull(index))!!
         }),
-      subject = DataRequirement.Subject.from(subjectCodeableConcept, subjectReference),
+      subject = (subjectCodeableConcept ?: subjectReference),
       mustSupport =
         (kotlin.collections.List(maxOf(mustSupport?.size ?: 0, _mustSupport?.size ?: 0)) { index ->
           R4bString.of(mustSupport?.getOrNull(index)?.let { it }, _mustSupport?.getOrNull(index))!!
@@ -531,16 +529,11 @@ internal object DataRequirementSerializer : KSerializer<DataRequirement> {
     }
     when (val choice = value.subject) {
       null -> {}
-      is DataRequirement.Subject.CodeableConcept -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          6,
-          Hoisted.subjectCodeableConceptSer,
-          choice.value,
-        )
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 6, Hoisted.subjectCodeableConceptSer, choice)
       }
-      is DataRequirement.Subject.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 7, Hoisted.subjectReferenceSer, choice.value)
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 7, Hoisted.subjectReferenceSer, choice)
       }
     }
     (value.mustSupport.map { it.value }.takeUnless { it.all { it == null } })?.let {

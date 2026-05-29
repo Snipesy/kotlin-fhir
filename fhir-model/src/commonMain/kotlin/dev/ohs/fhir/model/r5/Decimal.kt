@@ -43,7 +43,7 @@ public data class Decimal(
   override val extension: List<Extension> = listOf(),
   /** The actual value */
   @Serializable(with = FhirDecimalSerializer::class) public val `value`: FhirDecimal? = null,
-) : PrimitiveType() {
+) : PrimitiveType(), FhirChoiceParticipants.DecimalChoices {
   public fun toBuilder(): Builder =
     with(this) {
       Builder().apply {

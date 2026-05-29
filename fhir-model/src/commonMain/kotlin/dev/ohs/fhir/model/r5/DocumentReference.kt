@@ -24,7 +24,6 @@ import dev.ohs.fhir.model.r5.serializers.DocumentReferenceSerializer
 import dev.ohs.fhir.model.r5.terminologies.DocumentReferenceStatus
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -692,8 +691,12 @@ public data class DocumentReference(
        * level of simplicity for everyone.
        */
       override val modifierExtension: List<Extension> = listOf(),
-      /** Code|uri|canonical. */
-      public val `value`: Value,
+      /**
+       * Code|uri|canonical.
+       *
+       * A FHIR choice type — one of: [CanonicalBox] | [Coding] | [UriBox]
+       */
+      public val `value`: Profile.Value,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -704,38 +707,13 @@ public data class DocumentReference(
           }
         }
 
-      public sealed interface Value {
-        public fun asCoding(): Coding? = this as? Coding
-
-        public fun asUri(): Uri? = this as? Uri
-
-        public fun asCanonical(): Canonical? = this as? Canonical
-
-        @JvmInline
-        public value class Coding(public val `value`: dev.ohs.fhir.model.r5.Coding) : Value
-
-        @JvmInline public value class Uri(public val `value`: dev.ohs.fhir.model.r5.Uri) : Value
-
-        @JvmInline
-        public value class Canonical(public val `value`: dev.ohs.fhir.model.r5.Canonical) : Value
-
-        public companion object {
-          internal fun from(
-            codingValue: dev.ohs.fhir.model.r5.Coding?,
-            uriValue: dev.ohs.fhir.model.r5.Uri?,
-            canonicalValue: dev.ohs.fhir.model.r5.Canonical?,
-          ): Value? {
-            if (codingValue != null) return Coding(codingValue)
-            if (uriValue != null) return Uri(uriValue)
-            if (canonicalValue != null) return Canonical(canonicalValue)
-            return null
-          }
-        }
-      }
-
       public class Builder(
-        /** Code|uri|canonical. */
-        public var `value`: Value
+        /**
+         * Code|uri|canonical.
+         *
+         * A FHIR choice type — one of: [CanonicalBox] | [Coding] | [UriBox]
+         */
+        public var `value`: Profile.Value
       ) {
         /**
          * Unique id for the element within a resource (for internal references). This may be any
@@ -785,6 +763,9 @@ public data class DocumentReference(
             `value` = `value`,
           )
       }
+
+      /** A FHIR choice type — one of: [CanonicalBox] | [Coding] | [UriBox] */
+      public typealias Value = FhirChoiceTypes.CanonicalOrCodingOrUri
     }
 
     public class Builder(

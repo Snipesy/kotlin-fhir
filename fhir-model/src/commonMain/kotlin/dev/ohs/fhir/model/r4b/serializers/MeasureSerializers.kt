@@ -1123,7 +1123,7 @@ internal object MeasureSerializer : KSerializer<Measure> {
       subtitle = R4bString.of(subtitle, _subtitle),
       status = Enumeration.of(PublicationStatus.fromCode(status!!), _status),
       experimental = R4bBoolean.of(experimental, _experimental),
-      subject = Measure.Subject.from(subjectCodeableConcept, subjectReference),
+      subject = (subjectCodeableConcept ?: subjectReference),
       date = DateTime.of(FhirDateTime.fromString(date), _date),
       publisher = R4bString.of(publisher, _publisher),
       contact = contact ?: listOf(),
@@ -1306,20 +1306,20 @@ internal object MeasureSerializer : KSerializer<Measure> {
     }
     when (val choice = value.subject) {
       null -> {}
-      is Measure.Subject.CodeableConcept -> {
+      is CodeableConcept -> {
         encoder.encodeSerializableElement(
           descriptor,
           25 + descriptorOffset,
           Hoisted.subjectCodeableConceptSer,
-          choice.value,
+          choice,
         )
       }
-      is Measure.Subject.Reference -> {
+      is Reference -> {
         encoder.encodeSerializableElement(
           descriptor,
           26 + descriptorOffset,
           Hoisted.subjectReferenceSer,
-          choice.value,
+          choice,
         )
       }
     }

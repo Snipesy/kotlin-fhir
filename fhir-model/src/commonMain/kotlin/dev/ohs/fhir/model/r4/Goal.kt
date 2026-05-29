@@ -20,7 +20,6 @@ import dev.ohs.fhir.model.r4.serializers.GoalSerializer
 import dev.ohs.fhir.model.r4.serializers.GoalTargetSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -172,8 +171,12 @@ public data class Goal(
   public val description: CodeableConcept,
   /** Identifies the patient, group or organization for whom the goal is being established. */
   public val subject: Reference,
-  /** The date or event after which the goal should begin being pursued. */
-  public val start: Start? = null,
+  /**
+   * The date or event after which the goal should begin being pursued.
+   *
+   * A FHIR choice type — one of: [CodeableConcept] | [Date]
+   */
+  public val start: Goal.Start? = null,
   /**
    * Indicates what should be done by when.
    *
@@ -311,10 +314,17 @@ public data class Goal(
      *
      * A CodeableConcept with just a text would be used instead of a string if the field was usually
      * coded, or if the type associated with the Goal.target.measure defines a coded value.
+     *
+     * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Integer] | [Quantity] | [Range]
+     * | [Ratio] | [String]
      */
-    public val detail: Detail? = null,
-    /** Indicates either the date or the duration after start by which the goal should be met. */
-    public val due: Due? = null,
+    public val detail: Target.Detail? = null,
+    /**
+     * Indicates either the date or the duration after start by which the goal should be met.
+     *
+     * A FHIR choice type — one of: [Date] | [Duration]
+     */
+    public val due: Target.Due? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -327,86 +337,6 @@ public data class Goal(
           due = this@with.due
         }
       }
-
-    public sealed interface Detail {
-      public fun asQuantity(): Quantity? = this as? Quantity
-
-      public fun asRange(): Range? = this as? Range
-
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asString(): String? = this as? String
-
-      public fun asBoolean(): Boolean? = this as? Boolean
-
-      public fun asInteger(): Integer? = this as? Integer
-
-      public fun asRatio(): Ratio? = this as? Ratio
-
-      @JvmInline
-      public value class Quantity(public val `value`: dev.ohs.fhir.model.r4.Quantity) : Detail
-
-      @JvmInline public value class Range(public val `value`: dev.ohs.fhir.model.r4.Range) : Detail
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r4.CodeableConcept
-      ) : Detail
-
-      @JvmInline
-      public value class String(public val `value`: dev.ohs.fhir.model.r4.String) : Detail
-
-      @JvmInline
-      public value class Boolean(public val `value`: dev.ohs.fhir.model.r4.Boolean) : Detail
-
-      @JvmInline
-      public value class Integer(public val `value`: dev.ohs.fhir.model.r4.Integer) : Detail
-
-      @JvmInline public value class Ratio(public val `value`: dev.ohs.fhir.model.r4.Ratio) : Detail
-
-      public companion object {
-        internal fun from(
-          quantityValue: dev.ohs.fhir.model.r4.Quantity?,
-          rangeValue: dev.ohs.fhir.model.r4.Range?,
-          codeableConceptValue: dev.ohs.fhir.model.r4.CodeableConcept?,
-          stringValue: dev.ohs.fhir.model.r4.String?,
-          booleanValue: dev.ohs.fhir.model.r4.Boolean?,
-          integerValue: dev.ohs.fhir.model.r4.Integer?,
-          ratioValue: dev.ohs.fhir.model.r4.Ratio?,
-        ): Detail? {
-          if (quantityValue != null) return Quantity(quantityValue)
-          if (rangeValue != null) return Range(rangeValue)
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (stringValue != null) return String(stringValue)
-          if (booleanValue != null) return Boolean(booleanValue)
-          if (integerValue != null) return Integer(integerValue)
-          if (ratioValue != null) return Ratio(ratioValue)
-          return null
-        }
-      }
-    }
-
-    public sealed interface Due {
-      public fun asDate(): Date? = this as? Date
-
-      public fun asDuration(): Duration? = this as? Duration
-
-      @JvmInline public value class Date(public val `value`: dev.ohs.fhir.model.r4.Date) : Due
-
-      @JvmInline
-      public value class Duration(public val `value`: dev.ohs.fhir.model.r4.Duration) : Due
-
-      public companion object {
-        internal fun from(
-          dateValue: dev.ohs.fhir.model.r4.Date?,
-          durationValue: dev.ohs.fhir.model.r4.Duration?,
-        ): Due? {
-          if (dateValue != null) return Date(dateValue)
-          if (durationValue != null) return Duration(durationValue)
-          return null
-        }
-      }
-    }
 
     public class Builder() {
       /**
@@ -465,11 +395,18 @@ public data class Goal(
        * A CodeableConcept with just a text would be used instead of a string if the field was
        * usually coded, or if the type associated with the Goal.target.measure defines a coded
        * value.
+       *
+       * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Integer] | [Quantity] |
+       * [Range] | [Ratio] | [String]
        */
-      public var detail: Detail? = null
+      public var detail: Target.Detail? = null
 
-      /** Indicates either the date or the duration after start by which the goal should be met. */
-      public var due: Due? = null
+      /**
+       * Indicates either the date or the duration after start by which the goal should be met.
+       *
+       * A FHIR choice type — one of: [Date] | [Duration]
+       */
+      public var due: Target.Due? = null
 
       public fun build(): Target =
         Target(
@@ -481,29 +418,15 @@ public data class Goal(
           due = due,
         )
     }
-  }
 
-  public sealed interface Start {
-    public fun asDate(): Date? = this as? Date
+    /**
+     * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Integer] | [Quantity] | [Range]
+     * | [Ratio] | [String]
+     */
+    public typealias Detail = FhirChoiceTypes.GoalTargetDetailChoice
 
-    public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-    @JvmInline public value class Date(public val `value`: dev.ohs.fhir.model.r4.Date) : Start
-
-    @JvmInline
-    public value class CodeableConcept(public val `value`: dev.ohs.fhir.model.r4.CodeableConcept) :
-      Start
-
-    public companion object {
-      internal fun from(
-        dateValue: dev.ohs.fhir.model.r4.Date?,
-        codeableConceptValue: dev.ohs.fhir.model.r4.CodeableConcept?,
-      ): Start? {
-        if (dateValue != null) return Date(dateValue)
-        if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-        return null
-      }
-    }
+    /** A FHIR choice type — one of: [Date] | [Duration] */
+    public typealias Due = FhirChoiceTypes.DateOrDuration
   }
 
   public class Builder(
@@ -661,8 +584,12 @@ public data class Goal(
      */
     public var priority: CodeableConcept.Builder? = null
 
-    /** The date or event after which the goal should begin being pursued. */
-    public var start: Start? = null
+    /**
+     * The date or event after which the goal should begin being pursued.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Date]
+     */
+    public var start: Goal.Start? = null
 
     /**
      * Indicates what should be done by when.
@@ -799,4 +726,7 @@ public data class Goal(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [CodeableConcept] | [Date] */
+  public typealias Start = FhirChoiceTypes.CodeableConceptOrDate
 }

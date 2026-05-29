@@ -35,7 +35,6 @@ import dev.ohs.fhir.model.r4b.serializers.MedicationKnowledgeRelatedMedicationKn
 import dev.ohs.fhir.model.r4b.serializers.MedicationKnowledgeSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -551,8 +550,12 @@ public data class MedicationKnowledge(
      * simplicity for everyone.
      */
     override val modifierExtension: List<Extension> = listOf(),
-    /** The actual ingredient - either a substance (simple ingredient) or another medication. */
-    public val item: Item,
+    /**
+     * The actual ingredient - either a substance (simple ingredient) or another medication.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Reference]
+     */
+    public val item: Ingredient.Item,
     /** Indication of whether this ingredient affects the therapeutic action of the drug. */
     public val isActive: Boolean? = null,
     /**
@@ -573,34 +576,13 @@ public data class MedicationKnowledge(
         }
       }
 
-    public sealed interface Item {
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asReference(): Reference? = this as? Reference
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r4b.CodeableConcept
-      ) : Item
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r4b.Reference) : Item
-
-      public companion object {
-        internal fun from(
-          codeableConceptValue: dev.ohs.fhir.model.r4b.CodeableConcept?,
-          referenceValue: dev.ohs.fhir.model.r4b.Reference?,
-        ): Item? {
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (referenceValue != null) return Reference(referenceValue)
-          return null
-        }
-      }
-    }
-
     public class Builder(
-      /** The actual ingredient - either a substance (simple ingredient) or another medication. */
-      public var item: Item
+      /**
+       * The actual ingredient - either a substance (simple ingredient) or another medication.
+       *
+       * A FHIR choice type — one of: [CodeableConcept] | [Reference]
+       */
+      public var item: Ingredient.Item
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -662,6 +644,9 @@ public data class MedicationKnowledge(
           strength = strength?.build(),
         )
     }
+
+    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+    public typealias Item = FhirChoiceTypes.CodeableConceptOrReference
   }
 
   /** The price of the medication. */
@@ -944,8 +929,12 @@ public data class MedicationKnowledge(
     override val modifierExtension: List<Extension> = listOf(),
     /** Dosage for the medication for the specific guidelines. */
     public val dosage: List<Dosage> = listOf(),
-    /** Indication for use that apply to the specific administration guidelines. */
-    public val indication: Indication? = null,
+    /**
+     * Indication for use that apply to the specific administration guidelines.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Reference]
+     */
+    public val indication: AdministrationGuidelines.Indication? = null,
     /**
      * Characteristics of the patient that are relevant to the administration guidelines (for
      * example, height, weight, gender, etc.).
@@ -1124,8 +1113,10 @@ public data class MedicationKnowledge(
       /**
        * Specific characteristic that is relevant to the administration guideline (e.g. height,
        * weight, gender).
+       *
+       * A FHIR choice type — one of: [CodeableConcept] | [Quantity]
        */
-      public val characteristic: Characteristic,
+      public val characteristic: PatientCharacteristics.Characteristic,
       /** The specific characteristic (e.g. height, weight, gender, etc.). */
       public val `value`: List<String> = listOf(),
     ) : BackboneElement() {
@@ -1139,38 +1130,14 @@ public data class MedicationKnowledge(
           }
         }
 
-      public sealed interface Characteristic {
-        public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-        public fun asQuantity(): Quantity? = this as? Quantity
-
-        @JvmInline
-        public value class CodeableConcept(
-          public val `value`: dev.ohs.fhir.model.r4b.CodeableConcept
-        ) : Characteristic
-
-        @JvmInline
-        public value class Quantity(public val `value`: dev.ohs.fhir.model.r4b.Quantity) :
-          Characteristic
-
-        public companion object {
-          internal fun from(
-            codeableConceptValue: dev.ohs.fhir.model.r4b.CodeableConcept?,
-            quantityValue: dev.ohs.fhir.model.r4b.Quantity?,
-          ): Characteristic? {
-            if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-            if (quantityValue != null) return Quantity(quantityValue)
-            return null
-          }
-        }
-      }
-
       public class Builder(
         /**
          * Specific characteristic that is relevant to the administration guideline (e.g. height,
          * weight, gender).
+         *
+         * A FHIR choice type — one of: [CodeableConcept] | [Quantity]
          */
-        public var characteristic: Characteristic
+        public var characteristic: PatientCharacteristics.Characteristic
       ) {
         /**
          * Unique id for the element within a resource (for internal references). This may be any
@@ -1224,32 +1191,9 @@ public data class MedicationKnowledge(
             `value` = `value`.map { it.build() },
           )
       }
-    }
 
-    public sealed interface Indication {
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asReference(): Reference? = this as? Reference
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r4b.CodeableConcept
-      ) : Indication
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r4b.Reference) :
-        Indication
-
-      public companion object {
-        internal fun from(
-          codeableConceptValue: dev.ohs.fhir.model.r4b.CodeableConcept?,
-          referenceValue: dev.ohs.fhir.model.r4b.Reference?,
-        ): Indication? {
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (referenceValue != null) return Reference(referenceValue)
-          return null
-        }
-      }
+      /** A FHIR choice type — one of: [CodeableConcept] | [Quantity] */
+      public typealias Characteristic = FhirChoiceTypes.CodeableConceptOrQuantity
     }
 
     public class Builder() {
@@ -1296,8 +1240,12 @@ public data class MedicationKnowledge(
       /** Dosage for the medication for the specific guidelines. */
       public var dosage: MutableList<Dosage.Builder> = mutableListOf()
 
-      /** Indication for use that apply to the specific administration guidelines. */
-      public var indication: Indication? = null
+      /**
+       * Indication for use that apply to the specific administration guidelines.
+       *
+       * A FHIR choice type — one of: [CodeableConcept] | [Reference]
+       */
+      public var indication: AdministrationGuidelines.Indication? = null
 
       /**
        * Characteristics of the patient that are relevant to the administration guidelines (for
@@ -1316,6 +1264,9 @@ public data class MedicationKnowledge(
           patientCharacteristics = patientCharacteristics.map { it.build() },
         )
     }
+
+    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+    public typealias Indication = FhirChoiceTypes.CodeableConceptOrReference
   }
 
   /** Categorization of the medication within a formulary or classification system. */
@@ -1613,8 +1564,10 @@ public data class MedicationKnowledge(
      *
      * The description should be provided as a CodeableConcept, SimpleQuantity or an image. The
      * description can be a string only when these others are not available.
+     *
+     * A FHIR choice type — one of: [Base64Binary] | [CodeableConcept] | [Quantity] | [String]
      */
-    public val `value`: Value? = null,
+    public val `value`: DrugCharacteristic.Value? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -1626,46 +1579,6 @@ public data class MedicationKnowledge(
           `value` = this@with.`value`
         }
       }
-
-    public sealed interface Value {
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asString(): String? = this as? String
-
-      public fun asQuantity(): Quantity? = this as? Quantity
-
-      public fun asBase64Binary(): Base64Binary? = this as? Base64Binary
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r4b.CodeableConcept
-      ) : Value
-
-      @JvmInline
-      public value class String(public val `value`: dev.ohs.fhir.model.r4b.String) : Value
-
-      @JvmInline
-      public value class Quantity(public val `value`: dev.ohs.fhir.model.r4b.Quantity) : Value
-
-      @JvmInline
-      public value class Base64Binary(public val `value`: dev.ohs.fhir.model.r4b.Base64Binary) :
-        Value
-
-      public companion object {
-        internal fun from(
-          codeableConceptValue: dev.ohs.fhir.model.r4b.CodeableConcept?,
-          stringValue: dev.ohs.fhir.model.r4b.String?,
-          quantityValue: dev.ohs.fhir.model.r4b.Quantity?,
-          base64BinaryValue: dev.ohs.fhir.model.r4b.Base64Binary?,
-        ): Value? {
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (stringValue != null) return String(stringValue)
-          if (quantityValue != null) return Quantity(quantityValue)
-          if (base64BinaryValue != null) return Base64Binary(base64BinaryValue)
-          return null
-        }
-      }
-    }
 
     public class Builder() {
       /**
@@ -1719,8 +1632,10 @@ public data class MedicationKnowledge(
        *
        * The description should be provided as a CodeableConcept, SimpleQuantity or an image. The
        * description can be a string only when these others are not available.
+       *
+       * A FHIR choice type — one of: [Base64Binary] | [CodeableConcept] | [Quantity] | [String]
        */
-      public var `value`: Value? = null
+      public var `value`: DrugCharacteristic.Value? = null
 
       public fun build(): DrugCharacteristic =
         DrugCharacteristic(
@@ -1731,6 +1646,9 @@ public data class MedicationKnowledge(
           `value` = `value`,
         )
     }
+
+    /** A FHIR choice type — one of: [Base64Binary] | [CodeableConcept] | [Quantity] | [String] */
+    public typealias Value = FhirChoiceTypes.Base64BinaryOrCodeableConceptOrQuantityOrString
   }
 
   /** Regulatory information about a medication. */

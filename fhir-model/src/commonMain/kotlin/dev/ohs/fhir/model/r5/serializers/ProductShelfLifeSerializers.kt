@@ -122,8 +122,7 @@ internal object ProductShelfLifeSerializer : KSerializer<ProductShelfLife> {
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
       type = type,
-      period =
-        ProductShelfLife.Period.from(periodDuration, R5String.of(periodString, _periodString)),
+      period = (periodDuration ?: R5String.of(periodString, _periodString)),
       specialPrecautionsForStorage = specialPrecautionsForStorage ?: listOf(),
     )
   }
@@ -142,12 +141,12 @@ internal object ProductShelfLifeSerializer : KSerializer<ProductShelfLife> {
     (value.type)?.let { encoder.encodeSerializableElement(descriptor, 3, Hoisted.typeSer, it) }
     when (val choice = value.period) {
       null -> {}
-      is ProductShelfLife.Period.Duration -> {
-        encoder.encodeSerializableElement(descriptor, 4, Hoisted.periodDurationSer, choice.value)
+      is Duration -> {
+        encoder.encodeSerializableElement(descriptor, 4, Hoisted.periodDurationSer, choice)
       }
-      is ProductShelfLife.Period.String -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
-        (choice.value.toElement())?.let {
+      is R5String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 6, Hoisted.periodStringSer, it)
         }
       }

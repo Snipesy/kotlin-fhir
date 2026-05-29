@@ -384,7 +384,7 @@ internal object ContractTermSerializer : KSerializer<Contract.Term> {
       identifier = identifier,
       issued = DateTime.of(FhirDateTime.fromString(issued), _issued),
       applies = applies,
-      topic = Contract.Term.Topic.from(topicCodeableConcept, topicReference),
+      topic = (topicCodeableConcept ?: topicReference),
       type = type,
       subType = subType,
       text = R4bString.of(text, _text),
@@ -419,16 +419,11 @@ internal object ContractTermSerializer : KSerializer<Contract.Term> {
     }
     when (val choice = value.topic) {
       null -> {}
-      is Contract.Term.Topic.CodeableConcept -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          7,
-          Hoisted.topicCodeableConceptSer,
-          choice.value,
-        )
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 7, Hoisted.topicCodeableConceptSer, choice)
       }
-      is Contract.Term.Topic.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 8, Hoisted.topicReferenceSer, choice.value)
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 8, Hoisted.topicReferenceSer, choice)
       }
     }
     (value.type)?.let {
@@ -1107,20 +1102,18 @@ internal object ContractTermOfferAnswerSerializer : KSerializer<Contract.Term.Of
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
       `value` =
-        Contract.Term.Offer.Answer.Value.from(
-          R4bBoolean.of(valueBoolean, _valueBoolean),
-          Decimal.of(valueDecimal, _valueDecimal),
-          Integer.of(valueInteger, _valueInteger),
-          Date.of(FhirDate.fromString(valueDate), _valueDate),
-          DateTime.of(FhirDateTime.fromString(valueDateTime), _valueDateTime),
-          Time.of(valueTime, _valueTime),
-          R4bString.of(valueString, _valueString),
-          Uri.of(valueUri, _valueUri),
-          valueAttachment,
-          valueCoding,
-          valueQuantity,
-          valueReference,
-        )!!,
+        (R4bBoolean.of(valueBoolean, _valueBoolean)
+          ?: Decimal.of(valueDecimal, _valueDecimal)
+          ?: Integer.of(valueInteger, _valueInteger)
+          ?: Date.of(FhirDate.fromString(valueDate), _valueDate)
+          ?: DateTime.of(FhirDateTime.fromString(valueDateTime), _valueDateTime)
+          ?: Time.of(valueTime, _valueTime)
+          ?: R4bString.of(valueString, _valueString)
+          ?: Uri.of(valueUri, _valueUri)
+          ?: valueAttachment
+          ?: valueCoding
+          ?: valueQuantity
+          ?: valueReference)!!,
     )
   }
 
@@ -1136,69 +1129,69 @@ internal object ContractTermOfferAnswerSerializer : KSerializer<Contract.Term.Of
         value.modifierExtension,
       )
     when (val choice = value.`value`) {
-      is Contract.Term.Offer.Answer.Value.Boolean -> {
-        ((choice.value.value))?.let { encoder.encodeBooleanElement(descriptor, 3, it) }
-        (choice.value.toElement())?.let {
+      is R4bBoolean -> {
+        ((choice.value))?.let { encoder.encodeBooleanElement(descriptor, 3, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 4, Hoisted.valueBooleanSer, it)
         }
       }
-      is Contract.Term.Offer.Answer.Value.Decimal -> {
-        ((choice.value.value))?.let {
+      is Decimal -> {
+        ((choice.value))?.let {
           encoder.encodeSerializableElement(descriptor, 5, FhirDecimalSerializer, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 6, Hoisted.valueBooleanSer, it)
         }
       }
-      is Contract.Term.Offer.Answer.Value.Integer -> {
-        ((choice.value.value))?.let { encoder.encodeIntElement(descriptor, 7, it) }
-        (choice.value.toElement())?.let {
+      is Integer -> {
+        ((choice.value))?.let { encoder.encodeIntElement(descriptor, 7, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 8, Hoisted.valueBooleanSer, it)
         }
       }
-      is Contract.Term.Offer.Answer.Value.Date -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 9, it) }
-        (choice.value.toElement())?.let {
+      is Date -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 9, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 10, Hoisted.valueBooleanSer, it)
         }
       }
-      is Contract.Term.Offer.Answer.Value.DateTime -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 11, it) }
-        (choice.value.toElement())?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 11, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 12, Hoisted.valueBooleanSer, it)
         }
       }
-      is Contract.Term.Offer.Answer.Value.Time -> {
-        ((choice.value.value))?.let {
+      is Time -> {
+        ((choice.value))?.let {
           encoder.encodeSerializableElement(descriptor, 13, LocalTimeSerializer, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 14, Hoisted.valueBooleanSer, it)
         }
       }
-      is Contract.Term.Offer.Answer.Value.String -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 15, it) }
-        (choice.value.toElement())?.let {
+      is R4bString -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 15, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 16, Hoisted.valueBooleanSer, it)
         }
       }
-      is Contract.Term.Offer.Answer.Value.Uri -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 17, it) }
-        (choice.value.toElement())?.let {
+      is Uri -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 17, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 18, Hoisted.valueBooleanSer, it)
         }
       }
-      is Contract.Term.Offer.Answer.Value.Attachment -> {
-        encoder.encodeSerializableElement(descriptor, 19, Hoisted.valueAttachmentSer, choice.value)
+      is Attachment -> {
+        encoder.encodeSerializableElement(descriptor, 19, Hoisted.valueAttachmentSer, choice)
       }
-      is Contract.Term.Offer.Answer.Value.Coding -> {
-        encoder.encodeSerializableElement(descriptor, 20, Hoisted.valueCodingSer, choice.value)
+      is Coding -> {
+        encoder.encodeSerializableElement(descriptor, 20, Hoisted.valueCodingSer, choice)
       }
-      is Contract.Term.Offer.Answer.Value.Quantity -> {
-        encoder.encodeSerializableElement(descriptor, 21, Hoisted.valueQuantitySer, choice.value)
+      is Quantity -> {
+        encoder.encodeSerializableElement(descriptor, 21, Hoisted.valueQuantitySer, choice)
       }
-      is Contract.Term.Offer.Answer.Value.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 22, Hoisted.valueReferenceSer, choice.value)
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 22, Hoisted.valueReferenceSer, choice)
       }
     }
   }
@@ -1833,7 +1826,7 @@ internal object ContractTermAssetValuedItemSerializer :
       id = id,
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
-      entity = Contract.Term.Asset.ValuedItem.Entity.from(entityCodeableConcept, entityReference),
+      entity = (entityCodeableConcept ?: entityReference),
       identifier = identifier,
       effectiveTime = DateTime.of(FhirDateTime.fromString(effectiveTime), _effectiveTime),
       quantity = quantity,
@@ -1877,16 +1870,11 @@ internal object ContractTermAssetValuedItemSerializer :
       )
     when (val choice = value.entity) {
       null -> {}
-      is Contract.Term.Asset.ValuedItem.Entity.CodeableConcept -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          3,
-          Hoisted.entityCodeableConceptSer,
-          choice.value,
-        )
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 3, Hoisted.entityCodeableConceptSer, choice)
       }
-      is Contract.Term.Asset.ValuedItem.Entity.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 4, Hoisted.entityReferenceSer, choice.value)
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 4, Hoisted.entityReferenceSer, choice)
       }
     }
     (value.identifier)?.let {
@@ -2276,11 +2264,9 @@ internal object ContractTermActionSerializer : KSerializer<Contract.Term.Action>
           )!!
         }),
       occurrence =
-        Contract.Term.Action.Occurrence.from(
-          DateTime.of(FhirDateTime.fromString(occurrenceDateTime), _occurrenceDateTime),
-          occurrencePeriod,
-          occurrenceTiming,
-        ),
+        (DateTime.of(FhirDateTime.fromString(occurrenceDateTime), _occurrenceDateTime)
+          ?: occurrencePeriod
+          ?: occurrenceTiming),
       requester = requester ?: listOf(),
       requesterLinkId =
         (kotlin.collections.List(maxOf(requesterLinkId?.size ?: 0, _requesterLinkId?.size ?: 0)) {
@@ -2365,17 +2351,17 @@ internal object ContractTermActionSerializer : KSerializer<Contract.Term.Action>
     }
     when (val choice = value.occurrence) {
       null -> {}
-      is Contract.Term.Action.Occurrence.DateTime -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 14, it) }
-        (choice.value.toElement())?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 14, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 15, Hoisted.doNotPerformSer, it)
         }
       }
-      is Contract.Term.Action.Occurrence.Period -> {
-        encoder.encodeSerializableElement(descriptor, 16, Hoisted.occurrencePeriodSer, choice.value)
+      is Period -> {
+        encoder.encodeSerializableElement(descriptor, 16, Hoisted.occurrencePeriodSer, choice)
       }
-      is Contract.Term.Action.Occurrence.Timing -> {
-        encoder.encodeSerializableElement(descriptor, 17, Hoisted.occurrenceTimingSer, choice.value)
+      is Timing -> {
+        encoder.encodeSerializableElement(descriptor, 17, Hoisted.occurrenceTimingSer, choice)
       }
     }
     if (value.requester.isNotEmpty())
@@ -2733,7 +2719,7 @@ internal object ContractFriendlySerializer : KSerializer<Contract.Friendly> {
       id = id,
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
-      content = Contract.Friendly.Content.from(contentAttachment, contentReference)!!,
+      content = (contentAttachment ?: contentReference)!!,
     )
   }
 
@@ -2749,11 +2735,11 @@ internal object ContractFriendlySerializer : KSerializer<Contract.Friendly> {
         value.modifierExtension,
       )
     when (val choice = value.content) {
-      is Contract.Friendly.Content.Attachment -> {
-        encoder.encodeSerializableElement(descriptor, 3, Hoisted.contentAttachmentSer, choice.value)
+      is Attachment -> {
+        encoder.encodeSerializableElement(descriptor, 3, Hoisted.contentAttachmentSer, choice)
       }
-      is Contract.Friendly.Content.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 4, Hoisted.contentReferenceSer, choice.value)
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 4, Hoisted.contentReferenceSer, choice)
       }
     }
   }
@@ -2834,7 +2820,7 @@ internal object ContractLegalSerializer : KSerializer<Contract.Legal> {
       id = id,
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
-      content = Contract.Legal.Content.from(contentAttachment, contentReference)!!,
+      content = (contentAttachment ?: contentReference)!!,
     )
   }
 
@@ -2850,11 +2836,11 @@ internal object ContractLegalSerializer : KSerializer<Contract.Legal> {
         value.modifierExtension,
       )
     when (val choice = value.content) {
-      is Contract.Legal.Content.Attachment -> {
-        encoder.encodeSerializableElement(descriptor, 3, Hoisted.contentAttachmentSer, choice.value)
+      is Attachment -> {
+        encoder.encodeSerializableElement(descriptor, 3, Hoisted.contentAttachmentSer, choice)
       }
-      is Contract.Legal.Content.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 4, Hoisted.contentReferenceSer, choice.value)
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 4, Hoisted.contentReferenceSer, choice)
       }
     }
   }
@@ -2935,7 +2921,7 @@ internal object ContractRuleSerializer : KSerializer<Contract.Rule> {
       id = id,
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
-      content = Contract.Rule.Content.from(contentAttachment, contentReference)!!,
+      content = (contentAttachment ?: contentReference)!!,
     )
   }
 
@@ -2951,11 +2937,11 @@ internal object ContractRuleSerializer : KSerializer<Contract.Rule> {
         value.modifierExtension,
       )
     when (val choice = value.content) {
-      is Contract.Rule.Content.Attachment -> {
-        encoder.encodeSerializableElement(descriptor, 3, Hoisted.contentAttachmentSer, choice.value)
+      is Attachment -> {
+        encoder.encodeSerializableElement(descriptor, 3, Hoisted.contentAttachmentSer, choice)
       }
-      is Contract.Rule.Content.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 4, Hoisted.contentReferenceSer, choice.value)
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 4, Hoisted.contentReferenceSer, choice)
       }
     }
   }
@@ -3364,7 +3350,7 @@ internal object ContractSerializer : KSerializer<Contract> {
         }),
       author = author,
       scope = scope,
-      topic = Contract.Topic.from(topicCodeableConcept, topicReference),
+      topic = (topicCodeableConcept ?: topicReference),
       type = type,
       subType = subType ?: listOf(),
       contentDefinition = contentDefinition,
@@ -3375,8 +3361,7 @@ internal object ContractSerializer : KSerializer<Contract> {
       friendly = friendly ?: listOf(),
       legal = legal ?: listOf(),
       rule = rule ?: listOf(),
-      legallyBinding =
-        Contract.LegallyBinding.from(legallyBindingAttachment, legallyBindingReference),
+      legallyBinding = (legallyBindingAttachment ?: legallyBindingReference),
     )
   }
 
@@ -3616,20 +3601,20 @@ internal object ContractSerializer : KSerializer<Contract> {
     }
     when (val choice = value.topic) {
       null -> {}
-      is Contract.Topic.CodeableConcept -> {
+      is CodeableConcept -> {
         encoder.encodeSerializableElement(
           descriptor,
           40 + descriptorOffset,
           Hoisted.legalStateSer,
-          choice.value,
+          choice,
         )
       }
-      is Contract.Topic.Reference -> {
+      is Reference -> {
         encoder.encodeSerializableElement(
           descriptor,
           41 + descriptorOffset,
           Hoisted.instantiatesCanonicalSer,
-          choice.value,
+          choice,
         )
       }
     }
@@ -3707,20 +3692,20 @@ internal object ContractSerializer : KSerializer<Contract> {
       )
     when (val choice = value.legallyBinding) {
       null -> {}
-      is Contract.LegallyBinding.Attachment -> {
+      is Attachment -> {
         encoder.encodeSerializableElement(
           descriptor,
           52 + descriptorOffset,
           Hoisted.legallyBindingAttachmentSer,
-          choice.value,
+          choice,
         )
       }
-      is Contract.LegallyBinding.Reference -> {
+      is Reference -> {
         encoder.encodeSerializableElement(
           descriptor,
           53 + descriptorOffset,
           Hoisted.instantiatesCanonicalSer,
-          choice.value,
+          choice,
         )
       }
     }

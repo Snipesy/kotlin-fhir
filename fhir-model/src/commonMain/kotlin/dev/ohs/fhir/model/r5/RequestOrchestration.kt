@@ -26,7 +26,6 @@ import dev.ohs.fhir.model.r5.serializers.RequestOrchestrationActionSerializer
 import dev.ohs.fhir.model.r5.serializers.RequestOrchestrationSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -335,8 +334,10 @@ public data class RequestOrchestration(
      * performed. The timing may be absolute (specified as a dateTime or Period) or relative
      * (specified as an Age, Duration, or Range), or it may be a more complex, potentially repeating
      * timing specified using Timing.
+     *
+     * A FHIR choice type — one of: [Age] | [DateTime] | [Duration] | [Period] | [Range] | [Timing]
      */
-    public val timing: Timing? = null,
+    public val timing: FhirChoiceTypes.AgeOrDateTimeOrDurationOrPeriodOrRangeOrTiming? = null,
     /**
      * Identifies the facility where the action will occur; e.g. home, hospital, specific clinic,
      * etc.
@@ -380,8 +381,10 @@ public data class RequestOrchestration(
      *
      * Note that the definition is optional, and if no definition is specified, a dynamicValue with
      * a root ($this) path can be used to define the entire resource dynamically.
+     *
+     * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
      */
-    public val definition: Definition? = null,
+    public val definition: Action.Definition? = null,
     /**
      * A reference to a StructureMap resource that defines a transform that can be executed to
      * produce the intent resource using the ActivityDefinition instance as the input.
@@ -913,8 +916,10 @@ public data class RequestOrchestration(
       /**
        * A duration or range of durations to apply to the relationship. For example, 30-60 minutes
        * before.
+       *
+       * A FHIR choice type — one of: [Duration] | [Range]
        */
-      public val offset: Offset? = null,
+      public val offset: RelatedAction.Offset? = null,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -926,29 +931,6 @@ public data class RequestOrchestration(
             offset = this@with.offset
           }
         }
-
-      public sealed interface Offset {
-        public fun asDuration(): Duration? = this as? Duration
-
-        public fun asRange(): Range? = this as? Range
-
-        @JvmInline
-        public value class Duration(public val `value`: dev.ohs.fhir.model.r5.Duration) : Offset
-
-        @JvmInline
-        public value class Range(public val `value`: dev.ohs.fhir.model.r5.Range) : Offset
-
-        public companion object {
-          internal fun from(
-            durationValue: dev.ohs.fhir.model.r5.Duration?,
-            rangeValue: dev.ohs.fhir.model.r5.Range?,
-          ): Offset? {
-            if (durationValue != null) return Duration(durationValue)
-            if (rangeValue != null) return Range(rangeValue)
-            return null
-          }
-        }
-      }
 
       public class Builder(
         /** The element id of the target related action. */
@@ -1002,8 +984,10 @@ public data class RequestOrchestration(
         /**
          * A duration or range of durations to apply to the relationship. For example, 30-60 minutes
          * before.
+         *
+         * A FHIR choice type — one of: [Duration] | [Range]
          */
-        public var offset: Offset? = null
+        public var offset: RelatedAction.Offset? = null
 
         public fun build(): RelatedAction =
           RelatedAction(
@@ -1016,6 +1000,9 @@ public data class RequestOrchestration(
             offset = offset,
           )
       }
+
+      /** A FHIR choice type — one of: [Duration] | [Range] */
+      public typealias Offset = FhirChoiceTypes.DurationOrRange
     }
 
     /** The participant that should perform or be responsible for this action. */
@@ -1075,8 +1062,12 @@ public data class RequestOrchestration(
        * Indicates how the actor will be involved in the action - author, reviewer, witness, etc.
        */
       public val function: CodeableConcept? = null,
-      /** A reference to the actual participant. */
-      public val actor: Actor? = null,
+      /**
+       * A reference to the actual participant.
+       *
+       * A FHIR choice type — one of: [Canonical] | [Reference]
+       */
+      public val actor: Participant.Actor? = null,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -1092,29 +1083,6 @@ public data class RequestOrchestration(
             actor = this@with.actor
           }
         }
-
-      public sealed interface Actor {
-        public fun asCanonical(): Canonical? = this as? Canonical
-
-        public fun asReference(): Reference? = this as? Reference
-
-        @JvmInline
-        public value class Canonical(public val `value`: dev.ohs.fhir.model.r5.Canonical) : Actor
-
-        @JvmInline
-        public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : Actor
-
-        public companion object {
-          internal fun from(
-            canonicalValue: dev.ohs.fhir.model.r5.Canonical?,
-            referenceValue: dev.ohs.fhir.model.r5.Reference?,
-          ): Actor? {
-            if (canonicalValue != null) return Canonical(canonicalValue)
-            if (referenceValue != null) return Reference(referenceValue)
-            return null
-          }
-        }
-      }
 
       public class Builder() {
         /**
@@ -1179,8 +1147,12 @@ public data class RequestOrchestration(
          */
         public var function: CodeableConcept.Builder? = null
 
-        /** A reference to the actual participant. */
-        public var actor: Actor? = null
+        /**
+         * A reference to the actual participant.
+         *
+         * A FHIR choice type — one of: [Canonical] | [Reference]
+         */
+        public var actor: Participant.Actor? = null
 
         public fun build(): Participant =
           Participant(
@@ -1195,6 +1167,9 @@ public data class RequestOrchestration(
             actor = actor,
           )
       }
+
+      /** A FHIR choice type — one of: [Canonical] | [Reference] */
+      public typealias Actor = FhirChoiceTypes.CanonicalOrReference
     }
 
     /**
@@ -1354,82 +1329,6 @@ public data class RequestOrchestration(
       }
     }
 
-    public sealed interface Timing {
-      public fun asDateTime(): DateTime? = this as? DateTime
-
-      public fun asAge(): Age? = this as? Age
-
-      public fun asPeriod(): Period? = this as? Period
-
-      public fun asDuration(): Duration? = this as? Duration
-
-      public fun asRange(): Range? = this as? Range
-
-      public fun asTiming(): Timing? = this as? Timing
-
-      @JvmInline
-      public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) :
-        Action.Timing
-
-      @JvmInline
-      public value class Age(public val `value`: dev.ohs.fhir.model.r5.Age) : Action.Timing
-
-      @JvmInline
-      public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) : Action.Timing
-
-      @JvmInline
-      public value class Duration(public val `value`: dev.ohs.fhir.model.r5.Duration) :
-        Action.Timing
-
-      @JvmInline
-      public value class Range(public val `value`: dev.ohs.fhir.model.r5.Range) : Action.Timing
-
-      @JvmInline
-      public value class Timing(public val `value`: dev.ohs.fhir.model.r5.Timing) : Action.Timing
-
-      public companion object {
-        internal fun from(
-          dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-          ageValue: dev.ohs.fhir.model.r5.Age?,
-          periodValue: dev.ohs.fhir.model.r5.Period?,
-          durationValue: dev.ohs.fhir.model.r5.Duration?,
-          rangeValue: dev.ohs.fhir.model.r5.Range?,
-          timingValue: dev.ohs.fhir.model.r5.Timing?,
-        ): Action.Timing? {
-          if (dateTimeValue != null) return DateTime(dateTimeValue)
-          if (ageValue != null) return Age(ageValue)
-          if (periodValue != null) return Period(periodValue)
-          if (durationValue != null) return Duration(durationValue)
-          if (rangeValue != null) return Range(rangeValue)
-          if (timingValue != null) return Timing(timingValue)
-          return null
-        }
-      }
-    }
-
-    public sealed interface Definition {
-      public fun asCanonical(): Canonical? = this as? Canonical
-
-      public fun asUri(): Uri? = this as? Uri
-
-      @JvmInline
-      public value class Canonical(public val `value`: dev.ohs.fhir.model.r5.Canonical) :
-        Definition
-
-      @JvmInline public value class Uri(public val `value`: dev.ohs.fhir.model.r5.Uri) : Definition
-
-      public companion object {
-        internal fun from(
-          canonicalValue: dev.ohs.fhir.model.r5.Canonical?,
-          uriValue: dev.ohs.fhir.model.r5.Uri?,
-        ): Definition? {
-          if (canonicalValue != null) return Canonical(canonicalValue)
-          if (uriValue != null) return Uri(uriValue)
-          return null
-        }
-      }
-    }
-
     public class Builder() {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -1540,8 +1439,11 @@ public data class RequestOrchestration(
        * performed. The timing may be absolute (specified as a dateTime or Period) or relative
        * (specified as an Age, Duration, or Range), or it may be a more complex, potentially
        * repeating timing specified using Timing.
+       *
+       * A FHIR choice type — one of: [Age] | [DateTime] | [Duration] | [Period] | [Range] |
+       * [Timing]
        */
-      public var timing: Timing? = null
+      public var timing: FhirChoiceTypes.AgeOrDateTimeOrDurationOrPeriodOrRangeOrTiming? = null
 
       /**
        * Identifies the facility where the action will occur; e.g. home, hospital, specific clinic,
@@ -1595,8 +1497,10 @@ public data class RequestOrchestration(
        *
        * Note that the definition is optional, and if no definition is specified, a dynamicValue
        * with a root ($this) path can be used to define the entire resource dynamically.
+       *
+       * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
        */
-      public var definition: Definition? = null
+      public var definition: Action.Definition? = null
 
       /**
        * A reference to a StructureMap resource that defines a transform that can be executed to
@@ -1659,6 +1563,9 @@ public data class RequestOrchestration(
           action = action.map { it.build() },
         )
     }
+
+    /** A FHIR choice type — one of: [CanonicalBox] | [UriBox] */
+    public typealias Definition = FhirChoiceTypes.CanonicalOrUri
   }
 
   public class Builder(

@@ -20,7 +20,6 @@ import dev.ohs.fhir.model.r5.serializers.DosageDoseAndRateSerializer
 import dev.ohs.fhir.model.r5.serializers.DosageSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.Serializable
 
 /** Dosage Type: Indicates how the medication is/was taken or should be taken by the patient. */
@@ -142,7 +141,7 @@ public data class Dosage(
   public val maxDosePerAdministration: Quantity? = null,
   /** Upper limit on medication per lifetime of the patient. */
   public val maxDosePerLifetime: Quantity? = null,
-) : BackboneType() {
+) : BackboneType(), FhirChoiceTypes.ElementDefinitionDefaultValueChoice {
   public fun toBuilder(): Builder =
     with(this) {
       Builder().apply {
@@ -208,8 +207,10 @@ public data class Dosage(
      * specified to convey the total amount to be administered over the period of time as indicated
      * by the schedule e.g. 500 ml in dose, with timing used to convey that this should be done over
      * 4 hours.
+     *
+     * A FHIR choice type — one of: [Quantity] | [Range]
      */
-    public val dose: Dose? = null,
+    public val dose: DoseAndRate.Dose? = null,
     /**
      * Amount of medication per unit of time.
      *
@@ -225,8 +226,10 @@ public data class Dosage(
      * is specified as the denominator. Where a rate such as 500ml over 2 hours is specified, the
      * use of rateRatio may be more semantically correct than specifying using a rateQuantity of 250
      * mg/hour.
+     *
+     * A FHIR choice type — one of: [Quantity] | [Range] | [Ratio]
      */
-    public val rate: Rate? = null,
+    public val rate: DoseAndRate.Rate? = null,
   ) : Element() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -238,56 +241,6 @@ public data class Dosage(
           rate = this@with.rate
         }
       }
-
-    public sealed interface Dose {
-      public fun asRange(): Range? = this as? Range
-
-      public fun asQuantity(): Quantity? = this as? Quantity
-
-      @JvmInline public value class Range(public val `value`: dev.ohs.fhir.model.r5.Range) : Dose
-
-      @JvmInline
-      public value class Quantity(public val `value`: dev.ohs.fhir.model.r5.Quantity) : Dose
-
-      public companion object {
-        internal fun from(
-          rangeValue: dev.ohs.fhir.model.r5.Range?,
-          quantityValue: dev.ohs.fhir.model.r5.Quantity?,
-        ): Dose? {
-          if (rangeValue != null) return Range(rangeValue)
-          if (quantityValue != null) return Quantity(quantityValue)
-          return null
-        }
-      }
-    }
-
-    public sealed interface Rate {
-      public fun asRatio(): Ratio? = this as? Ratio
-
-      public fun asRange(): Range? = this as? Range
-
-      public fun asQuantity(): Quantity? = this as? Quantity
-
-      @JvmInline public value class Ratio(public val `value`: dev.ohs.fhir.model.r5.Ratio) : Rate
-
-      @JvmInline public value class Range(public val `value`: dev.ohs.fhir.model.r5.Range) : Rate
-
-      @JvmInline
-      public value class Quantity(public val `value`: dev.ohs.fhir.model.r5.Quantity) : Rate
-
-      public companion object {
-        internal fun from(
-          ratioValue: dev.ohs.fhir.model.r5.Ratio?,
-          rangeValue: dev.ohs.fhir.model.r5.Range?,
-          quantityValue: dev.ohs.fhir.model.r5.Quantity?,
-        ): Rate? {
-          if (ratioValue != null) return Ratio(ratioValue)
-          if (rangeValue != null) return Range(rangeValue)
-          if (quantityValue != null) return Quantity(quantityValue)
-          return null
-        }
-      }
-    }
 
     public class Builder() {
       /**
@@ -328,8 +281,10 @@ public data class Dosage(
        * duration), this can be specified to convey the total amount to be administered over the
        * period of time as indicated by the schedule e.g. 500 ml in dose, with timing used to convey
        * that this should be done over 4 hours.
+       *
+       * A FHIR choice type — one of: [Quantity] | [Range]
        */
-      public var dose: Dose? = null
+      public var dose: DoseAndRate.Dose? = null
 
       /**
        * Amount of medication per unit of time.
@@ -346,8 +301,10 @@ public data class Dosage(
        * where the time is specified as the denominator. Where a rate such as 500ml over 2 hours is
        * specified, the use of rateRatio may be more semantically correct than specifying using a
        * rateQuantity of 250 mg/hour.
+       *
+       * A FHIR choice type — one of: [Quantity] | [Range] | [Ratio]
        */
-      public var rate: Rate? = null
+      public var rate: DoseAndRate.Rate? = null
 
       public fun build(): DoseAndRate =
         DoseAndRate(
@@ -358,6 +315,12 @@ public data class Dosage(
           rate = rate,
         )
     }
+
+    /** A FHIR choice type — one of: [Quantity] | [Range] */
+    public typealias Dose = FhirChoiceTypes.QuantityOrRange
+
+    /** A FHIR choice type — one of: [Quantity] | [Range] | [Ratio] */
+    public typealias Rate = FhirChoiceTypes.QuantityOrRangeOrRatio
   }
 
   public open class Builder() {

@@ -22,7 +22,6 @@ import dev.ohs.fhir.model.r4.serializers.ProvenanceSerializer
 import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -153,8 +152,10 @@ public data class Provenance(
    *
    * The period can be a little arbitrary; where possible, the time should correspond to human
    * assessment of the activity time.
+   *
+   * A FHIR choice type — one of: [DateTime] | [Period]
    */
-  public val occurred: Occurred? = null,
+  public val occurred: Provenance.Occurred? = null,
   /**
    * The instant of time at which the activity was recorded.
    *
@@ -540,29 +541,6 @@ public data class Provenance(
     }
   }
 
-  public sealed interface Occurred {
-    public fun asPeriod(): Period? = this as? Period
-
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    @JvmInline
-    public value class Period(public val `value`: dev.ohs.fhir.model.r4.Period) : Occurred
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r4.DateTime) : Occurred
-
-    public companion object {
-      internal fun from(
-        periodValue: dev.ohs.fhir.model.r4.Period?,
-        dateTimeValue: dev.ohs.fhir.model.r4.DateTime?,
-      ): Occurred? {
-        if (periodValue != null) return Period(periodValue)
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
     /**
      * The Reference(s) that were generated or updated by the activity described in this resource. A
@@ -703,8 +681,10 @@ public data class Provenance(
      *
      * The period can be a little arbitrary; where possible, the time should correspond to human
      * assessment of the activity time.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Period]
      */
-    public var occurred: Occurred? = null
+    public var occurred: Provenance.Occurred? = null
 
     /**
      * Policy or plan the activity was defined by. Typically, a single activity may have multiple
@@ -793,4 +773,7 @@ public data class Provenance(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [DateTime] | [Period] */
+  public typealias Occurred = FhirChoiceTypes.DateTimeOrPeriod
 }

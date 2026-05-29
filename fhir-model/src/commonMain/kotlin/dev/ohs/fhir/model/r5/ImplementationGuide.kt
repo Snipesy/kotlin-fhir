@@ -33,7 +33,6 @@ import dev.ohs.fhir.model.r5.terminologies.PublicationStatus
 import dev.ohs.fhir.model.r5.terminologies.ResourceType
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -189,8 +188,10 @@ public data class ImplementationGuide(
    * passed in - %version1 and %version2 and will return a negative number if version1 is newer, a
    * positive number if version2 and a 0 if the version ordering can't be successfully be
    * determined.
+   *
+   * A FHIR choice type — one of: [Coding] | [String]
    */
-  public val versionAlgorithm: VersionAlgorithm? = null,
+  public val versionAlgorithm: ImplementationGuide.VersionAlgorithm? = null,
   /**
    * A natural language name identifying the implementation guide. This name should be usable as an
    * identifier for the module by machine processing applications such as code generation.
@@ -1178,8 +1179,10 @@ public data class ImplementationGuide(
        * If absent and the page isn't a generated page, this may be inferred from the page name by
        * checking input locations. String is used for XHTML content - sent as an escaped string.
        * FHIR tooling can't support 'direct' XHTML anywhere other than in narrative.
+       *
+       * A FHIR choice type — one of: [MarkdownBox] | [StringBox] | [Url]
        */
-      public val source: Source? = null,
+      public val source: Page.Source? = null,
       /**
        * The url by which the page should be known when published.
        *
@@ -1211,35 +1214,6 @@ public data class ImplementationGuide(
             page = this@with.page.map { it.toBuilder() }.toMutableList()
           }
         }
-
-      public sealed interface Source {
-        public fun asUrl(): Url? = this as? Url
-
-        public fun asString(): String? = this as? String
-
-        public fun asMarkdown(): Markdown? = this as? Markdown
-
-        @JvmInline public value class Url(public val `value`: dev.ohs.fhir.model.r5.Url) : Source
-
-        @JvmInline
-        public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : Source
-
-        @JvmInline
-        public value class Markdown(public val `value`: dev.ohs.fhir.model.r5.Markdown) : Source
-
-        public companion object {
-          internal fun from(
-            urlValue: dev.ohs.fhir.model.r5.Url?,
-            stringValue: dev.ohs.fhir.model.r5.String?,
-            markdownValue: dev.ohs.fhir.model.r5.Markdown?,
-          ): Source? {
-            if (urlValue != null) return Url(urlValue)
-            if (stringValue != null) return String(stringValue)
-            if (markdownValue != null) return Markdown(markdownValue)
-            return null
-          }
-        }
-      }
 
       public class Builder(
         /**
@@ -1303,8 +1277,10 @@ public data class ImplementationGuide(
          * If absent and the page isn't a generated page, this may be inferred from the page name by
          * checking input locations. String is used for XHTML content - sent as an escaped string.
          * FHIR tooling can't support 'direct' XHTML anywhere other than in narrative.
+         *
+         * A FHIR choice type — one of: [MarkdownBox] | [StringBox] | [Url]
          */
-        public var source: Source? = null
+        public var source: Page.Source? = null
 
         /**
          * Nested Pages/Sections under this page.
@@ -1325,6 +1301,9 @@ public data class ImplementationGuide(
             page = page.map { it.build() },
           )
       }
+
+      /** A FHIR choice type — one of: [MarkdownBox] | [StringBox] | [Url] */
+      public typealias Source = FhirChoiceTypes.MarkdownOrStringOrUrl
     }
 
     /**
@@ -2104,29 +2083,6 @@ public data class ImplementationGuide(
     }
   }
 
-  public sealed interface VersionAlgorithm {
-    public fun asString(): String? = this as? String
-
-    public fun asCoding(): Coding? = this as? Coding
-
-    @JvmInline
-    public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : VersionAlgorithm
-
-    @JvmInline
-    public value class Coding(public val `value`: dev.ohs.fhir.model.r5.Coding) : VersionAlgorithm
-
-    public companion object {
-      internal fun from(
-        stringValue: dev.ohs.fhir.model.r5.String?,
-        codingValue: dev.ohs.fhir.model.r5.Coding?,
-      ): VersionAlgorithm? {
-        if (stringValue != null) return String(stringValue)
-        if (codingValue != null) return Coding(codingValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
     /**
      * An absolute URI that is used to identify this implementation guide when it is referenced in a
@@ -2325,8 +2281,10 @@ public data class ImplementationGuide(
      * passed in - %version1 and %version2 and will return a negative number if version1 is newer, a
      * positive number if version2 and a 0 if the version ordering can't be successfully be
      * determined.
+     *
+     * A FHIR choice type — one of: [Coding] | [String]
      */
-    public var versionAlgorithm: VersionAlgorithm? = null
+    public var versionAlgorithm: ImplementationGuide.VersionAlgorithm? = null
 
     /**
      * A short, descriptive, user-friendly title for the implementation guide.
@@ -3786,4 +3744,7 @@ public data class ImplementationGuide(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [Coding] | [String] */
+  public typealias VersionAlgorithm = FhirChoiceTypes.CodingOrString
 }

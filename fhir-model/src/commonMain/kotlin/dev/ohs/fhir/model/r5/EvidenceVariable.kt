@@ -25,7 +25,6 @@ import dev.ohs.fhir.model.r5.serializers.EvidenceVariableSerializer
 import dev.ohs.fhir.model.r5.terminologies.PublicationStatus
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -176,8 +175,10 @@ public data class EvidenceVariable(
    * passed in - %version1 and %version2 and will return a negative number if version1 is newer, a
    * positive number if version2 is newer, and a 0 if the version ordering can't successfully be
    * determined.
+   *
+   * A FHIR choice type — one of: [Coding] | [String]
    */
-  public val versionAlgorithm: VersionAlgorithm? = null,
+  public val versionAlgorithm: EvidenceVariable.VersionAlgorithm? = null,
   /**
    * A natural language name identifying the evidence variable. This name should be usable as an
    * identifier for the module by machine processing applications such as code generation.
@@ -510,10 +511,18 @@ public data class EvidenceVariable(
     public val definitionByTypeAndValue: DefinitionByTypeAndValue? = null,
     /** Defines the characteristic as a combination of two or more characteristics. */
     public val definitionByCombination: DefinitionByCombination? = null,
-    /** Number of occurrences meeting the characteristic. */
-    public val instances: Instances? = null,
-    /** Length of time in which the characteristic is met. */
-    public val duration: Duration? = null,
+    /**
+     * Number of occurrences meeting the characteristic.
+     *
+     * A FHIR choice type — one of: [Quantity] | [Range]
+     */
+    public val instances: Characteristic.Instances? = null,
+    /**
+     * Length of time in which the characteristic is met.
+     *
+     * A FHIR choice type — one of: [Quantity] | [Range]
+     */
+    public val duration: FhirChoiceTypes.QuantityOrRange? = null,
     /** Timing in which the characteristic is determined. */
     public val timeFromEvent: List<TimeFromEvent> = listOf(),
   ) : BackboneElement() {
@@ -586,8 +595,13 @@ public data class EvidenceVariable(
       public val method: List<CodeableConcept> = listOf(),
       /** Device used for determining characteristic. */
       public val device: Reference? = null,
-      /** Defines the characteristic when paired with characteristic.type. */
-      public val `value`: Value,
+      /**
+       * Defines the characteristic when paired with characteristic.type.
+       *
+       * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Id] | [Quantity] | [Range] |
+       * [Reference]
+       */
+      public val `value`: DefinitionByTypeAndValue.Value,
       /**
        * Defines the reference point for comparison when valueQuantity or valueRange is not compared
        * to zero.
@@ -606,63 +620,16 @@ public data class EvidenceVariable(
           }
         }
 
-      public sealed interface Value {
-        public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-        public fun asBoolean(): Boolean? = this as? Boolean
-
-        public fun asQuantity(): Quantity? = this as? Quantity
-
-        public fun asRange(): Range? = this as? Range
-
-        public fun asReference(): Reference? = this as? Reference
-
-        public fun asId(): Id? = this as? Id
-
-        @JvmInline
-        public value class CodeableConcept(
-          public val `value`: dev.ohs.fhir.model.r5.CodeableConcept
-        ) : Value
-
-        @JvmInline
-        public value class Boolean(public val `value`: dev.ohs.fhir.model.r5.Boolean) : Value
-
-        @JvmInline
-        public value class Quantity(public val `value`: dev.ohs.fhir.model.r5.Quantity) : Value
-
-        @JvmInline
-        public value class Range(public val `value`: dev.ohs.fhir.model.r5.Range) : Value
-
-        @JvmInline
-        public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : Value
-
-        @JvmInline public value class Id(public val `value`: dev.ohs.fhir.model.r5.Id) : Value
-
-        public companion object {
-          internal fun from(
-            codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-            booleanValue: dev.ohs.fhir.model.r5.Boolean?,
-            quantityValue: dev.ohs.fhir.model.r5.Quantity?,
-            rangeValue: dev.ohs.fhir.model.r5.Range?,
-            referenceValue: dev.ohs.fhir.model.r5.Reference?,
-            idValue: dev.ohs.fhir.model.r5.Id?,
-          ): Value? {
-            if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-            if (booleanValue != null) return Boolean(booleanValue)
-            if (quantityValue != null) return Quantity(quantityValue)
-            if (rangeValue != null) return Range(rangeValue)
-            if (referenceValue != null) return Reference(referenceValue)
-            if (idValue != null) return Id(idValue)
-            return null
-          }
-        }
-      }
-
       public class Builder(
         /** Used to express the type of characteristic. */
         public var type: CodeableConcept.Builder,
-        /** Defines the characteristic when paired with characteristic.type. */
-        public var `value`: Value,
+        /**
+         * Defines the characteristic when paired with characteristic.type.
+         *
+         * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Id] | [Quantity] | [Range]
+         * | [Reference]
+         */
+        public var `value`: DefinitionByTypeAndValue.Value,
       ) {
         /**
          * Unique id for the element within a resource (for internal references). This may be any
@@ -728,6 +695,13 @@ public data class EvidenceVariable(
             offset = offset?.build(),
           )
       }
+
+      /**
+       * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Id] | [Quantity] | [Range] |
+       * [Reference]
+       */
+      public typealias Value =
+        FhirChoiceTypes.BooleanOrCodeableConceptOrIdOrQuantityOrRangeOrReference
     }
 
     /** Defines the characteristic as a combination of two or more characteristics. */
@@ -892,8 +866,12 @@ public data class EvidenceVariable(
       public val description: Markdown? = null,
       /** A human-readable string to clarify or explain concepts about the timeFromEvent. */
       public val note: List<Annotation> = listOf(),
-      /** The event used as a base point (reference point) in time. */
-      public val event: Event? = null,
+      /**
+       * The event used as a base point (reference point) in time.
+       *
+       * A FHIR choice type — one of: [CodeableConcept] | [DateTime] | [Id] | [Reference]
+       */
+      public val event: TimeFromEvent.Event? = null,
       /** Used to express the observation at a defined amount of time before or after the event. */
       public val quantity: Quantity? = null,
       /** Used to express the observation within a period before and/or after the event. */
@@ -912,44 +890,6 @@ public data class EvidenceVariable(
             range = this@with.range?.toBuilder()
           }
         }
-
-      public sealed interface Event {
-        public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-        public fun asReference(): Reference? = this as? Reference
-
-        public fun asDateTime(): DateTime? = this as? DateTime
-
-        public fun asId(): Id? = this as? Id
-
-        @JvmInline
-        public value class CodeableConcept(
-          public val `value`: dev.ohs.fhir.model.r5.CodeableConcept
-        ) : Event
-
-        @JvmInline
-        public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : Event
-
-        @JvmInline
-        public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) : Event
-
-        @JvmInline public value class Id(public val `value`: dev.ohs.fhir.model.r5.Id) : Event
-
-        public companion object {
-          internal fun from(
-            codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-            referenceValue: dev.ohs.fhir.model.r5.Reference?,
-            dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-            idValue: dev.ohs.fhir.model.r5.Id?,
-          ): Event? {
-            if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-            if (referenceValue != null) return Reference(referenceValue)
-            if (dateTimeValue != null) return DateTime(dateTimeValue)
-            if (idValue != null) return Id(idValue)
-            return null
-          }
-        }
-      }
 
       public class Builder() {
         /**
@@ -998,8 +938,12 @@ public data class EvidenceVariable(
         /** A human-readable string to clarify or explain concepts about the timeFromEvent. */
         public var note: MutableList<Annotation.Builder> = mutableListOf()
 
-        /** The event used as a base point (reference point) in time. */
-        public var event: Event? = null
+        /**
+         * The event used as a base point (reference point) in time.
+         *
+         * A FHIR choice type — one of: [CodeableConcept] | [DateTime] | [Id] | [Reference]
+         */
+        public var event: TimeFromEvent.Event? = null
 
         /**
          * Used to express the observation at a defined amount of time before or after the event.
@@ -1021,52 +965,9 @@ public data class EvidenceVariable(
             range = range?.build(),
           )
       }
-    }
 
-    public sealed interface Instances {
-      public fun asQuantity(): Quantity? = this as? Quantity
-
-      public fun asRange(): Range? = this as? Range
-
-      @JvmInline
-      public value class Quantity(public val `value`: dev.ohs.fhir.model.r5.Quantity) : Instances
-
-      @JvmInline
-      public value class Range(public val `value`: dev.ohs.fhir.model.r5.Range) : Instances
-
-      public companion object {
-        internal fun from(
-          quantityValue: dev.ohs.fhir.model.r5.Quantity?,
-          rangeValue: dev.ohs.fhir.model.r5.Range?,
-        ): Instances? {
-          if (quantityValue != null) return Quantity(quantityValue)
-          if (rangeValue != null) return Range(rangeValue)
-          return null
-        }
-      }
-    }
-
-    public sealed interface Duration {
-      public fun asQuantity(): Quantity? = this as? Quantity
-
-      public fun asRange(): Range? = this as? Range
-
-      @JvmInline
-      public value class Quantity(public val `value`: dev.ohs.fhir.model.r5.Quantity) : Duration
-
-      @JvmInline
-      public value class Range(public val `value`: dev.ohs.fhir.model.r5.Range) : Duration
-
-      public companion object {
-        internal fun from(
-          quantityValue: dev.ohs.fhir.model.r5.Quantity?,
-          rangeValue: dev.ohs.fhir.model.r5.Range?,
-        ): Duration? {
-          if (quantityValue != null) return Quantity(quantityValue)
-          if (rangeValue != null) return Range(rangeValue)
-          return null
-        }
-      }
+      /** A FHIR choice type — one of: [CodeableConcept] | [DateTime] | [Id] | [Reference] */
+      public typealias Event = FhirChoiceTypes.CodeableConceptOrDateTimeOrIdOrReference
     }
 
     public class Builder() {
@@ -1155,11 +1056,19 @@ public data class EvidenceVariable(
       /** Defines the characteristic as a combination of two or more characteristics. */
       public var definitionByCombination: DefinitionByCombination.Builder? = null
 
-      /** Number of occurrences meeting the characteristic. */
-      public var instances: Instances? = null
+      /**
+       * Number of occurrences meeting the characteristic.
+       *
+       * A FHIR choice type — one of: [Quantity] | [Range]
+       */
+      public var instances: Characteristic.Instances? = null
 
-      /** Length of time in which the characteristic is met. */
-      public var duration: Duration? = null
+      /**
+       * Length of time in which the characteristic is met.
+       *
+       * A FHIR choice type — one of: [Quantity] | [Range]
+       */
+      public var duration: FhirChoiceTypes.QuantityOrRange? = null
 
       /** Timing in which the characteristic is determined. */
       public var timeFromEvent: MutableList<TimeFromEvent.Builder> = mutableListOf()
@@ -1185,6 +1094,9 @@ public data class EvidenceVariable(
           timeFromEvent = timeFromEvent.map { it.build() },
         )
     }
+
+    /** A FHIR choice type — one of: [Quantity] | [Range] */
+    public typealias Instances = FhirChoiceTypes.QuantityOrRange
   }
 
   /** A grouping for ordinal or polychotomous variables. */
@@ -1229,8 +1141,12 @@ public data class EvidenceVariable(
     override val modifierExtension: List<Extension> = listOf(),
     /** Description of the grouping. */
     public val name: String? = null,
-    /** Definition of the grouping. */
-    public val `value`: Value? = null,
+    /**
+     * Definition of the grouping.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Range]
+     */
+    public val `value`: Category.Value? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -1242,37 +1158,6 @@ public data class EvidenceVariable(
           `value` = this@with.`value`
         }
       }
-
-    public sealed interface Value {
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asQuantity(): Quantity? = this as? Quantity
-
-      public fun asRange(): Range? = this as? Range
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r5.CodeableConcept
-      ) : Value
-
-      @JvmInline
-      public value class Quantity(public val `value`: dev.ohs.fhir.model.r5.Quantity) : Value
-
-      @JvmInline public value class Range(public val `value`: dev.ohs.fhir.model.r5.Range) : Value
-
-      public companion object {
-        internal fun from(
-          codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-          quantityValue: dev.ohs.fhir.model.r5.Quantity?,
-          rangeValue: dev.ohs.fhir.model.r5.Range?,
-        ): Value? {
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (quantityValue != null) return Quantity(quantityValue)
-          if (rangeValue != null) return Range(rangeValue)
-          return null
-        }
-      }
-    }
 
     public class Builder() {
       /**
@@ -1318,8 +1203,12 @@ public data class EvidenceVariable(
       /** Description of the grouping. */
       public var name: String.Builder? = null
 
-      /** Definition of the grouping. */
-      public var `value`: Value? = null
+      /**
+       * Definition of the grouping.
+       *
+       * A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Range]
+       */
+      public var `value`: Category.Value? = null
 
       public fun build(): Category =
         Category(
@@ -1330,29 +1219,9 @@ public data class EvidenceVariable(
           `value` = `value`,
         )
     }
-  }
 
-  public sealed interface VersionAlgorithm {
-    public fun asString(): String? = this as? String
-
-    public fun asCoding(): Coding? = this as? Coding
-
-    @JvmInline
-    public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : VersionAlgorithm
-
-    @JvmInline
-    public value class Coding(public val `value`: dev.ohs.fhir.model.r5.Coding) : VersionAlgorithm
-
-    public companion object {
-      internal fun from(
-        stringValue: dev.ohs.fhir.model.r5.String?,
-        codingValue: dev.ohs.fhir.model.r5.Coding?,
-      ): VersionAlgorithm? {
-        if (stringValue != null) return String(stringValue)
-        if (codingValue != null) return Coding(codingValue)
-        return null
-      }
-    }
+    /** A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Range] */
+    public typealias Value = FhirChoiceTypes.CodeableConceptOrQuantityOrRange
   }
 
   public class Builder(
@@ -1523,8 +1392,10 @@ public data class EvidenceVariable(
      * passed in - %version1 and %version2 and will return a negative number if version1 is newer, a
      * positive number if version2 is newer, and a 0 if the version ordering can't successfully be
      * determined.
+     *
+     * A FHIR choice type — one of: [Coding] | [String]
      */
-    public var versionAlgorithm: VersionAlgorithm? = null
+    public var versionAlgorithm: EvidenceVariable.VersionAlgorithm? = null
 
     /**
      * A natural language name identifying the evidence variable. This name should be usable as an
@@ -1873,4 +1744,7 @@ public data class EvidenceVariable(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [Coding] | [String] */
+  public typealias VersionAlgorithm = FhirChoiceTypes.CodingOrString
 }

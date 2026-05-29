@@ -34,7 +34,6 @@ import dev.ohs.fhir.model.r5.serializers.ClaimResponseSerializer
 import dev.ohs.fhir.model.r5.serializers.ClaimResponseTotalSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -411,8 +410,10 @@ public data class ClaimResponse(
     /**
      * A date or period in the past or future indicating when the event occurred or is expectd to
      * occur.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Period]
      */
-    public val `when`: When,
+    public val `when`: Event.When,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -423,36 +424,16 @@ public data class ClaimResponse(
         }
       }
 
-    public sealed interface When {
-      public fun asDateTime(): DateTime? = this as? DateTime
-
-      public fun asPeriod(): Period? = this as? Period
-
-      @JvmInline
-      public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) : When
-
-      @JvmInline public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) : When
-
-      public companion object {
-        internal fun from(
-          dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-          periodValue: dev.ohs.fhir.model.r5.Period?,
-        ): When? {
-          if (dateTimeValue != null) return DateTime(dateTimeValue)
-          if (periodValue != null) return Period(periodValue)
-          return null
-        }
-      }
-    }
-
     public class Builder(
       /** A coded event such as when a service is expected or a card printed. */
       public var type: CodeableConcept.Builder,
       /**
        * A date or period in the past or future indicating when the event occurred or is expectd to
        * occur.
+       *
+       * A FHIR choice type — one of: [DateTime] | [Period]
        */
-      public var `when`: When,
+      public var `when`: Event.When,
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -503,6 +484,9 @@ public data class ClaimResponse(
           `when` = `when`,
         )
     }
+
+    /** A FHIR choice type — one of: [DateTime] | [Period] */
+    public typealias When = FhirChoiceTypes.DateTimeOrPeriod
   }
 
   /**
@@ -1390,10 +1374,18 @@ public data class ClaimResponse(
      * For example: Neonatal program, child dental program or drug users recovery program.
      */
     public val programCode: List<CodeableConcept> = listOf(),
-    /** The date or dates when the service or product was supplied, performed or completed. */
-    public val serviced: Serviced? = null,
-    /** Where the product or service was provided. */
-    public val location: Location? = null,
+    /**
+     * The date or dates when the service or product was supplied, performed or completed.
+     *
+     * A FHIR choice type — one of: [Date] | [Period]
+     */
+    public val serviced: AddItem.Serviced? = null,
+    /**
+     * Where the product or service was provided.
+     *
+     * A FHIR choice type — one of: [Address] | [CodeableConcept] | [Reference]
+     */
+    public val location: FhirChoiceTypes.AddressOrCodeableConceptOrReference? = null,
     /** The number of repetitions of a service or product. */
     public val quantity: Quantity? = null,
     /**
@@ -2138,60 +2130,6 @@ public data class ClaimResponse(
       }
     }
 
-    public sealed interface Serviced {
-      public fun asDate(): Date? = this as? Date
-
-      public fun asPeriod(): Period? = this as? Period
-
-      @JvmInline public value class Date(public val `value`: dev.ohs.fhir.model.r5.Date) : Serviced
-
-      @JvmInline
-      public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) : Serviced
-
-      public companion object {
-        internal fun from(
-          dateValue: dev.ohs.fhir.model.r5.Date?,
-          periodValue: dev.ohs.fhir.model.r5.Period?,
-        ): Serviced? {
-          if (dateValue != null) return Date(dateValue)
-          if (periodValue != null) return Period(periodValue)
-          return null
-        }
-      }
-    }
-
-    public sealed interface Location {
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asAddress(): Address? = this as? Address
-
-      public fun asReference(): Reference? = this as? Reference
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r5.CodeableConcept
-      ) : Location
-
-      @JvmInline
-      public value class Address(public val `value`: dev.ohs.fhir.model.r5.Address) : Location
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : Location
-
-      public companion object {
-        internal fun from(
-          codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-          addressValue: dev.ohs.fhir.model.r5.Address?,
-          referenceValue: dev.ohs.fhir.model.r5.Reference?,
-        ): Location? {
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (addressValue != null) return Address(addressValue)
-          if (referenceValue != null) return Reference(referenceValue)
-          return null
-        }
-      }
-    }
-
     public class Builder() {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -2300,11 +2238,19 @@ public data class ClaimResponse(
        */
       public var programCode: MutableList<CodeableConcept.Builder> = mutableListOf()
 
-      /** The date or dates when the service or product was supplied, performed or completed. */
-      public var serviced: Serviced? = null
+      /**
+       * The date or dates when the service or product was supplied, performed or completed.
+       *
+       * A FHIR choice type — one of: [Date] | [Period]
+       */
+      public var serviced: AddItem.Serviced? = null
 
-      /** Where the product or service was provided. */
-      public var location: Location? = null
+      /**
+       * Where the product or service was provided.
+       *
+       * A FHIR choice type — one of: [Address] | [CodeableConcept] | [Reference]
+       */
+      public var location: FhirChoiceTypes.AddressOrCodeableConceptOrReference? = null
 
       /** The number of repetitions of a service or product. */
       public var quantity: Quantity.Builder? = null
@@ -2381,6 +2327,9 @@ public data class ClaimResponse(
           detail = detail.map { it.build() },
         )
     }
+
+    /** A FHIR choice type — one of: [Date] | [Period] */
+    public typealias Serviced = FhirChoiceTypes.DateOrPeriod
   }
 
   /** Categorized monetary totals for the adjudication. */

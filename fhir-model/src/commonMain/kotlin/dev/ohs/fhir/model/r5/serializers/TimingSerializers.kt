@@ -255,7 +255,7 @@ internal object TimingRepeatSerializer : KSerializer<Timing.Repeat> {
     return Timing.Repeat(
       id = id,
       extension = extension ?: listOf(),
-      bounds = Timing.Repeat.Bounds.from(boundsDuration, boundsRange, boundsPeriod),
+      bounds = (boundsDuration ?: boundsRange ?: boundsPeriod),
       count = PositiveInt.of(count, _count),
       countMax = PositiveInt.of(countMax, _countMax),
       duration = Decimal.of(duration, _duration),
@@ -295,14 +295,14 @@ internal object TimingRepeatSerializer : KSerializer<Timing.Repeat> {
       encoder.encodeSerializableElement(descriptor, 1, Hoisted.extensionSer, value.extension)
     when (val choice = value.bounds) {
       null -> {}
-      is Timing.Repeat.Bounds.Duration -> {
-        encoder.encodeSerializableElement(descriptor, 2, Hoisted.boundsDurationSer, choice.value)
+      is Duration -> {
+        encoder.encodeSerializableElement(descriptor, 2, Hoisted.boundsDurationSer, choice)
       }
-      is Timing.Repeat.Bounds.Range -> {
-        encoder.encodeSerializableElement(descriptor, 3, Hoisted.boundsRangeSer, choice.value)
+      is Range -> {
+        encoder.encodeSerializableElement(descriptor, 3, Hoisted.boundsRangeSer, choice)
       }
-      is Timing.Repeat.Bounds.Period -> {
-        encoder.encodeSerializableElement(descriptor, 4, Hoisted.boundsPeriodSer, choice.value)
+      is Period -> {
+        encoder.encodeSerializableElement(descriptor, 4, Hoisted.boundsPeriodSer, choice)
       }
     }
     ((value.count?.value))?.let { encoder.encodeIntElement(descriptor, 5, it) }

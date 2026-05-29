@@ -20,6 +20,7 @@ package dev.ohs.fhir.model.r5.serializers
 
 import dev.ohs.fhir.model.r5.Boolean as R5Boolean
 import dev.ohs.fhir.model.r5.Canonical
+import dev.ohs.fhir.model.r5.CanonicalBox
 import dev.ohs.fhir.model.r5.Code
 import dev.ohs.fhir.model.r5.CodeableConcept
 import dev.ohs.fhir.model.r5.Coding
@@ -40,6 +41,7 @@ import dev.ohs.fhir.model.r5.Resource
 import dev.ohs.fhir.model.r5.String as R5String
 import dev.ohs.fhir.model.r5.TestScript
 import dev.ohs.fhir.model.r5.Uri
+import dev.ohs.fhir.model.r5.UriBox
 import dev.ohs.fhir.model.r5.Url
 import dev.ohs.fhir.model.r5.UsageContext
 import dev.ohs.fhir.model.r5.terminologies.PublicationStatus
@@ -2114,10 +2116,8 @@ internal object TestScriptSetupActionAssertRequirementSerializer :
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
       link =
-        TestScript.Setup.Action.Assert.Requirement.Link.from(
-          Uri.of(linkUri, _linkUri),
-          Canonical.of(linkCanonical, _linkCanonical),
-        ),
+        ((Uri.of(linkUri, _linkUri))?.let { UriBox(it) }
+          ?: (Canonical.of(linkCanonical, _linkCanonical))?.let { CanonicalBox(it) }),
     )
   }
 
@@ -2137,13 +2137,13 @@ internal object TestScriptSetupActionAssertRequirementSerializer :
       )
     when (val choice = value.link) {
       null -> {}
-      is TestScript.Setup.Action.Assert.Requirement.Link.Uri -> {
+      is UriBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 3, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 4, Hoisted.linkUriSer, it)
         }
       }
-      is TestScript.Setup.Action.Assert.Requirement.Link.Canonical -> {
+      is CanonicalBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 6, Hoisted.linkUriSer, it)
@@ -2875,10 +2875,7 @@ internal object TestScriptSerializer : KSerializer<TestScript> {
       identifier = identifier ?: listOf(),
       version = R5String.of(version, _version),
       versionAlgorithm =
-        TestScript.VersionAlgorithm.from(
-          R5String.of(versionAlgorithmString, _versionAlgorithmString),
-          versionAlgorithmCoding,
-        ),
+        (R5String.of(versionAlgorithmString, _versionAlgorithmString) ?: versionAlgorithmCoding),
       name = R5String.of(name, _name)!!,
       title = R5String.of(title, _title),
       status = Enumeration.of(PublicationStatus.fromCode(status!!), _status),
@@ -2993,11 +2990,9 @@ internal object TestScriptSerializer : KSerializer<TestScript> {
     }
     when (val choice = value.versionAlgorithm) {
       null -> {}
-      is TestScript.VersionAlgorithm.String -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 15 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is R5String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 15 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             16 + descriptorOffset,
@@ -3006,12 +3001,12 @@ internal object TestScriptSerializer : KSerializer<TestScript> {
           )
         }
       }
-      is TestScript.VersionAlgorithm.Coding -> {
+      is Coding -> {
         encoder.encodeSerializableElement(
           descriptor,
           17 + descriptorOffset,
           Hoisted.versionAlgorithmCodingSer,
-          choice.value,
+          choice,
         )
       }
     }

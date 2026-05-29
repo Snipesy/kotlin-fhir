@@ -28,7 +28,6 @@ import dev.ohs.fhir.model.r5.serializers.ExampleScenarioSerializer
 import dev.ohs.fhir.model.r5.terminologies.PublicationStatus
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -185,8 +184,10 @@ public data class ExampleScenario(
    * passed in - %version1 and %version2 and will return a negative number if version1 is newer, a
    * positive number if version2 and a 0 if the version ordering can't be successfully be
    * determined.
+   *
+   * A FHIR choice type — one of: [Coding] | [String]
    */
-  public val versionAlgorithm: VersionAlgorithm? = null,
+  public val versionAlgorithm: ExampleScenario.VersionAlgorithm? = null,
   /**
    * Temporarily retained for tooling purposes.
    *
@@ -528,8 +529,12 @@ public data class ExampleScenario(
      * OpenEHR, etc. is instance compliant with.
      */
     public val structureVersion: String? = null,
-    /** Refers to a profile, template or other ruleset the instance adheres to. */
-    public val structureProfile: StructureProfile? = null,
+    /**
+     * Refers to a profile, template or other ruleset the instance adheres to.
+     *
+     * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
+     */
+    public val structureProfile: Instance.StructureProfile? = null,
     /** A short descriptive label the instance to be used in tables or diagrams. */
     public val title: String,
     /** An explanation of what the instance contains and what it's for. */
@@ -835,30 +840,6 @@ public data class ExampleScenario(
       }
     }
 
-    public sealed interface StructureProfile {
-      public fun asCanonical(): Canonical? = this as? Canonical
-
-      public fun asUri(): Uri? = this as? Uri
-
-      @JvmInline
-      public value class Canonical(public val `value`: dev.ohs.fhir.model.r5.Canonical) :
-        StructureProfile
-
-      @JvmInline
-      public value class Uri(public val `value`: dev.ohs.fhir.model.r5.Uri) : StructureProfile
-
-      public companion object {
-        internal fun from(
-          canonicalValue: dev.ohs.fhir.model.r5.Canonical?,
-          uriValue: dev.ohs.fhir.model.r5.Uri?,
-        ): StructureProfile? {
-          if (canonicalValue != null) return Canonical(canonicalValue)
-          if (uriValue != null) return Uri(uriValue)
-          return null
-        }
-      }
-    }
-
     public class Builder(
       /** A unique string within the scenario that is used to reference the instance. */
       public var key: String.Builder,
@@ -916,8 +897,12 @@ public data class ExampleScenario(
        */
       public var structureVersion: String.Builder? = null
 
-      /** Refers to a profile, template or other ruleset the instance adheres to. */
-      public var structureProfile: StructureProfile? = null
+      /**
+       * Refers to a profile, template or other ruleset the instance adheres to.
+       *
+       * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
+       */
+      public var structureProfile: Instance.StructureProfile? = null
 
       /** An explanation of what the instance contains and what it's for. */
       public var description: Markdown.Builder? = null
@@ -960,6 +945,9 @@ public data class ExampleScenario(
           containedInstance = containedInstance.map { it.build() },
         )
     }
+
+    /** A FHIR choice type — one of: [CanonicalBox] | [UriBox] */
+    public typealias StructureProfile = FhirChoiceTypes.CanonicalOrUri
   }
 
   /** A group of operations that represents a significant step within a scenario. */
@@ -1649,29 +1637,6 @@ public data class ExampleScenario(
     }
   }
 
-  public sealed interface VersionAlgorithm {
-    public fun asString(): String? = this as? String
-
-    public fun asCoding(): Coding? = this as? Coding
-
-    @JvmInline
-    public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : VersionAlgorithm
-
-    @JvmInline
-    public value class Coding(public val `value`: dev.ohs.fhir.model.r5.Coding) : VersionAlgorithm
-
-    public companion object {
-      internal fun from(
-        stringValue: dev.ohs.fhir.model.r5.String?,
-        codingValue: dev.ohs.fhir.model.r5.Coding?,
-      ): VersionAlgorithm? {
-        if (stringValue != null) return String(stringValue)
-        if (codingValue != null) return Coding(codingValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
     /**
      * The status of this example scenario. Enables tracking the life-cycle of the content.
@@ -1841,8 +1806,10 @@ public data class ExampleScenario(
      * passed in - %version1 and %version2 and will return a negative number if version1 is newer, a
      * positive number if version2 and a 0 if the version ordering can't be successfully be
      * determined.
+     *
+     * A FHIR choice type — one of: [Coding] | [String]
      */
-    public var versionAlgorithm: VersionAlgorithm? = null
+    public var versionAlgorithm: ExampleScenario.VersionAlgorithm? = null
 
     /**
      * Temporarily retained for tooling purposes.
@@ -2044,4 +2011,7 @@ public data class ExampleScenario(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [Coding] | [String] */
+  public typealias VersionAlgorithm = FhirChoiceTypes.CodingOrString
 }

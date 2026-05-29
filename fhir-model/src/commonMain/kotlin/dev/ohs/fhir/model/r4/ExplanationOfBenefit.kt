@@ -40,7 +40,6 @@ import dev.ohs.fhir.model.r4.serializers.ExplanationOfBenefitTotalSerializer
 import dev.ohs.fhir.model.r4.terminologies.NoteType
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -921,16 +920,22 @@ public data class ExplanationOfBenefit(
      * This may contain the local bill type codes such as the US UB-04 bill type code.
      */
     public val code: CodeableConcept? = null,
-    /** The date when or period to which this information refers. */
-    public val timing: Timing? = null,
+    /**
+     * The date when or period to which this information refers.
+     *
+     * A FHIR choice type — one of: [Date] | [Period]
+     */
+    public val timing: FhirChoiceTypes.DateOrPeriod? = null,
     /**
      * Additional data or information such as resources, documents, images etc. including references
      * to the data or the actual inclusion of the data.
      *
      * Could be used to provide references to other resources, document. For example, could contain
      * a PDF in an Attachment of the Police Report for an Accident.
+     *
+     * A FHIR choice type — one of: [Attachment] | [Boolean] | [Quantity] | [Reference] | [String]
      */
-    public val `value`: Value? = null,
+    public val `value`: SupportingInfo.Value? = null,
     /**
      * Provides the reason in the situation where a reason code is required in addition to the
      * content.
@@ -951,72 +956,6 @@ public data class ExplanationOfBenefit(
           reason = this@with.reason?.toBuilder()
         }
       }
-
-    public sealed interface Timing {
-      public fun asDate(): Date? = this as? Date
-
-      public fun asPeriod(): Period? = this as? Period
-
-      @JvmInline public value class Date(public val `value`: dev.ohs.fhir.model.r4.Date) : Timing
-
-      @JvmInline
-      public value class Period(public val `value`: dev.ohs.fhir.model.r4.Period) : Timing
-
-      public companion object {
-        internal fun from(
-          dateValue: dev.ohs.fhir.model.r4.Date?,
-          periodValue: dev.ohs.fhir.model.r4.Period?,
-        ): Timing? {
-          if (dateValue != null) return Date(dateValue)
-          if (periodValue != null) return Period(periodValue)
-          return null
-        }
-      }
-    }
-
-    public sealed interface Value {
-      public fun asBoolean(): Boolean? = this as? Boolean
-
-      public fun asString(): String? = this as? String
-
-      public fun asQuantity(): Quantity? = this as? Quantity
-
-      public fun asAttachment(): Attachment? = this as? Attachment
-
-      public fun asReference(): Reference? = this as? Reference
-
-      @JvmInline
-      public value class Boolean(public val `value`: dev.ohs.fhir.model.r4.Boolean) : Value
-
-      @JvmInline
-      public value class String(public val `value`: dev.ohs.fhir.model.r4.String) : Value
-
-      @JvmInline
-      public value class Quantity(public val `value`: dev.ohs.fhir.model.r4.Quantity) : Value
-
-      @JvmInline
-      public value class Attachment(public val `value`: dev.ohs.fhir.model.r4.Attachment) : Value
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r4.Reference) : Value
-
-      public companion object {
-        internal fun from(
-          booleanValue: dev.ohs.fhir.model.r4.Boolean?,
-          stringValue: dev.ohs.fhir.model.r4.String?,
-          quantityValue: dev.ohs.fhir.model.r4.Quantity?,
-          attachmentValue: dev.ohs.fhir.model.r4.Attachment?,
-          referenceValue: dev.ohs.fhir.model.r4.Reference?,
-        ): Value? {
-          if (booleanValue != null) return Boolean(booleanValue)
-          if (stringValue != null) return String(stringValue)
-          if (quantityValue != null) return Quantity(quantityValue)
-          if (attachmentValue != null) return Attachment(attachmentValue)
-          if (referenceValue != null) return Reference(referenceValue)
-          return null
-        }
-      }
-    }
 
     public class Builder(
       /** A number to uniquely identify supporting information entries. */
@@ -1077,8 +1016,12 @@ public data class ExplanationOfBenefit(
        */
       public var code: CodeableConcept.Builder? = null
 
-      /** The date when or period to which this information refers. */
-      public var timing: Timing? = null
+      /**
+       * The date when or period to which this information refers.
+       *
+       * A FHIR choice type — one of: [Date] | [Period]
+       */
+      public var timing: FhirChoiceTypes.DateOrPeriod? = null
 
       /**
        * Additional data or information such as resources, documents, images etc. including
@@ -1086,8 +1029,10 @@ public data class ExplanationOfBenefit(
        *
        * Could be used to provide references to other resources, document. For example, could
        * contain a PDF in an Attachment of the Police Report for an Accident.
+       *
+       * A FHIR choice type — one of: [Attachment] | [Boolean] | [Quantity] | [Reference] | [String]
        */
-      public var `value`: Value? = null
+      public var `value`: SupportingInfo.Value? = null
 
       /**
        * Provides the reason in the situation where a reason code is required in addition to the
@@ -1110,6 +1055,11 @@ public data class ExplanationOfBenefit(
           reason = reason?.build(),
         )
     }
+
+    /**
+     * A FHIR choice type — one of: [Attachment] | [Boolean] | [Quantity] | [Reference] | [String]
+     */
+    public typealias Value = FhirChoiceTypes.AttachmentOrBooleanOrQuantityOrReferenceOrString
   }
 
   /** Information about diagnoses relevant to the claim items. */
@@ -1161,8 +1111,10 @@ public data class ExplanationOfBenefit(
     /**
      * The nature of illness or problem in a coded form or as a reference to an external defined
      * Condition.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public val diagnosis: Diagnosis,
+    public val diagnosis: FhirChoiceTypes.CodeableConceptOrReference,
     /**
      * When the condition was observed or the relative ranking.
      *
@@ -1195,31 +1147,6 @@ public data class ExplanationOfBenefit(
         }
       }
 
-    public sealed interface Diagnosis {
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asReference(): Reference? = this as? Reference
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r4.CodeableConcept
-      ) : Diagnosis
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r4.Reference) : Diagnosis
-
-      public companion object {
-        internal fun from(
-          codeableConceptValue: dev.ohs.fhir.model.r4.CodeableConcept?,
-          referenceValue: dev.ohs.fhir.model.r4.Reference?,
-        ): Diagnosis? {
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (referenceValue != null) return Reference(referenceValue)
-          return null
-        }
-      }
-    }
-
     public class Builder(
       /**
        * A number to uniquely identify diagnosis entries.
@@ -1231,8 +1158,10 @@ public data class ExplanationOfBenefit(
       /**
        * The nature of illness or problem in a coded form or as a reference to an external defined
        * Condition.
+       *
+       * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public var diagnosis: Diagnosis,
+      public var diagnosis: FhirChoiceTypes.CodeableConceptOrReference,
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -1296,8 +1225,8 @@ public data class ExplanationOfBenefit(
        */
       public var packageCode: CodeableConcept.Builder? = null
 
-      public fun build(): ExplanationOfBenefit.Diagnosis =
-        ExplanationOfBenefit.Diagnosis(
+      public fun build(): Diagnosis =
+        Diagnosis(
           id = id,
           extension = extension.map { it.build() },
           modifierExtension = modifierExtension.map { it.build() },
@@ -1359,8 +1288,10 @@ public data class ExplanationOfBenefit(
     /**
      * The code or reference to a Procedure resource which identifies the clinical intervention
      * performed.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public val procedure: Procedure,
+    public val procedure: FhirChoiceTypes.CodeableConceptOrReference,
     /** Unique Device Identifiers associated with this line item. */
     public val udi: List<Reference> = listOf(),
   ) : BackboneElement() {
@@ -1376,39 +1307,16 @@ public data class ExplanationOfBenefit(
         }
       }
 
-    public sealed interface Procedure {
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asReference(): Reference? = this as? Reference
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r4.CodeableConcept
-      ) : Procedure
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r4.Reference) : Procedure
-
-      public companion object {
-        internal fun from(
-          codeableConceptValue: dev.ohs.fhir.model.r4.CodeableConcept?,
-          referenceValue: dev.ohs.fhir.model.r4.Reference?,
-        ): Procedure? {
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (referenceValue != null) return Reference(referenceValue)
-          return null
-        }
-      }
-    }
-
     public class Builder(
       /** A number to uniquely identify procedure entries. */
       public var sequence: PositiveInt.Builder,
       /**
        * The code or reference to a Procedure resource which identifies the clinical intervention
        * performed.
+       *
+       * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public var procedure: Procedure,
+      public var procedure: FhirChoiceTypes.CodeableConceptOrReference,
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -1459,8 +1367,8 @@ public data class ExplanationOfBenefit(
       /** Unique Device Identifiers associated with this line item. */
       public var udi: MutableList<Reference.Builder> = mutableListOf()
 
-      public fun build(): ExplanationOfBenefit.Procedure =
-        ExplanationOfBenefit.Procedure(
+      public fun build(): Procedure =
+        Procedure(
           id = id,
           extension = extension.map { it.build() },
           modifierExtension = modifierExtension.map { it.build() },
@@ -1689,8 +1597,12 @@ public data class ExplanationOfBenefit(
      * insurance coverages and determination of coordination between insurers.
      */
     public val type: CodeableConcept? = null,
-    /** The physical location of the accident event. */
-    public val location: Location? = null,
+    /**
+     * The physical location of the accident event.
+     *
+     * A FHIR choice type — one of: [Address] | [Reference]
+     */
+    public val location: FhirChoiceTypes.AddressOrReference? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -1703,29 +1615,6 @@ public data class ExplanationOfBenefit(
           location = this@with.location
         }
       }
-
-    public sealed interface Location {
-      public fun asAddress(): Address? = this as? Address
-
-      public fun asReference(): Reference? = this as? Reference
-
-      @JvmInline
-      public value class Address(public val `value`: dev.ohs.fhir.model.r4.Address) : Location
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r4.Reference) : Location
-
-      public companion object {
-        internal fun from(
-          addressValue: dev.ohs.fhir.model.r4.Address?,
-          referenceValue: dev.ohs.fhir.model.r4.Reference?,
-        ): Location? {
-          if (addressValue != null) return Address(addressValue)
-          if (referenceValue != null) return Reference(referenceValue)
-          return null
-        }
-      }
-    }
 
     public class Builder() {
       /**
@@ -1782,8 +1671,12 @@ public data class ExplanationOfBenefit(
        */
       public var type: CodeableConcept.Builder? = null
 
-      /** The physical location of the accident event. */
-      public var location: Location? = null
+      /**
+       * The physical location of the accident event.
+       *
+       * A FHIR choice type — one of: [Address] | [Reference]
+       */
+      public var location: FhirChoiceTypes.AddressOrReference? = null
 
       public fun build(): Accident =
         Accident(
@@ -1884,10 +1777,18 @@ public data class ExplanationOfBenefit(
      * For example: Neonatal program, child dental program or drug users recovery program.
      */
     public val programCode: List<CodeableConcept> = listOf(),
-    /** The date or dates when the service or product was supplied, performed or completed. */
-    public val serviced: Serviced? = null,
-    /** Where the product or service was provided. */
-    public val location: Location? = null,
+    /**
+     * The date or dates when the service or product was supplied, performed or completed.
+     *
+     * A FHIR choice type — one of: [Date] | [Period]
+     */
+    public val serviced: Item.Serviced? = null,
+    /**
+     * Where the product or service was provided.
+     *
+     * A FHIR choice type — one of: [Address] | [CodeableConcept] | [Reference]
+     */
+    public val location: FhirChoiceTypes.AddressOrCodeableConceptOrReference? = null,
     /** The number of repetitions of a service or product. */
     public val quantity: Quantity? = null,
     /**
@@ -2682,60 +2583,6 @@ public data class ExplanationOfBenefit(
       }
     }
 
-    public sealed interface Serviced {
-      public fun asDate(): Date? = this as? Date
-
-      public fun asPeriod(): Period? = this as? Period
-
-      @JvmInline public value class Date(public val `value`: dev.ohs.fhir.model.r4.Date) : Serviced
-
-      @JvmInline
-      public value class Period(public val `value`: dev.ohs.fhir.model.r4.Period) : Serviced
-
-      public companion object {
-        internal fun from(
-          dateValue: dev.ohs.fhir.model.r4.Date?,
-          periodValue: dev.ohs.fhir.model.r4.Period?,
-        ): Serviced? {
-          if (dateValue != null) return Date(dateValue)
-          if (periodValue != null) return Period(periodValue)
-          return null
-        }
-      }
-    }
-
-    public sealed interface Location {
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asAddress(): Address? = this as? Address
-
-      public fun asReference(): Reference? = this as? Reference
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r4.CodeableConcept
-      ) : Location
-
-      @JvmInline
-      public value class Address(public val `value`: dev.ohs.fhir.model.r4.Address) : Location
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r4.Reference) : Location
-
-      public companion object {
-        internal fun from(
-          codeableConceptValue: dev.ohs.fhir.model.r4.CodeableConcept?,
-          addressValue: dev.ohs.fhir.model.r4.Address?,
-          referenceValue: dev.ohs.fhir.model.r4.Reference?,
-        ): Location? {
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (addressValue != null) return Address(addressValue)
-          if (referenceValue != null) return Reference(referenceValue)
-          return null
-        }
-      }
-    }
-
     public class Builder(
       /** A number to uniquely identify item entries. */
       public var sequence: PositiveInt.Builder,
@@ -2832,11 +2679,19 @@ public data class ExplanationOfBenefit(
        */
       public var programCode: MutableList<CodeableConcept.Builder> = mutableListOf()
 
-      /** The date or dates when the service or product was supplied, performed or completed. */
-      public var serviced: Serviced? = null
+      /**
+       * The date or dates when the service or product was supplied, performed or completed.
+       *
+       * A FHIR choice type — one of: [Date] | [Period]
+       */
+      public var serviced: Item.Serviced? = null
 
-      /** Where the product or service was provided. */
-      public var location: Location? = null
+      /**
+       * Where the product or service was provided.
+       *
+       * A FHIR choice type — one of: [Address] | [CodeableConcept] | [Reference]
+       */
+      public var location: FhirChoiceTypes.AddressOrCodeableConceptOrReference? = null
 
       /** The number of repetitions of a service or product. */
       public var quantity: Quantity.Builder? = null
@@ -2924,6 +2779,9 @@ public data class ExplanationOfBenefit(
           detail = detail.map { it.build() },
         )
     }
+
+    /** A FHIR choice type — one of: [Date] | [Period] */
+    public typealias Serviced = FhirChoiceTypes.DateOrPeriod
   }
 
   /** The first-tier service adjudications for payor added product or service lines. */
@@ -3003,10 +2861,18 @@ public data class ExplanationOfBenefit(
      * For example: Neonatal program, child dental program or drug users recovery program.
      */
     public val programCode: List<CodeableConcept> = listOf(),
-    /** The date or dates when the service or product was supplied, performed or completed. */
-    public val serviced: Serviced? = null,
-    /** Where the product or service was provided. */
-    public val location: Location? = null,
+    /**
+     * The date or dates when the service or product was supplied, performed or completed.
+     *
+     * A FHIR choice type — one of: [Date] | [Period]
+     */
+    public val serviced: AddItem.Serviced? = null,
+    /**
+     * Where the product or service was provided.
+     *
+     * A FHIR choice type — one of: [Address] | [CodeableConcept] | [Reference]
+     */
+    public val location: FhirChoiceTypes.AddressOrCodeableConceptOrReference? = null,
     /** The number of repetitions of a service or product. */
     public val quantity: Quantity? = null,
     /**
@@ -3502,60 +3368,6 @@ public data class ExplanationOfBenefit(
       }
     }
 
-    public sealed interface Serviced {
-      public fun asDate(): Date? = this as? Date
-
-      public fun asPeriod(): Period? = this as? Period
-
-      @JvmInline public value class Date(public val `value`: dev.ohs.fhir.model.r4.Date) : Serviced
-
-      @JvmInline
-      public value class Period(public val `value`: dev.ohs.fhir.model.r4.Period) : Serviced
-
-      public companion object {
-        internal fun from(
-          dateValue: dev.ohs.fhir.model.r4.Date?,
-          periodValue: dev.ohs.fhir.model.r4.Period?,
-        ): Serviced? {
-          if (dateValue != null) return Date(dateValue)
-          if (periodValue != null) return Period(periodValue)
-          return null
-        }
-      }
-    }
-
-    public sealed interface Location {
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asAddress(): Address? = this as? Address
-
-      public fun asReference(): Reference? = this as? Reference
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r4.CodeableConcept
-      ) : Location
-
-      @JvmInline
-      public value class Address(public val `value`: dev.ohs.fhir.model.r4.Address) : Location
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r4.Reference) : Location
-
-      public companion object {
-        internal fun from(
-          codeableConceptValue: dev.ohs.fhir.model.r4.CodeableConcept?,
-          addressValue: dev.ohs.fhir.model.r4.Address?,
-          referenceValue: dev.ohs.fhir.model.r4.Reference?,
-        ): Location? {
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (addressValue != null) return Address(addressValue)
-          if (referenceValue != null) return Reference(referenceValue)
-          return null
-        }
-      }
-    }
-
     public class Builder(
       /**
        * When the value is a group code then this item collects a set of related claim details,
@@ -3642,11 +3454,19 @@ public data class ExplanationOfBenefit(
        */
       public var programCode: MutableList<CodeableConcept.Builder> = mutableListOf()
 
-      /** The date or dates when the service or product was supplied, performed or completed. */
-      public var serviced: Serviced? = null
+      /**
+       * The date or dates when the service or product was supplied, performed or completed.
+       *
+       * A FHIR choice type — one of: [Date] | [Period]
+       */
+      public var serviced: AddItem.Serviced? = null
 
-      /** Where the product or service was provided. */
-      public var location: Location? = null
+      /**
+       * Where the product or service was provided.
+       *
+       * A FHIR choice type — one of: [Address] | [CodeableConcept] | [Reference]
+       */
+      public var location: FhirChoiceTypes.AddressOrCodeableConceptOrReference? = null
 
       /** The number of repetitions of a service or product. */
       public var quantity: Quantity.Builder? = null
@@ -3719,6 +3539,9 @@ public data class ExplanationOfBenefit(
           detail = detail.map { it.build() },
         )
     }
+
+    /** A FHIR choice type — one of: [Date] | [Period] */
+    public typealias Serviced = FhirChoiceTypes.DateOrPeriod
   }
 
   /** Categorized monetary totals for the adjudication. */
@@ -4287,10 +4110,18 @@ public data class ExplanationOfBenefit(
        * For example: deductible, visits, benefit amount.
        */
       public val type: CodeableConcept,
-      /** The quantity of the benefit which is permitted under the coverage. */
-      public val allowed: Allowed? = null,
-      /** The quantity of the benefit which have been consumed to date. */
-      public val used: Used? = null,
+      /**
+       * The quantity of the benefit which is permitted under the coverage.
+       *
+       * A FHIR choice type — one of: [Money] | [String] | [UnsignedInt]
+       */
+      public val allowed: Financial.Allowed? = null,
+      /**
+       * The quantity of the benefit which have been consumed to date.
+       *
+       * A FHIR choice type — one of: [Money] | [UnsignedInt]
+       */
+      public val used: Financial.Used? = null,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -4302,60 +4133,6 @@ public data class ExplanationOfBenefit(
             used = this@with.used
           }
         }
-
-      public sealed interface Allowed {
-        public fun asUnsignedInt(): UnsignedInt? = this as? UnsignedInt
-
-        public fun asString(): String? = this as? String
-
-        public fun asMoney(): Money? = this as? Money
-
-        @JvmInline
-        public value class UnsignedInt(public val `value`: dev.ohs.fhir.model.r4.UnsignedInt) :
-          Allowed
-
-        @JvmInline
-        public value class String(public val `value`: dev.ohs.fhir.model.r4.String) : Allowed
-
-        @JvmInline
-        public value class Money(public val `value`: dev.ohs.fhir.model.r4.Money) : Allowed
-
-        public companion object {
-          internal fun from(
-            unsignedIntValue: dev.ohs.fhir.model.r4.UnsignedInt?,
-            stringValue: dev.ohs.fhir.model.r4.String?,
-            moneyValue: dev.ohs.fhir.model.r4.Money?,
-          ): Allowed? {
-            if (unsignedIntValue != null) return UnsignedInt(unsignedIntValue)
-            if (stringValue != null) return String(stringValue)
-            if (moneyValue != null) return Money(moneyValue)
-            return null
-          }
-        }
-      }
-
-      public sealed interface Used {
-        public fun asUnsignedInt(): UnsignedInt? = this as? UnsignedInt
-
-        public fun asMoney(): Money? = this as? Money
-
-        @JvmInline
-        public value class UnsignedInt(public val `value`: dev.ohs.fhir.model.r4.UnsignedInt) :
-          Used
-
-        @JvmInline public value class Money(public val `value`: dev.ohs.fhir.model.r4.Money) : Used
-
-        public companion object {
-          internal fun from(
-            unsignedIntValue: dev.ohs.fhir.model.r4.UnsignedInt?,
-            moneyValue: dev.ohs.fhir.model.r4.Money?,
-          ): Used? {
-            if (unsignedIntValue != null) return UnsignedInt(unsignedIntValue)
-            if (moneyValue != null) return Money(moneyValue)
-            return null
-          }
-        }
-      }
 
       public class Builder(
         /**
@@ -4405,11 +4182,19 @@ public data class ExplanationOfBenefit(
          */
         public var modifierExtension: MutableList<Extension.Builder> = mutableListOf()
 
-        /** The quantity of the benefit which is permitted under the coverage. */
-        public var allowed: Allowed? = null
+        /**
+         * The quantity of the benefit which is permitted under the coverage.
+         *
+         * A FHIR choice type — one of: [Money] | [String] | [UnsignedInt]
+         */
+        public var allowed: Financial.Allowed? = null
 
-        /** The quantity of the benefit which have been consumed to date. */
-        public var used: Used? = null
+        /**
+         * The quantity of the benefit which have been consumed to date.
+         *
+         * A FHIR choice type — one of: [Money] | [UnsignedInt]
+         */
+        public var used: Financial.Used? = null
 
         public fun build(): Financial =
           Financial(
@@ -4421,6 +4206,12 @@ public data class ExplanationOfBenefit(
             used = used,
           )
       }
+
+      /** A FHIR choice type — one of: [Money] | [String] | [UnsignedInt] */
+      public typealias Allowed = FhirChoiceTypes.MoneyOrStringOrUnsignedInt
+
+      /** A FHIR choice type — one of: [Money] | [UnsignedInt] */
+      public typealias Used = FhirChoiceTypes.MoneyOrUnsignedInt
     }
 
     public class Builder(

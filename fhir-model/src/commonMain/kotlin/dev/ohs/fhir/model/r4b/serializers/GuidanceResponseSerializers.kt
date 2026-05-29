@@ -20,6 +20,7 @@ package dev.ohs.fhir.model.r4b.serializers
 
 import dev.ohs.fhir.model.r4b.Annotation
 import dev.ohs.fhir.model.r4b.Canonical
+import dev.ohs.fhir.model.r4b.CanonicalBox
 import dev.ohs.fhir.model.r4b.Code
 import dev.ohs.fhir.model.r4b.CodeableConcept
 import dev.ohs.fhir.model.r4b.DataRequirement
@@ -35,6 +36,7 @@ import dev.ohs.fhir.model.r4b.Narrative
 import dev.ohs.fhir.model.r4b.Reference
 import dev.ohs.fhir.model.r4b.Resource
 import dev.ohs.fhir.model.r4b.Uri
+import dev.ohs.fhir.model.r4b.UriBox
 import kotlin.Int
 import kotlin.OptIn
 import kotlin.String
@@ -292,11 +294,9 @@ internal object GuidanceResponseSerializer : KSerializer<GuidanceResponse> {
       requestIdentifier = requestIdentifier,
       identifier = identifier ?: listOf(),
       module =
-        GuidanceResponse.Module.from(
-          Uri.of(moduleUri, _moduleUri),
-          Canonical.of(moduleCanonical, _moduleCanonical),
-          moduleCodeableConcept,
-        )!!,
+        ((Uri.of(moduleUri, _moduleUri))?.let { UriBox(it) }
+          ?: (Canonical.of(moduleCanonical, _moduleCanonical))?.let { CanonicalBox(it) }
+          ?: moduleCodeableConcept)!!,
       status = Enumeration.of(GuidanceResponse.GuidanceResponseStatus.fromCode(status!!), _status),
       subject = subject,
       encounter = encounter,
@@ -385,7 +385,7 @@ internal object GuidanceResponseSerializer : KSerializer<GuidanceResponse> {
         value.identifier,
       )
     when (val choice = value.module) {
-      is GuidanceResponse.Module.Uri -> {
+      is UriBox -> {
         ((choice.value.value))?.let {
           encoder.encodeStringElement(descriptor, 12 + descriptorOffset, it)
         }
@@ -398,7 +398,7 @@ internal object GuidanceResponseSerializer : KSerializer<GuidanceResponse> {
           )
         }
       }
-      is GuidanceResponse.Module.Canonical -> {
+      is CanonicalBox -> {
         ((choice.value.value))?.let {
           encoder.encodeStringElement(descriptor, 14 + descriptorOffset, it)
         }
@@ -411,12 +411,12 @@ internal object GuidanceResponseSerializer : KSerializer<GuidanceResponse> {
           )
         }
       }
-      is GuidanceResponse.Module.CodeableConcept -> {
+      is CodeableConcept -> {
         encoder.encodeSerializableElement(
           descriptor,
           16 + descriptorOffset,
           Hoisted.moduleCodeableConceptSer,
-          choice.value,
+          choice,
         )
       }
     }

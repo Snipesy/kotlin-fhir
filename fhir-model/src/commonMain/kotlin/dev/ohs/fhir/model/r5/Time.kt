@@ -44,7 +44,7 @@ public data class Time(
   override val extension: List<Extension> = listOf(),
   /** The actual value */
   @Serializable(with = LocalTimeSerializer::class) public val `value`: LocalTime? = null,
-) : PrimitiveType() {
+) : PrimitiveType(), FhirChoiceParticipants.TimeChoices {
   public fun toBuilder(): Builder =
     with(this) {
       Builder().apply {

@@ -23,7 +23,6 @@ import dev.ohs.fhir.model.r4b.terminologies.PublicationStatus
 import dev.ohs.fhir.model.r4b.terminologies.RequestResourceType
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -218,8 +217,10 @@ public data class ActivityDefinition(
    * Note that the choice of canonical for the subject element was introduced in R4B to support
    * pharmaceutical quality use cases. To ensure as much backwards-compatibility as possible, it is
    * recommended to only use the new canonical type with these use cases.
+   *
+   * A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [Reference]
    */
-  public val subject: Subject? = null,
+  public val subject: ActivityDefinition.Subject? = null,
   /**
    * The date (and optionally time) when the activity definition was published. The date must change
    * when the business version changes and it must change if the status code changes. In addition,
@@ -383,8 +384,12 @@ public data class ActivityDefinition(
    * RequestGroup.
    */
   public val doNotPerform: Boolean? = null,
-  /** The period, timing or frequency upon which the described activity is to occur. */
-  public val timing: Timing? = null,
+  /**
+   * The period, timing or frequency upon which the described activity is to occur.
+   *
+   * A FHIR choice type — one of: [Age] | [DateTime] | [Duration] | [Period] | [Range] | [Timing]
+   */
+  public val timing: FhirChoiceTypes.AgeOrDateTimeOrDurationOrPeriodOrRangeOrTiming? = null,
   /**
    * Identifies the facility where the activity will occur; e.g. home, hospital, specific clinic,
    * etc.
@@ -394,8 +399,12 @@ public data class ActivityDefinition(
   public val location: Reference? = null,
   /** Indicates who should participate in performing the action described. */
   public val participant: List<Participant> = listOf(),
-  /** Identifies the food, drug or other product being consumed or supplied in the activity. */
-  public val product: Product? = null,
+  /**
+   * Identifies the food, drug or other product being consumed or supplied in the activity.
+   *
+   * A FHIR choice type — one of: [CodeableConcept] | [Reference]
+   */
+  public val product: ActivityDefinition.Product? = null,
   /** Identifies the quantity expected to be consumed at once (per dose, per meal, etc.). */
   public val quantity: Quantity? = null,
   /**
@@ -766,118 +775,6 @@ public data class ActivityDefinition(
     }
   }
 
-  public sealed interface Subject {
-    public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-    public fun asReference(): Reference? = this as? Reference
-
-    public fun asCanonical(): Canonical? = this as? Canonical
-
-    @JvmInline
-    public value class CodeableConcept(public val `value`: dev.ohs.fhir.model.r4b.CodeableConcept) :
-      Subject
-
-    @JvmInline
-    public value class Reference(public val `value`: dev.ohs.fhir.model.r4b.Reference) : Subject
-
-    @JvmInline
-    public value class Canonical(public val `value`: dev.ohs.fhir.model.r4b.Canonical) : Subject
-
-    public companion object {
-      internal fun from(
-        codeableConceptValue: dev.ohs.fhir.model.r4b.CodeableConcept?,
-        referenceValue: dev.ohs.fhir.model.r4b.Reference?,
-        canonicalValue: dev.ohs.fhir.model.r4b.Canonical?,
-      ): Subject? {
-        if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-        if (referenceValue != null) return Reference(referenceValue)
-        if (canonicalValue != null) return Canonical(canonicalValue)
-        return null
-      }
-    }
-  }
-
-  public sealed interface Timing {
-    public fun asTiming(): Timing? = this as? Timing
-
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    public fun asAge(): Age? = this as? Age
-
-    public fun asPeriod(): Period? = this as? Period
-
-    public fun asRange(): Range? = this as? Range
-
-    public fun asDuration(): Duration? = this as? Duration
-
-    @JvmInline
-    public value class Timing(public val `value`: dev.ohs.fhir.model.r4b.Timing) :
-      ActivityDefinition.Timing
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r4b.DateTime) :
-      ActivityDefinition.Timing
-
-    @JvmInline
-    public value class Age(public val `value`: dev.ohs.fhir.model.r4b.Age) :
-      ActivityDefinition.Timing
-
-    @JvmInline
-    public value class Period(public val `value`: dev.ohs.fhir.model.r4b.Period) :
-      ActivityDefinition.Timing
-
-    @JvmInline
-    public value class Range(public val `value`: dev.ohs.fhir.model.r4b.Range) :
-      ActivityDefinition.Timing
-
-    @JvmInline
-    public value class Duration(public val `value`: dev.ohs.fhir.model.r4b.Duration) :
-      ActivityDefinition.Timing
-
-    public companion object {
-      internal fun from(
-        timingValue: dev.ohs.fhir.model.r4b.Timing?,
-        dateTimeValue: dev.ohs.fhir.model.r4b.DateTime?,
-        ageValue: dev.ohs.fhir.model.r4b.Age?,
-        periodValue: dev.ohs.fhir.model.r4b.Period?,
-        rangeValue: dev.ohs.fhir.model.r4b.Range?,
-        durationValue: dev.ohs.fhir.model.r4b.Duration?,
-      ): ActivityDefinition.Timing? {
-        if (timingValue != null) return Timing(timingValue)
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        if (ageValue != null) return Age(ageValue)
-        if (periodValue != null) return Period(periodValue)
-        if (rangeValue != null) return Range(rangeValue)
-        if (durationValue != null) return Duration(durationValue)
-        return null
-      }
-    }
-  }
-
-  public sealed interface Product {
-    public fun asReference(): Reference? = this as? Reference
-
-    public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-    @JvmInline
-    public value class Reference(public val `value`: dev.ohs.fhir.model.r4b.Reference) : Product
-
-    @JvmInline
-    public value class CodeableConcept(public val `value`: dev.ohs.fhir.model.r4b.CodeableConcept) :
-      Product
-
-    public companion object {
-      internal fun from(
-        referenceValue: dev.ohs.fhir.model.r4b.Reference?,
-        codeableConceptValue: dev.ohs.fhir.model.r4b.CodeableConcept?,
-      ): Product? {
-        if (referenceValue != null) return Reference(referenceValue)
-        if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
     /**
      * The status of this activity definition. Enables tracking the life-cycle of the content.
@@ -1081,8 +978,10 @@ public data class ActivityDefinition(
      * Note that the choice of canonical for the subject element was introduced in R4B to support
      * pharmaceutical quality use cases. To ensure as much backwards-compatibility as possible, it
      * is recommended to only use the new canonical type with these use cases.
+     *
+     * A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [Reference]
      */
-    public var subject: Subject? = null
+    public var subject: ActivityDefinition.Subject? = null
 
     /**
      * The date (and optionally time) when the activity definition was published. The date must
@@ -1281,8 +1180,12 @@ public data class ActivityDefinition(
      */
     public var doNotPerform: Boolean.Builder? = null
 
-    /** The period, timing or frequency upon which the described activity is to occur. */
-    public var timing: Timing? = null
+    /**
+     * The period, timing or frequency upon which the described activity is to occur.
+     *
+     * A FHIR choice type — one of: [Age] | [DateTime] | [Duration] | [Period] | [Range] | [Timing]
+     */
+    public var timing: FhirChoiceTypes.AgeOrDateTimeOrDurationOrPeriodOrRangeOrTiming? = null
 
     /**
      * Identifies the facility where the activity will occur; e.g. home, hospital, specific clinic,
@@ -1295,8 +1198,12 @@ public data class ActivityDefinition(
     /** Indicates who should participate in performing the action described. */
     public var participant: MutableList<Participant.Builder> = mutableListOf()
 
-    /** Identifies the food, drug or other product being consumed or supplied in the activity. */
-    public var product: Product? = null
+    /**
+     * Identifies the food, drug or other product being consumed or supplied in the activity.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Reference]
+     */
+    public var product: ActivityDefinition.Product? = null
 
     /** Identifies the quantity expected to be consumed at once (per dose, per meal, etc.). */
     public var quantity: Quantity.Builder? = null
@@ -1519,4 +1426,10 @@ public data class ActivityDefinition(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [Reference] */
+  public typealias Subject = FhirChoiceTypes.CanonicalOrCodeableConceptOrReference
+
+  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+  public typealias Product = FhirChoiceTypes.CodeableConceptOrReference
 }

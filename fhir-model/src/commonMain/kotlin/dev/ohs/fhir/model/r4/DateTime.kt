@@ -48,7 +48,7 @@ public data class DateTime(
   override val extension: List<Extension> = listOf(),
   /** The actual value */
   @Serializable(with = FhirDateTimeSerializer::class) public val `value`: FhirDateTime? = null,
-) : Element(id, extension) {
+) : Element(id, extension), FhirChoiceParticipants.DateTimeChoices {
   public fun toBuilder(): Builder =
     with(this) {
       Builder().apply {

@@ -21,7 +21,6 @@ import dev.ohs.fhir.model.r5.serializers.MedicationStatementSerializer
 import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -200,8 +199,10 @@ public data class MedicationStatement(
    * "end" date will be omitted. If the end date is known, then it is included as the "end date".
    * The date/time attribute supports a variety of dates - year, year/month and exact date. If
    * something more than this is required, this should be conveyed as text.
+   *
+   * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
    */
-  public val effective: Effective? = null,
+  public val effective: MedicationStatement.Effective? = null,
   /** The date when the Medication Statement was asserted by the information source. */
   public val dateAsserted: DateTime? = null,
   /**
@@ -416,36 +417,6 @@ public data class MedicationStatement(
     }
   }
 
-  public sealed interface Effective {
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    public fun asPeriod(): Period? = this as? Period
-
-    public fun asTiming(): Timing? = this as? Timing
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) : Effective
-
-    @JvmInline
-    public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) : Effective
-
-    @JvmInline
-    public value class Timing(public val `value`: dev.ohs.fhir.model.r5.Timing) : Effective
-
-    public companion object {
-      internal fun from(
-        dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-        periodValue: dev.ohs.fhir.model.r5.Period?,
-        timingValue: dev.ohs.fhir.model.r5.Timing?,
-      ): Effective? {
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        if (periodValue != null) return Period(periodValue)
-        if (timingValue != null) return Timing(timingValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
     /**
      * A code representing the status of recording the medication statement.
@@ -613,8 +584,10 @@ public data class MedicationStatement(
      * "end" date will be omitted. If the end date is known, then it is included as the "end date".
      * The date/time attribute supports a variety of dates - year, year/month and exact date. If
      * something more than this is required, this should be conveyed as text.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
      */
-    public var effective: Effective? = null
+    public var effective: MedicationStatement.Effective? = null
 
     /** The date when the Medication Statement was asserted by the information source. */
     public var dateAsserted: DateTime.Builder? = null
@@ -751,4 +724,7 @@ public data class MedicationStatement(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [DateTime] | [Period] | [Timing] */
+  public typealias Effective = FhirChoiceTypes.DateTimeOrPeriodOrTiming
 }

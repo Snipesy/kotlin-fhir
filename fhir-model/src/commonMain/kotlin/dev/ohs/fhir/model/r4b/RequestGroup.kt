@@ -22,7 +22,6 @@ import dev.ohs.fhir.model.r4b.serializers.RequestGroupActionSerializer
 import dev.ohs.fhir.model.r4b.serializers.RequestGroupSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -303,8 +302,12 @@ public data class RequestGroup(
     public val condition: List<Condition> = listOf(),
     /** A relationship to another action such as "before" or "30-60 minutes after start of". */
     public val relatedAction: List<RelatedAction> = listOf(),
-    /** An optional value describing when the action should be performed. */
-    public val timing: Timing? = null,
+    /**
+     * An optional value describing when the action should be performed.
+     *
+     * A FHIR choice type — one of: [Age] | [DateTime] | [Duration] | [Period] | [Range] | [Timing]
+     */
+    public val timing: FhirChoiceTypes.AgeOrDateTimeOrDurationOrPeriodOrRangeOrTiming? = null,
     /** The participant that should perform or be responsible for this action. */
     public val participant: List<Reference> = listOf(),
     /** The type of action to perform (create, update, remove). */
@@ -543,8 +546,10 @@ public data class RequestGroup(
       /**
        * A duration or range of durations to apply to the relationship. For example, 30-60 minutes
        * before.
+       *
+       * A FHIR choice type — one of: [Duration] | [Range]
        */
-      public val offset: Offset? = null,
+      public val offset: RelatedAction.Offset? = null,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -555,29 +560,6 @@ public data class RequestGroup(
             offset = this@with.offset
           }
         }
-
-      public sealed interface Offset {
-        public fun asDuration(): Duration? = this as? Duration
-
-        public fun asRange(): Range? = this as? Range
-
-        @JvmInline
-        public value class Duration(public val `value`: dev.ohs.fhir.model.r4b.Duration) : Offset
-
-        @JvmInline
-        public value class Range(public val `value`: dev.ohs.fhir.model.r4b.Range) : Offset
-
-        public companion object {
-          internal fun from(
-            durationValue: dev.ohs.fhir.model.r4b.Duration?,
-            rangeValue: dev.ohs.fhir.model.r4b.Range?,
-          ): Offset? {
-            if (durationValue != null) return Duration(durationValue)
-            if (rangeValue != null) return Range(rangeValue)
-            return null
-          }
-        }
-      }
 
       public class Builder(
         /** The element id of the action this is related to. */
@@ -628,8 +610,10 @@ public data class RequestGroup(
         /**
          * A duration or range of durations to apply to the relationship. For example, 30-60 minutes
          * before.
+         *
+         * A FHIR choice type — one of: [Duration] | [Range]
          */
-        public var offset: Offset? = null
+        public var offset: RelatedAction.Offset? = null
 
         public fun build(): RelatedAction =
           RelatedAction(
@@ -641,59 +625,9 @@ public data class RequestGroup(
             offset = offset,
           )
       }
-    }
 
-    public sealed interface Timing {
-      public fun asDateTime(): DateTime? = this as? DateTime
-
-      public fun asAge(): Age? = this as? Age
-
-      public fun asPeriod(): Period? = this as? Period
-
-      public fun asDuration(): Duration? = this as? Duration
-
-      public fun asRange(): Range? = this as? Range
-
-      public fun asTiming(): Timing? = this as? Timing
-
-      @JvmInline
-      public value class DateTime(public val `value`: dev.ohs.fhir.model.r4b.DateTime) :
-        Action.Timing
-
-      @JvmInline
-      public value class Age(public val `value`: dev.ohs.fhir.model.r4b.Age) : Action.Timing
-
-      @JvmInline
-      public value class Period(public val `value`: dev.ohs.fhir.model.r4b.Period) : Action.Timing
-
-      @JvmInline
-      public value class Duration(public val `value`: dev.ohs.fhir.model.r4b.Duration) :
-        Action.Timing
-
-      @JvmInline
-      public value class Range(public val `value`: dev.ohs.fhir.model.r4b.Range) : Action.Timing
-
-      @JvmInline
-      public value class Timing(public val `value`: dev.ohs.fhir.model.r4b.Timing) : Action.Timing
-
-      public companion object {
-        internal fun from(
-          dateTimeValue: dev.ohs.fhir.model.r4b.DateTime?,
-          ageValue: dev.ohs.fhir.model.r4b.Age?,
-          periodValue: dev.ohs.fhir.model.r4b.Period?,
-          durationValue: dev.ohs.fhir.model.r4b.Duration?,
-          rangeValue: dev.ohs.fhir.model.r4b.Range?,
-          timingValue: dev.ohs.fhir.model.r4b.Timing?,
-        ): Action.Timing? {
-          if (dateTimeValue != null) return DateTime(dateTimeValue)
-          if (ageValue != null) return Age(ageValue)
-          if (periodValue != null) return Period(periodValue)
-          if (durationValue != null) return Duration(durationValue)
-          if (rangeValue != null) return Range(rangeValue)
-          if (timingValue != null) return Timing(timingValue)
-          return null
-        }
-      }
+      /** A FHIR choice type — one of: [Duration] | [Range] */
+      public typealias Offset = FhirChoiceTypes.DurationOrRange
     }
 
     public class Builder() {
@@ -781,8 +715,13 @@ public data class RequestGroup(
       /** A relationship to another action such as "before" or "30-60 minutes after start of". */
       public var relatedAction: MutableList<RelatedAction.Builder> = mutableListOf()
 
-      /** An optional value describing when the action should be performed. */
-      public var timing: Timing? = null
+      /**
+       * An optional value describing when the action should be performed.
+       *
+       * A FHIR choice type — one of: [Age] | [DateTime] | [Duration] | [Period] | [Range] |
+       * [Timing]
+       */
+      public var timing: FhirChoiceTypes.AgeOrDateTimeOrDurationOrPeriodOrRangeOrTiming? = null
 
       /** The participant that should perform or be responsible for this action. */
       public var participant: MutableList<Reference.Builder> = mutableListOf()

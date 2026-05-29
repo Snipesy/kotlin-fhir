@@ -466,17 +466,14 @@ internal object LibrarySerializer : KSerializer<Library> {
       identifier = identifier ?: listOf(),
       version = R5String.of(version, _version),
       versionAlgorithm =
-        Library.VersionAlgorithm.from(
-          R5String.of(versionAlgorithmString, _versionAlgorithmString),
-          versionAlgorithmCoding,
-        ),
+        (R5String.of(versionAlgorithmString, _versionAlgorithmString) ?: versionAlgorithmCoding),
       name = R5String.of(name, _name),
       title = R5String.of(title, _title),
       subtitle = R5String.of(subtitle, _subtitle),
       status = Enumeration.of(PublicationStatus.fromCode(status!!), _status),
       experimental = R5Boolean.of(experimental, _experimental),
       type = type!!,
-      subject = Library.Subject.from(subjectCodeableConcept, subjectReference),
+      subject = (subjectCodeableConcept ?: subjectReference),
       date = DateTime.of(FhirDateTime.fromString(date), _date),
       publisher = R5String.of(publisher, _publisher),
       contact = contact ?: listOf(),
@@ -587,11 +584,9 @@ internal object LibrarySerializer : KSerializer<Library> {
     }
     when (val choice = value.versionAlgorithm) {
       null -> {}
-      is Library.VersionAlgorithm.String -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 15 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is R5String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 15 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             16 + descriptorOffset,
@@ -600,12 +595,12 @@ internal object LibrarySerializer : KSerializer<Library> {
           )
         }
       }
-      is Library.VersionAlgorithm.Coding -> {
+      is Coding -> {
         encoder.encodeSerializableElement(
           descriptor,
           17 + descriptorOffset,
           Hoisted.versionAlgorithmCodingSer,
-          choice.value,
+          choice,
         )
       }
     }
@@ -672,20 +667,20 @@ internal object LibrarySerializer : KSerializer<Library> {
     )
     when (val choice = value.subject) {
       null -> {}
-      is Library.Subject.CodeableConcept -> {
+      is CodeableConcept -> {
         encoder.encodeSerializableElement(
           descriptor,
           29 + descriptorOffset,
           Hoisted.typeSer,
-          choice.value,
+          choice,
         )
       }
-      is Library.Subject.Reference -> {
+      is Reference -> {
         encoder.encodeSerializableElement(
           descriptor,
           30 + descriptorOffset,
           Hoisted.subjectReferenceSer,
-          choice.value,
+          choice,
         )
       }
     }

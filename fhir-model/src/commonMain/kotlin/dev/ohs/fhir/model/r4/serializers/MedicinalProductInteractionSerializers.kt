@@ -111,7 +111,7 @@ internal object MedicinalProductInteractionInteractantSerializer :
       id = id,
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
-      item = MedicinalProductInteraction.Interactant.Item.from(itemReference, itemCodeableConcept)!!,
+      item = (itemReference ?: itemCodeableConcept)!!,
     )
   }
 
@@ -130,16 +130,11 @@ internal object MedicinalProductInteractionInteractantSerializer :
         value.modifierExtension,
       )
     when (val choice = value.item) {
-      is MedicinalProductInteraction.Interactant.Item.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 3, Hoisted.itemReferenceSer, choice.value)
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 3, Hoisted.itemReferenceSer, choice)
       }
-      is MedicinalProductInteraction.Interactant.Item.CodeableConcept -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          4,
-          Hoisted.itemCodeableConceptSer,
-          choice.value,
-        )
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 4, Hoisted.itemCodeableConceptSer, choice)
       }
     }
   }

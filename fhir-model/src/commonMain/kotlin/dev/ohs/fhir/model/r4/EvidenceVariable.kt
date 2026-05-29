@@ -21,7 +21,6 @@ import dev.ohs.fhir.model.r4.serializers.EvidenceVariableSerializer
 import dev.ohs.fhir.model.r4.terminologies.PublicationStatus
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -421,8 +420,11 @@ public data class EvidenceVariable(
      * Define members of the evidence element using Codes (such as condition, medication, or
      * observation), Expressions ( using an expression language such as FHIRPath or CQL) or
      * DataRequirements (such as Diabetes diagnosis onset in the last year).
+     *
+     * A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [DataRequirement] |
+     * [Expression] | [Reference] | [TriggerDefinition]
      */
-    public val definition: Definition,
+    public val definition: Characteristic.Definition,
     /**
      * Use UsageContext to define the members of the population, such as Age Ranges, Genders,
      * Settings.
@@ -430,8 +432,12 @@ public data class EvidenceVariable(
     public val usageContext: List<UsageContext> = listOf(),
     /** When true, members with this characteristic are excluded from the element. */
     public val exclude: Boolean? = null,
-    /** Indicates what effective period the study covers. */
-    public val participantEffective: ParticipantEffective? = null,
+    /**
+     * Indicates what effective period the study covers.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Duration] | [Period] | [Timing]
+     */
+    public val participantEffective: Characteristic.ParticipantEffective? = null,
     /** Indicates duration from the participant's study entry. */
     public val timeFromStart: Duration? = null,
     /** Indicates how elements are aggregated within the study effective period. */
@@ -452,114 +458,16 @@ public data class EvidenceVariable(
         }
       }
 
-    public sealed interface Definition {
-      public fun asReference(): Reference? = this as? Reference
-
-      public fun asCanonical(): Canonical? = this as? Canonical
-
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asExpression(): Expression? = this as? Expression
-
-      public fun asDataRequirement(): DataRequirement? = this as? DataRequirement
-
-      public fun asTriggerDefinition(): TriggerDefinition? = this as? TriggerDefinition
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r4.Reference) :
-        Definition
-
-      @JvmInline
-      public value class Canonical(public val `value`: dev.ohs.fhir.model.r4.Canonical) :
-        Definition
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r4.CodeableConcept
-      ) : Definition
-
-      @JvmInline
-      public value class Expression(public val `value`: dev.ohs.fhir.model.r4.Expression) :
-        Definition
-
-      @JvmInline
-      public value class DataRequirement(
-        public val `value`: dev.ohs.fhir.model.r4.DataRequirement
-      ) : Definition
-
-      @JvmInline
-      public value class TriggerDefinition(
-        public val `value`: dev.ohs.fhir.model.r4.TriggerDefinition
-      ) : Definition
-
-      public companion object {
-        internal fun from(
-          referenceValue: dev.ohs.fhir.model.r4.Reference?,
-          canonicalValue: dev.ohs.fhir.model.r4.Canonical?,
-          codeableConceptValue: dev.ohs.fhir.model.r4.CodeableConcept?,
-          expressionValue: dev.ohs.fhir.model.r4.Expression?,
-          dataRequirementValue: dev.ohs.fhir.model.r4.DataRequirement?,
-          triggerDefinitionValue: dev.ohs.fhir.model.r4.TriggerDefinition?,
-        ): Definition? {
-          if (referenceValue != null) return Reference(referenceValue)
-          if (canonicalValue != null) return Canonical(canonicalValue)
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (expressionValue != null) return Expression(expressionValue)
-          if (dataRequirementValue != null) return DataRequirement(dataRequirementValue)
-          if (triggerDefinitionValue != null) return TriggerDefinition(triggerDefinitionValue)
-          return null
-        }
-      }
-    }
-
-    public sealed interface ParticipantEffective {
-      public fun asDateTime(): DateTime? = this as? DateTime
-
-      public fun asPeriod(): Period? = this as? Period
-
-      public fun asDuration(): Duration? = this as? Duration
-
-      public fun asTiming(): Timing? = this as? Timing
-
-      @JvmInline
-      public value class DateTime(public val `value`: dev.ohs.fhir.model.r4.DateTime) :
-        ParticipantEffective
-
-      @JvmInline
-      public value class Period(public val `value`: dev.ohs.fhir.model.r4.Period) :
-        ParticipantEffective
-
-      @JvmInline
-      public value class Duration(public val `value`: dev.ohs.fhir.model.r4.Duration) :
-        ParticipantEffective
-
-      @JvmInline
-      public value class Timing(public val `value`: dev.ohs.fhir.model.r4.Timing) :
-        ParticipantEffective
-
-      public companion object {
-        internal fun from(
-          dateTimeValue: dev.ohs.fhir.model.r4.DateTime?,
-          periodValue: dev.ohs.fhir.model.r4.Period?,
-          durationValue: dev.ohs.fhir.model.r4.Duration?,
-          timingValue: dev.ohs.fhir.model.r4.Timing?,
-        ): ParticipantEffective? {
-          if (dateTimeValue != null) return DateTime(dateTimeValue)
-          if (periodValue != null) return Period(periodValue)
-          if (durationValue != null) return Duration(durationValue)
-          if (timingValue != null) return Timing(timingValue)
-          return null
-        }
-      }
-    }
-
     public class Builder(
       /**
        * Define members of the evidence element using Codes (such as condition, medication, or
        * observation), Expressions ( using an expression language such as FHIRPath or CQL) or
        * DataRequirements (such as Diabetes diagnosis onset in the last year).
+       *
+       * A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [DataRequirement] |
+       * [Expression] | [Reference] | [TriggerDefinition]
        */
-      public var definition: Definition
+      public var definition: Characteristic.Definition
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -616,8 +524,12 @@ public data class EvidenceVariable(
       /** When true, members with this characteristic are excluded from the element. */
       public var exclude: Boolean.Builder? = null
 
-      /** Indicates what effective period the study covers. */
-      public var participantEffective: ParticipantEffective? = null
+      /**
+       * Indicates what effective period the study covers.
+       *
+       * A FHIR choice type — one of: [DateTime] | [Duration] | [Period] | [Timing]
+       */
+      public var participantEffective: Characteristic.ParticipantEffective? = null
 
       /** Indicates duration from the participant's study entry. */
       public var timeFromStart: Duration.Builder? = null
@@ -639,6 +551,15 @@ public data class EvidenceVariable(
           groupMeasure = groupMeasure,
         )
     }
+
+    /**
+     * A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [DataRequirement] |
+     * [Expression] | [Reference] | [TriggerDefinition]
+     */
+    public typealias Definition = FhirChoiceTypes.EvidenceVariableCharacteristicDefinitionChoice
+
+    /** A FHIR choice type — one of: [DateTime] | [Duration] | [Period] | [Timing] */
+    public typealias ParticipantEffective = FhirChoiceTypes.DateTimeOrDurationOrPeriodOrTiming
   }
 
   public class Builder(

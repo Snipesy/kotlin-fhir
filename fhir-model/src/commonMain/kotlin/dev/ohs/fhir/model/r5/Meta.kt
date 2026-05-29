@@ -107,7 +107,7 @@ public data class Meta(
    * is a set. Uniqueness is based the system/code, and version and display are ignored.
    */
   public val tag: List<Coding> = listOf(),
-) : DataType() {
+) : DataType(), FhirChoiceTypes.ElementDefinitionDefaultValueChoice {
   public fun toBuilder(): Builder =
     with(this) {
       Builder().apply {

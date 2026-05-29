@@ -115,7 +115,7 @@ public data class Reference(
    * to identify what's being referenced, not to fully describe it.
    */
   public val display: String? = null,
-) : Element() {
+) : Element(), FhirChoiceParticipants.ReferenceChoices {
   public fun toBuilder(): Builder =
     with(this) {
       Builder().apply {

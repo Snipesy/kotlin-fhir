@@ -57,7 +57,7 @@ internal fun CodegenContext.buildJsonWireFields(
   elements: List<Element>,
 ): List<WireField> {
   val propertyMapper =
-    PropertyMapper(PropertyMapper.MappingContext.WIRE, modelClassName, valueSetMap)
+    PropertyMapper(PropertyMapper.MappingContext.WIRE, modelClassName, valueSetMap, choiceRegistry)
   return elements.flatMap { element ->
     propertyMapper.mapToProperties(element).map { info ->
       WireField(

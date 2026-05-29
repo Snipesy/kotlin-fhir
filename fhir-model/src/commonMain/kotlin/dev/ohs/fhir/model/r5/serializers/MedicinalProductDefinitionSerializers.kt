@@ -796,15 +796,13 @@ internal object MedicinalProductDefinitionCharacteristicSerializer :
       modifierExtension = modifierExtension ?: listOf(),
       type = type!!,
       `value` =
-        MedicinalProductDefinition.Characteristic.Value.from(
-          valueCodeableConcept,
-          Markdown.of(valueMarkdown, _valueMarkdown),
-          valueQuantity,
-          Integer.of(valueInteger, _valueInteger),
-          Date.of(FhirDate.fromString(valueDate), _valueDate),
-          R5Boolean.of(valueBoolean, _valueBoolean),
-          valueAttachment,
-        ),
+        (valueCodeableConcept
+          ?: Markdown.of(valueMarkdown, _valueMarkdown)
+          ?: valueQuantity
+          ?: Integer.of(valueInteger, _valueInteger)
+          ?: Date.of(FhirDate.fromString(valueDate), _valueDate)
+          ?: R5Boolean.of(valueBoolean, _valueBoolean)
+          ?: valueAttachment),
     )
   }
 
@@ -825,38 +823,38 @@ internal object MedicinalProductDefinitionCharacteristicSerializer :
     encoder.encodeSerializableElement(descriptor, 3, Hoisted.typeSer, value.type)
     when (val choice = value.`value`) {
       null -> {}
-      is MedicinalProductDefinition.Characteristic.Value.CodeableConcept -> {
-        encoder.encodeSerializableElement(descriptor, 4, Hoisted.typeSer, choice.value)
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 4, Hoisted.typeSer, choice)
       }
-      is MedicinalProductDefinition.Characteristic.Value.Markdown -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
-        (choice.value.toElement())?.let {
+      is Markdown -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 6, Hoisted.valueMarkdownSer, it)
         }
       }
-      is MedicinalProductDefinition.Characteristic.Value.Quantity -> {
-        encoder.encodeSerializableElement(descriptor, 7, Hoisted.valueQuantitySer, choice.value)
+      is Quantity -> {
+        encoder.encodeSerializableElement(descriptor, 7, Hoisted.valueQuantitySer, choice)
       }
-      is MedicinalProductDefinition.Characteristic.Value.Integer -> {
-        ((choice.value.value))?.let { encoder.encodeIntElement(descriptor, 8, it) }
-        (choice.value.toElement())?.let {
+      is Integer -> {
+        ((choice.value))?.let { encoder.encodeIntElement(descriptor, 8, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 9, Hoisted.valueMarkdownSer, it)
         }
       }
-      is MedicinalProductDefinition.Characteristic.Value.Date -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 10, it) }
-        (choice.value.toElement())?.let {
+      is Date -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 10, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 11, Hoisted.valueMarkdownSer, it)
         }
       }
-      is MedicinalProductDefinition.Characteristic.Value.Boolean -> {
-        ((choice.value.value))?.let { encoder.encodeBooleanElement(descriptor, 12, it) }
-        (choice.value.toElement())?.let {
+      is R5Boolean -> {
+        ((choice.value))?.let { encoder.encodeBooleanElement(descriptor, 12, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 13, Hoisted.valueMarkdownSer, it)
         }
       }
-      is MedicinalProductDefinition.Characteristic.Value.Attachment -> {
-        encoder.encodeSerializableElement(descriptor, 14, Hoisted.valueAttachmentSer, choice.value)
+      is Attachment -> {
+        encoder.encodeSerializableElement(descriptor, 14, Hoisted.valueAttachmentSer, choice)
       }
     }
   }

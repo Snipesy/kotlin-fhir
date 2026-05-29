@@ -19,7 +19,6 @@ package dev.ohs.fhir.model.r4b
 import dev.ohs.fhir.model.r4b.serializers.ServiceRequestSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -231,8 +230,10 @@ public data class ServiceRequest(
    * An amount of service being requested which can be a quantity ( for example $1,500 home
    * modification), a ratio ( for example, 20 half day visits per month), or a range (2.0 to 1.8 Gy
    * per fraction).
+   *
+   * A FHIR choice type — one of: [Quantity] | [Range] | [Ratio]
    */
-  public val quantity: Quantity? = null,
+  public val quantity: FhirChoiceTypes.QuantityOrRangeOrRatio? = null,
   /**
    * On whom or what the service is to be performed. This is usually a human patient, but can also
    * be requested on animals, groups of humans or animals, devices such as dialysis machines, or
@@ -244,13 +245,19 @@ public data class ServiceRequest(
    * request is made.
    */
   public val encounter: Reference? = null,
-  /** The date/time at which the requested service should occur. */
-  public val occurrence: Occurrence? = null,
+  /**
+   * The date/time at which the requested service should occur.
+   *
+   * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
+   */
+  public val occurrence: ServiceRequest.Occurrence? = null,
   /**
    * If a CodeableConcept is present, it indicates the pre-condition for performing the service. For
    * example "pain", "on flare-up", etc.
+   *
+   * A FHIR choice type — one of: [Boolean] | [CodeableConcept]
    */
-  public val asNeeded: AsNeeded? = null,
+  public val asNeeded: ServiceRequest.AsNeeded? = null,
   /** When the request transitioned to being actionable. */
   public val authoredOn: DateTime? = null,
   /**
@@ -413,93 +420,6 @@ public data class ServiceRequest(
         relevantHistory = this@with.relevantHistory.map { it.toBuilder() }.toMutableList()
       }
     }
-
-  public sealed interface Quantity {
-    public fun asQuantity(): Quantity? = this as? Quantity
-
-    public fun asRatio(): Ratio? = this as? Ratio
-
-    public fun asRange(): Range? = this as? Range
-
-    @JvmInline
-    public value class Quantity(public val `value`: dev.ohs.fhir.model.r4b.Quantity) :
-      ServiceRequest.Quantity
-
-    @JvmInline
-    public value class Ratio(public val `value`: dev.ohs.fhir.model.r4b.Ratio) :
-      ServiceRequest.Quantity
-
-    @JvmInline
-    public value class Range(public val `value`: dev.ohs.fhir.model.r4b.Range) :
-      ServiceRequest.Quantity
-
-    public companion object {
-      internal fun from(
-        quantityValue: dev.ohs.fhir.model.r4b.Quantity?,
-        ratioValue: dev.ohs.fhir.model.r4b.Ratio?,
-        rangeValue: dev.ohs.fhir.model.r4b.Range?,
-      ): ServiceRequest.Quantity? {
-        if (quantityValue != null) return Quantity(quantityValue)
-        if (ratioValue != null) return Ratio(ratioValue)
-        if (rangeValue != null) return Range(rangeValue)
-        return null
-      }
-    }
-  }
-
-  public sealed interface Occurrence {
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    public fun asPeriod(): Period? = this as? Period
-
-    public fun asTiming(): Timing? = this as? Timing
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r4b.DateTime) : Occurrence
-
-    @JvmInline
-    public value class Period(public val `value`: dev.ohs.fhir.model.r4b.Period) : Occurrence
-
-    @JvmInline
-    public value class Timing(public val `value`: dev.ohs.fhir.model.r4b.Timing) : Occurrence
-
-    public companion object {
-      internal fun from(
-        dateTimeValue: dev.ohs.fhir.model.r4b.DateTime?,
-        periodValue: dev.ohs.fhir.model.r4b.Period?,
-        timingValue: dev.ohs.fhir.model.r4b.Timing?,
-      ): Occurrence? {
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        if (periodValue != null) return Period(periodValue)
-        if (timingValue != null) return Timing(timingValue)
-        return null
-      }
-    }
-  }
-
-  public sealed interface AsNeeded {
-    public fun asBoolean(): Boolean? = this as? Boolean
-
-    public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-    @JvmInline
-    public value class Boolean(public val `value`: dev.ohs.fhir.model.r4b.Boolean) : AsNeeded
-
-    @JvmInline
-    public value class CodeableConcept(public val `value`: dev.ohs.fhir.model.r4b.CodeableConcept) :
-      AsNeeded
-
-    public companion object {
-      internal fun from(
-        booleanValue: dev.ohs.fhir.model.r4b.Boolean?,
-        codeableConceptValue: dev.ohs.fhir.model.r4b.CodeableConcept?,
-      ): AsNeeded? {
-        if (booleanValue != null) return Boolean(booleanValue)
-        if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-        return null
-      }
-    }
-  }
 
   public class Builder(
     /**
@@ -731,8 +651,10 @@ public data class ServiceRequest(
      * An amount of service being requested which can be a quantity ( for example $1,500 home
      * modification), a ratio ( for example, 20 half day visits per month), or a range (2.0 to 1.8
      * Gy per fraction).
+     *
+     * A FHIR choice type — one of: [Quantity] | [Range] | [Ratio]
      */
-    public var quantity: Quantity? = null
+    public var quantity: FhirChoiceTypes.QuantityOrRangeOrRatio? = null
 
     /**
      * An encounter that provides additional information about the healthcare context in which this
@@ -740,14 +662,20 @@ public data class ServiceRequest(
      */
     public var encounter: Reference.Builder? = null
 
-    /** The date/time at which the requested service should occur. */
-    public var occurrence: Occurrence? = null
+    /**
+     * The date/time at which the requested service should occur.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
+     */
+    public var occurrence: ServiceRequest.Occurrence? = null
 
     /**
      * If a CodeableConcept is present, it indicates the pre-condition for performing the service.
      * For example "pain", "on flare-up", etc.
+     *
+     * A FHIR choice type — one of: [Boolean] | [CodeableConcept]
      */
-    public var asNeeded: AsNeeded? = null
+    public var asNeeded: ServiceRequest.AsNeeded? = null
 
     /** When the request transitioned to being actionable. */
     public var authoredOn: DateTime.Builder? = null
@@ -1035,4 +963,10 @@ public data class ServiceRequest(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [DateTime] | [Period] | [Timing] */
+  public typealias Occurrence = FhirChoiceTypes.DateTimeOrPeriodOrTiming
+
+  /** A FHIR choice type — one of: [Boolean] | [CodeableConcept] */
+  public typealias AsNeeded = FhirChoiceTypes.BooleanOrCodeableConcept
 }

@@ -135,12 +135,10 @@ internal object DeviceRequestParameterSerializer : KSerializer<DeviceRequest.Par
       modifierExtension = modifierExtension ?: listOf(),
       code = code,
       `value` =
-        DeviceRequest.Parameter.Value.from(
-          valueCodeableConcept,
-          valueQuantity,
-          valueRange,
-          R5Boolean.of(valueBoolean, _valueBoolean),
-        ),
+        (valueCodeableConcept
+          ?: valueQuantity
+          ?: valueRange
+          ?: R5Boolean.of(valueBoolean, _valueBoolean)),
     )
   }
 
@@ -158,18 +156,18 @@ internal object DeviceRequestParameterSerializer : KSerializer<DeviceRequest.Par
     (value.code)?.let { encoder.encodeSerializableElement(descriptor, 3, Hoisted.codeSer, it) }
     when (val choice = value.`value`) {
       null -> {}
-      is DeviceRequest.Parameter.Value.CodeableConcept -> {
-        encoder.encodeSerializableElement(descriptor, 4, Hoisted.codeSer, choice.value)
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 4, Hoisted.codeSer, choice)
       }
-      is DeviceRequest.Parameter.Value.Quantity -> {
-        encoder.encodeSerializableElement(descriptor, 5, Hoisted.valueQuantitySer, choice.value)
+      is Quantity -> {
+        encoder.encodeSerializableElement(descriptor, 5, Hoisted.valueQuantitySer, choice)
       }
-      is DeviceRequest.Parameter.Value.Range -> {
-        encoder.encodeSerializableElement(descriptor, 6, Hoisted.valueRangeSer, choice.value)
+      is Range -> {
+        encoder.encodeSerializableElement(descriptor, 6, Hoisted.valueRangeSer, choice)
       }
-      is DeviceRequest.Parameter.Value.Boolean -> {
-        ((choice.value.value))?.let { encoder.encodeBooleanElement(descriptor, 7, it) }
-        (choice.value.toElement())?.let {
+      is R5Boolean -> {
+        ((choice.value))?.let { encoder.encodeBooleanElement(descriptor, 7, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 8, Hoisted.valueBooleanSer, it)
         }
       }
@@ -566,11 +564,9 @@ internal object DeviceRequestSerializer : KSerializer<DeviceRequest> {
       subject = subject!!,
       encounter = encounter,
       occurrence =
-        DeviceRequest.Occurrence.from(
-          DateTime.of(FhirDateTime.fromString(occurrenceDateTime), _occurrenceDateTime),
-          occurrencePeriod,
-          occurrenceTiming,
-        ),
+        (DateTime.of(FhirDateTime.fromString(occurrenceDateTime), _occurrenceDateTime)
+          ?: occurrencePeriod
+          ?: occurrenceTiming),
       authoredOn = DateTime.of(FhirDateTime.fromString(authoredOn), _authoredOn),
       requester = requester,
       performer = performer,
@@ -785,11 +781,11 @@ internal object DeviceRequestSerializer : KSerializer<DeviceRequest> {
     }
     when (val choice = value.occurrence) {
       null -> {}
-      is DeviceRequest.Occurrence.DateTime -> {
-        ((choice.value.value?.toString()))?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let {
           encoder.encodeStringElement(descriptor, 32 + descriptorOffset, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             33 + descriptorOffset,
@@ -798,20 +794,20 @@ internal object DeviceRequestSerializer : KSerializer<DeviceRequest> {
           )
         }
       }
-      is DeviceRequest.Occurrence.Period -> {
+      is Period -> {
         encoder.encodeSerializableElement(
           descriptor,
           34 + descriptorOffset,
           Hoisted.occurrencePeriodSer,
-          choice.value,
+          choice,
         )
       }
-      is DeviceRequest.Occurrence.Timing -> {
+      is Timing -> {
         encoder.encodeSerializableElement(
           descriptor,
           35 + descriptorOffset,
           Hoisted.occurrenceTimingSer,
-          choice.value,
+          choice,
         )
       }
     }

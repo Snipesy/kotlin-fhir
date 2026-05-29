@@ -382,24 +382,20 @@ internal object ResearchElementDefinitionCharacteristicSerializer :
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
       definition =
-        ResearchElementDefinition.Characteristic.Definition.from(
-          definitionCodeableConcept,
-          Canonical.of(definitionCanonical, _definitionCanonical),
-          definitionExpression,
-          definitionDataRequirement,
-        )!!,
+        (definitionCodeableConcept
+          ?: Canonical.of(definitionCanonical, _definitionCanonical)
+          ?: definitionExpression
+          ?: definitionDataRequirement)!!,
       usageContext = usageContext ?: listOf(),
       exclude = R4bBoolean.of(exclude, _exclude),
       unitOfMeasure = unitOfMeasure,
       studyEffectiveDescription =
         R4bString.of(studyEffectiveDescription, _studyEffectiveDescription),
       studyEffective =
-        ResearchElementDefinition.Characteristic.StudyEffective.from(
-          DateTime.of(FhirDateTime.fromString(studyEffectiveDateTime), _studyEffectiveDateTime),
-          studyEffectivePeriod,
-          studyEffectiveDuration,
-          studyEffectiveTiming,
-        ),
+        (DateTime.of(FhirDateTime.fromString(studyEffectiveDateTime), _studyEffectiveDateTime)
+          ?: studyEffectivePeriod
+          ?: studyEffectiveDuration
+          ?: studyEffectiveTiming),
       studyEffectiveTimeFromStart = studyEffectiveTimeFromStart,
       studyEffectiveGroupMeasure =
         studyEffectiveGroupMeasure?.let {
@@ -411,15 +407,13 @@ internal object ResearchElementDefinitionCharacteristicSerializer :
       participantEffectiveDescription =
         R4bString.of(participantEffectiveDescription, _participantEffectiveDescription),
       participantEffective =
-        ResearchElementDefinition.Characteristic.ParticipantEffective.from(
-          DateTime.of(
-            FhirDateTime.fromString(participantEffectiveDateTime),
-            _participantEffectiveDateTime,
-          ),
-          participantEffectivePeriod,
-          participantEffectiveDuration,
-          participantEffectiveTiming,
-        ),
+        (DateTime.of(
+          FhirDateTime.fromString(participantEffectiveDateTime),
+          _participantEffectiveDateTime,
+        )
+          ?: participantEffectivePeriod
+          ?: participantEffectiveDuration
+          ?: participantEffectiveTiming),
       participantEffectiveTimeFromStart = participantEffectiveTimeFromStart,
       participantEffectiveGroupMeasure =
         participantEffectiveGroupMeasure?.let {
@@ -446,34 +440,29 @@ internal object ResearchElementDefinitionCharacteristicSerializer :
         value.modifierExtension,
       )
     when (val choice = value.definition) {
-      is ResearchElementDefinition.Characteristic.Definition.CodeableConcept -> {
+      is CodeableConcept -> {
         encoder.encodeSerializableElement(
           descriptor,
           3,
           Hoisted.definitionCodeableConceptSer,
-          choice.value,
+          choice,
         )
       }
-      is ResearchElementDefinition.Characteristic.Definition.Canonical -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 4, it) }
-        (choice.value.toElement())?.let {
+      is Canonical -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 4, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 5, Hoisted.definitionCanonicalSer, it)
         }
       }
-      is ResearchElementDefinition.Characteristic.Definition.Expression -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          6,
-          Hoisted.definitionExpressionSer,
-          choice.value,
-        )
+      is Expression -> {
+        encoder.encodeSerializableElement(descriptor, 6, Hoisted.definitionExpressionSer, choice)
       }
-      is ResearchElementDefinition.Characteristic.Definition.DataRequirement -> {
+      is DataRequirement -> {
         encoder.encodeSerializableElement(
           descriptor,
           7,
           Hoisted.definitionDataRequirementSer,
-          choice.value,
+          choice,
         )
       }
     }
@@ -494,35 +483,20 @@ internal object ResearchElementDefinitionCharacteristicSerializer :
     }
     when (val choice = value.studyEffective) {
       null -> {}
-      is ResearchElementDefinition.Characteristic.StudyEffective.DateTime -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 14, it) }
-        (choice.value.toElement())?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 14, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 15, Hoisted.definitionCanonicalSer, it)
         }
       }
-      is ResearchElementDefinition.Characteristic.StudyEffective.Period -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          16,
-          Hoisted.studyEffectivePeriodSer,
-          choice.value,
-        )
+      is Period -> {
+        encoder.encodeSerializableElement(descriptor, 16, Hoisted.studyEffectivePeriodSer, choice)
       }
-      is ResearchElementDefinition.Characteristic.StudyEffective.Duration -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          17,
-          Hoisted.studyEffectiveDurationSer,
-          choice.value,
-        )
+      is Duration -> {
+        encoder.encodeSerializableElement(descriptor, 17, Hoisted.studyEffectiveDurationSer, choice)
       }
-      is ResearchElementDefinition.Characteristic.StudyEffective.Timing -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          18,
-          Hoisted.studyEffectiveTimingSer,
-          choice.value,
-        )
+      is Timing -> {
+        encoder.encodeSerializableElement(descriptor, 18, Hoisted.studyEffectiveTimingSer, choice)
       }
     }
     (value.studyEffectiveTimeFromStart)?.let {
@@ -542,35 +516,20 @@ internal object ResearchElementDefinitionCharacteristicSerializer :
     }
     when (val choice = value.participantEffective) {
       null -> {}
-      is ResearchElementDefinition.Characteristic.ParticipantEffective.DateTime -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 24, it) }
-        (choice.value.toElement())?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 24, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 25, Hoisted.definitionCanonicalSer, it)
         }
       }
-      is ResearchElementDefinition.Characteristic.ParticipantEffective.Period -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          26,
-          Hoisted.studyEffectivePeriodSer,
-          choice.value,
-        )
+      is Period -> {
+        encoder.encodeSerializableElement(descriptor, 26, Hoisted.studyEffectivePeriodSer, choice)
       }
-      is ResearchElementDefinition.Characteristic.ParticipantEffective.Duration -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          27,
-          Hoisted.studyEffectiveDurationSer,
-          choice.value,
-        )
+      is Duration -> {
+        encoder.encodeSerializableElement(descriptor, 27, Hoisted.studyEffectiveDurationSer, choice)
       }
-      is ResearchElementDefinition.Characteristic.ParticipantEffective.Timing -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          28,
-          Hoisted.studyEffectiveTimingSer,
-          choice.value,
-        )
+      is Timing -> {
+        encoder.encodeSerializableElement(descriptor, 28, Hoisted.studyEffectiveTimingSer, choice)
       }
     }
     (value.participantEffectiveTimeFromStart)?.let {
@@ -1030,7 +989,7 @@ internal object ResearchElementDefinitionSerializer : KSerializer<ResearchElemen
       subtitle = R4bString.of(subtitle, _subtitle),
       status = Enumeration.of(PublicationStatus.fromCode(status!!), _status),
       experimental = R4bBoolean.of(experimental, _experimental),
-      subject = ResearchElementDefinition.Subject.from(subjectCodeableConcept, subjectReference),
+      subject = (subjectCodeableConcept ?: subjectReference),
       date = DateTime.of(FhirDateTime.fromString(date), _date),
       publisher = R4bString.of(publisher, _publisher),
       contact = contact ?: listOf(),
@@ -1217,20 +1176,20 @@ internal object ResearchElementDefinitionSerializer : KSerializer<ResearchElemen
     }
     when (val choice = value.subject) {
       null -> {}
-      is ResearchElementDefinition.Subject.CodeableConcept -> {
+      is CodeableConcept -> {
         encoder.encodeSerializableElement(
           descriptor,
           27 + descriptorOffset,
           Hoisted.subjectCodeableConceptSer,
-          choice.value,
+          choice,
         )
       }
-      is ResearchElementDefinition.Subject.Reference -> {
+      is Reference -> {
         encoder.encodeSerializableElement(
           descriptor,
           28 + descriptorOffset,
           Hoisted.subjectReferenceSer,
-          choice.value,
+          choice,
         )
       }
     }

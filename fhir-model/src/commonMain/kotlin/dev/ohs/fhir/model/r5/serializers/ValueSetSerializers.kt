@@ -21,6 +21,7 @@ package dev.ohs.fhir.model.r5.serializers
 import dev.ohs.fhir.model.r5.Boolean as R5Boolean
 import dev.ohs.fhir.model.r5.Canonical
 import dev.ohs.fhir.model.r5.Code
+import dev.ohs.fhir.model.r5.CodeBox
 import dev.ohs.fhir.model.r5.CodeableConcept
 import dev.ohs.fhir.model.r5.Coding
 import dev.ohs.fhir.model.r5.ContactDetail
@@ -42,6 +43,7 @@ import dev.ohs.fhir.model.r5.Period
 import dev.ohs.fhir.model.r5.RelatedArtifact
 import dev.ohs.fhir.model.r5.Resource
 import dev.ohs.fhir.model.r5.String as R5String
+import dev.ohs.fhir.model.r5.StringBox
 import dev.ohs.fhir.model.r5.Uri
 import dev.ohs.fhir.model.r5.UsageContext
 import dev.ohs.fhir.model.r5.ValueSet
@@ -1068,15 +1070,13 @@ internal object ValueSetExpansionParameterSerializer : KSerializer<ValueSet.Expa
       modifierExtension = modifierExtension ?: listOf(),
       name = R5String.of(name, _name)!!,
       `value` =
-        ValueSet.Expansion.Parameter.Value.from(
-          R5String.of(valueString, _valueString),
-          R5Boolean.of(valueBoolean, _valueBoolean),
-          Integer.of(valueInteger, _valueInteger),
-          Decimal.of(valueDecimal, _valueDecimal),
-          Uri.of(valueUri, _valueUri),
-          Code.of(valueCode, _valueCode),
-          DateTime.of(FhirDateTime.fromString(valueDateTime), _valueDateTime),
-        ),
+        ((R5String.of(valueString, _valueString))?.let { StringBox(it) }
+          ?: R5Boolean.of(valueBoolean, _valueBoolean)
+          ?: Integer.of(valueInteger, _valueInteger)
+          ?: Decimal.of(valueDecimal, _valueDecimal)
+          ?: Uri.of(valueUri, _valueUri)
+          ?: (Code.of(valueCode, _valueCode))?.let { CodeBox(it) }
+          ?: DateTime.of(FhirDateTime.fromString(valueDateTime), _valueDateTime)),
     )
   }
 
@@ -1097,47 +1097,47 @@ internal object ValueSetExpansionParameterSerializer : KSerializer<ValueSet.Expa
     }
     when (val choice = value.`value`) {
       null -> {}
-      is ValueSet.Expansion.Parameter.Value.String -> {
+      is StringBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 6, Hoisted.nameSer, it)
         }
       }
-      is ValueSet.Expansion.Parameter.Value.Boolean -> {
-        ((choice.value.value))?.let { encoder.encodeBooleanElement(descriptor, 7, it) }
-        (choice.value.toElement())?.let {
+      is R5Boolean -> {
+        ((choice.value))?.let { encoder.encodeBooleanElement(descriptor, 7, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 8, Hoisted.nameSer, it)
         }
       }
-      is ValueSet.Expansion.Parameter.Value.Integer -> {
-        ((choice.value.value))?.let { encoder.encodeIntElement(descriptor, 9, it) }
-        (choice.value.toElement())?.let {
+      is Integer -> {
+        ((choice.value))?.let { encoder.encodeIntElement(descriptor, 9, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 10, Hoisted.nameSer, it)
         }
       }
-      is ValueSet.Expansion.Parameter.Value.Decimal -> {
-        ((choice.value.value))?.let {
+      is Decimal -> {
+        ((choice.value))?.let {
           encoder.encodeSerializableElement(descriptor, 11, FhirDecimalSerializer, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 12, Hoisted.nameSer, it)
         }
       }
-      is ValueSet.Expansion.Parameter.Value.Uri -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 13, it) }
-        (choice.value.toElement())?.let {
+      is Uri -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 13, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 14, Hoisted.nameSer, it)
         }
       }
-      is ValueSet.Expansion.Parameter.Value.Code -> {
+      is CodeBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 15, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 16, Hoisted.nameSer, it)
         }
       }
-      is ValueSet.Expansion.Parameter.Value.DateTime -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 17, it) }
-        (choice.value.toElement())?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 17, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 18, Hoisted.nameSer, it)
         }
       }
@@ -1574,15 +1574,13 @@ internal object ValueSetExpansionContainsPropertySerializer :
       modifierExtension = modifierExtension ?: listOf(),
       code = Code.of(code, _code)!!,
       `value` =
-        ValueSet.Expansion.Contains.Property.Value.from(
-          Code.of(valueCode, _valueCode),
-          valueCoding,
-          R5String.of(valueString, _valueString),
-          Integer.of(valueInteger, _valueInteger),
-          R5Boolean.of(valueBoolean, _valueBoolean),
-          DateTime.of(FhirDateTime.fromString(valueDateTime), _valueDateTime),
-          Decimal.of(valueDecimal, _valueDecimal),
-        )!!,
+        ((Code.of(valueCode, _valueCode))?.let { CodeBox(it) }
+          ?: valueCoding
+          ?: (R5String.of(valueString, _valueString))?.let { StringBox(it) }
+          ?: Integer.of(valueInteger, _valueInteger)
+          ?: R5Boolean.of(valueBoolean, _valueBoolean)
+          ?: DateTime.of(FhirDateTime.fromString(valueDateTime), _valueDateTime)
+          ?: Decimal.of(valueDecimal, _valueDecimal))!!,
       subProperty = subProperty ?: listOf(),
     )
   }
@@ -1606,44 +1604,44 @@ internal object ValueSetExpansionContainsPropertySerializer :
       encoder.encodeSerializableElement(descriptor, 4, Hoisted.codeSer, it)
     }
     when (val choice = value.`value`) {
-      is ValueSet.Expansion.Contains.Property.Value.Code -> {
+      is CodeBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 6, Hoisted.codeSer, it)
         }
       }
-      is ValueSet.Expansion.Contains.Property.Value.Coding -> {
-        encoder.encodeSerializableElement(descriptor, 7, Hoisted.valueCodingSer, choice.value)
+      is Coding -> {
+        encoder.encodeSerializableElement(descriptor, 7, Hoisted.valueCodingSer, choice)
       }
-      is ValueSet.Expansion.Contains.Property.Value.String -> {
+      is StringBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 8, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 9, Hoisted.codeSer, it)
         }
       }
-      is ValueSet.Expansion.Contains.Property.Value.Integer -> {
-        ((choice.value.value))?.let { encoder.encodeIntElement(descriptor, 10, it) }
-        (choice.value.toElement())?.let {
+      is Integer -> {
+        ((choice.value))?.let { encoder.encodeIntElement(descriptor, 10, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 11, Hoisted.codeSer, it)
         }
       }
-      is ValueSet.Expansion.Contains.Property.Value.Boolean -> {
-        ((choice.value.value))?.let { encoder.encodeBooleanElement(descriptor, 12, it) }
-        (choice.value.toElement())?.let {
+      is R5Boolean -> {
+        ((choice.value))?.let { encoder.encodeBooleanElement(descriptor, 12, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 13, Hoisted.codeSer, it)
         }
       }
-      is ValueSet.Expansion.Contains.Property.Value.DateTime -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 14, it) }
-        (choice.value.toElement())?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 14, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 15, Hoisted.codeSer, it)
         }
       }
-      is ValueSet.Expansion.Contains.Property.Value.Decimal -> {
-        ((choice.value.value))?.let {
+      is Decimal -> {
+        ((choice.value))?.let {
           encoder.encodeSerializableElement(descriptor, 16, FhirDecimalSerializer, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 17, Hoisted.codeSer, it)
         }
       }
@@ -1783,15 +1781,13 @@ internal object ValueSetExpansionContainsPropertySubPropertySerializer :
       modifierExtension = modifierExtension ?: listOf(),
       code = Code.of(code, _code)!!,
       `value` =
-        ValueSet.Expansion.Contains.Property.SubProperty.Value.from(
-          Code.of(valueCode, _valueCode),
-          valueCoding,
-          R5String.of(valueString, _valueString),
-          Integer.of(valueInteger, _valueInteger),
-          R5Boolean.of(valueBoolean, _valueBoolean),
-          DateTime.of(FhirDateTime.fromString(valueDateTime), _valueDateTime),
-          Decimal.of(valueDecimal, _valueDecimal),
-        )!!,
+        ((Code.of(valueCode, _valueCode))?.let { CodeBox(it) }
+          ?: valueCoding
+          ?: (R5String.of(valueString, _valueString))?.let { StringBox(it) }
+          ?: Integer.of(valueInteger, _valueInteger)
+          ?: R5Boolean.of(valueBoolean, _valueBoolean)
+          ?: DateTime.of(FhirDateTime.fromString(valueDateTime), _valueDateTime)
+          ?: Decimal.of(valueDecimal, _valueDecimal))!!,
     )
   }
 
@@ -1814,44 +1810,44 @@ internal object ValueSetExpansionContainsPropertySubPropertySerializer :
       encoder.encodeSerializableElement(descriptor, 4, Hoisted.codeSer, it)
     }
     when (val choice = value.`value`) {
-      is ValueSet.Expansion.Contains.Property.SubProperty.Value.Code -> {
+      is CodeBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 6, Hoisted.codeSer, it)
         }
       }
-      is ValueSet.Expansion.Contains.Property.SubProperty.Value.Coding -> {
-        encoder.encodeSerializableElement(descriptor, 7, Hoisted.valueCodingSer, choice.value)
+      is Coding -> {
+        encoder.encodeSerializableElement(descriptor, 7, Hoisted.valueCodingSer, choice)
       }
-      is ValueSet.Expansion.Contains.Property.SubProperty.Value.String -> {
+      is StringBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 8, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 9, Hoisted.codeSer, it)
         }
       }
-      is ValueSet.Expansion.Contains.Property.SubProperty.Value.Integer -> {
-        ((choice.value.value))?.let { encoder.encodeIntElement(descriptor, 10, it) }
-        (choice.value.toElement())?.let {
+      is Integer -> {
+        ((choice.value))?.let { encoder.encodeIntElement(descriptor, 10, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 11, Hoisted.codeSer, it)
         }
       }
-      is ValueSet.Expansion.Contains.Property.SubProperty.Value.Boolean -> {
-        ((choice.value.value))?.let { encoder.encodeBooleanElement(descriptor, 12, it) }
-        (choice.value.toElement())?.let {
+      is R5Boolean -> {
+        ((choice.value))?.let { encoder.encodeBooleanElement(descriptor, 12, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 13, Hoisted.codeSer, it)
         }
       }
-      is ValueSet.Expansion.Contains.Property.SubProperty.Value.DateTime -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 14, it) }
-        (choice.value.toElement())?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 14, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 15, Hoisted.codeSer, it)
         }
       }
-      is ValueSet.Expansion.Contains.Property.SubProperty.Value.Decimal -> {
-        ((choice.value.value))?.let {
+      is Decimal -> {
+        ((choice.value))?.let {
           encoder.encodeSerializableElement(descriptor, 16, FhirDecimalSerializer, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 17, Hoisted.codeSer, it)
         }
       }
@@ -2339,10 +2335,7 @@ internal object ValueSetSerializer : KSerializer<ValueSet> {
       identifier = identifier ?: listOf(),
       version = R5String.of(version, _version),
       versionAlgorithm =
-        ValueSet.VersionAlgorithm.from(
-          R5String.of(versionAlgorithmString, _versionAlgorithmString),
-          versionAlgorithmCoding,
-        ),
+        (R5String.of(versionAlgorithmString, _versionAlgorithmString) ?: versionAlgorithmCoding),
       name = R5String.of(name, _name),
       title = R5String.of(title, _title),
       status = Enumeration.of(PublicationStatus.fromCode(status!!), _status),
@@ -2457,11 +2450,9 @@ internal object ValueSetSerializer : KSerializer<ValueSet> {
     }
     when (val choice = value.versionAlgorithm) {
       null -> {}
-      is ValueSet.VersionAlgorithm.String -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 15 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is R5String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 15 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             16 + descriptorOffset,
@@ -2470,12 +2461,12 @@ internal object ValueSetSerializer : KSerializer<ValueSet> {
           )
         }
       }
-      is ValueSet.VersionAlgorithm.Coding -> {
+      is Coding -> {
         encoder.encodeSerializableElement(
           descriptor,
           17 + descriptorOffset,
           Hoisted.versionAlgorithmCodingSer,
-          choice.value,
+          choice,
         )
       }
     }

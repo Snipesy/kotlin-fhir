@@ -23,7 +23,6 @@ import dev.ohs.fhir.model.r5.serializers.CoveragePaymentBySerializer
 import dev.ohs.fhir.model.r5.serializers.CoverageSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -598,8 +597,10 @@ public data class Coverage(
      *
      * Amount may be expressed as a percentage of the service/product cost or a fixed amount of
      * currency.
+     *
+     * A FHIR choice type — one of: [Money] | [Quantity]
      */
-    public val `value`: Value? = null,
+    public val `value`: CostToBeneficiary.Value? = null,
     /**
      * A suite of codes indicating exceptions or reductions to patient costs and their effective
      * periods.
@@ -738,28 +739,6 @@ public data class Coverage(
       }
     }
 
-    public sealed interface Value {
-      public fun asQuantity(): Quantity? = this as? Quantity
-
-      public fun asMoney(): Money? = this as? Money
-
-      @JvmInline
-      public value class Quantity(public val `value`: dev.ohs.fhir.model.r5.Quantity) : Value
-
-      @JvmInline public value class Money(public val `value`: dev.ohs.fhir.model.r5.Money) : Value
-
-      public companion object {
-        internal fun from(
-          quantityValue: dev.ohs.fhir.model.r5.Quantity?,
-          moneyValue: dev.ohs.fhir.model.r5.Money?,
-        ): Value? {
-          if (quantityValue != null) return Quantity(quantityValue)
-          if (moneyValue != null) return Money(moneyValue)
-          return null
-        }
-      }
-    }
-
     public class Builder() {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -836,8 +815,10 @@ public data class Coverage(
        *
        * Amount may be expressed as a percentage of the service/product cost or a fixed amount of
        * currency.
+       *
+       * A FHIR choice type — one of: [Money] | [Quantity]
        */
-      public var `value`: Value? = null
+      public var `value`: CostToBeneficiary.Value? = null
 
       /**
        * A suite of codes indicating exceptions or reductions to patient costs and their effective
@@ -859,6 +840,9 @@ public data class Coverage(
           exception = exception.map { it.build() },
         )
     }
+
+    /** A FHIR choice type — one of: [Money] | [Quantity] */
+    public typealias Value = FhirChoiceTypes.MoneyOrQuantity
   }
 
   public class Builder(

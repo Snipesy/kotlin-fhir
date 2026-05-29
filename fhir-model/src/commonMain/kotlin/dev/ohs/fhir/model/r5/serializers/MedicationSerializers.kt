@@ -140,12 +140,7 @@ internal object MedicationIngredientSerializer : KSerializer<Medication.Ingredie
       modifierExtension = modifierExtension ?: listOf(),
       item = item!!,
       isActive = R5Boolean.of(isActive, _isActive),
-      strength =
-        Medication.Ingredient.Strength.from(
-          strengthRatio,
-          strengthCodeableConcept,
-          strengthQuantity,
-        ),
+      strength = (strengthRatio ?: strengthCodeableConcept ?: strengthQuantity),
     )
   }
 
@@ -167,19 +162,14 @@ internal object MedicationIngredientSerializer : KSerializer<Medication.Ingredie
     }
     when (val choice = value.strength) {
       null -> {}
-      is Medication.Ingredient.Strength.Ratio -> {
-        encoder.encodeSerializableElement(descriptor, 6, Hoisted.strengthRatioSer, choice.value)
+      is Ratio -> {
+        encoder.encodeSerializableElement(descriptor, 6, Hoisted.strengthRatioSer, choice)
       }
-      is Medication.Ingredient.Strength.CodeableConcept -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          7,
-          Hoisted.strengthCodeableConceptSer,
-          choice.value,
-        )
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 7, Hoisted.strengthCodeableConceptSer, choice)
       }
-      is Medication.Ingredient.Strength.Quantity -> {
-        encoder.encodeSerializableElement(descriptor, 8, Hoisted.strengthQuantitySer, choice.value)
+      is Quantity -> {
+        encoder.encodeSerializableElement(descriptor, 8, Hoisted.strengthQuantitySer, choice)
       }
     }
   }

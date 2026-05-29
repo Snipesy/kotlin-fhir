@@ -27,7 +27,6 @@ import dev.ohs.fhir.model.r5.serializers.TestPlanTestCaseTestRunSerializer
 import dev.ohs.fhir.model.r5.terminologies.PublicationStatus
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -181,8 +180,10 @@ public data class TestPlan(
    * passed in - %version1 and %version2 and will return a negative number if version1 is newer, a
    * positive number if version2 and a 0 if the version ordering can't be successfully be
    * determined.
+   *
+   * A FHIR choice type — one of: [Coding] | [String]
    */
-  public val versionAlgorithm: VersionAlgorithm? = null,
+  public val versionAlgorithm: TestPlan.VersionAlgorithm? = null,
   /**
    * A natural language name identifying the test plan. This name should be usable as an identifier
    * for the module by machine processing applications such as code generation.
@@ -777,8 +778,10 @@ public data class TestPlan(
         /**
          * The actual content of the cases - references to TestScripts or externally defined
          * content.
+         *
+         * A FHIR choice type — one of: [Reference] | [String]
          */
-        public val source: Source? = null,
+        public val source: Script.Source? = null,
       ) : BackboneElement() {
         public fun toBuilder(): Builder =
           with(this) {
@@ -790,30 +793,6 @@ public data class TestPlan(
               source = this@with.source
             }
           }
-
-        public sealed interface Source {
-          public fun asString(): String? = this as? String
-
-          public fun asReference(): Reference? = this as? Reference
-
-          @JvmInline
-          public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : Source
-
-          @JvmInline
-          public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) :
-            Source
-
-          public companion object {
-            internal fun from(
-              stringValue: dev.ohs.fhir.model.r5.String?,
-              referenceValue: dev.ohs.fhir.model.r5.Reference?,
-            ): Source? {
-              if (stringValue != null) return String(stringValue)
-              if (referenceValue != null) return Reference(referenceValue)
-              return null
-            }
-          }
-        }
 
         public class Builder() {
           /**
@@ -862,8 +841,10 @@ public data class TestPlan(
           /**
            * The actual content of the cases - references to TestScripts or externally defined
            * content.
+           *
+           * A FHIR choice type — one of: [Reference] | [String]
            */
-          public var source: Source? = null
+          public var source: Script.Source? = null
 
           public fun build(): Script =
             Script(
@@ -874,6 +855,9 @@ public data class TestPlan(
               source = source,
             )
         }
+
+        /** A FHIR choice type — one of: [Reference] | [String] */
+        public typealias Source = FhirChoiceTypes.ReferenceOrString
       }
 
       public class Builder() {
@@ -981,8 +965,10 @@ public data class TestPlan(
       /**
        * Pointer to a definition of test resources - narrative or structured e.g. synthetic data
        * generation, etc.
+       *
+       * A FHIR choice type — one of: [Reference] | [String]
        */
-      public val source: Source? = null,
+      public val source: TestData.Source? = null,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -994,29 +980,6 @@ public data class TestPlan(
             source = this@with.source
           }
         }
-
-      public sealed interface Source {
-        public fun asString(): String? = this as? String
-
-        public fun asReference(): Reference? = this as? Reference
-
-        @JvmInline
-        public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : Source
-
-        @JvmInline
-        public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : Source
-
-        public companion object {
-          internal fun from(
-            stringValue: dev.ohs.fhir.model.r5.String?,
-            referenceValue: dev.ohs.fhir.model.r5.Reference?,
-          ): Source? {
-            if (stringValue != null) return String(stringValue)
-            if (referenceValue != null) return Reference(referenceValue)
-            return null
-          }
-        }
-      }
 
       public class Builder(
         /** The type of test data description, e.g. 'synthea'. */
@@ -1068,8 +1031,10 @@ public data class TestPlan(
         /**
          * Pointer to a definition of test resources - narrative or structured e.g. synthetic data
          * generation, etc.
+         *
+         * A FHIR choice type — one of: [Reference] | [String]
          */
-        public var source: Source? = null
+        public var source: TestData.Source? = null
 
         public fun build(): TestData =
           TestData(
@@ -1081,6 +1046,9 @@ public data class TestPlan(
             source = source,
           )
       }
+
+      /** A FHIR choice type — one of: [Reference] | [String] */
+      public typealias Source = FhirChoiceTypes.ReferenceOrString
     }
 
     /**
@@ -1294,29 +1262,6 @@ public data class TestPlan(
     }
   }
 
-  public sealed interface VersionAlgorithm {
-    public fun asString(): String? = this as? String
-
-    public fun asCoding(): Coding? = this as? Coding
-
-    @JvmInline
-    public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : VersionAlgorithm
-
-    @JvmInline
-    public value class Coding(public val `value`: dev.ohs.fhir.model.r5.Coding) : VersionAlgorithm
-
-    public companion object {
-      internal fun from(
-        stringValue: dev.ohs.fhir.model.r5.String?,
-        codingValue: dev.ohs.fhir.model.r5.Coding?,
-      ): VersionAlgorithm? {
-        if (stringValue != null) return String(stringValue)
-        if (codingValue != null) return Coding(codingValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
     /**
      * The status of this test plan. Enables tracking the life-cycle of the content.
@@ -1486,8 +1431,10 @@ public data class TestPlan(
      * passed in - %version1 and %version2 and will return a negative number if version1 is newer, a
      * positive number if version2 and a 0 if the version ordering can't be successfully be
      * determined.
+     *
+     * A FHIR choice type — one of: [Coding] | [String]
      */
-    public var versionAlgorithm: VersionAlgorithm? = null
+    public var versionAlgorithm: TestPlan.VersionAlgorithm? = null
 
     /**
      * A natural language name identifying the test plan. This name should be usable as an
@@ -1675,4 +1622,7 @@ public data class TestPlan(
         testCase = testCase.map { it.build() },
       )
   }
+
+  /** A FHIR choice type — one of: [Coding] | [String] */
+  public typealias VersionAlgorithm = FhirChoiceTypes.CodingOrString
 }

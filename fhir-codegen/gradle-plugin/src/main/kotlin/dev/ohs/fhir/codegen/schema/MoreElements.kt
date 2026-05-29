@@ -21,9 +21,6 @@ import dev.ohs.fhir.codegen.schema.valueset.ValueSet
 
 internal fun Element.getElementName() = path.substringAfterLast('.').removeSuffix("[x]")
 
-internal fun Element.getPathSimpleNames(): List<String> =
-  path.replace("[x]", "").split(".").map { it.capitalized() }
-
 /**
  * Determines if an [Element] is a BackboneElement.
  *

@@ -23,7 +23,6 @@ import dev.ohs.fhir.model.r5.serializers.MedicationRequestSubstitutionSerializer
 import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -844,8 +843,10 @@ public data class MedicationRequest(
      *
      * This element is labeled as a modifier because whether substitution is allow or not, it cannot
      * be ignored.
+     *
+     * A FHIR choice type — one of: [Boolean] | [CodeableConcept]
      */
-    public val allowed: Allowed,
+    public val allowed: Substitution.Allowed,
     /**
      * Indicates the reason for the substitution, or why substitution must or must not be performed.
      */
@@ -861,39 +862,16 @@ public data class MedicationRequest(
         }
       }
 
-    public sealed interface Allowed {
-      public fun asBoolean(): Boolean? = this as? Boolean
-
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      @JvmInline
-      public value class Boolean(public val `value`: dev.ohs.fhir.model.r5.Boolean) : Allowed
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r5.CodeableConcept
-      ) : Allowed
-
-      public companion object {
-        internal fun from(
-          booleanValue: dev.ohs.fhir.model.r5.Boolean?,
-          codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-        ): Allowed? {
-          if (booleanValue != null) return Boolean(booleanValue)
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          return null
-        }
-      }
-    }
-
     public class Builder(
       /**
        * True if the prescriber allows a different drug to be dispensed from what was prescribed.
        *
        * This element is labeled as a modifier because whether substitution is allow or not, it
        * cannot be ignored.
+       *
+       * A FHIR choice type — one of: [Boolean] | [CodeableConcept]
        */
-      public var allowed: Allowed
+      public var allowed: Substitution.Allowed
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -950,6 +928,9 @@ public data class MedicationRequest(
           reason = reason?.build(),
         )
     }
+
+    /** A FHIR choice type — one of: [Boolean] | [CodeableConcept] */
+    public typealias Allowed = FhirChoiceTypes.BooleanOrCodeableConcept
   }
 
   public class Builder(

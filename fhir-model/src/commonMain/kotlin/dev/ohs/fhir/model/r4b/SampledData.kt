@@ -89,7 +89,7 @@ public data class SampledData(
    * for any actual use of a SampledData.
    */
   public val `data`: String? = null,
-) : Element() {
+) : Element(), FhirChoiceParticipants.SampledDataChoices {
   public fun toBuilder(): Builder =
     with(this) {
       Builder(origin.toBuilder(), period.toBuilder(), dimensions.toBuilder()).apply {

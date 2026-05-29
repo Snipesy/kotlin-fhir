@@ -24,7 +24,6 @@ import dev.ohs.fhir.model.r5.serializers.CoverageEligibilityResponseInsuranceSer
 import dev.ohs.fhir.model.r5.serializers.CoverageEligibilityResponseSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -155,8 +154,12 @@ public data class CoverageEligibilityResponse(
   public val patient: Reference,
   /** Information code for an event with a corresponding date or period. */
   public val event: List<Event> = listOf(),
-  /** The date or dates when the enclosed suite of services were performed or completed. */
-  public val serviced: Serviced? = null,
+  /**
+   * The date or dates when the enclosed suite of services were performed or completed.
+   *
+   * A FHIR choice type — one of: [Date] | [Period]
+   */
+  public val serviced: CoverageEligibilityResponse.Serviced? = null,
   /** The date this resource was created. */
   public val created: DateTime,
   /**
@@ -285,8 +288,10 @@ public data class CoverageEligibilityResponse(
     /**
      * A date or period in the past or future indicating when the event occurred or is expectd to
      * occur.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Period]
      */
-    public val `when`: When,
+    public val `when`: Event.When,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -297,36 +302,16 @@ public data class CoverageEligibilityResponse(
         }
       }
 
-    public sealed interface When {
-      public fun asDateTime(): DateTime? = this as? DateTime
-
-      public fun asPeriod(): Period? = this as? Period
-
-      @JvmInline
-      public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) : When
-
-      @JvmInline public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) : When
-
-      public companion object {
-        internal fun from(
-          dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-          periodValue: dev.ohs.fhir.model.r5.Period?,
-        ): When? {
-          if (dateTimeValue != null) return DateTime(dateTimeValue)
-          if (periodValue != null) return Period(periodValue)
-          return null
-        }
-      }
-    }
-
     public class Builder(
       /** A coded event such as when a service is expected or a card printed. */
       public var type: CodeableConcept.Builder,
       /**
        * A date or period in the past or future indicating when the event occurred or is expectd to
        * occur.
+       *
+       * A FHIR choice type — one of: [DateTime] | [Period]
        */
-      public var `when`: When,
+      public var `when`: Event.When,
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -377,6 +362,9 @@ public data class CoverageEligibilityResponse(
           `when` = `when`,
         )
     }
+
+    /** A FHIR choice type — one of: [DateTime] | [Period] */
+    public typealias When = FhirChoiceTypes.DateTimeOrPeriod
   }
 
   /** Financial instruments for reimbursement for the health care products and services. */
@@ -632,10 +620,18 @@ public data class CoverageEligibilityResponse(
          * For example: deductible, visits, benefit amount.
          */
         public val type: CodeableConcept,
-        /** The quantity of the benefit which is permitted under the coverage. */
-        public val allowed: Allowed? = null,
-        /** The quantity of the benefit which have been consumed to date. */
-        public val used: Used? = null,
+        /**
+         * The quantity of the benefit which is permitted under the coverage.
+         *
+         * A FHIR choice type — one of: [Money] | [String] | [UnsignedInt]
+         */
+        public val allowed: Benefit.Allowed? = null,
+        /**
+         * The quantity of the benefit which have been consumed to date.
+         *
+         * A FHIR choice type — one of: [Money] | [String] | [UnsignedInt]
+         */
+        public val used: Benefit.Used? = null,
       ) : BackboneElement() {
         public fun toBuilder(): Builder =
           with(this) {
@@ -647,68 +643,6 @@ public data class CoverageEligibilityResponse(
               used = this@with.used
             }
           }
-
-        public sealed interface Allowed {
-          public fun asUnsignedInt(): UnsignedInt? = this as? UnsignedInt
-
-          public fun asString(): String? = this as? String
-
-          public fun asMoney(): Money? = this as? Money
-
-          @JvmInline
-          public value class UnsignedInt(public val `value`: dev.ohs.fhir.model.r5.UnsignedInt) :
-            Allowed
-
-          @JvmInline
-          public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : Allowed
-
-          @JvmInline
-          public value class Money(public val `value`: dev.ohs.fhir.model.r5.Money) : Allowed
-
-          public companion object {
-            internal fun from(
-              unsignedIntValue: dev.ohs.fhir.model.r5.UnsignedInt?,
-              stringValue: dev.ohs.fhir.model.r5.String?,
-              moneyValue: dev.ohs.fhir.model.r5.Money?,
-            ): Allowed? {
-              if (unsignedIntValue != null) return UnsignedInt(unsignedIntValue)
-              if (stringValue != null) return String(stringValue)
-              if (moneyValue != null) return Money(moneyValue)
-              return null
-            }
-          }
-        }
-
-        public sealed interface Used {
-          public fun asUnsignedInt(): UnsignedInt? = this as? UnsignedInt
-
-          public fun asString(): String? = this as? String
-
-          public fun asMoney(): Money? = this as? Money
-
-          @JvmInline
-          public value class UnsignedInt(public val `value`: dev.ohs.fhir.model.r5.UnsignedInt) :
-            Used
-
-          @JvmInline
-          public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : Used
-
-          @JvmInline
-          public value class Money(public val `value`: dev.ohs.fhir.model.r5.Money) : Used
-
-          public companion object {
-            internal fun from(
-              unsignedIntValue: dev.ohs.fhir.model.r5.UnsignedInt?,
-              stringValue: dev.ohs.fhir.model.r5.String?,
-              moneyValue: dev.ohs.fhir.model.r5.Money?,
-            ): Used? {
-              if (unsignedIntValue != null) return UnsignedInt(unsignedIntValue)
-              if (stringValue != null) return String(stringValue)
-              if (moneyValue != null) return Money(moneyValue)
-              return null
-            }
-          }
-        }
 
         public class Builder(
           /**
@@ -758,11 +692,19 @@ public data class CoverageEligibilityResponse(
            */
           public var modifierExtension: MutableList<Extension.Builder> = mutableListOf()
 
-          /** The quantity of the benefit which is permitted under the coverage. */
-          public var allowed: Allowed? = null
+          /**
+           * The quantity of the benefit which is permitted under the coverage.
+           *
+           * A FHIR choice type — one of: [Money] | [String] | [UnsignedInt]
+           */
+          public var allowed: Benefit.Allowed? = null
 
-          /** The quantity of the benefit which have been consumed to date. */
-          public var used: Used? = null
+          /**
+           * The quantity of the benefit which have been consumed to date.
+           *
+           * A FHIR choice type — one of: [Money] | [String] | [UnsignedInt]
+           */
+          public var used: Benefit.Used? = null
 
           public fun build(): Benefit =
             Benefit(
@@ -774,6 +716,12 @@ public data class CoverageEligibilityResponse(
               used = used,
             )
         }
+
+        /** A FHIR choice type — one of: [Money] | [String] | [UnsignedInt] */
+        public typealias Allowed = FhirChoiceTypes.MoneyOrStringOrUnsignedInt
+
+        /** A FHIR choice type — one of: [Money] | [String] | [UnsignedInt] */
+        public typealias Used = FhirChoiceTypes.MoneyOrStringOrUnsignedInt
       }
 
       public class Builder() {
@@ -1132,28 +1080,6 @@ public data class CoverageEligibilityResponse(
     }
   }
 
-  public sealed interface Serviced {
-    public fun asDate(): Date? = this as? Date
-
-    public fun asPeriod(): Period? = this as? Period
-
-    @JvmInline public value class Date(public val `value`: dev.ohs.fhir.model.r5.Date) : Serviced
-
-    @JvmInline
-    public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) : Serviced
-
-    public companion object {
-      internal fun from(
-        dateValue: dev.ohs.fhir.model.r5.Date?,
-        periodValue: dev.ohs.fhir.model.r5.Period?,
-      ): Serviced? {
-        if (dateValue != null) return Date(dateValue)
-        if (periodValue != null) return Period(periodValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
     /**
      * The status of the resource instance.
@@ -1302,8 +1228,12 @@ public data class CoverageEligibilityResponse(
     /** Information code for an event with a corresponding date or period. */
     public var event: MutableList<Event.Builder> = mutableListOf()
 
-    /** The date or dates when the enclosed suite of services were performed or completed. */
-    public var serviced: Serviced? = null
+    /**
+     * The date or dates when the enclosed suite of services were performed or completed.
+     *
+     * A FHIR choice type — one of: [Date] | [Period]
+     */
+    public var serviced: CoverageEligibilityResponse.Serviced? = null
 
     /**
      * The provider which is responsible for the request.
@@ -1479,4 +1409,7 @@ public data class CoverageEligibilityResponse(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [Date] | [Period] */
+  public typealias Serviced = FhirChoiceTypes.DateOrPeriod
 }

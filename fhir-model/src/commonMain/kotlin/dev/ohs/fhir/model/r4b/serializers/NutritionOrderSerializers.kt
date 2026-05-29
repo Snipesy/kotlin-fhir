@@ -830,7 +830,7 @@ internal object NutritionOrderEnteralFormulaAdministrationSerializer :
       modifierExtension = modifierExtension ?: listOf(),
       schedule = schedule,
       quantity = quantity,
-      rate = NutritionOrder.EnteralFormula.Administration.Rate.from(rateQuantity, rateRatio),
+      rate = (rateQuantity ?: rateRatio),
     )
   }
 
@@ -856,11 +856,11 @@ internal object NutritionOrderEnteralFormulaAdministrationSerializer :
     }
     when (val choice = value.rate) {
       null -> {}
-      is NutritionOrder.EnteralFormula.Administration.Rate.Quantity -> {
-        encoder.encodeSerializableElement(descriptor, 5, Hoisted.quantitySer, choice.value)
+      is Quantity -> {
+        encoder.encodeSerializableElement(descriptor, 5, Hoisted.quantitySer, choice)
       }
-      is NutritionOrder.EnteralFormula.Administration.Rate.Ratio -> {
-        encoder.encodeSerializableElement(descriptor, 6, Hoisted.rateRatioSer, choice.value)
+      is Ratio -> {
+        encoder.encodeSerializableElement(descriptor, 6, Hoisted.rateRatioSer, choice)
       }
     }
   }

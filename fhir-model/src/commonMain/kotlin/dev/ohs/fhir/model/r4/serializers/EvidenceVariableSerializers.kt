@@ -272,26 +272,22 @@ internal object EvidenceVariableCharacteristicSerializer :
       modifierExtension = modifierExtension ?: listOf(),
       description = R4String.of(description, _description),
       definition =
-        EvidenceVariable.Characteristic.Definition.from(
-          definitionReference,
-          Canonical.of(definitionCanonical, _definitionCanonical),
-          definitionCodeableConcept,
-          definitionExpression,
-          definitionDataRequirement,
-          definitionTriggerDefinition,
-        )!!,
+        (definitionReference
+          ?: Canonical.of(definitionCanonical, _definitionCanonical)
+          ?: definitionCodeableConcept
+          ?: definitionExpression
+          ?: definitionDataRequirement
+          ?: definitionTriggerDefinition)!!,
       usageContext = usageContext ?: listOf(),
       exclude = R4Boolean.of(exclude, _exclude),
       participantEffective =
-        EvidenceVariable.Characteristic.ParticipantEffective.from(
-          DateTime.of(
-            FhirDateTime.fromString(participantEffectiveDateTime),
-            _participantEffectiveDateTime,
-          ),
-          participantEffectivePeriod,
-          participantEffectiveDuration,
-          participantEffectiveTiming,
-        ),
+        (DateTime.of(
+          FhirDateTime.fromString(participantEffectiveDateTime),
+          _participantEffectiveDateTime,
+        )
+          ?: participantEffectivePeriod
+          ?: participantEffectiveDuration
+          ?: participantEffectiveTiming),
       timeFromStart = timeFromStart,
       groupMeasure =
         groupMeasure?.let {
@@ -319,50 +315,40 @@ internal object EvidenceVariableCharacteristicSerializer :
       encoder.encodeSerializableElement(descriptor, 4, Hoisted.descriptionSer, it)
     }
     when (val choice = value.definition) {
-      is EvidenceVariable.Characteristic.Definition.Reference -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          5,
-          Hoisted.definitionReferenceSer,
-          choice.value,
-        )
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 5, Hoisted.definitionReferenceSer, choice)
       }
-      is EvidenceVariable.Characteristic.Definition.Canonical -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 6, it) }
-        (choice.value.toElement())?.let {
+      is Canonical -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 6, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 7, Hoisted.descriptionSer, it)
         }
       }
-      is EvidenceVariable.Characteristic.Definition.CodeableConcept -> {
+      is CodeableConcept -> {
         encoder.encodeSerializableElement(
           descriptor,
           8,
           Hoisted.definitionCodeableConceptSer,
-          choice.value,
+          choice,
         )
       }
-      is EvidenceVariable.Characteristic.Definition.Expression -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          9,
-          Hoisted.definitionExpressionSer,
-          choice.value,
-        )
+      is Expression -> {
+        encoder.encodeSerializableElement(descriptor, 9, Hoisted.definitionExpressionSer, choice)
       }
-      is EvidenceVariable.Characteristic.Definition.DataRequirement -> {
+      is DataRequirement -> {
         encoder.encodeSerializableElement(
           descriptor,
           10,
           Hoisted.definitionDataRequirementSer,
-          choice.value,
+          choice,
         )
       }
-      is EvidenceVariable.Characteristic.Definition.TriggerDefinition -> {
+      is TriggerDefinition -> {
         encoder.encodeSerializableElement(
           descriptor,
           11,
           Hoisted.definitionTriggerDefinitionSer,
-          choice.value,
+          choice,
         )
       }
     }
@@ -374,34 +360,34 @@ internal object EvidenceVariableCharacteristicSerializer :
     }
     when (val choice = value.participantEffective) {
       null -> {}
-      is EvidenceVariable.Characteristic.ParticipantEffective.DateTime -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 15, it) }
-        (choice.value.toElement())?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 15, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 16, Hoisted.descriptionSer, it)
         }
       }
-      is EvidenceVariable.Characteristic.ParticipantEffective.Period -> {
+      is Period -> {
         encoder.encodeSerializableElement(
           descriptor,
           17,
           Hoisted.participantEffectivePeriodSer,
-          choice.value,
+          choice,
         )
       }
-      is EvidenceVariable.Characteristic.ParticipantEffective.Duration -> {
+      is Duration -> {
         encoder.encodeSerializableElement(
           descriptor,
           18,
           Hoisted.participantEffectiveDurationSer,
-          choice.value,
+          choice,
         )
       }
-      is EvidenceVariable.Characteristic.ParticipantEffective.Timing -> {
+      is Timing -> {
         encoder.encodeSerializableElement(
           descriptor,
           19,
           Hoisted.participantEffectiveTimingSer,
-          choice.value,
+          choice,
         )
       }
     }

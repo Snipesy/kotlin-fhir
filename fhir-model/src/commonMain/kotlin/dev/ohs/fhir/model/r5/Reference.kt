@@ -119,7 +119,7 @@ public data class Reference(
    * to identify what's being referenced, not to fully describe it.
    */
   public val display: String? = null,
-) : DataType() {
+) : DataType(), FhirChoiceParticipants.ReferenceChoices {
   public fun toBuilder(): Builder =
     with(this) {
       Builder().apply {

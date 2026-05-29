@@ -628,13 +628,11 @@ internal object ProcedureSerializer : KSerializer<Procedure> {
       subject = subject!!,
       encounter = encounter,
       performed =
-        Procedure.Performed.from(
-          DateTime.of(FhirDateTime.fromString(performedDateTime), _performedDateTime),
-          performedPeriod,
-          R4String.of(performedString, _performedString),
-          performedAge,
-          performedRange,
-        ),
+        (DateTime.of(FhirDateTime.fromString(performedDateTime), _performedDateTime)
+          ?: performedPeriod
+          ?: R4String.of(performedString, _performedString)
+          ?: performedAge
+          ?: performedRange),
       recorder = recorder,
       asserter = asserter,
       performer = performer ?: listOf(),
@@ -814,11 +812,11 @@ internal object ProcedureSerializer : KSerializer<Procedure> {
     }
     when (val choice = value.performed) {
       null -> {}
-      is Procedure.Performed.DateTime -> {
-        ((choice.value.value?.toString()))?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let {
           encoder.encodeStringElement(descriptor, 24 + descriptorOffset, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             25 + descriptorOffset,
@@ -827,19 +825,17 @@ internal object ProcedureSerializer : KSerializer<Procedure> {
           )
         }
       }
-      is Procedure.Performed.Period -> {
+      is Period -> {
         encoder.encodeSerializableElement(
           descriptor,
           26 + descriptorOffset,
           Hoisted.performedPeriodSer,
-          choice.value,
+          choice,
         )
       }
-      is Procedure.Performed.String -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 27 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is R4String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 27 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             28 + descriptorOffset,
@@ -848,20 +844,20 @@ internal object ProcedureSerializer : KSerializer<Procedure> {
           )
         }
       }
-      is Procedure.Performed.Age -> {
+      is Age -> {
         encoder.encodeSerializableElement(
           descriptor,
           29 + descriptorOffset,
           Hoisted.performedAgeSer,
-          choice.value,
+          choice,
         )
       }
-      is Procedure.Performed.Range -> {
+      is Range -> {
         encoder.encodeSerializableElement(
           descriptor,
           30 + descriptorOffset,
           Hoisted.performedRangeSer,
-          choice.value,
+          choice,
         )
       }
     }

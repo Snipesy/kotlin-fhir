@@ -22,10 +22,8 @@ import dev.ohs.fhir.model.r5.serializers.AuditEventEntitySerializer
 import dev.ohs.fhir.model.r5.serializers.AuditEventOutcomeSerializer
 import dev.ohs.fhir.model.r5.serializers.AuditEventSerializer
 import dev.ohs.fhir.model.r5.serializers.AuditEventSourceSerializer
-import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -44,7 +42,7 @@ public data class AuditEvent(
    * like the create and conditional update. Otherwise, the use of the resouce id depends on the
    * given use case.
    */
-  override val id: String? = null,
+  override val id: kotlin.String? = null,
   /**
    * The metadata about the resource. This is content that is maintained by the infrastructure.
    * Changes to the content might not always be associated with version changes to the resource.
@@ -151,8 +149,10 @@ public data class AuditEvent(
    *
    * The time or period can be a little arbitrary; where possible, the time should correspond to
    * human assessment of the activity time.
+   *
+   * A FHIR choice type — one of: [DateTime] | [Period]
    */
-  public val occurred: Occurred? = null,
+  public val occurred: AuditEvent.Occurred? = null,
   /**
    * The time when the event was recorded.
    *
@@ -264,7 +264,7 @@ public data class AuditEvent(
      * Unique id for the element within a resource (for internal references). This may be any string
      * value that does not contain spaces.
      */
-    override val id: String? = null,
+    override val id: kotlin.String? = null,
     /**
      * May be used to represent additional information that is not part of the basic definition of
      * the element. To make the use of extensions safe and managable, there is a strict set of
@@ -337,7 +337,7 @@ public data class AuditEvent(
        * Unique id for the element within a resource (for internal references). This may be any
        * string value that does not contain spaces.
        */
-      public var id: String? = null
+      public var id: kotlin.String? = null
 
       /**
        * May be used to represent additional information that is not part of the basic definition of
@@ -399,7 +399,7 @@ public data class AuditEvent(
      * Unique id for the element within a resource (for internal references). This may be any string
      * value that does not contain spaces.
      */
-    override val id: String? = null,
+    override val id: kotlin.String? = null,
     /**
      * May be used to represent additional information that is not part of the basic definition of
      * the element. To make the use of extensions safe and managable, there is a strict set of
@@ -481,8 +481,10 @@ public data class AuditEvent(
      * to Destination. The convention for Search, given data flows both ways (query parameters vs
      * results), is to have the Source as the initiator of the Search Transaction, and the
      * Destination the responder to the Search transaction.
+     *
+     * A FHIR choice type — one of: [Reference] | [String] | [Uri]
      */
-    public val network: Network? = null,
+    public val network: Agent.Network? = null,
     /**
      * The authorization (e.g., PurposeOfUse) that was used during the event being recorded.
      *
@@ -508,35 +510,6 @@ public data class AuditEvent(
         }
       }
 
-    public sealed interface Network {
-      public fun asReference(): Reference? = this as? Reference
-
-      public fun asUri(): Uri? = this as? Uri
-
-      public fun asString(): String? = this as? String
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : Network
-
-      @JvmInline public value class Uri(public val `value`: dev.ohs.fhir.model.r5.Uri) : Network
-
-      @JvmInline
-      public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : Network
-
-      public companion object {
-        internal fun from(
-          referenceValue: dev.ohs.fhir.model.r5.Reference?,
-          uriValue: dev.ohs.fhir.model.r5.Uri?,
-          stringValue: dev.ohs.fhir.model.r5.String?,
-        ): Network? {
-          if (referenceValue != null) return Reference(referenceValue)
-          if (uriValue != null) return Uri(uriValue)
-          if (stringValue != null) return String(stringValue)
-          return null
-        }
-      }
-    }
-
     public class Builder(
       /**
        * Reference to who this agent is that was involved in the event.
@@ -550,7 +523,7 @@ public data class AuditEvent(
        * Unique id for the element within a resource (for internal references). This may be any
        * string value that does not contain spaces.
        */
-      public var id: String? = null
+      public var id: kotlin.String? = null
 
       /**
        * May be used to represent additional information that is not part of the basic definition of
@@ -633,8 +606,10 @@ public data class AuditEvent(
        * Source to Destination. The convention for Search, given data flows both ways (query
        * parameters vs results), is to have the Source as the initiator of the Search Transaction,
        * and the Destination the responder to the Search transaction.
+       *
+       * A FHIR choice type — one of: [Reference] | [String] | [Uri]
        */
-      public var network: Network? = null
+      public var network: Agent.Network? = null
 
       /**
        * The authorization (e.g., PurposeOfUse) that was used during the event being recorded.
@@ -660,6 +635,9 @@ public data class AuditEvent(
           authorization = authorization.map { it.build() },
         )
     }
+
+    /** A FHIR choice type — one of: [Reference] | [String] | [Uri] */
+    public typealias Network = FhirChoiceTypes.ReferenceOrStringOrUri
   }
 
   /** The actor that is reporting the event. */
@@ -669,7 +647,7 @@ public data class AuditEvent(
      * Unique id for the element within a resource (for internal references). This may be any string
      * value that does not contain spaces.
      */
-    override val id: String? = null,
+    override val id: kotlin.String? = null,
     /**
      * May be used to represent additional information that is not part of the basic definition of
      * the element. To make the use of extensions safe and managable, there is a strict set of
@@ -731,7 +709,7 @@ public data class AuditEvent(
        * Unique id for the element within a resource (for internal references). This may be any
        * string value that does not contain spaces.
        */
-      public var id: String? = null
+      public var id: kotlin.String? = null
 
       /**
        * May be used to represent additional information that is not part of the basic definition of
@@ -795,7 +773,7 @@ public data class AuditEvent(
      * Unique id for the element within a resource (for internal references). This may be any string
      * value that does not contain spaces.
      */
-    override val id: String? = null,
+    override val id: kotlin.String? = null,
     /**
      * May be used to represent additional information that is not part of the basic definition of
      * the element. To make the use of extensions safe and managable, there is a strict set of
@@ -898,7 +876,7 @@ public data class AuditEvent(
        * Unique id for the element within a resource (for internal references). This may be any
        * string value that does not contain spaces.
        */
-      override val id: String? = null,
+      override val id: kotlin.String? = null,
       /**
        * May be used to represent additional information that is not part of the basic definition of
        * the element. To make the use of extensions safe and managable, there is a strict set of
@@ -933,8 +911,13 @@ public data class AuditEvent(
       override val modifierExtension: List<Extension> = listOf(),
       /** The type of extra detail provided in the value. */
       public val type: CodeableConcept,
-      /** The value of the extra detail. */
-      public val `value`: Value,
+      /**
+       * The value of the extra detail.
+       *
+       * A FHIR choice type — one of: [Base64Binary] | [Boolean] | [CodeableConcept] | [DateTime] |
+       * [Integer] | [Period] | [Quantity] | [Range] | [Ratio] | [String] | [Time]
+       */
+      public val `value`: Detail.Value,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -945,105 +928,22 @@ public data class AuditEvent(
           }
         }
 
-      public sealed interface Value {
-        public fun asQuantity(): Quantity? = this as? Quantity
-
-        public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-        public fun asString(): String? = this as? String
-
-        public fun asBoolean(): Boolean? = this as? Boolean
-
-        public fun asInteger(): Integer? = this as? Integer
-
-        public fun asRange(): Range? = this as? Range
-
-        public fun asRatio(): Ratio? = this as? Ratio
-
-        public fun asTime(): Time? = this as? Time
-
-        public fun asDateTime(): DateTime? = this as? DateTime
-
-        public fun asPeriod(): Period? = this as? Period
-
-        public fun asBase64Binary(): Base64Binary? = this as? Base64Binary
-
-        @JvmInline
-        public value class Quantity(public val `value`: dev.ohs.fhir.model.r5.Quantity) : Value
-
-        @JvmInline
-        public value class CodeableConcept(
-          public val `value`: dev.ohs.fhir.model.r5.CodeableConcept
-        ) : Value
-
-        @JvmInline
-        public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : Value
-
-        @JvmInline
-        public value class Boolean(public val `value`: dev.ohs.fhir.model.r5.Boolean) : Value
-
-        @JvmInline
-        public value class Integer(public val `value`: dev.ohs.fhir.model.r5.Integer) : Value
-
-        @JvmInline
-        public value class Range(public val `value`: dev.ohs.fhir.model.r5.Range) : Value
-
-        @JvmInline
-        public value class Ratio(public val `value`: dev.ohs.fhir.model.r5.Ratio) : Value
-
-        @JvmInline public value class Time(public val `value`: dev.ohs.fhir.model.r5.Time) : Value
-
-        @JvmInline
-        public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) : Value
-
-        @JvmInline
-        public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) : Value
-
-        @JvmInline
-        public value class Base64Binary(public val `value`: dev.ohs.fhir.model.r5.Base64Binary) :
-          Value
-
-        public companion object {
-          internal fun from(
-            quantityValue: dev.ohs.fhir.model.r5.Quantity?,
-            codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-            stringValue: dev.ohs.fhir.model.r5.String?,
-            booleanValue: dev.ohs.fhir.model.r5.Boolean?,
-            integerValue: dev.ohs.fhir.model.r5.Integer?,
-            rangeValue: dev.ohs.fhir.model.r5.Range?,
-            ratioValue: dev.ohs.fhir.model.r5.Ratio?,
-            timeValue: dev.ohs.fhir.model.r5.Time?,
-            dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-            periodValue: dev.ohs.fhir.model.r5.Period?,
-            base64BinaryValue: dev.ohs.fhir.model.r5.Base64Binary?,
-          ): Value? {
-            if (quantityValue != null) return Quantity(quantityValue)
-            if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-            if (stringValue != null) return String(stringValue)
-            if (booleanValue != null) return Boolean(booleanValue)
-            if (integerValue != null) return Integer(integerValue)
-            if (rangeValue != null) return Range(rangeValue)
-            if (ratioValue != null) return Ratio(ratioValue)
-            if (timeValue != null) return Time(timeValue)
-            if (dateTimeValue != null) return DateTime(dateTimeValue)
-            if (periodValue != null) return Period(periodValue)
-            if (base64BinaryValue != null) return Base64Binary(base64BinaryValue)
-            return null
-          }
-        }
-      }
-
       public class Builder(
         /** The type of extra detail provided in the value. */
         public var type: CodeableConcept.Builder,
-        /** The value of the extra detail. */
-        public var `value`: Value,
+        /**
+         * The value of the extra detail.
+         *
+         * A FHIR choice type — one of: [Base64Binary] | [Boolean] | [CodeableConcept] | [DateTime]
+         * | [Integer] | [Period] | [Quantity] | [Range] | [Ratio] | [String] | [Time]
+         */
+        public var `value`: Detail.Value,
       ) {
         /**
          * Unique id for the element within a resource (for internal references). This may be any
          * string value that does not contain spaces.
          */
-        public var id: String? = null
+        public var id: kotlin.String? = null
 
         /**
          * May be used to represent additional information that is not part of the basic definition
@@ -1088,6 +988,12 @@ public data class AuditEvent(
             `value` = `value`,
           )
       }
+
+      /**
+       * A FHIR choice type — one of: [Base64Binary] | [Boolean] | [CodeableConcept] | [DateTime] |
+       * [Integer] | [Period] | [Quantity] | [Range] | [Ratio] | [String] | [Time]
+       */
+      public typealias Value = FhirChoiceTypes.AuditEventEntityDetailValueChoice
     }
 
     public class Builder() {
@@ -1095,7 +1001,7 @@ public data class AuditEvent(
        * Unique id for the element within a resource (for internal references). This may be any
        * string value that does not contain spaces.
        */
-      public var id: String? = null
+      public var id: kotlin.String? = null
 
       /**
        * May be used to represent additional information that is not part of the basic definition of
@@ -1200,29 +1106,6 @@ public data class AuditEvent(
     }
   }
 
-  public sealed interface Occurred {
-    public fun asPeriod(): Period? = this as? Period
-
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    @JvmInline
-    public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) : Occurred
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) : Occurred
-
-    public companion object {
-      internal fun from(
-        periodValue: dev.ohs.fhir.model.r5.Period?,
-        dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-      ): Occurred? {
-        if (periodValue != null) return Period(periodValue)
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
     /** Describes what happened. The most specific code for the event. */
     public var code: CodeableConcept.Builder,
@@ -1264,7 +1147,7 @@ public data class AuditEvent(
      * like the create and conditional update. Otherwise, the use of the resouce id depends on the
      * given use case.
      */
-    public var id: String? = null
+    public var id: kotlin.String? = null
 
     /**
      * The metadata about the resource. This is content that is maintained by the infrastructure.
@@ -1381,8 +1264,10 @@ public data class AuditEvent(
      *
      * The time or period can be a little arbitrary; where possible, the time should correspond to
      * human assessment of the activity time.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Period]
      */
-    public var occurred: Occurred? = null
+    public var occurred: AuditEvent.Occurred? = null
 
     /**
      * Indicates whether the event succeeded or failed. A free text descripiton can be given in
@@ -1460,9 +1345,9 @@ public data class AuditEvent(
 
   /** Indicator for type of action performed during the event that generated the event. */
   public enum class AuditEventAction(
-    private val code: String,
-    private val system: String,
-    private val display: String?,
+    private val code: kotlin.String,
+    private val system: kotlin.String,
+    private val display: kotlin.String?,
   ) {
     C("C", "http://hl7.org/fhir/audit-event-action", "Create"),
     R("R", "http://hl7.org/fhir/audit-event-action", "Read"),
@@ -1470,16 +1355,16 @@ public data class AuditEvent(
     D("D", "http://hl7.org/fhir/audit-event-action", "Delete"),
     E("E", "http://hl7.org/fhir/audit-event-action", "Execute");
 
-    override fun toString(): String = code
+    override fun toString(): kotlin.String = code
 
-    public fun getCode(): String = code
+    public fun getCode(): kotlin.String = code
 
-    public fun getSystem(): String = system
+    public fun getSystem(): kotlin.String = system
 
-    public fun getDisplay(): String? = display
+    public fun getDisplay(): kotlin.String? = display
 
     public companion object {
-      public fun fromCode(code: String): AuditEventAction =
+      public fun fromCode(code: kotlin.String): AuditEventAction =
         when (code) {
           "C" -> C
           "R" -> R
@@ -1493,9 +1378,9 @@ public data class AuditEvent(
 
   /** The severity of the audit entry. */
   public enum class AuditEventSeverity(
-    private val code: String,
-    private val system: String,
-    private val display: String?,
+    private val code: kotlin.String,
+    private val system: kotlin.String,
+    private val display: kotlin.String?,
   ) {
     Emergency("emergency", "http://hl7.org/fhir/audit-event-severity", "Emergency"),
     Alert("alert", "http://hl7.org/fhir/audit-event-severity", "Alert"),
@@ -1506,16 +1391,16 @@ public data class AuditEvent(
     Informational("informational", "http://hl7.org/fhir/audit-event-severity", "Informational"),
     Debug("debug", "http://hl7.org/fhir/audit-event-severity", "Debug");
 
-    override fun toString(): String = code
+    override fun toString(): kotlin.String = code
 
-    public fun getCode(): String = code
+    public fun getCode(): kotlin.String = code
 
-    public fun getSystem(): String = system
+    public fun getSystem(): kotlin.String = system
 
-    public fun getDisplay(): String? = display
+    public fun getDisplay(): kotlin.String? = display
 
     public companion object {
-      public fun fromCode(code: String): AuditEventSeverity =
+      public fun fromCode(code: kotlin.String): AuditEventSeverity =
         when (code) {
           "emergency" -> Emergency
           "alert" -> Alert
@@ -1529,4 +1414,7 @@ public data class AuditEvent(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [DateTime] | [Period] */
+  public typealias Occurred = FhirChoiceTypes.DateTimeOrPeriod
 }

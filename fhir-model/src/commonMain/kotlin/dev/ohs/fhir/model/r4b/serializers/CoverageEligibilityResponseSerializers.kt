@@ -552,17 +552,13 @@ internal object CoverageEligibilityResponseInsuranceItemBenefitSerializer :
       modifierExtension = modifierExtension ?: listOf(),
       type = type!!,
       allowed =
-        CoverageEligibilityResponse.Insurance.Item.Benefit.Allowed.from(
-          UnsignedInt.of(allowedUnsignedInt, _allowedUnsignedInt),
-          R4bString.of(allowedString, _allowedString),
-          allowedMoney,
-        ),
+        (UnsignedInt.of(allowedUnsignedInt, _allowedUnsignedInt)
+          ?: R4bString.of(allowedString, _allowedString)
+          ?: allowedMoney),
       used =
-        CoverageEligibilityResponse.Insurance.Item.Benefit.Used.from(
-          UnsignedInt.of(usedUnsignedInt, _usedUnsignedInt),
-          R4bString.of(usedString, _usedString),
-          usedMoney,
-        ),
+        (UnsignedInt.of(usedUnsignedInt, _usedUnsignedInt)
+          ?: R4bString.of(usedString, _usedString)
+          ?: usedMoney),
     )
   }
 
@@ -583,38 +579,38 @@ internal object CoverageEligibilityResponseInsuranceItemBenefitSerializer :
     encoder.encodeSerializableElement(descriptor, 3, Hoisted.typeSer, value.type)
     when (val choice = value.allowed) {
       null -> {}
-      is CoverageEligibilityResponse.Insurance.Item.Benefit.Allowed.UnsignedInt -> {
-        ((choice.value.value))?.let { encoder.encodeIntElement(descriptor, 4, it) }
-        (choice.value.toElement())?.let {
+      is UnsignedInt -> {
+        ((choice.value))?.let { encoder.encodeIntElement(descriptor, 4, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 5, Hoisted.allowedUnsignedIntSer, it)
         }
       }
-      is CoverageEligibilityResponse.Insurance.Item.Benefit.Allowed.String -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 6, it) }
-        (choice.value.toElement())?.let {
+      is R4bString -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 6, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 7, Hoisted.allowedUnsignedIntSer, it)
         }
       }
-      is CoverageEligibilityResponse.Insurance.Item.Benefit.Allowed.Money -> {
-        encoder.encodeSerializableElement(descriptor, 8, Hoisted.allowedMoneySer, choice.value)
+      is Money -> {
+        encoder.encodeSerializableElement(descriptor, 8, Hoisted.allowedMoneySer, choice)
       }
     }
     when (val choice = value.used) {
       null -> {}
-      is CoverageEligibilityResponse.Insurance.Item.Benefit.Used.UnsignedInt -> {
-        ((choice.value.value))?.let { encoder.encodeIntElement(descriptor, 9, it) }
-        (choice.value.toElement())?.let {
+      is UnsignedInt -> {
+        ((choice.value))?.let { encoder.encodeIntElement(descriptor, 9, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 10, Hoisted.allowedUnsignedIntSer, it)
         }
       }
-      is CoverageEligibilityResponse.Insurance.Item.Benefit.Used.String -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 11, it) }
-        (choice.value.toElement())?.let {
+      is R4bString -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 11, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 12, Hoisted.allowedUnsignedIntSer, it)
         }
       }
-      is CoverageEligibilityResponse.Insurance.Item.Benefit.Used.Money -> {
-        encoder.encodeSerializableElement(descriptor, 13, Hoisted.allowedMoneySer, choice.value)
+      is Money -> {
+        encoder.encodeSerializableElement(descriptor, 13, Hoisted.allowedMoneySer, choice)
       }
     }
   }
@@ -950,11 +946,7 @@ internal object CoverageEligibilityResponseSerializer : KSerializer<CoverageElig
           )
         }),
       patient = patient!!,
-      serviced =
-        CoverageEligibilityResponse.Serviced.from(
-          Date.of(FhirDate.fromString(servicedDate), _servicedDate),
-          servicedPeriod,
-        ),
+      serviced = (Date.of(FhirDate.fromString(servicedDate), _servicedDate) ?: servicedPeriod),
       created = DateTime.of(FhirDateTime.fromString(created), _created)!!,
       requestor = requestor,
       request = request!!,
@@ -1056,11 +1048,11 @@ internal object CoverageEligibilityResponseSerializer : KSerializer<CoverageElig
     )
     when (val choice = value.serviced) {
       null -> {}
-      is CoverageEligibilityResponse.Serviced.Date -> {
-        ((choice.value.value?.toString()))?.let {
+      is Date -> {
+        ((choice.value?.toString()))?.let {
           encoder.encodeStringElement(descriptor, 16 + descriptorOffset, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             17 + descriptorOffset,
@@ -1069,12 +1061,12 @@ internal object CoverageEligibilityResponseSerializer : KSerializer<CoverageElig
           )
         }
       }
-      is CoverageEligibilityResponse.Serviced.Period -> {
+      is Period -> {
         encoder.encodeSerializableElement(
           descriptor,
           18 + descriptorOffset,
           Hoisted.servicedPeriodSer,
-          choice.value,
+          choice,
         )
       }
     }

@@ -412,11 +412,7 @@ internal object MedicationRequestSubstitutionSerializer :
       id = id,
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
-      allowed =
-        MedicationRequest.Substitution.Allowed.from(
-          R4Boolean.of(allowedBoolean, _allowedBoolean),
-          allowedCodeableConcept,
-        )!!,
+      allowed = (R4Boolean.of(allowedBoolean, _allowedBoolean) ?: allowedCodeableConcept)!!,
       reason = reason,
     )
   }
@@ -436,19 +432,14 @@ internal object MedicationRequestSubstitutionSerializer :
         value.modifierExtension,
       )
     when (val choice = value.allowed) {
-      is MedicationRequest.Substitution.Allowed.Boolean -> {
-        ((choice.value.value))?.let { encoder.encodeBooleanElement(descriptor, 3, it) }
-        (choice.value.toElement())?.let {
+      is R4Boolean -> {
+        ((choice.value))?.let { encoder.encodeBooleanElement(descriptor, 3, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 4, Hoisted.allowedBooleanSer, it)
         }
       }
-      is MedicationRequest.Substitution.Allowed.CodeableConcept -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          5,
-          Hoisted.allowedCodeableConceptSer,
-          choice.value,
-        )
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 5, Hoisted.allowedCodeableConceptSer, choice)
       }
     }
     (value.reason)?.let {
@@ -938,13 +929,8 @@ internal object MedicationRequestSerializer : KSerializer<MedicationRequest> {
       priority =
         priority?.let { Enumeration.of(MedicationRequest.RequestPriority.fromCode(it), _priority) },
       doNotPerform = R4Boolean.of(doNotPerform, _doNotPerform),
-      reported =
-        MedicationRequest.Reported.from(
-          R4Boolean.of(reportedBoolean, _reportedBoolean),
-          reportedReference,
-        ),
-      medication =
-        MedicationRequest.Medication.from(medicationCodeableConcept, medicationReference)!!,
+      reported = (R4Boolean.of(reportedBoolean, _reportedBoolean) ?: reportedReference),
+      medication = (medicationCodeableConcept ?: medicationReference)!!,
       subject = subject!!,
       encounter = encounter,
       supportingInformation = supportingInformation ?: listOf(),
@@ -1110,11 +1096,11 @@ internal object MedicationRequestSerializer : KSerializer<MedicationRequest> {
     }
     when (val choice = value.reported) {
       null -> {}
-      is MedicationRequest.Reported.Boolean -> {
-        ((choice.value.value))?.let {
+      is R4Boolean -> {
+        ((choice.value))?.let {
           encoder.encodeBooleanElement(descriptor, 21 + descriptorOffset, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             22 + descriptorOffset,
@@ -1123,30 +1109,30 @@ internal object MedicationRequestSerializer : KSerializer<MedicationRequest> {
           )
         }
       }
-      is MedicationRequest.Reported.Reference -> {
+      is Reference -> {
         encoder.encodeSerializableElement(
           descriptor,
           23 + descriptorOffset,
           Hoisted.reportedReferenceSer,
-          choice.value,
+          choice,
         )
       }
     }
     when (val choice = value.medication) {
-      is MedicationRequest.Medication.CodeableConcept -> {
+      is CodeableConcept -> {
         encoder.encodeSerializableElement(
           descriptor,
           24 + descriptorOffset,
           Hoisted.statusReasonSer,
-          choice.value,
+          choice,
         )
       }
-      is MedicationRequest.Medication.Reference -> {
+      is Reference -> {
         encoder.encodeSerializableElement(
           descriptor,
           25 + descriptorOffset,
           Hoisted.reportedReferenceSer,
-          choice.value,
+          choice,
         )
       }
     }

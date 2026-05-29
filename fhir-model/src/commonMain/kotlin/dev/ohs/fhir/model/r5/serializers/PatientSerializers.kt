@@ -638,17 +638,13 @@ internal object PatientSerializer : KSerializer<Patient> {
       gender = gender?.let { Enumeration.of(AdministrativeGender.fromCode(it), _gender) },
       birthDate = Date.of(FhirDate.fromString(birthDate), _birthDate),
       deceased =
-        Patient.Deceased.from(
-          R5Boolean.of(deceasedBoolean, _deceasedBoolean),
-          DateTime.of(FhirDateTime.fromString(deceasedDateTime), _deceasedDateTime),
-        ),
+        (R5Boolean.of(deceasedBoolean, _deceasedBoolean)
+          ?: DateTime.of(FhirDateTime.fromString(deceasedDateTime), _deceasedDateTime)),
       address = address ?: listOf(),
       maritalStatus = maritalStatus,
       multipleBirth =
-        Patient.MultipleBirth.from(
-          R5Boolean.of(multipleBirthBoolean, _multipleBirthBoolean),
-          Integer.of(multipleBirthInteger, _multipleBirthInteger),
-        ),
+        (R5Boolean.of(multipleBirthBoolean, _multipleBirthBoolean)
+          ?: Integer.of(multipleBirthInteger, _multipleBirthInteger)),
       photo = photo ?: listOf(),
       contact = contact ?: listOf(),
       communication = communication ?: listOf(),
@@ -770,11 +766,11 @@ internal object PatientSerializer : KSerializer<Patient> {
     }
     when (val choice = value.deceased) {
       null -> {}
-      is Patient.Deceased.Boolean -> {
-        ((choice.value.value))?.let {
+      is R5Boolean -> {
+        ((choice.value))?.let {
           encoder.encodeBooleanElement(descriptor, 19 + descriptorOffset, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             20 + descriptorOffset,
@@ -783,11 +779,11 @@ internal object PatientSerializer : KSerializer<Patient> {
           )
         }
       }
-      is Patient.Deceased.DateTime -> {
-        ((choice.value.value?.toString()))?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let {
           encoder.encodeStringElement(descriptor, 21 + descriptorOffset, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             22 + descriptorOffset,
@@ -814,11 +810,11 @@ internal object PatientSerializer : KSerializer<Patient> {
     }
     when (val choice = value.multipleBirth) {
       null -> {}
-      is Patient.MultipleBirth.Boolean -> {
-        ((choice.value.value))?.let {
+      is R5Boolean -> {
+        ((choice.value))?.let {
           encoder.encodeBooleanElement(descriptor, 25 + descriptorOffset, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             26 + descriptorOffset,
@@ -827,11 +823,9 @@ internal object PatientSerializer : KSerializer<Patient> {
           )
         }
       }
-      is Patient.MultipleBirth.Integer -> {
-        ((choice.value.value))?.let {
-          encoder.encodeIntElement(descriptor, 27 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is Integer -> {
+        ((choice.value))?.let { encoder.encodeIntElement(descriptor, 27 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             28 + descriptorOffset,

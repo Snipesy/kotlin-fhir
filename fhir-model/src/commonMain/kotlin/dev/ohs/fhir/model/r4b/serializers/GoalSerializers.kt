@@ -174,16 +174,14 @@ internal object GoalTargetSerializer : KSerializer<Goal.Target> {
       modifierExtension = modifierExtension ?: listOf(),
       measure = measure,
       detail =
-        Goal.Target.Detail.from(
-          detailQuantity,
-          detailRange,
-          detailCodeableConcept,
-          R4bString.of(detailString, _detailString),
-          R4bBoolean.of(detailBoolean, _detailBoolean),
-          Integer.of(detailInteger, _detailInteger),
-          detailRatio,
-        ),
-      due = Goal.Target.Due.from(Date.of(FhirDate.fromString(dueDate), _dueDate), dueDuration),
+        (detailQuantity
+          ?: detailRange
+          ?: detailCodeableConcept
+          ?: R4bString.of(detailString, _detailString)
+          ?: R4bBoolean.of(detailBoolean, _detailBoolean)
+          ?: Integer.of(detailInteger, _detailInteger)
+          ?: detailRatio),
+      due = (Date.of(FhirDate.fromString(dueDate), _dueDate) ?: dueDuration),
     )
   }
 
@@ -203,47 +201,47 @@ internal object GoalTargetSerializer : KSerializer<Goal.Target> {
     }
     when (val choice = value.detail) {
       null -> {}
-      is Goal.Target.Detail.Quantity -> {
-        encoder.encodeSerializableElement(descriptor, 4, Hoisted.detailQuantitySer, choice.value)
+      is Quantity -> {
+        encoder.encodeSerializableElement(descriptor, 4, Hoisted.detailQuantitySer, choice)
       }
-      is Goal.Target.Detail.Range -> {
-        encoder.encodeSerializableElement(descriptor, 5, Hoisted.detailRangeSer, choice.value)
+      is Range -> {
+        encoder.encodeSerializableElement(descriptor, 5, Hoisted.detailRangeSer, choice)
       }
-      is Goal.Target.Detail.CodeableConcept -> {
-        encoder.encodeSerializableElement(descriptor, 6, Hoisted.measureSer, choice.value)
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 6, Hoisted.measureSer, choice)
       }
-      is Goal.Target.Detail.String -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 7, it) }
-        (choice.value.toElement())?.let {
+      is R4bString -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 7, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 8, Hoisted.detailStringSer, it)
         }
       }
-      is Goal.Target.Detail.Boolean -> {
-        ((choice.value.value))?.let { encoder.encodeBooleanElement(descriptor, 9, it) }
-        (choice.value.toElement())?.let {
+      is R4bBoolean -> {
+        ((choice.value))?.let { encoder.encodeBooleanElement(descriptor, 9, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 10, Hoisted.detailStringSer, it)
         }
       }
-      is Goal.Target.Detail.Integer -> {
-        ((choice.value.value))?.let { encoder.encodeIntElement(descriptor, 11, it) }
-        (choice.value.toElement())?.let {
+      is Integer -> {
+        ((choice.value))?.let { encoder.encodeIntElement(descriptor, 11, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 12, Hoisted.detailStringSer, it)
         }
       }
-      is Goal.Target.Detail.Ratio -> {
-        encoder.encodeSerializableElement(descriptor, 13, Hoisted.detailRatioSer, choice.value)
+      is Ratio -> {
+        encoder.encodeSerializableElement(descriptor, 13, Hoisted.detailRatioSer, choice)
       }
     }
     when (val choice = value.due) {
       null -> {}
-      is Goal.Target.Due.Date -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 14, it) }
-        (choice.value.toElement())?.let {
+      is Date -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 14, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 15, Hoisted.detailStringSer, it)
         }
       }
-      is Goal.Target.Due.Duration -> {
-        encoder.encodeSerializableElement(descriptor, 16, Hoisted.dueDurationSer, choice.value)
+      is Duration -> {
+        encoder.encodeSerializableElement(descriptor, 16, Hoisted.dueDurationSer, choice)
       }
     }
   }
@@ -508,8 +506,7 @@ internal object GoalSerializer : KSerializer<Goal> {
       priority = priority,
       description = description!!,
       subject = subject!!,
-      start =
-        Goal.Start.from(Date.of(FhirDate.fromString(startDate), _startDate), startCodeableConcept),
+      start = (Date.of(FhirDate.fromString(startDate), _startDate) ?: startCodeableConcept),
       target = target ?: listOf(),
       statusDate = Date.of(FhirDate.fromString(statusDate), _statusDate),
       statusReason = R4bString.of(statusReason, _statusReason),
@@ -632,11 +629,11 @@ internal object GoalSerializer : KSerializer<Goal> {
     )
     when (val choice = value.start) {
       null -> {}
-      is Goal.Start.Date -> {
-        ((choice.value.value?.toString()))?.let {
+      is Date -> {
+        ((choice.value?.toString()))?.let {
           encoder.encodeStringElement(descriptor, 18 + descriptorOffset, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             19 + descriptorOffset,
@@ -645,12 +642,12 @@ internal object GoalSerializer : KSerializer<Goal> {
           )
         }
       }
-      is Goal.Start.CodeableConcept -> {
+      is CodeableConcept -> {
         encoder.encodeSerializableElement(
           descriptor,
           20 + descriptorOffset,
           Hoisted.achievementStatusSer,
-          choice.value,
+          choice,
         )
       }
     }

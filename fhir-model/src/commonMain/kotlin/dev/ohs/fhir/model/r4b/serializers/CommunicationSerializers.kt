@@ -130,11 +130,7 @@ internal object CommunicationPayloadSerializer : KSerializer<Communication.Paylo
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
       content =
-        Communication.Payload.Content.from(
-          R4bString.of(contentString, _contentString),
-          contentAttachment,
-          contentReference,
-        )!!,
+        (R4bString.of(contentString, _contentString) ?: contentAttachment ?: contentReference)!!,
     )
   }
 
@@ -150,17 +146,17 @@ internal object CommunicationPayloadSerializer : KSerializer<Communication.Paylo
         value.modifierExtension,
       )
     when (val choice = value.content) {
-      is Communication.Payload.Content.String -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 3, it) }
-        (choice.value.toElement())?.let {
+      is R4bString -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 3, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 4, Hoisted.contentStringSer, it)
         }
       }
-      is Communication.Payload.Content.Attachment -> {
-        encoder.encodeSerializableElement(descriptor, 5, Hoisted.contentAttachmentSer, choice.value)
+      is Attachment -> {
+        encoder.encodeSerializableElement(descriptor, 5, Hoisted.contentAttachmentSer, choice)
       }
-      is Communication.Payload.Content.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 6, Hoisted.contentReferenceSer, choice.value)
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 6, Hoisted.contentReferenceSer, choice)
       }
     }
   }

@@ -455,11 +455,7 @@ internal object MedicationRequestSubstitutionSerializer :
       id = id,
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
-      allowed =
-        MedicationRequest.Substitution.Allowed.from(
-          R5Boolean.of(allowedBoolean, _allowedBoolean),
-          allowedCodeableConcept,
-        )!!,
+      allowed = (R5Boolean.of(allowedBoolean, _allowedBoolean) ?: allowedCodeableConcept)!!,
       reason = reason,
     )
   }
@@ -479,19 +475,14 @@ internal object MedicationRequestSubstitutionSerializer :
         value.modifierExtension,
       )
     when (val choice = value.allowed) {
-      is MedicationRequest.Substitution.Allowed.Boolean -> {
-        ((choice.value.value))?.let { encoder.encodeBooleanElement(descriptor, 3, it) }
-        (choice.value.toElement())?.let {
+      is R5Boolean -> {
+        ((choice.value))?.let { encoder.encodeBooleanElement(descriptor, 3, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 4, Hoisted.allowedBooleanSer, it)
         }
       }
-      is MedicationRequest.Substitution.Allowed.CodeableConcept -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          5,
-          Hoisted.allowedCodeableConceptSer,
-          choice.value,
-        )
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 5, Hoisted.allowedCodeableConceptSer, choice)
       }
     }
     (value.reason)?.let {

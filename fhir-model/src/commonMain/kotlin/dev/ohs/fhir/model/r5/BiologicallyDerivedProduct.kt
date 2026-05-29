@@ -21,7 +21,6 @@ import dev.ohs.fhir.model.r5.serializers.BiologicallyDerivedProductPropertySeria
 import dev.ohs.fhir.model.r5.serializers.BiologicallyDerivedProductSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -277,8 +276,12 @@ public data class BiologicallyDerivedProduct(
      * processed/manipulated/manufactured product, providing the product.
      */
     public val source: Reference? = null,
-    /** Time of product collection. */
-    public val collected: Collected? = null,
+    /**
+     * Time of product collection.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Period]
+     */
+    public val collected: Collection.Collected? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -291,29 +294,6 @@ public data class BiologicallyDerivedProduct(
           collected = this@with.collected
         }
       }
-
-    public sealed interface Collected {
-      public fun asDateTime(): DateTime? = this as? DateTime
-
-      public fun asPeriod(): Period? = this as? Period
-
-      @JvmInline
-      public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) : Collected
-
-      @JvmInline
-      public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) : Collected
-
-      public companion object {
-        internal fun from(
-          dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-          periodValue: dev.ohs.fhir.model.r5.Period?,
-        ): Collected? {
-          if (dateTimeValue != null) return DateTime(dateTimeValue)
-          if (periodValue != null) return Period(periodValue)
-          return null
-        }
-      }
-    }
 
     public class Builder() {
       /**
@@ -365,8 +345,12 @@ public data class BiologicallyDerivedProduct(
        */
       public var source: Reference.Builder? = null
 
-      /** Time of product collection. */
-      public var collected: Collected? = null
+      /**
+       * Time of product collection.
+       *
+       * A FHIR choice type — one of: [DateTime] | [Period]
+       */
+      public var collected: Collection.Collected? = null
 
       public fun build(): Collection =
         Collection(
@@ -378,6 +362,9 @@ public data class BiologicallyDerivedProduct(
           collected = collected,
         )
     }
+
+    /** A FHIR choice type — one of: [DateTime] | [Period] */
+    public typealias Collected = FhirChoiceTypes.DateTimeOrPeriod
   }
 
   /** A property that is specific to this BiologicallyDerviedProduct instance. */
@@ -433,8 +420,11 @@ public data class BiologicallyDerivedProduct(
      * The value should be provided as a boolean, integer, CodeableConcept, period, quantity, range,
      * ratio, or attachment. The description can be a string only when these others are not
      * available. The type of value will depend on the property type and is specified in ST-027.
+     *
+     * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Integer] |
+     * [Period] | [Quantity] | [Range] | [Ratio] | [String]
      */
-    public val `value`: Value,
+    public val `value`: Property.Value,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -444,78 +434,6 @@ public data class BiologicallyDerivedProduct(
           modifierExtension = this@with.modifierExtension.map { it.toBuilder() }.toMutableList()
         }
       }
-
-    public sealed interface Value {
-      public fun asBoolean(): Boolean? = this as? Boolean
-
-      public fun asInteger(): Integer? = this as? Integer
-
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asPeriod(): Period? = this as? Period
-
-      public fun asQuantity(): Quantity? = this as? Quantity
-
-      public fun asRange(): Range? = this as? Range
-
-      public fun asRatio(): Ratio? = this as? Ratio
-
-      public fun asString(): String? = this as? String
-
-      public fun asAttachment(): Attachment? = this as? Attachment
-
-      @JvmInline
-      public value class Boolean(public val `value`: dev.ohs.fhir.model.r5.Boolean) : Value
-
-      @JvmInline
-      public value class Integer(public val `value`: dev.ohs.fhir.model.r5.Integer) : Value
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r5.CodeableConcept
-      ) : Value
-
-      @JvmInline
-      public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) : Value
-
-      @JvmInline
-      public value class Quantity(public val `value`: dev.ohs.fhir.model.r5.Quantity) : Value
-
-      @JvmInline public value class Range(public val `value`: dev.ohs.fhir.model.r5.Range) : Value
-
-      @JvmInline public value class Ratio(public val `value`: dev.ohs.fhir.model.r5.Ratio) : Value
-
-      @JvmInline
-      public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : Value
-
-      @JvmInline
-      public value class Attachment(public val `value`: dev.ohs.fhir.model.r5.Attachment) : Value
-
-      public companion object {
-        internal fun from(
-          booleanValue: dev.ohs.fhir.model.r5.Boolean?,
-          integerValue: dev.ohs.fhir.model.r5.Integer?,
-          codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-          periodValue: dev.ohs.fhir.model.r5.Period?,
-          quantityValue: dev.ohs.fhir.model.r5.Quantity?,
-          rangeValue: dev.ohs.fhir.model.r5.Range?,
-          ratioValue: dev.ohs.fhir.model.r5.Ratio?,
-          stringValue: dev.ohs.fhir.model.r5.String?,
-          attachmentValue: dev.ohs.fhir.model.r5.Attachment?,
-        ): Value? {
-          if (booleanValue != null) return Boolean(booleanValue)
-          if (integerValue != null) return Integer(integerValue)
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (periodValue != null) return Period(periodValue)
-          if (quantityValue != null) return Quantity(quantityValue)
-          if (rangeValue != null) return Range(rangeValue)
-          if (ratioValue != null) return Ratio(ratioValue)
-          if (stringValue != null) return String(stringValue)
-          if (attachmentValue != null) return Attachment(attachmentValue)
-          return null
-        }
-      }
-    }
 
     public class Builder(
       /**
@@ -531,8 +449,11 @@ public data class BiologicallyDerivedProduct(
        * The value should be provided as a boolean, integer, CodeableConcept, period, quantity,
        * range, ratio, or attachment. The description can be a string only when these others are not
        * available. The type of value will depend on the property type and is specified in ST-027.
+       *
+       * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Integer] |
+       * [Period] | [Quantity] | [Range] | [Ratio] | [String]
        */
-      public var `value`: Value,
+      public var `value`: Property.Value,
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -583,6 +504,12 @@ public data class BiologicallyDerivedProduct(
           `value` = `value`,
         )
     }
+
+    /**
+     * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Integer] |
+     * [Period] | [Quantity] | [Range] | [Ratio] | [String]
+     */
+    public typealias Value = FhirChoiceTypes.BiologicallyDerivedProductPropertyValueChoice
   }
 
   public class Builder() : DomainResource.Builder() {

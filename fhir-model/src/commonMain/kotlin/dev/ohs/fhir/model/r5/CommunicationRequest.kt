@@ -21,7 +21,6 @@ import dev.ohs.fhir.model.r5.serializers.CommunicationRequestSerializer
 import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -231,8 +230,12 @@ public data class CommunicationRequest(
   public val encounter: Reference? = null,
   /** Text, attachment(s), or resource(s) to be communicated to the recipient. */
   public val payload: List<Payload> = listOf(),
-  /** The time when this communication is to occur. */
-  public val occurrence: Occurrence? = null,
+  /**
+   * The time when this communication is to occur.
+   *
+   * A FHIR choice type — one of: [DateTime] | [Period]
+   */
+  public val occurrence: CommunicationRequest.Occurrence? = null,
   /**
    * For draft requests, indicates the date of initial creation. For requests with other statuses,
    * indicates the date of activation.
@@ -349,8 +352,10 @@ public data class CommunicationRequest(
      *
      * When using contentCodeableConcept, the CodeableConcept is what is being communicated and is
      * not a categorization of the content.
+     *
+     * A FHIR choice type — one of: [Attachment] | [CodeableConcept] | [Reference]
      */
-    public val content: Content,
+    public val content: Payload.Content,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -360,38 +365,6 @@ public data class CommunicationRequest(
           modifierExtension = this@with.modifierExtension.map { it.toBuilder() }.toMutableList()
         }
       }
-
-    public sealed interface Content {
-      public fun asAttachment(): Attachment? = this as? Attachment
-
-      public fun asReference(): Reference? = this as? Reference
-
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      @JvmInline
-      public value class Attachment(public val `value`: dev.ohs.fhir.model.r5.Attachment) : Content
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : Content
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r5.CodeableConcept
-      ) : Content
-
-      public companion object {
-        internal fun from(
-          attachmentValue: dev.ohs.fhir.model.r5.Attachment?,
-          referenceValue: dev.ohs.fhir.model.r5.Reference?,
-          codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-        ): Content? {
-          if (attachmentValue != null) return Attachment(attachmentValue)
-          if (referenceValue != null) return Reference(referenceValue)
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          return null
-        }
-      }
-    }
 
     public class Builder(
       /**
@@ -407,8 +380,10 @@ public data class CommunicationRequest(
        *
        * When using contentCodeableConcept, the CodeableConcept is what is being communicated and is
        * not a categorization of the content.
+       *
+       * A FHIR choice type — one of: [Attachment] | [CodeableConcept] | [Reference]
        */
-      public var content: Content
+      public var content: Payload.Content
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -458,29 +433,9 @@ public data class CommunicationRequest(
           content = content,
         )
     }
-  }
 
-  public sealed interface Occurrence {
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    public fun asPeriod(): Period? = this as? Period
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) : Occurrence
-
-    @JvmInline
-    public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) : Occurrence
-
-    public companion object {
-      internal fun from(
-        dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-        periodValue: dev.ohs.fhir.model.r5.Period?,
-      ): Occurrence? {
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        if (periodValue != null) return Period(periodValue)
-        return null
-      }
-    }
+    /** A FHIR choice type — one of: [Attachment] | [CodeableConcept] | [Reference] */
+    public typealias Content = FhirChoiceTypes.AttachmentOrCodeableConceptOrReference
   }
 
   public class Builder(
@@ -705,8 +660,12 @@ public data class CommunicationRequest(
     /** Text, attachment(s), or resource(s) to be communicated to the recipient. */
     public var payload: MutableList<Payload.Builder> = mutableListOf()
 
-    /** The time when this communication is to occur. */
-    public var occurrence: Occurrence? = null
+    /**
+     * The time when this communication is to occur.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Period]
+     */
+    public var occurrence: CommunicationRequest.Occurrence? = null
 
     /**
      * For draft requests, indicates the date of initial creation. For requests with other statuses,
@@ -885,4 +844,7 @@ public data class CommunicationRequest(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [DateTime] | [Period] */
+  public typealias Occurrence = FhirChoiceTypes.DateTimeOrPeriod
 }

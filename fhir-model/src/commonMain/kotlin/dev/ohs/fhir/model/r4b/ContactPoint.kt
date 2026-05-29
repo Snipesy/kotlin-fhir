@@ -75,7 +75,7 @@ public data class ContactPoint(
   public val rank: PositiveInt? = null,
   /** Time period when the contact point was/is in use. */
   public val period: Period? = null,
-) : Element() {
+) : Element(), FhirChoiceParticipants.ContactPointChoices {
   public fun toBuilder(): Builder =
     with(this) {
       Builder().apply {

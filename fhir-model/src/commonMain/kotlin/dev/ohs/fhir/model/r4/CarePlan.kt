@@ -21,7 +21,6 @@ import dev.ohs.fhir.model.r4.serializers.CarePlanActivitySerializer
 import dev.ohs.fhir.model.r4.serializers.CarePlanSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -532,8 +531,12 @@ public data class CarePlan(
        * not to be performed.
        */
       public val doNotPerform: Boolean? = null,
-      /** The period, timing or frequency upon which the described activity is to occur. */
-      public val scheduled: Scheduled? = null,
+      /**
+       * The period, timing or frequency upon which the described activity is to occur.
+       *
+       * A FHIR choice type — one of: [Period] | [String] | [Timing]
+       */
+      public val scheduled: Detail.Scheduled? = null,
       /**
        * Identifies the facility where the activity will occur; e.g. home, hospital, specific
        * clinic, etc.
@@ -547,8 +550,12 @@ public data class CarePlan(
        * A performer MAY also be a participant in the care plan.
        */
       public val performer: List<Reference> = listOf(),
-      /** Identifies the food, drug or other product to be consumed or supplied in the activity. */
-      public val product: Product? = null,
+      /**
+       * Identifies the food, drug or other product to be consumed or supplied in the activity.
+       *
+       * A FHIR choice type — one of: [CodeableConcept] | [Reference]
+       */
+      public val product: Detail.Product? = null,
       /** Identifies the quantity expected to be consumed in a given day. */
       public val dailyAmount: Quantity? = null,
       /**
@@ -588,61 +595,6 @@ public data class CarePlan(
             description = this@with.description?.toBuilder()
           }
         }
-
-      public sealed interface Scheduled {
-        public fun asTiming(): Timing? = this as? Timing
-
-        public fun asPeriod(): Period? = this as? Period
-
-        public fun asString(): String? = this as? String
-
-        @JvmInline
-        public value class Timing(public val `value`: dev.ohs.fhir.model.r4.Timing) : Scheduled
-
-        @JvmInline
-        public value class Period(public val `value`: dev.ohs.fhir.model.r4.Period) : Scheduled
-
-        @JvmInline
-        public value class String(public val `value`: dev.ohs.fhir.model.r4.String) : Scheduled
-
-        public companion object {
-          internal fun from(
-            timingValue: dev.ohs.fhir.model.r4.Timing?,
-            periodValue: dev.ohs.fhir.model.r4.Period?,
-            stringValue: dev.ohs.fhir.model.r4.String?,
-          ): Scheduled? {
-            if (timingValue != null) return Timing(timingValue)
-            if (periodValue != null) return Period(periodValue)
-            if (stringValue != null) return String(stringValue)
-            return null
-          }
-        }
-      }
-
-      public sealed interface Product {
-        public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-        public fun asReference(): Reference? = this as? Reference
-
-        @JvmInline
-        public value class CodeableConcept(
-          public val `value`: dev.ohs.fhir.model.r4.CodeableConcept
-        ) : Product
-
-        @JvmInline
-        public value class Reference(public val `value`: dev.ohs.fhir.model.r4.Reference) : Product
-
-        public companion object {
-          internal fun from(
-            codeableConceptValue: dev.ohs.fhir.model.r4.CodeableConcept?,
-            referenceValue: dev.ohs.fhir.model.r4.Reference?,
-          ): Product? {
-            if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-            if (referenceValue != null) return Reference(referenceValue)
-            return null
-          }
-        }
-      }
 
       public class Builder(
         /**
@@ -769,8 +721,12 @@ public data class CarePlan(
          */
         public var doNotPerform: Boolean.Builder? = null
 
-        /** The period, timing or frequency upon which the described activity is to occur. */
-        public var scheduled: Scheduled? = null
+        /**
+         * The period, timing or frequency upon which the described activity is to occur.
+         *
+         * A FHIR choice type — one of: [Period] | [String] | [Timing]
+         */
+        public var scheduled: Detail.Scheduled? = null
 
         /**
          * Identifies the facility where the activity will occur; e.g. home, hospital, specific
@@ -789,8 +745,10 @@ public data class CarePlan(
 
         /**
          * Identifies the food, drug or other product to be consumed or supplied in the activity.
+         *
+         * A FHIR choice type — one of: [CodeableConcept] | [Reference]
          */
-        public var product: Product? = null
+        public var product: Detail.Product? = null
 
         /** Identifies the quantity expected to be consumed in a given day. */
         public var dailyAmount: Quantity.Builder? = null
@@ -832,6 +790,12 @@ public data class CarePlan(
             description = description?.build(),
           )
       }
+
+      /** A FHIR choice type — one of: [Period] | [String] | [Timing] */
+      public typealias Scheduled = FhirChoiceTypes.PeriodOrStringOrTiming
+
+      /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+      public typealias Product = FhirChoiceTypes.CodeableConceptOrReference
     }
 
     public class Builder() {

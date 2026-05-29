@@ -490,11 +490,9 @@ internal object ChargeItemSerializer : KSerializer<ChargeItem> {
       subject = subject!!,
       encounter = encounter,
       occurrence =
-        ChargeItem.Occurrence.from(
-          DateTime.of(FhirDateTime.fromString(occurrenceDateTime), _occurrenceDateTime),
-          occurrencePeriod,
-          occurrenceTiming,
-        ),
+        (DateTime.of(FhirDateTime.fromString(occurrenceDateTime), _occurrenceDateTime)
+          ?: occurrencePeriod
+          ?: occurrenceTiming),
       performer = performer ?: listOf(),
       performingOrganization = performingOrganization,
       requestingOrganization = requestingOrganization,
@@ -650,11 +648,11 @@ internal object ChargeItemSerializer : KSerializer<ChargeItem> {
     }
     when (val choice = value.occurrence) {
       null -> {}
-      is ChargeItem.Occurrence.DateTime -> {
-        ((choice.value.value?.toString()))?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let {
           encoder.encodeStringElement(descriptor, 21 + descriptorOffset, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             22 + descriptorOffset,
@@ -663,20 +661,20 @@ internal object ChargeItemSerializer : KSerializer<ChargeItem> {
           )
         }
       }
-      is ChargeItem.Occurrence.Period -> {
+      is Period -> {
         encoder.encodeSerializableElement(
           descriptor,
           23 + descriptorOffset,
           Hoisted.occurrencePeriodSer,
-          choice.value,
+          choice,
         )
       }
-      is ChargeItem.Occurrence.Timing -> {
+      is Timing -> {
         encoder.encodeSerializableElement(
           descriptor,
           24 + descriptorOffset,
           Hoisted.occurrenceTimingSer,
-          choice.value,
+          choice,
         )
       }
     }

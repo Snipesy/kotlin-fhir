@@ -46,7 +46,7 @@ public data class Date(
   override val extension: List<Extension> = listOf(),
   /** The actual value */
   @Serializable(with = FhirDateSerializer::class) public val `value`: FhirDate? = null,
-) : PrimitiveType() {
+) : PrimitiveType(), FhirChoiceParticipants.DateChoices {
   public fun toBuilder(): Builder =
     with(this) {
       Builder().apply {

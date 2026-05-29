@@ -24,7 +24,6 @@ import dev.ohs.fhir.model.r4b.serializers.IngredientSubstanceStrengthSerializer
 import dev.ohs.fhir.model.r4b.terminologies.PublicationStatus
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -423,15 +422,21 @@ public data class Ingredient(
        * quantity that the item occurs in e.g. a strength per tablet size, perhaps 'per 20mg' (the
        * size of the tablet). It is not generally normalized as a unitary unit, which would be 'per
        * mg').
+       *
+       * A FHIR choice type — one of: [Ratio] | [RatioRange]
        */
-      public val presentation: Presentation? = null,
+      public val presentation: Strength.Presentation? = null,
       /**
        * A textual represention of either the whole of the presentation strength or a part of it -
        * with the rest being in Strength.presentation as a ratio.
        */
       public val textPresentation: String? = null,
-      /** The strength per unitary volume (or mass). */
-      public val concentration: Concentration? = null,
+      /**
+       * The strength per unitary volume (or mass).
+       *
+       * A FHIR choice type — one of: [Ratio] | [RatioRange]
+       */
+      public val concentration: Strength.Concentration? = null,
       /**
        * A textual represention of either the whole of the concentration strength or a part of it -
        * with the rest being in Strength.concentration as a ratio.
@@ -520,8 +525,12 @@ public data class Ingredient(
         override val modifierExtension: List<Extension> = listOf(),
         /** Relevant reference substance. */
         public val substance: CodeableReference? = null,
-        /** Strength expressed in terms of a reference substance. */
-        public val strength: Strength,
+        /**
+         * Strength expressed in terms of a reference substance.
+         *
+         * A FHIR choice type — one of: [Ratio] | [RatioRange]
+         */
+        public val strength: ReferenceStrength.Strength,
         /** For when strength is measured at a particular point or distance. */
         public val measurementPoint: String? = null,
         /** The country or countries for which the strength range applies. */
@@ -539,33 +548,13 @@ public data class Ingredient(
             }
           }
 
-        public sealed interface Strength {
-          public fun asRatio(): Ratio? = this as? Ratio
-
-          public fun asRatioRange(): RatioRange? = this as? RatioRange
-
-          @JvmInline
-          public value class Ratio(public val `value`: dev.ohs.fhir.model.r4b.Ratio) : Strength
-
-          @JvmInline
-          public value class RatioRange(public val `value`: dev.ohs.fhir.model.r4b.RatioRange) :
-            Strength
-
-          public companion object {
-            internal fun from(
-              ratioValue: dev.ohs.fhir.model.r4b.Ratio?,
-              ratioRangeValue: dev.ohs.fhir.model.r4b.RatioRange?,
-            ): Strength? {
-              if (ratioValue != null) return Ratio(ratioValue)
-              if (ratioRangeValue != null) return RatioRange(ratioRangeValue)
-              return null
-            }
-          }
-        }
-
         public class Builder(
-          /** Strength expressed in terms of a reference substance. */
-          public var strength: Strength
+          /**
+           * Strength expressed in terms of a reference substance.
+           *
+           * A FHIR choice type — one of: [Ratio] | [RatioRange]
+           */
+          public var strength: ReferenceStrength.Strength
         ) {
           /**
            * Unique id for the element within a resource (for internal references). This may be any
@@ -627,54 +616,9 @@ public data class Ingredient(
               country = country.map { it.build() },
             )
         }
-      }
 
-      public sealed interface Presentation {
-        public fun asRatio(): Ratio? = this as? Ratio
-
-        public fun asRatioRange(): RatioRange? = this as? RatioRange
-
-        @JvmInline
-        public value class Ratio(public val `value`: dev.ohs.fhir.model.r4b.Ratio) : Presentation
-
-        @JvmInline
-        public value class RatioRange(public val `value`: dev.ohs.fhir.model.r4b.RatioRange) :
-          Presentation
-
-        public companion object {
-          internal fun from(
-            ratioValue: dev.ohs.fhir.model.r4b.Ratio?,
-            ratioRangeValue: dev.ohs.fhir.model.r4b.RatioRange?,
-          ): Presentation? {
-            if (ratioValue != null) return Ratio(ratioValue)
-            if (ratioRangeValue != null) return RatioRange(ratioRangeValue)
-            return null
-          }
-        }
-      }
-
-      public sealed interface Concentration {
-        public fun asRatio(): Ratio? = this as? Ratio
-
-        public fun asRatioRange(): RatioRange? = this as? RatioRange
-
-        @JvmInline
-        public value class Ratio(public val `value`: dev.ohs.fhir.model.r4b.Ratio) : Concentration
-
-        @JvmInline
-        public value class RatioRange(public val `value`: dev.ohs.fhir.model.r4b.RatioRange) :
-          Concentration
-
-        public companion object {
-          internal fun from(
-            ratioValue: dev.ohs.fhir.model.r4b.Ratio?,
-            ratioRangeValue: dev.ohs.fhir.model.r4b.RatioRange?,
-          ): Concentration? {
-            if (ratioValue != null) return Ratio(ratioValue)
-            if (ratioRangeValue != null) return RatioRange(ratioRangeValue)
-            return null
-          }
-        }
+        /** A FHIR choice type — one of: [Ratio] | [RatioRange] */
+        public typealias Strength = FhirChoiceTypes.RatioOrRatioRange
       }
 
       public class Builder() {
@@ -724,8 +668,10 @@ public data class Ingredient(
          * quantity that the item occurs in e.g. a strength per tablet size, perhaps 'per 20mg' (the
          * size of the tablet). It is not generally normalized as a unitary unit, which would be
          * 'per mg').
+         *
+         * A FHIR choice type — one of: [Ratio] | [RatioRange]
          */
-        public var presentation: Presentation? = null
+        public var presentation: Strength.Presentation? = null
 
         /**
          * A textual represention of either the whole of the presentation strength or a part of it -
@@ -733,8 +679,12 @@ public data class Ingredient(
          */
         public var textPresentation: String.Builder? = null
 
-        /** The strength per unitary volume (or mass). */
-        public var concentration: Concentration? = null
+        /**
+         * The strength per unitary volume (or mass).
+         *
+         * A FHIR choice type — one of: [Ratio] | [RatioRange]
+         */
+        public var concentration: Strength.Concentration? = null
 
         /**
          * A textual represention of either the whole of the concentration strength or a part of
@@ -777,6 +727,12 @@ public data class Ingredient(
             referenceStrength = referenceStrength.map { it.build() },
           )
       }
+
+      /** A FHIR choice type — one of: [Ratio] | [RatioRange] */
+      public typealias Presentation = FhirChoiceTypes.RatioOrRatioRange
+
+      /** A FHIR choice type — one of: [Ratio] | [RatioRange] */
+      public typealias Concentration = FhirChoiceTypes.RatioOrRatioRange
     }
 
     public class Builder(

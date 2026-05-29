@@ -20,7 +20,6 @@ import dev.ohs.fhir.model.r4.serializers.DiagnosticReportMediaSerializer
 import dev.ohs.fhir.model.r4.serializers.DiagnosticReportSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -181,8 +180,10 @@ public data class DiagnosticReport(
    * collection times, but the specimen information is not always available, and the exact
    * relationship between the specimens and the diagnostically relevant time is not always
    * automatic.
+   *
+   * A FHIR choice type — one of: [DateTime] | [Period]
    */
-  public val effective: Effective? = null,
+  public val effective: DiagnosticReport.Effective? = null,
   /**
    * The date and time that this version of the report was made available to providers, typically
    * after the report was reviewed and verified.
@@ -414,29 +415,6 @@ public data class DiagnosticReport(
     }
   }
 
-  public sealed interface Effective {
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    public fun asPeriod(): Period? = this as? Period
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r4.DateTime) : Effective
-
-    @JvmInline
-    public value class Period(public val `value`: dev.ohs.fhir.model.r4.Period) : Effective
-
-    public companion object {
-      internal fun from(
-        dateTimeValue: dev.ohs.fhir.model.r4.DateTime?,
-        periodValue: dev.ohs.fhir.model.r4.Period?,
-      ): Effective? {
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        if (periodValue != null) return Period(periodValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
     /** The status of the diagnostic report. */
     public var status: Enumeration<DiagnosticReportStatus>,
@@ -601,8 +579,10 @@ public data class DiagnosticReport(
      * collection times, but the specimen information is not always available, and the exact
      * relationship between the specimens and the diagnostically relevant time is not always
      * automatic.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Period]
      */
-    public var effective: Effective? = null
+    public var effective: DiagnosticReport.Effective? = null
 
     /**
      * The date and time that this version of the report was made available to providers, typically
@@ -763,4 +743,7 @@ public data class DiagnosticReport(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [DateTime] | [Period] */
+  public typealias Effective = FhirChoiceTypes.DateTimeOrPeriod
 }

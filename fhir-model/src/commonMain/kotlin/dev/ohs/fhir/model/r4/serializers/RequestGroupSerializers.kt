@@ -306,14 +306,12 @@ internal object RequestGroupActionSerializer : KSerializer<RequestGroup.Action> 
       condition = condition ?: listOf(),
       relatedAction = relatedAction ?: listOf(),
       timing =
-        RequestGroup.Action.Timing.from(
-          DateTime.of(FhirDateTime.fromString(timingDateTime), _timingDateTime),
-          timingAge,
-          timingPeriod,
-          timingDuration,
-          timingRange,
-          timingTiming,
-        ),
+        (DateTime.of(FhirDateTime.fromString(timingDateTime), _timingDateTime)
+          ?: timingAge
+          ?: timingPeriod
+          ?: timingDuration
+          ?: timingRange
+          ?: timingTiming),
       participant = participant ?: listOf(),
       type = type,
       groupingBehavior =
@@ -392,26 +390,26 @@ internal object RequestGroupActionSerializer : KSerializer<RequestGroup.Action> 
       )
     when (val choice = value.timing) {
       null -> {}
-      is RequestGroup.Action.Timing.DateTime -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 17, it) }
-        (choice.value.toElement())?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 17, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 18, Hoisted.prefixSer, it)
         }
       }
-      is RequestGroup.Action.Timing.Age -> {
-        encoder.encodeSerializableElement(descriptor, 19, Hoisted.timingAgeSer, choice.value)
+      is Age -> {
+        encoder.encodeSerializableElement(descriptor, 19, Hoisted.timingAgeSer, choice)
       }
-      is RequestGroup.Action.Timing.Period -> {
-        encoder.encodeSerializableElement(descriptor, 20, Hoisted.timingPeriodSer, choice.value)
+      is Period -> {
+        encoder.encodeSerializableElement(descriptor, 20, Hoisted.timingPeriodSer, choice)
       }
-      is RequestGroup.Action.Timing.Duration -> {
-        encoder.encodeSerializableElement(descriptor, 21, Hoisted.timingDurationSer, choice.value)
+      is Duration -> {
+        encoder.encodeSerializableElement(descriptor, 21, Hoisted.timingDurationSer, choice)
       }
-      is RequestGroup.Action.Timing.Range -> {
-        encoder.encodeSerializableElement(descriptor, 22, Hoisted.timingRangeSer, choice.value)
+      is Range -> {
+        encoder.encodeSerializableElement(descriptor, 22, Hoisted.timingRangeSer, choice)
       }
-      is RequestGroup.Action.Timing.Timing -> {
-        encoder.encodeSerializableElement(descriptor, 23, Hoisted.timingTimingSer, choice.value)
+      is Timing -> {
+        encoder.encodeSerializableElement(descriptor, 23, Hoisted.timingTimingSer, choice)
       }
     }
     if (value.participant.isNotEmpty())
@@ -678,7 +676,7 @@ internal object RequestGroupActionRelatedActionSerializer :
       actionId = Id.of(actionId, _actionId)!!,
       relationship =
         Enumeration.of(RequestGroup.ActionRelationshipType.fromCode(relationship!!), _relationship),
-      offset = RequestGroup.Action.RelatedAction.Offset.from(offsetDuration, offsetRange),
+      offset = (offsetDuration ?: offsetRange),
     )
   }
 
@@ -706,11 +704,11 @@ internal object RequestGroupActionRelatedActionSerializer :
     }
     when (val choice = value.offset) {
       null -> {}
-      is RequestGroup.Action.RelatedAction.Offset.Duration -> {
-        encoder.encodeSerializableElement(descriptor, 7, Hoisted.offsetDurationSer, choice.value)
+      is Duration -> {
+        encoder.encodeSerializableElement(descriptor, 7, Hoisted.offsetDurationSer, choice)
       }
-      is RequestGroup.Action.RelatedAction.Offset.Range -> {
-        encoder.encodeSerializableElement(descriptor, 8, Hoisted.offsetRangeSer, choice.value)
+      is Range -> {
+        encoder.encodeSerializableElement(descriptor, 8, Hoisted.offsetRangeSer, choice)
       }
     }
   }

@@ -694,10 +694,8 @@ internal object AuditEventEntityDetailSerializer : KSerializer<AuditEvent.Entity
       modifierExtension = modifierExtension ?: listOf(),
       type = R4String.of(type, _type)!!,
       `value` =
-        AuditEvent.Entity.Detail.Value.from(
-          R4String.of(valueString, _valueString),
-          Base64Binary.of(valueBase64Binary, _valueBase64Binary),
-        )!!,
+        (R4String.of(valueString, _valueString)
+          ?: Base64Binary.of(valueBase64Binary, _valueBase64Binary))!!,
     )
   }
 
@@ -717,15 +715,15 @@ internal object AuditEventEntityDetailSerializer : KSerializer<AuditEvent.Entity
       encoder.encodeSerializableElement(descriptor, 4, Hoisted.typeSer, it)
     }
     when (val choice = value.`value`) {
-      is AuditEvent.Entity.Detail.Value.String -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
-        (choice.value.toElement())?.let {
+      is R4String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 6, Hoisted.typeSer, it)
         }
       }
-      is AuditEvent.Entity.Detail.Value.Base64Binary -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 7, it) }
-        (choice.value.toElement())?.let {
+      is Base64Binary -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 7, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 8, Hoisted.typeSer, it)
         }
       }

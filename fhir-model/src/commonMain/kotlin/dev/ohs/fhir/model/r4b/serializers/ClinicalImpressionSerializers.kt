@@ -520,10 +520,8 @@ internal object ClinicalImpressionSerializer : KSerializer<ClinicalImpression> {
       subject = subject!!,
       encounter = encounter,
       effective =
-        ClinicalImpression.Effective.from(
-          DateTime.of(FhirDateTime.fromString(effectiveDateTime), _effectiveDateTime),
-          effectivePeriod,
-        ),
+        (DateTime.of(FhirDateTime.fromString(effectiveDateTime), _effectiveDateTime)
+          ?: effectivePeriod),
       date = DateTime.of(FhirDateTime.fromString(date), _date),
       assessor = assessor,
       previous = previous,
@@ -654,11 +652,11 @@ internal object ClinicalImpressionSerializer : KSerializer<ClinicalImpression> {
     }
     when (val choice = value.effective) {
       null -> {}
-      is ClinicalImpression.Effective.DateTime -> {
-        ((choice.value.value?.toString()))?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let {
           encoder.encodeStringElement(descriptor, 19 + descriptorOffset, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             20 + descriptorOffset,
@@ -667,12 +665,12 @@ internal object ClinicalImpressionSerializer : KSerializer<ClinicalImpression> {
           )
         }
       }
-      is ClinicalImpression.Effective.Period -> {
+      is Period -> {
         encoder.encodeSerializableElement(
           descriptor,
           21 + descriptorOffset,
           Hoisted.effectivePeriodSer,
-          choice.value,
+          choice,
         )
       }
     }

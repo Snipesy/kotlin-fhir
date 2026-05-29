@@ -453,10 +453,7 @@ internal object CompartmentDefinitionSerializer : KSerializer<CompartmentDefinit
       url = Uri.of(url, _url)!!,
       version = R5String.of(version, _version),
       versionAlgorithm =
-        CompartmentDefinition.VersionAlgorithm.from(
-          R5String.of(versionAlgorithmString, _versionAlgorithmString),
-          versionAlgorithmCoding,
-        ),
+        (R5String.of(versionAlgorithmString, _versionAlgorithmString) ?: versionAlgorithmCoding),
       name = R5String.of(name, _name)!!,
       title = R5String.of(title, _title),
       status = Enumeration.of(PublicationStatus.fromCode(status!!), _status),
@@ -551,11 +548,9 @@ internal object CompartmentDefinitionSerializer : KSerializer<CompartmentDefinit
     }
     when (val choice = value.versionAlgorithm) {
       null -> {}
-      is CompartmentDefinition.VersionAlgorithm.String -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 14 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is R5String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 14 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             15 + descriptorOffset,
@@ -564,12 +559,12 @@ internal object CompartmentDefinitionSerializer : KSerializer<CompartmentDefinit
           )
         }
       }
-      is CompartmentDefinition.VersionAlgorithm.Coding -> {
+      is Coding -> {
         encoder.encodeSerializableElement(
           descriptor,
           16 + descriptorOffset,
           Hoisted.versionAlgorithmCodingSer,
-          choice.value,
+          choice,
         )
       }
     }

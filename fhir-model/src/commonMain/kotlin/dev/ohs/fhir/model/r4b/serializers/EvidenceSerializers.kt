@@ -1487,7 +1487,7 @@ internal object EvidenceSerializer : KSerializer<Evidence> {
       identifier = identifier ?: listOf(),
       version = R4bString.of(version, _version),
       title = R4bString.of(title, _title),
-      citeAs = Evidence.CiteAs.from(citeAsReference, Markdown.of(citeAsMarkdown, _citeAsMarkdown)),
+      citeAs = (citeAsReference ?: Markdown.of(citeAsMarkdown, _citeAsMarkdown)),
       status = Enumeration.of(PublicationStatus.fromCode(status!!), _status),
       date = DateTime.of(FhirDateTime.fromString(date), _date),
       useContext = useContext ?: listOf(),
@@ -1607,19 +1607,17 @@ internal object EvidenceSerializer : KSerializer<Evidence> {
     }
     when (val choice = value.citeAs) {
       null -> {}
-      is Evidence.CiteAs.Reference -> {
+      is Reference -> {
         encoder.encodeSerializableElement(
           descriptor,
           17 + descriptorOffset,
           Hoisted.citeAsReferenceSer,
-          choice.value,
+          choice,
         )
       }
-      is Evidence.CiteAs.Markdown -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 18 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is Markdown -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 18 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             19 + descriptorOffset,

@@ -58,7 +58,7 @@ public data class Period(
    * an end value of 2012-02-03.
    */
   public val end: DateTime? = null,
-) : DataType() {
+) : DataType(), FhirChoiceParticipants.PeriodChoices {
   public fun toBuilder(): Builder =
     with(this) {
       Builder().apply {

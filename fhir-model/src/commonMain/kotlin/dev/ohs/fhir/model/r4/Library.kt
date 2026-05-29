@@ -20,7 +20,6 @@ import dev.ohs.fhir.model.r4.serializers.LibrarySerializer
 import dev.ohs.fhir.model.r4.terminologies.PublicationStatus
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -213,8 +212,10 @@ public data class Library(
   public val type: CodeableConcept,
   /**
    * A code or group definition that describes the intended subject of the contents of the library.
+   *
+   * A FHIR choice type — one of: [CodeableConcept] | [Reference]
    */
-  public val subject: Subject? = null,
+  public val subject: Library.Subject? = null,
   /**
    * The date (and optionally time) when the library was published. The date must change when the
    * business version changes and it must change if the status code changes. In addition, it should
@@ -392,30 +393,6 @@ public data class Library(
         content = this@with.content.map { it.toBuilder() }.toMutableList()
       }
     }
-
-  public sealed interface Subject {
-    public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-    public fun asReference(): Reference? = this as? Reference
-
-    @JvmInline
-    public value class CodeableConcept(public val `value`: dev.ohs.fhir.model.r4.CodeableConcept) :
-      Subject
-
-    @JvmInline
-    public value class Reference(public val `value`: dev.ohs.fhir.model.r4.Reference) : Subject
-
-    public companion object {
-      internal fun from(
-        codeableConceptValue: dev.ohs.fhir.model.r4.CodeableConcept?,
-        referenceValue: dev.ohs.fhir.model.r4.Reference?,
-      ): Subject? {
-        if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-        if (referenceValue != null) return Reference(referenceValue)
-        return null
-      }
-    }
-  }
 
   public class Builder(
     /**
@@ -617,8 +594,10 @@ public data class Library(
     /**
      * A code or group definition that describes the intended subject of the contents of the
      * library.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public var subject: Subject? = null
+    public var subject: Library.Subject? = null
 
     /**
      * The date (and optionally time) when the library was published. The date must change when the
@@ -822,4 +801,7 @@ public data class Library(
         content = content.map { it.build() },
       )
   }
+
+  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+  public typealias Subject = FhirChoiceTypes.CodeableConceptOrReference
 }

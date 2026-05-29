@@ -861,7 +861,7 @@ internal object ConsentSerializer : KSerializer<Consent> {
       dateTime = DateTime.of(FhirDateTime.fromString(dateTime), _dateTime),
       performer = performer ?: listOf(),
       organization = organization ?: listOf(),
-      source = Consent.Source.from(sourceAttachment, sourceReference),
+      source = (sourceAttachment ?: sourceReference),
       policy = policy ?: listOf(),
       policyRule = policyRule,
       verification = verification ?: listOf(),
@@ -986,20 +986,20 @@ internal object ConsentSerializer : KSerializer<Consent> {
       )
     when (val choice = value.source) {
       null -> {}
-      is Consent.Source.Attachment -> {
+      is Attachment -> {
         encoder.encodeSerializableElement(
           descriptor,
           20 + descriptorOffset,
           Hoisted.sourceAttachmentSer,
-          choice.value,
+          choice,
         )
       }
-      is Consent.Source.Reference -> {
+      is Reference -> {
         encoder.encodeSerializableElement(
           descriptor,
           21 + descriptorOffset,
           Hoisted.patientSer,
-          choice.value,
+          choice,
         )
       }
     }

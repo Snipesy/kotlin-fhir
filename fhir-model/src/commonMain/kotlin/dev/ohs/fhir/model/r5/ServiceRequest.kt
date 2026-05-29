@@ -20,10 +20,8 @@ import dev.ohs.fhir.model.r5.serializers.ServiceRequestOrderDetailParameterSeria
 import dev.ohs.fhir.model.r5.serializers.ServiceRequestOrderDetailSerializer
 import dev.ohs.fhir.model.r5.serializers.ServiceRequestPatientInstructionSerializer
 import dev.ohs.fhir.model.r5.serializers.ServiceRequestSerializer
-import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -42,7 +40,7 @@ public data class ServiceRequest(
    * like the create and conditional update. Otherwise, the use of the resouce id depends on the
    * given use case.
    */
-  override val id: String? = null,
+  override val id: kotlin.String? = null,
   /**
    * The metadata about the resource. This is content that is maintained by the infrastructure.
    * Changes to the content might not always be associated with version changes to the resource.
@@ -235,8 +233,10 @@ public data class ServiceRequest(
    * An amount of service being requested which can be a quantity ( for example $1,500 home
    * modification), a ratio ( for example, 20 half day visits per month), or a range (2.0 to 1.8 Gy
    * per fraction).
+   *
+   * A FHIR choice type — one of: [Quantity] | [Range] | [Ratio]
    */
-  public val quantity: Quantity? = null,
+  public val quantity: FhirChoiceTypes.QuantityOrRangeOrRatio? = null,
   /**
    * On whom or what the service is to be performed. This is usually a human patient, but can also
    * be requested on animals, groups of humans or animals, devices such as dialysis machines, or
@@ -256,13 +256,19 @@ public data class ServiceRequest(
    * request is made.
    */
   public val encounter: Reference? = null,
-  /** The date/time at which the requested service should occur. */
-  public val occurrence: Occurrence? = null,
+  /**
+   * The date/time at which the requested service should occur.
+   *
+   * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
+   */
+  public val occurrence: ServiceRequest.Occurrence? = null,
   /**
    * If a CodeableConcept is present, it indicates the pre-condition for performing the service. For
    * example "pain", "on flare-up", etc.
+   *
+   * A FHIR choice type — one of: [Boolean] | [CodeableConcept]
    */
-  public val asNeeded: AsNeeded? = null,
+  public val asNeeded: ServiceRequest.AsNeeded? = null,
   /** When the request transitioned to being actionable. */
   public val authoredOn: DateTime? = null,
   /**
@@ -422,7 +428,7 @@ public data class ServiceRequest(
      * Unique id for the element within a resource (for internal references). This may be any string
      * value that does not contain spaces.
      */
-    override val id: String? = null,
+    override val id: kotlin.String? = null,
     /**
      * May be used to represent additional information that is not part of the basic definition of
      * the element. To make the use of extensions safe and managable, there is a strict set of
@@ -477,7 +483,7 @@ public data class ServiceRequest(
        * Unique id for the element within a resource (for internal references). This may be any
        * string value that does not contain spaces.
        */
-      override val id: String? = null,
+      override val id: kotlin.String? = null,
       /**
        * May be used to represent additional information that is not part of the basic definition of
        * the element. To make the use of extensions safe and managable, there is a strict set of
@@ -521,8 +527,11 @@ public data class ServiceRequest(
        * CodeableConcept values are indented to express concepts that would normally be coded - when
        * a code is not available for a concept, CodeableConcept.text can be used. When the data is a
        * text or not a single identifiable concept, string should be used.
+       *
+       * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Period] | [Quantity] |
+       * [Range] | [Ratio] | [String]
        */
-      public val `value`: Value,
+      public val `value`: Parameter.Value,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -532,66 +541,6 @@ public data class ServiceRequest(
             modifierExtension = this@with.modifierExtension.map { it.toBuilder() }.toMutableList()
           }
         }
-
-      public sealed interface Value {
-        public fun asQuantity(): Quantity? = this as? Quantity
-
-        public fun asRatio(): Ratio? = this as? Ratio
-
-        public fun asRange(): Range? = this as? Range
-
-        public fun asBoolean(): Boolean? = this as? Boolean
-
-        public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-        public fun asString(): String? = this as? String
-
-        public fun asPeriod(): Period? = this as? Period
-
-        @JvmInline
-        public value class Quantity(public val `value`: dev.ohs.fhir.model.r5.Quantity) : Value
-
-        @JvmInline
-        public value class Ratio(public val `value`: dev.ohs.fhir.model.r5.Ratio) : Value
-
-        @JvmInline
-        public value class Range(public val `value`: dev.ohs.fhir.model.r5.Range) : Value
-
-        @JvmInline
-        public value class Boolean(public val `value`: dev.ohs.fhir.model.r5.Boolean) : Value
-
-        @JvmInline
-        public value class CodeableConcept(
-          public val `value`: dev.ohs.fhir.model.r5.CodeableConcept
-        ) : Value
-
-        @JvmInline
-        public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : Value
-
-        @JvmInline
-        public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) : Value
-
-        public companion object {
-          internal fun from(
-            quantityValue: dev.ohs.fhir.model.r5.Quantity?,
-            ratioValue: dev.ohs.fhir.model.r5.Ratio?,
-            rangeValue: dev.ohs.fhir.model.r5.Range?,
-            booleanValue: dev.ohs.fhir.model.r5.Boolean?,
-            codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-            stringValue: dev.ohs.fhir.model.r5.String?,
-            periodValue: dev.ohs.fhir.model.r5.Period?,
-          ): Value? {
-            if (quantityValue != null) return Quantity(quantityValue)
-            if (ratioValue != null) return Ratio(ratioValue)
-            if (rangeValue != null) return Range(rangeValue)
-            if (booleanValue != null) return Boolean(booleanValue)
-            if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-            if (stringValue != null) return String(stringValue)
-            if (periodValue != null) return Period(periodValue)
-            return null
-          }
-        }
-      }
 
       public class Builder(
         /**
@@ -605,14 +554,17 @@ public data class ServiceRequest(
          * CodeableConcept values are indented to express concepts that would normally be coded -
          * when a code is not available for a concept, CodeableConcept.text can be used. When the
          * data is a text or not a single identifiable concept, string should be used.
+         *
+         * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Period] | [Quantity] |
+         * [Range] | [Ratio] | [String]
          */
-        public var `value`: Value,
+        public var `value`: Parameter.Value,
       ) {
         /**
          * Unique id for the element within a resource (for internal references). This may be any
          * string value that does not contain spaces.
          */
-        public var id: String? = null
+        public var id: kotlin.String? = null
 
         /**
          * May be used to represent additional information that is not part of the basic definition
@@ -657,6 +609,13 @@ public data class ServiceRequest(
             `value` = `value`,
           )
       }
+
+      /**
+       * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Period] | [Quantity] |
+       * [Range] | [Ratio] | [String]
+       */
+      public typealias Value =
+        FhirChoiceTypes.BooleanOrCodeableConceptOrPeriodOrQuantityOrRangeOrRatioOrString
     }
 
     public class Builder(
@@ -667,7 +626,7 @@ public data class ServiceRequest(
        * Unique id for the element within a resource (for internal references). This may be any
        * string value that does not contain spaces.
        */
-      public var id: String? = null
+      public var id: kotlin.String? = null
 
       /**
        * May be used to represent additional information that is not part of the basic definition of
@@ -724,7 +683,7 @@ public data class ServiceRequest(
      * Unique id for the element within a resource (for internal references). This may be any string
      * value that does not contain spaces.
      */
-    override val id: String? = null,
+    override val id: kotlin.String? = null,
     /**
      * May be used to represent additional information that is not part of the basic definition of
      * the element. To make the use of extensions safe and managable, there is a strict set of
@@ -757,8 +716,12 @@ public data class ServiceRequest(
      * simplicity for everyone.
      */
     override val modifierExtension: List<Extension> = listOf(),
-    /** Instructions in terms that are understood by the patient or consumer. */
-    public val instruction: Instruction? = null,
+    /**
+     * Instructions in terms that are understood by the patient or consumer.
+     *
+     * A FHIR choice type — one of: [Markdown] | [Reference]
+     */
+    public val instruction: PatientInstruction.Instruction? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -770,36 +733,12 @@ public data class ServiceRequest(
         }
       }
 
-    public sealed interface Instruction {
-      public fun asMarkdown(): Markdown? = this as? Markdown
-
-      public fun asReference(): Reference? = this as? Reference
-
-      @JvmInline
-      public value class Markdown(public val `value`: dev.ohs.fhir.model.r5.Markdown) : Instruction
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) :
-        Instruction
-
-      public companion object {
-        internal fun from(
-          markdownValue: dev.ohs.fhir.model.r5.Markdown?,
-          referenceValue: dev.ohs.fhir.model.r5.Reference?,
-        ): Instruction? {
-          if (markdownValue != null) return Markdown(markdownValue)
-          if (referenceValue != null) return Reference(referenceValue)
-          return null
-        }
-      }
-    }
-
     public class Builder() {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
        * string value that does not contain spaces.
        */
-      public var id: String? = null
+      public var id: kotlin.String? = null
 
       /**
        * May be used to represent additional information that is not part of the basic definition of
@@ -835,8 +774,12 @@ public data class ServiceRequest(
        */
       public var modifierExtension: MutableList<Extension.Builder> = mutableListOf()
 
-      /** Instructions in terms that are understood by the patient or consumer. */
-      public var instruction: Instruction? = null
+      /**
+       * Instructions in terms that are understood by the patient or consumer.
+       *
+       * A FHIR choice type — one of: [Markdown] | [Reference]
+       */
+      public var instruction: PatientInstruction.Instruction? = null
 
       public fun build(): PatientInstruction =
         PatientInstruction(
@@ -846,93 +789,9 @@ public data class ServiceRequest(
           instruction = instruction,
         )
     }
-  }
 
-  public sealed interface Quantity {
-    public fun asQuantity(): Quantity? = this as? Quantity
-
-    public fun asRatio(): Ratio? = this as? Ratio
-
-    public fun asRange(): Range? = this as? Range
-
-    @JvmInline
-    public value class Quantity(public val `value`: dev.ohs.fhir.model.r5.Quantity) :
-      ServiceRequest.Quantity
-
-    @JvmInline
-    public value class Ratio(public val `value`: dev.ohs.fhir.model.r5.Ratio) :
-      ServiceRequest.Quantity
-
-    @JvmInline
-    public value class Range(public val `value`: dev.ohs.fhir.model.r5.Range) :
-      ServiceRequest.Quantity
-
-    public companion object {
-      internal fun from(
-        quantityValue: dev.ohs.fhir.model.r5.Quantity?,
-        ratioValue: dev.ohs.fhir.model.r5.Ratio?,
-        rangeValue: dev.ohs.fhir.model.r5.Range?,
-      ): ServiceRequest.Quantity? {
-        if (quantityValue != null) return Quantity(quantityValue)
-        if (ratioValue != null) return Ratio(ratioValue)
-        if (rangeValue != null) return Range(rangeValue)
-        return null
-      }
-    }
-  }
-
-  public sealed interface Occurrence {
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    public fun asPeriod(): Period? = this as? Period
-
-    public fun asTiming(): Timing? = this as? Timing
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) : Occurrence
-
-    @JvmInline
-    public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) : Occurrence
-
-    @JvmInline
-    public value class Timing(public val `value`: dev.ohs.fhir.model.r5.Timing) : Occurrence
-
-    public companion object {
-      internal fun from(
-        dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-        periodValue: dev.ohs.fhir.model.r5.Period?,
-        timingValue: dev.ohs.fhir.model.r5.Timing?,
-      ): Occurrence? {
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        if (periodValue != null) return Period(periodValue)
-        if (timingValue != null) return Timing(timingValue)
-        return null
-      }
-    }
-  }
-
-  public sealed interface AsNeeded {
-    public fun asBoolean(): Boolean? = this as? Boolean
-
-    public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-    @JvmInline
-    public value class Boolean(public val `value`: dev.ohs.fhir.model.r5.Boolean) : AsNeeded
-
-    @JvmInline
-    public value class CodeableConcept(public val `value`: dev.ohs.fhir.model.r5.CodeableConcept) :
-      AsNeeded
-
-    public companion object {
-      internal fun from(
-        booleanValue: dev.ohs.fhir.model.r5.Boolean?,
-        codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-      ): AsNeeded? {
-        if (booleanValue != null) return Boolean(booleanValue)
-        if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-        return null
-      }
-    }
+    /** A FHIR choice type — one of: [Markdown] | [Reference] */
+    public typealias Instruction = FhirChoiceTypes.MarkdownOrReference
   }
 
   public class Builder(
@@ -968,7 +827,7 @@ public data class ServiceRequest(
      * like the create and conditional update. Otherwise, the use of the resouce id depends on the
      * given use case.
      */
-    public var id: String? = null
+    public var id: kotlin.String? = null
 
     /**
      * The metadata about the resource. This is content that is maintained by the infrastructure.
@@ -1165,8 +1024,10 @@ public data class ServiceRequest(
      * An amount of service being requested which can be a quantity ( for example $1,500 home
      * modification), a ratio ( for example, 20 half day visits per month), or a range (2.0 to 1.8
      * Gy per fraction).
+     *
+     * A FHIR choice type — one of: [Quantity] | [Range] | [Ratio]
      */
-    public var quantity: Quantity? = null
+    public var quantity: FhirChoiceTypes.QuantityOrRangeOrRatio? = null
 
     /**
      * The actual focus of a service request when it is not the subject of record representing
@@ -1183,14 +1044,20 @@ public data class ServiceRequest(
      */
     public var encounter: Reference.Builder? = null
 
-    /** The date/time at which the requested service should occur. */
-    public var occurrence: Occurrence? = null
+    /**
+     * The date/time at which the requested service should occur.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
+     */
+    public var occurrence: ServiceRequest.Occurrence? = null
 
     /**
      * If a CodeableConcept is present, it indicates the pre-condition for performing the service.
      * For example "pain", "on flare-up", etc.
+     *
+     * A FHIR choice type — one of: [Boolean] | [CodeableConcept]
      */
-    public var asNeeded: AsNeeded? = null
+    public var asNeeded: ServiceRequest.AsNeeded? = null
 
     /** When the request transitioned to being actionable. */
     public var authoredOn: DateTime.Builder? = null
@@ -1355,9 +1222,9 @@ public data class ServiceRequest(
 
   /** Codes identifying the lifecycle stage of a request. */
   public enum class RequestStatus(
-    private val code: String,
-    private val system: String,
-    private val display: String?,
+    private val code: kotlin.String,
+    private val system: kotlin.String,
+    private val display: kotlin.String?,
   ) {
     Draft("draft", "http://hl7.org/fhir/request-status", "Draft"),
     Active("active", "http://hl7.org/fhir/request-status", "Active"),
@@ -1367,16 +1234,16 @@ public data class ServiceRequest(
     Entered_In_Error("entered-in-error", "http://hl7.org/fhir/request-status", "Entered in Error"),
     Unknown("unknown", "http://hl7.org/fhir/request-status", "Unknown");
 
-    override fun toString(): String = code
+    override fun toString(): kotlin.String = code
 
-    public fun getCode(): String = code
+    public fun getCode(): kotlin.String = code
 
-    public fun getSystem(): String = system
+    public fun getSystem(): kotlin.String = system
 
-    public fun getDisplay(): String? = display
+    public fun getDisplay(): kotlin.String? = display
 
     public companion object {
-      public fun fromCode(code: String): RequestStatus =
+      public fun fromCode(code: kotlin.String): RequestStatus =
         when (code) {
           "draft" -> Draft
           "active" -> Active
@@ -1392,9 +1259,9 @@ public data class ServiceRequest(
 
   /** Codes indicating the degree of authority/intentionality associated with a request. */
   public enum class RequestIntent(
-    private val code: String,
-    private val system: String,
-    private val display: String?,
+    private val code: kotlin.String,
+    private val system: kotlin.String,
+    private val display: kotlin.String?,
   ) {
     Proposal("proposal", "http://hl7.org/fhir/request-intent", "Proposal"),
     Plan("plan", "http://hl7.org/fhir/request-intent", "Plan"),
@@ -1406,16 +1273,16 @@ public data class ServiceRequest(
     Instance_Order("instance-order", "http://hl7.org/fhir/request-intent", "Instance Order"),
     Option("option", "http://hl7.org/fhir/request-intent", "Option");
 
-    override fun toString(): String = code
+    override fun toString(): kotlin.String = code
 
-    public fun getCode(): String = code
+    public fun getCode(): kotlin.String = code
 
-    public fun getSystem(): String = system
+    public fun getSystem(): kotlin.String = system
 
-    public fun getDisplay(): String? = display
+    public fun getDisplay(): kotlin.String? = display
 
     public companion object {
-      public fun fromCode(code: String): RequestIntent =
+      public fun fromCode(code: kotlin.String): RequestIntent =
         when (code) {
           "proposal" -> Proposal
           "plan" -> Plan
@@ -1433,25 +1300,25 @@ public data class ServiceRequest(
 
   /** Identifies the level of importance to be assigned to actioning the request. */
   public enum class RequestPriority(
-    private val code: String,
-    private val system: String,
-    private val display: String?,
+    private val code: kotlin.String,
+    private val system: kotlin.String,
+    private val display: kotlin.String?,
   ) {
     Routine("routine", "http://hl7.org/fhir/request-priority", "Routine"),
     Urgent("urgent", "http://hl7.org/fhir/request-priority", "Urgent"),
     Asap("asap", "http://hl7.org/fhir/request-priority", "ASAP"),
     Stat("stat", "http://hl7.org/fhir/request-priority", "STAT");
 
-    override fun toString(): String = code
+    override fun toString(): kotlin.String = code
 
-    public fun getCode(): String = code
+    public fun getCode(): kotlin.String = code
 
-    public fun getSystem(): String = system
+    public fun getSystem(): kotlin.String = system
 
-    public fun getDisplay(): String? = display
+    public fun getDisplay(): kotlin.String? = display
 
     public companion object {
-      public fun fromCode(code: String): RequestPriority =
+      public fun fromCode(code: kotlin.String): RequestPriority =
         when (code) {
           "routine" -> Routine
           "urgent" -> Urgent
@@ -1461,4 +1328,10 @@ public data class ServiceRequest(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [DateTime] | [Period] | [Timing] */
+  public typealias Occurrence = FhirChoiceTypes.DateTimeOrPeriodOrTiming
+
+  /** A FHIR choice type — one of: [Boolean] | [CodeableConcept] */
+  public typealias AsNeeded = FhirChoiceTypes.BooleanOrCodeableConcept
 }

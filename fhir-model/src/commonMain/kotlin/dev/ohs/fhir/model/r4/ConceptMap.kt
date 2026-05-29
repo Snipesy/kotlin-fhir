@@ -26,7 +26,6 @@ import dev.ohs.fhir.model.r4.terminologies.ConceptMapEquivalence
 import dev.ohs.fhir.model.r4.terminologies.PublicationStatus
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -276,8 +275,10 @@ public data class ConceptMap(
    * Should be a version specific reference. URIs SHOULD be absolute. If there is no source or
    * target value set, there is no specified context for the map (not recommended). The source value
    * set may select codes from either an explicit (standard or local) or implicit code system.
+   *
+   * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
    */
-  public val source: Source? = null,
+  public val source: ConceptMap.Source? = null,
   /**
    * The target value set provides context for the mappings. Note that the mapping is made between
    * concepts, not between value sets, but the value set provides important context about how the
@@ -285,8 +286,10 @@ public data class ConceptMap(
    *
    * Should be a version specific reference. URIs SHOULD be absolute. If there is no source or
    * target value set, the is no specified context for the map.
+   *
+   * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
    */
-  public val target: Target? = null,
+  public val target: ConceptMap.Target? = null,
   /** A group of mappings that all have the same source and target system. */
   public val group: List<Group> = listOf(),
 ) : DomainResource() {
@@ -1185,50 +1188,6 @@ public data class ConceptMap(
     }
   }
 
-  public sealed interface Source {
-    public fun asUri(): Uri? = this as? Uri
-
-    public fun asCanonical(): Canonical? = this as? Canonical
-
-    @JvmInline public value class Uri(public val `value`: dev.ohs.fhir.model.r4.Uri) : Source
-
-    @JvmInline
-    public value class Canonical(public val `value`: dev.ohs.fhir.model.r4.Canonical) : Source
-
-    public companion object {
-      internal fun from(
-        uriValue: dev.ohs.fhir.model.r4.Uri?,
-        canonicalValue: dev.ohs.fhir.model.r4.Canonical?,
-      ): Source? {
-        if (uriValue != null) return Uri(uriValue)
-        if (canonicalValue != null) return Canonical(canonicalValue)
-        return null
-      }
-    }
-  }
-
-  public sealed interface Target {
-    public fun asUri(): Uri? = this as? Uri
-
-    public fun asCanonical(): Canonical? = this as? Canonical
-
-    @JvmInline public value class Uri(public val `value`: dev.ohs.fhir.model.r4.Uri) : Target
-
-    @JvmInline
-    public value class Canonical(public val `value`: dev.ohs.fhir.model.r4.Canonical) : Target
-
-    public companion object {
-      internal fun from(
-        uriValue: dev.ohs.fhir.model.r4.Uri?,
-        canonicalValue: dev.ohs.fhir.model.r4.Canonical?,
-      ): Target? {
-        if (uriValue != null) return Uri(uriValue)
-        if (canonicalValue != null) return Canonical(canonicalValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
     /**
      * The status of this concept map. Enables tracking the life-cycle of the content.
@@ -1497,8 +1456,10 @@ public data class ConceptMap(
      * target value set, there is no specified context for the map (not recommended). The source
      * value set may select codes from either an explicit (standard or local) or implicit code
      * system.
+     *
+     * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
      */
-    public var source: Source? = null
+    public var source: ConceptMap.Source? = null
 
     /**
      * The target value set provides context for the mappings. Note that the mapping is made between
@@ -1507,8 +1468,10 @@ public data class ConceptMap(
      *
      * Should be a version specific reference. URIs SHOULD be absolute. If there is no source or
      * target value set, the is no specified context for the map.
+     *
+     * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
      */
-    public var target: Target? = null
+    public var target: ConceptMap.Target? = null
 
     /** A group of mappings that all have the same source and target system. */
     public var group: MutableList<Group.Builder> = mutableListOf()
@@ -1575,4 +1538,10 @@ public data class ConceptMap(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [CanonicalBox] | [UriBox] */
+  public typealias Source = FhirChoiceTypes.CanonicalOrUri
+
+  /** A FHIR choice type — one of: [CanonicalBox] | [UriBox] */
+  public typealias Target = FhirChoiceTypes.CanonicalOrUri
 }

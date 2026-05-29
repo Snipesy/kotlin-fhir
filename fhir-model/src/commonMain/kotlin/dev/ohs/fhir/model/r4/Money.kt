@@ -56,7 +56,7 @@ public data class Money(
   public val `value`: Decimal? = null,
   /** ISO 4217 Currency Code. */
   public val currency: Enumeration<Currencies>? = null,
-) : Element() {
+) : Element(), FhirChoiceParticipants.MoneyChoices {
   public fun toBuilder(): Builder =
     with(this) {
       Builder().apply {

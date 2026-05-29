@@ -45,7 +45,7 @@ public open class Integer(
   open override val extension: List<Extension> = listOf(),
   /** The actual value */
   public open val `value`: Int? = null,
-) : PrimitiveType() {
+) : PrimitiveType(), FhirChoiceParticipants.IntegerChoices {
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
     if (other !is Integer) return false

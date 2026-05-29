@@ -28,7 +28,6 @@ import dev.ohs.fhir.model.r4.serializers.ElementDefinitionTypeSerializer
 import dev.ohs.fhir.model.r4.terminologies.BindingStrength
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.Serializable
 
 /**
@@ -232,8 +231,18 @@ public data class ElementDefinition(
    * No default values are ever defined in the FHIR specification, nor can they be defined in
    * constraints ("profiles") on data types or resources. This element only exists so that default
    * values may be defined in logical models.
+   *
+   * A FHIR choice type — one of: [Address] | [AgeBox] | [Annotation] | [Attachment] |
+   * [Base64Binary] | [Boolean] | [CanonicalBox] | [CodeBox] | [CodeableConcept] | [Coding] |
+   * [ContactDetail] | [ContactPoint] | [Contributor] | [CountBox] | [DataRequirement] | [Date] |
+   * [DateTime] | [Decimal] | [DistanceBox] | [Dosage] | [DurationBox] | [Expression] | [HumanName]
+   * | [IdBox] | [Identifier] | [Instant] | [IntegerBox] | [MarkdownBox] | [Meta] | [Money] |
+   * [OidBox] | [ParameterDefinition] | [Period] | [PositiveIntBox] | [QuantityBox] | [Range] |
+   * [Ratio] | [Reference] | [RelatedArtifact] | [SampledData] | [Signature] | [StringBox] | [Time]
+   * | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] | [UrlBox] | [UsageContext] |
+   * [UuidBox]
    */
-  public val defaultValue: DefaultValue? = null,
+  public val defaultValue: ElementDefinition.DefaultValue? = null,
   /**
    * The Implicit meaning that is to be understood when this element is missing (e.g. 'when this
    * element is missing, the period is ongoing').
@@ -261,8 +270,18 @@ public data class ElementDefinition(
    *
    * This is not recommended for Coding and CodeableConcept since these often have highly contextual
    * properties such as version or display.
+   *
+   * A FHIR choice type — one of: [Address] | [AgeBox] | [Annotation] | [Attachment] |
+   * [Base64Binary] | [Boolean] | [CanonicalBox] | [CodeBox] | [CodeableConcept] | [Coding] |
+   * [ContactDetail] | [ContactPoint] | [Contributor] | [CountBox] | [DataRequirement] | [Date] |
+   * [DateTime] | [Decimal] | [DistanceBox] | [Dosage] | [DurationBox] | [Expression] | [HumanName]
+   * | [IdBox] | [Identifier] | [Instant] | [IntegerBox] | [MarkdownBox] | [Meta] | [Money] |
+   * [OidBox] | [ParameterDefinition] | [Period] | [PositiveIntBox] | [QuantityBox] | [Range] |
+   * [Ratio] | [Reference] | [RelatedArtifact] | [SampledData] | [Signature] | [StringBox] | [Time]
+   * | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] | [UrlBox] | [UsageContext] |
+   * [UuidBox]
    */
-  public val fixed: Fixed? = null,
+  public val fixed: ElementDefinition.Fixed? = null,
   /**
    * Specifies a value that the value in the instance SHALL follow - that is, any value in the
    * pattern must be found in the instance. Other additional values may be found too. This is
@@ -282,8 +301,18 @@ public data class ElementDefinition(
    *
    * Mostly used for fixing values of CodeableConcept. In general, pattern[x] is not intended for
    * use with primitive types, where is has the same meaning as fixed[x].
+   *
+   * A FHIR choice type — one of: [Address] | [AgeBox] | [Annotation] | [Attachment] |
+   * [Base64Binary] | [Boolean] | [CanonicalBox] | [CodeBox] | [CodeableConcept] | [Coding] |
+   * [ContactDetail] | [ContactPoint] | [Contributor] | [CountBox] | [DataRequirement] | [Date] |
+   * [DateTime] | [Decimal] | [DistanceBox] | [Dosage] | [DurationBox] | [Expression] | [HumanName]
+   * | [IdBox] | [Identifier] | [Instant] | [IntegerBox] | [MarkdownBox] | [Meta] | [Money] |
+   * [OidBox] | [ParameterDefinition] | [Period] | [PositiveIntBox] | [QuantityBox] | [Range] |
+   * [Ratio] | [Reference] | [RelatedArtifact] | [SampledData] | [Signature] | [StringBox] | [Time]
+   * | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] | [UrlBox] | [UsageContext] |
+   * [UuidBox]
    */
-  public val pattern: Pattern? = null,
+  public val pattern: ElementDefinition.Pattern? = null,
   /**
    * A sample value for this element demonstrating the type of information that would typically be
    * found in the element.
@@ -304,8 +333,11 @@ public data class ElementDefinition(
    * to the current time. The duration value is positive, and is subtracted from the current clock
    * to determine the minimum allowable value. A minimum value for a Quantity is interpreted as an
    * canonical minimum - e.g. you cannot provide 100mg if the minimum value is 10g.
+   *
+   * A FHIR choice type — one of: [Date] | [DateTime] | [Decimal] | [Instant] | [IntegerBox] |
+   * [PositiveIntBox] | [Quantity] | [Time] | [UnsignedIntBox]
    */
-  public val minValue: MinValue? = null,
+  public val minValue: ElementDefinition.MinValue? = null,
   /**
    * The maximum allowed value for the element. The value is inclusive. This is allowed for the
    * types date, dateTime, instant, time, decimal, integer, and Quantity.
@@ -316,8 +348,11 @@ public data class ElementDefinition(
    * to the current time. The duration value is positive, and is added to the current clock to
    * determine the maximum allowable value. A maximum value for a Quantity is interpreted as an
    * canonical maximum - e.g. you cannot provide 10g if the maximum value is 50mg.
+   *
+   * A FHIR choice type — one of: [Date] | [DateTime] | [Decimal] | [Instant] | [IntegerBox] |
+   * [PositiveIntBox] | [Quantity] | [Time] | [UnsignedIntBox]
    */
-  public val maxValue: MaxValue? = null,
+  public val maxValue: ElementDefinition.MaxValue? = null,
   /**
    * Indicates the maximum length in characters that is permitted to be present in conformant
    * instances and which is expected to be supported by conformant consumers that support the
@@ -1003,8 +1038,18 @@ public data class ElementDefinition(
     public val label: String,
     /**
      * The actual value for the element, which must be one of the types allowed for this element.
+     *
+     * A FHIR choice type — one of: [Address] | [AgeBox] | [Annotation] | [Attachment] |
+     * [Base64Binary] | [Boolean] | [CanonicalBox] | [CodeBox] | [CodeableConcept] | [Coding] |
+     * [ContactDetail] | [ContactPoint] | [Contributor] | [CountBox] | [DataRequirement] | [Date] |
+     * [DateTime] | [Decimal] | [DistanceBox] | [Dosage] | [DurationBox] | [Expression] |
+     * [HumanName] | [IdBox] | [Identifier] | [Instant] | [IntegerBox] | [MarkdownBox] | [Meta] |
+     * [Money] | [OidBox] | [ParameterDefinition] | [Period] | [PositiveIntBox] | [QuantityBox] |
+     * [Range] | [Ratio] | [Reference] | [RelatedArtifact] | [SampledData] | [Signature] |
+     * [StringBox] | [Time] | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] |
+     * [UrlBox] | [UsageContext] | [UuidBox]
      */
-    public val `value`: Value,
+    public val `value`: Example.Value,
   ) : Element() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -1014,372 +1059,23 @@ public data class ElementDefinition(
         }
       }
 
-    public sealed interface Value {
-      public fun asBase64Binary(): Base64Binary? = this as? Base64Binary
-
-      public fun asBoolean(): Boolean? = this as? Boolean
-
-      public fun asCanonical(): Canonical? = this as? Canonical
-
-      public fun asCode(): Code? = this as? Code
-
-      public fun asDate(): Date? = this as? Date
-
-      public fun asDateTime(): DateTime? = this as? DateTime
-
-      public fun asDecimal(): Decimal? = this as? Decimal
-
-      public fun asId(): Id? = this as? Id
-
-      public fun asInstant(): Instant? = this as? Instant
-
-      public fun asInteger(): Integer? = this as? Integer
-
-      public fun asMarkdown(): Markdown? = this as? Markdown
-
-      public fun asOid(): Oid? = this as? Oid
-
-      public fun asPositiveInt(): PositiveInt? = this as? PositiveInt
-
-      public fun asString(): String? = this as? String
-
-      public fun asTime(): Time? = this as? Time
-
-      public fun asUnsignedInt(): UnsignedInt? = this as? UnsignedInt
-
-      public fun asUri(): Uri? = this as? Uri
-
-      public fun asUrl(): Url? = this as? Url
-
-      public fun asUuid(): Uuid? = this as? Uuid
-
-      public fun asAddress(): Address? = this as? Address
-
-      public fun asAge(): Age? = this as? Age
-
-      public fun asAnnotation(): Annotation? = this as? Annotation
-
-      public fun asAttachment(): Attachment? = this as? Attachment
-
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asCoding(): Coding? = this as? Coding
-
-      public fun asContactPoint(): ContactPoint? = this as? ContactPoint
-
-      public fun asCount(): Count? = this as? Count
-
-      public fun asDistance(): Distance? = this as? Distance
-
-      public fun asDuration(): Duration? = this as? Duration
-
-      public fun asHumanName(): HumanName? = this as? HumanName
-
-      public fun asIdentifier(): Identifier? = this as? Identifier
-
-      public fun asMoney(): Money? = this as? Money
-
-      public fun asPeriod(): Period? = this as? Period
-
-      public fun asQuantity(): Quantity? = this as? Quantity
-
-      public fun asRange(): Range? = this as? Range
-
-      public fun asRatio(): Ratio? = this as? Ratio
-
-      public fun asReference(): Reference? = this as? Reference
-
-      public fun asSampledData(): SampledData? = this as? SampledData
-
-      public fun asSignature(): Signature? = this as? Signature
-
-      public fun asTiming(): Timing? = this as? Timing
-
-      public fun asContactDetail(): ContactDetail? = this as? ContactDetail
-
-      public fun asContributor(): Contributor? = this as? Contributor
-
-      public fun asDataRequirement(): DataRequirement? = this as? DataRequirement
-
-      public fun asExpression(): Expression? = this as? Expression
-
-      public fun asParameterDefinition(): ParameterDefinition? = this as? ParameterDefinition
-
-      public fun asRelatedArtifact(): RelatedArtifact? = this as? RelatedArtifact
-
-      public fun asTriggerDefinition(): TriggerDefinition? = this as? TriggerDefinition
-
-      public fun asUsageContext(): UsageContext? = this as? UsageContext
-
-      public fun asDosage(): Dosage? = this as? Dosage
-
-      public fun asMeta(): Meta? = this as? Meta
-
-      @JvmInline
-      public value class Base64Binary(public val `value`: dev.ohs.fhir.model.r4.Base64Binary) :
-        Value
-
-      @JvmInline
-      public value class Boolean(public val `value`: dev.ohs.fhir.model.r4.Boolean) : Value
-
-      @JvmInline
-      public value class Canonical(public val `value`: dev.ohs.fhir.model.r4.Canonical) : Value
-
-      @JvmInline public value class Code(public val `value`: dev.ohs.fhir.model.r4.Code) : Value
-
-      @JvmInline public value class Date(public val `value`: dev.ohs.fhir.model.r4.Date) : Value
-
-      @JvmInline
-      public value class DateTime(public val `value`: dev.ohs.fhir.model.r4.DateTime) : Value
-
-      @JvmInline
-      public value class Decimal(public val `value`: dev.ohs.fhir.model.r4.Decimal) : Value
-
-      @JvmInline public value class Id(public val `value`: dev.ohs.fhir.model.r4.Id) : Value
-
-      @JvmInline
-      public value class Instant(public val `value`: dev.ohs.fhir.model.r4.Instant) : Value
-
-      @JvmInline
-      public value class Integer(public val `value`: dev.ohs.fhir.model.r4.Integer) : Value
-
-      @JvmInline
-      public value class Markdown(public val `value`: dev.ohs.fhir.model.r4.Markdown) : Value
-
-      @JvmInline public value class Oid(public val `value`: dev.ohs.fhir.model.r4.Oid) : Value
-
-      @JvmInline
-      public value class PositiveInt(public val `value`: dev.ohs.fhir.model.r4.PositiveInt) : Value
-
-      @JvmInline
-      public value class String(public val `value`: dev.ohs.fhir.model.r4.String) : Value
-
-      @JvmInline public value class Time(public val `value`: dev.ohs.fhir.model.r4.Time) : Value
-
-      @JvmInline
-      public value class UnsignedInt(public val `value`: dev.ohs.fhir.model.r4.UnsignedInt) : Value
-
-      @JvmInline public value class Uri(public val `value`: dev.ohs.fhir.model.r4.Uri) : Value
-
-      @JvmInline public value class Url(public val `value`: dev.ohs.fhir.model.r4.Url) : Value
-
-      @JvmInline public value class Uuid(public val `value`: dev.ohs.fhir.model.r4.Uuid) : Value
-
-      @JvmInline
-      public value class Address(public val `value`: dev.ohs.fhir.model.r4.Address) : Value
-
-      @JvmInline public value class Age(public val `value`: dev.ohs.fhir.model.r4.Age) : Value
-
-      @JvmInline
-      public value class Annotation(public val `value`: dev.ohs.fhir.model.r4.Annotation) : Value
-
-      @JvmInline
-      public value class Attachment(public val `value`: dev.ohs.fhir.model.r4.Attachment) : Value
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r4.CodeableConcept
-      ) : Value
-
-      @JvmInline
-      public value class Coding(public val `value`: dev.ohs.fhir.model.r4.Coding) : Value
-
-      @JvmInline
-      public value class ContactPoint(public val `value`: dev.ohs.fhir.model.r4.ContactPoint) :
-        Value
-
-      @JvmInline public value class Count(public val `value`: dev.ohs.fhir.model.r4.Count) : Value
-
-      @JvmInline
-      public value class Distance(public val `value`: dev.ohs.fhir.model.r4.Distance) : Value
-
-      @JvmInline
-      public value class Duration(public val `value`: dev.ohs.fhir.model.r4.Duration) : Value
-
-      @JvmInline
-      public value class HumanName(public val `value`: dev.ohs.fhir.model.r4.HumanName) : Value
-
-      @JvmInline
-      public value class Identifier(public val `value`: dev.ohs.fhir.model.r4.Identifier) : Value
-
-      @JvmInline public value class Money(public val `value`: dev.ohs.fhir.model.r4.Money) : Value
-
-      @JvmInline
-      public value class Period(public val `value`: dev.ohs.fhir.model.r4.Period) : Value
-
-      @JvmInline
-      public value class Quantity(public val `value`: dev.ohs.fhir.model.r4.Quantity) : Value
-
-      @JvmInline public value class Range(public val `value`: dev.ohs.fhir.model.r4.Range) : Value
-
-      @JvmInline public value class Ratio(public val `value`: dev.ohs.fhir.model.r4.Ratio) : Value
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r4.Reference) : Value
-
-      @JvmInline
-      public value class SampledData(public val `value`: dev.ohs.fhir.model.r4.SampledData) : Value
-
-      @JvmInline
-      public value class Signature(public val `value`: dev.ohs.fhir.model.r4.Signature) : Value
-
-      @JvmInline
-      public value class Timing(public val `value`: dev.ohs.fhir.model.r4.Timing) : Value
-
-      @JvmInline
-      public value class ContactDetail(public val `value`: dev.ohs.fhir.model.r4.ContactDetail) :
-        Value
-
-      @JvmInline
-      public value class Contributor(public val `value`: dev.ohs.fhir.model.r4.Contributor) : Value
-
-      @JvmInline
-      public value class DataRequirement(
-        public val `value`: dev.ohs.fhir.model.r4.DataRequirement
-      ) : Value
-
-      @JvmInline
-      public value class Expression(public val `value`: dev.ohs.fhir.model.r4.Expression) : Value
-
-      @JvmInline
-      public value class ParameterDefinition(
-        public val `value`: dev.ohs.fhir.model.r4.ParameterDefinition
-      ) : Value
-
-      @JvmInline
-      public value class RelatedArtifact(
-        public val `value`: dev.ohs.fhir.model.r4.RelatedArtifact
-      ) : Value
-
-      @JvmInline
-      public value class TriggerDefinition(
-        public val `value`: dev.ohs.fhir.model.r4.TriggerDefinition
-      ) : Value
-
-      @JvmInline
-      public value class UsageContext(public val `value`: dev.ohs.fhir.model.r4.UsageContext) :
-        Value
-
-      @JvmInline
-      public value class Dosage(public val `value`: dev.ohs.fhir.model.r4.Dosage) : Value
-
-      @JvmInline public value class Meta(public val `value`: dev.ohs.fhir.model.r4.Meta) : Value
-
-      public companion object {
-        internal fun from(
-          base64BinaryValue: dev.ohs.fhir.model.r4.Base64Binary?,
-          booleanValue: dev.ohs.fhir.model.r4.Boolean?,
-          canonicalValue: dev.ohs.fhir.model.r4.Canonical?,
-          codeValue: dev.ohs.fhir.model.r4.Code?,
-          dateValue: dev.ohs.fhir.model.r4.Date?,
-          dateTimeValue: dev.ohs.fhir.model.r4.DateTime?,
-          decimalValue: dev.ohs.fhir.model.r4.Decimal?,
-          idValue: dev.ohs.fhir.model.r4.Id?,
-          instantValue: dev.ohs.fhir.model.r4.Instant?,
-          integerValue: dev.ohs.fhir.model.r4.Integer?,
-          markdownValue: dev.ohs.fhir.model.r4.Markdown?,
-          oidValue: dev.ohs.fhir.model.r4.Oid?,
-          positiveIntValue: dev.ohs.fhir.model.r4.PositiveInt?,
-          stringValue: dev.ohs.fhir.model.r4.String?,
-          timeValue: dev.ohs.fhir.model.r4.Time?,
-          unsignedIntValue: dev.ohs.fhir.model.r4.UnsignedInt?,
-          uriValue: dev.ohs.fhir.model.r4.Uri?,
-          urlValue: dev.ohs.fhir.model.r4.Url?,
-          uuidValue: dev.ohs.fhir.model.r4.Uuid?,
-          addressValue: dev.ohs.fhir.model.r4.Address?,
-          ageValue: dev.ohs.fhir.model.r4.Age?,
-          annotationValue: dev.ohs.fhir.model.r4.Annotation?,
-          attachmentValue: dev.ohs.fhir.model.r4.Attachment?,
-          codeableConceptValue: dev.ohs.fhir.model.r4.CodeableConcept?,
-          codingValue: dev.ohs.fhir.model.r4.Coding?,
-          contactPointValue: dev.ohs.fhir.model.r4.ContactPoint?,
-          countValue: dev.ohs.fhir.model.r4.Count?,
-          distanceValue: dev.ohs.fhir.model.r4.Distance?,
-          durationValue: dev.ohs.fhir.model.r4.Duration?,
-          humanNameValue: dev.ohs.fhir.model.r4.HumanName?,
-          identifierValue: dev.ohs.fhir.model.r4.Identifier?,
-          moneyValue: dev.ohs.fhir.model.r4.Money?,
-          periodValue: dev.ohs.fhir.model.r4.Period?,
-          quantityValue: dev.ohs.fhir.model.r4.Quantity?,
-          rangeValue: dev.ohs.fhir.model.r4.Range?,
-          ratioValue: dev.ohs.fhir.model.r4.Ratio?,
-          referenceValue: dev.ohs.fhir.model.r4.Reference?,
-          sampledDataValue: dev.ohs.fhir.model.r4.SampledData?,
-          signatureValue: dev.ohs.fhir.model.r4.Signature?,
-          timingValue: dev.ohs.fhir.model.r4.Timing?,
-          contactDetailValue: dev.ohs.fhir.model.r4.ContactDetail?,
-          contributorValue: dev.ohs.fhir.model.r4.Contributor?,
-          dataRequirementValue: dev.ohs.fhir.model.r4.DataRequirement?,
-          expressionValue: dev.ohs.fhir.model.r4.Expression?,
-          parameterDefinitionValue: dev.ohs.fhir.model.r4.ParameterDefinition?,
-          relatedArtifactValue: dev.ohs.fhir.model.r4.RelatedArtifact?,
-          triggerDefinitionValue: dev.ohs.fhir.model.r4.TriggerDefinition?,
-          usageContextValue: dev.ohs.fhir.model.r4.UsageContext?,
-          dosageValue: dev.ohs.fhir.model.r4.Dosage?,
-          metaValue: dev.ohs.fhir.model.r4.Meta?,
-        ): Value? {
-          if (base64BinaryValue != null) return Base64Binary(base64BinaryValue)
-          if (booleanValue != null) return Boolean(booleanValue)
-          if (canonicalValue != null) return Canonical(canonicalValue)
-          if (codeValue != null) return Code(codeValue)
-          if (dateValue != null) return Date(dateValue)
-          if (dateTimeValue != null) return DateTime(dateTimeValue)
-          if (decimalValue != null) return Decimal(decimalValue)
-          if (idValue != null) return Id(idValue)
-          if (instantValue != null) return Instant(instantValue)
-          if (integerValue != null) return Integer(integerValue)
-          if (markdownValue != null) return Markdown(markdownValue)
-          if (oidValue != null) return Oid(oidValue)
-          if (positiveIntValue != null) return PositiveInt(positiveIntValue)
-          if (stringValue != null) return String(stringValue)
-          if (timeValue != null) return Time(timeValue)
-          if (unsignedIntValue != null) return UnsignedInt(unsignedIntValue)
-          if (uriValue != null) return Uri(uriValue)
-          if (urlValue != null) return Url(urlValue)
-          if (uuidValue != null) return Uuid(uuidValue)
-          if (addressValue != null) return Address(addressValue)
-          if (ageValue != null) return Age(ageValue)
-          if (annotationValue != null) return Annotation(annotationValue)
-          if (attachmentValue != null) return Attachment(attachmentValue)
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (codingValue != null) return Coding(codingValue)
-          if (contactPointValue != null) return ContactPoint(contactPointValue)
-          if (countValue != null) return Count(countValue)
-          if (distanceValue != null) return Distance(distanceValue)
-          if (durationValue != null) return Duration(durationValue)
-          if (humanNameValue != null) return HumanName(humanNameValue)
-          if (identifierValue != null) return Identifier(identifierValue)
-          if (moneyValue != null) return Money(moneyValue)
-          if (periodValue != null) return Period(periodValue)
-          if (quantityValue != null) return Quantity(quantityValue)
-          if (rangeValue != null) return Range(rangeValue)
-          if (ratioValue != null) return Ratio(ratioValue)
-          if (referenceValue != null) return Reference(referenceValue)
-          if (sampledDataValue != null) return SampledData(sampledDataValue)
-          if (signatureValue != null) return Signature(signatureValue)
-          if (timingValue != null) return Timing(timingValue)
-          if (contactDetailValue != null) return ContactDetail(contactDetailValue)
-          if (contributorValue != null) return Contributor(contributorValue)
-          if (dataRequirementValue != null) return DataRequirement(dataRequirementValue)
-          if (expressionValue != null) return Expression(expressionValue)
-          if (parameterDefinitionValue != null) return ParameterDefinition(parameterDefinitionValue)
-          if (relatedArtifactValue != null) return RelatedArtifact(relatedArtifactValue)
-          if (triggerDefinitionValue != null) return TriggerDefinition(triggerDefinitionValue)
-          if (usageContextValue != null) return UsageContext(usageContextValue)
-          if (dosageValue != null) return Dosage(dosageValue)
-          if (metaValue != null) return Meta(metaValue)
-          return null
-        }
-      }
-    }
-
     public class Builder(
       /** Describes the purpose of this example amoung the set of examples. */
       public var label: String.Builder,
       /**
        * The actual value for the element, which must be one of the types allowed for this element.
+       *
+       * A FHIR choice type — one of: [Address] | [AgeBox] | [Annotation] | [Attachment] |
+       * [Base64Binary] | [Boolean] | [CanonicalBox] | [CodeBox] | [CodeableConcept] | [Coding] |
+       * [ContactDetail] | [ContactPoint] | [Contributor] | [CountBox] | [DataRequirement] | [Date]
+       * | [DateTime] | [Decimal] | [DistanceBox] | [Dosage] | [DurationBox] | [Expression] |
+       * [HumanName] | [IdBox] | [Identifier] | [Instant] | [IntegerBox] | [MarkdownBox] | [Meta] |
+       * [Money] | [OidBox] | [ParameterDefinition] | [Period] | [PositiveIntBox] | [QuantityBox] |
+       * [Range] | [Ratio] | [Reference] | [RelatedArtifact] | [SampledData] | [Signature] |
+       * [StringBox] | [Time] | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] |
+       * [UrlBox] | [UsageContext] | [UuidBox]
        */
-      public var `value`: Value,
+      public var `value`: Example.Value,
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -1409,6 +1105,19 @@ public data class ElementDefinition(
           `value` = `value`,
         )
     }
+
+    /**
+     * A FHIR choice type — one of: [Address] | [AgeBox] | [Annotation] | [Attachment] |
+     * [Base64Binary] | [Boolean] | [CanonicalBox] | [CodeBox] | [CodeableConcept] | [Coding] |
+     * [ContactDetail] | [ContactPoint] | [Contributor] | [CountBox] | [DataRequirement] | [Date] |
+     * [DateTime] | [Decimal] | [DistanceBox] | [Dosage] | [DurationBox] | [Expression] |
+     * [HumanName] | [IdBox] | [Identifier] | [Instant] | [IntegerBox] | [MarkdownBox] | [Meta] |
+     * [Money] | [OidBox] | [ParameterDefinition] | [Period] | [PositiveIntBox] | [QuantityBox] |
+     * [Range] | [Ratio] | [Reference] | [RelatedArtifact] | [SampledData] | [Signature] |
+     * [StringBox] | [Time] | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] |
+     * [UrlBox] | [UsageContext] | [UuidBox]
+     */
+    public typealias Value = FhirChoiceTypes.ElementDefinitionDefaultValueChoice
   }
 
   /**
@@ -1794,1231 +1503,6 @@ public data class ElementDefinition(
     }
   }
 
-  public sealed interface DefaultValue {
-    public fun asBase64Binary(): Base64Binary? = this as? Base64Binary
-
-    public fun asBoolean(): Boolean? = this as? Boolean
-
-    public fun asCanonical(): Canonical? = this as? Canonical
-
-    public fun asCode(): Code? = this as? Code
-
-    public fun asDate(): Date? = this as? Date
-
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    public fun asDecimal(): Decimal? = this as? Decimal
-
-    public fun asId(): Id? = this as? Id
-
-    public fun asInstant(): Instant? = this as? Instant
-
-    public fun asInteger(): Integer? = this as? Integer
-
-    public fun asMarkdown(): Markdown? = this as? Markdown
-
-    public fun asOid(): Oid? = this as? Oid
-
-    public fun asPositiveInt(): PositiveInt? = this as? PositiveInt
-
-    public fun asString(): String? = this as? String
-
-    public fun asTime(): Time? = this as? Time
-
-    public fun asUnsignedInt(): UnsignedInt? = this as? UnsignedInt
-
-    public fun asUri(): Uri? = this as? Uri
-
-    public fun asUrl(): Url? = this as? Url
-
-    public fun asUuid(): Uuid? = this as? Uuid
-
-    public fun asAddress(): Address? = this as? Address
-
-    public fun asAge(): Age? = this as? Age
-
-    public fun asAnnotation(): Annotation? = this as? Annotation
-
-    public fun asAttachment(): Attachment? = this as? Attachment
-
-    public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-    public fun asCoding(): Coding? = this as? Coding
-
-    public fun asContactPoint(): ContactPoint? = this as? ContactPoint
-
-    public fun asCount(): Count? = this as? Count
-
-    public fun asDistance(): Distance? = this as? Distance
-
-    public fun asDuration(): Duration? = this as? Duration
-
-    public fun asHumanName(): HumanName? = this as? HumanName
-
-    public fun asIdentifier(): Identifier? = this as? Identifier
-
-    public fun asMoney(): Money? = this as? Money
-
-    public fun asPeriod(): Period? = this as? Period
-
-    public fun asQuantity(): Quantity? = this as? Quantity
-
-    public fun asRange(): Range? = this as? Range
-
-    public fun asRatio(): Ratio? = this as? Ratio
-
-    public fun asReference(): Reference? = this as? Reference
-
-    public fun asSampledData(): SampledData? = this as? SampledData
-
-    public fun asSignature(): Signature? = this as? Signature
-
-    public fun asTiming(): Timing? = this as? Timing
-
-    public fun asContactDetail(): ContactDetail? = this as? ContactDetail
-
-    public fun asContributor(): Contributor? = this as? Contributor
-
-    public fun asDataRequirement(): DataRequirement? = this as? DataRequirement
-
-    public fun asExpression(): Expression? = this as? Expression
-
-    public fun asParameterDefinition(): ParameterDefinition? = this as? ParameterDefinition
-
-    public fun asRelatedArtifact(): RelatedArtifact? = this as? RelatedArtifact
-
-    public fun asTriggerDefinition(): TriggerDefinition? = this as? TriggerDefinition
-
-    public fun asUsageContext(): UsageContext? = this as? UsageContext
-
-    public fun asDosage(): Dosage? = this as? Dosage
-
-    public fun asMeta(): Meta? = this as? Meta
-
-    @JvmInline
-    public value class Base64Binary(public val `value`: dev.ohs.fhir.model.r4.Base64Binary) :
-      DefaultValue
-
-    @JvmInline
-    public value class Boolean(public val `value`: dev.ohs.fhir.model.r4.Boolean) : DefaultValue
-
-    @JvmInline
-    public value class Canonical(public val `value`: dev.ohs.fhir.model.r4.Canonical) :
-      DefaultValue
-
-    @JvmInline
-    public value class Code(public val `value`: dev.ohs.fhir.model.r4.Code) : DefaultValue
-
-    @JvmInline
-    public value class Date(public val `value`: dev.ohs.fhir.model.r4.Date) : DefaultValue
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r4.DateTime) : DefaultValue
-
-    @JvmInline
-    public value class Decimal(public val `value`: dev.ohs.fhir.model.r4.Decimal) : DefaultValue
-
-    @JvmInline public value class Id(public val `value`: dev.ohs.fhir.model.r4.Id) : DefaultValue
-
-    @JvmInline
-    public value class Instant(public val `value`: dev.ohs.fhir.model.r4.Instant) : DefaultValue
-
-    @JvmInline
-    public value class Integer(public val `value`: dev.ohs.fhir.model.r4.Integer) : DefaultValue
-
-    @JvmInline
-    public value class Markdown(public val `value`: dev.ohs.fhir.model.r4.Markdown) : DefaultValue
-
-    @JvmInline public value class Oid(public val `value`: dev.ohs.fhir.model.r4.Oid) : DefaultValue
-
-    @JvmInline
-    public value class PositiveInt(public val `value`: dev.ohs.fhir.model.r4.PositiveInt) :
-      DefaultValue
-
-    @JvmInline
-    public value class String(public val `value`: dev.ohs.fhir.model.r4.String) : DefaultValue
-
-    @JvmInline
-    public value class Time(public val `value`: dev.ohs.fhir.model.r4.Time) : DefaultValue
-
-    @JvmInline
-    public value class UnsignedInt(public val `value`: dev.ohs.fhir.model.r4.UnsignedInt) :
-      DefaultValue
-
-    @JvmInline public value class Uri(public val `value`: dev.ohs.fhir.model.r4.Uri) : DefaultValue
-
-    @JvmInline public value class Url(public val `value`: dev.ohs.fhir.model.r4.Url) : DefaultValue
-
-    @JvmInline
-    public value class Uuid(public val `value`: dev.ohs.fhir.model.r4.Uuid) : DefaultValue
-
-    @JvmInline
-    public value class Address(public val `value`: dev.ohs.fhir.model.r4.Address) : DefaultValue
-
-    @JvmInline public value class Age(public val `value`: dev.ohs.fhir.model.r4.Age) : DefaultValue
-
-    @JvmInline
-    public value class Annotation(public val `value`: dev.ohs.fhir.model.r4.Annotation) :
-      DefaultValue
-
-    @JvmInline
-    public value class Attachment(public val `value`: dev.ohs.fhir.model.r4.Attachment) :
-      DefaultValue
-
-    @JvmInline
-    public value class CodeableConcept(public val `value`: dev.ohs.fhir.model.r4.CodeableConcept) :
-      DefaultValue
-
-    @JvmInline
-    public value class Coding(public val `value`: dev.ohs.fhir.model.r4.Coding) : DefaultValue
-
-    @JvmInline
-    public value class ContactPoint(public val `value`: dev.ohs.fhir.model.r4.ContactPoint) :
-      DefaultValue
-
-    @JvmInline
-    public value class Count(public val `value`: dev.ohs.fhir.model.r4.Count) : DefaultValue
-
-    @JvmInline
-    public value class Distance(public val `value`: dev.ohs.fhir.model.r4.Distance) : DefaultValue
-
-    @JvmInline
-    public value class Duration(public val `value`: dev.ohs.fhir.model.r4.Duration) : DefaultValue
-
-    @JvmInline
-    public value class HumanName(public val `value`: dev.ohs.fhir.model.r4.HumanName) :
-      DefaultValue
-
-    @JvmInline
-    public value class Identifier(public val `value`: dev.ohs.fhir.model.r4.Identifier) :
-      DefaultValue
-
-    @JvmInline
-    public value class Money(public val `value`: dev.ohs.fhir.model.r4.Money) : DefaultValue
-
-    @JvmInline
-    public value class Period(public val `value`: dev.ohs.fhir.model.r4.Period) : DefaultValue
-
-    @JvmInline
-    public value class Quantity(public val `value`: dev.ohs.fhir.model.r4.Quantity) : DefaultValue
-
-    @JvmInline
-    public value class Range(public val `value`: dev.ohs.fhir.model.r4.Range) : DefaultValue
-
-    @JvmInline
-    public value class Ratio(public val `value`: dev.ohs.fhir.model.r4.Ratio) : DefaultValue
-
-    @JvmInline
-    public value class Reference(public val `value`: dev.ohs.fhir.model.r4.Reference) :
-      DefaultValue
-
-    @JvmInline
-    public value class SampledData(public val `value`: dev.ohs.fhir.model.r4.SampledData) :
-      DefaultValue
-
-    @JvmInline
-    public value class Signature(public val `value`: dev.ohs.fhir.model.r4.Signature) :
-      DefaultValue
-
-    @JvmInline
-    public value class Timing(public val `value`: dev.ohs.fhir.model.r4.Timing) : DefaultValue
-
-    @JvmInline
-    public value class ContactDetail(public val `value`: dev.ohs.fhir.model.r4.ContactDetail) :
-      DefaultValue
-
-    @JvmInline
-    public value class Contributor(public val `value`: dev.ohs.fhir.model.r4.Contributor) :
-      DefaultValue
-
-    @JvmInline
-    public value class DataRequirement(public val `value`: dev.ohs.fhir.model.r4.DataRequirement) :
-      DefaultValue
-
-    @JvmInline
-    public value class Expression(public val `value`: dev.ohs.fhir.model.r4.Expression) :
-      DefaultValue
-
-    @JvmInline
-    public value class ParameterDefinition(
-      public val `value`: dev.ohs.fhir.model.r4.ParameterDefinition
-    ) : DefaultValue
-
-    @JvmInline
-    public value class RelatedArtifact(public val `value`: dev.ohs.fhir.model.r4.RelatedArtifact) :
-      DefaultValue
-
-    @JvmInline
-    public value class TriggerDefinition(
-      public val `value`: dev.ohs.fhir.model.r4.TriggerDefinition
-    ) : DefaultValue
-
-    @JvmInline
-    public value class UsageContext(public val `value`: dev.ohs.fhir.model.r4.UsageContext) :
-      DefaultValue
-
-    @JvmInline
-    public value class Dosage(public val `value`: dev.ohs.fhir.model.r4.Dosage) : DefaultValue
-
-    @JvmInline
-    public value class Meta(public val `value`: dev.ohs.fhir.model.r4.Meta) : DefaultValue
-
-    public companion object {
-      internal fun from(
-        base64BinaryValue: dev.ohs.fhir.model.r4.Base64Binary?,
-        booleanValue: dev.ohs.fhir.model.r4.Boolean?,
-        canonicalValue: dev.ohs.fhir.model.r4.Canonical?,
-        codeValue: dev.ohs.fhir.model.r4.Code?,
-        dateValue: dev.ohs.fhir.model.r4.Date?,
-        dateTimeValue: dev.ohs.fhir.model.r4.DateTime?,
-        decimalValue: dev.ohs.fhir.model.r4.Decimal?,
-        idValue: dev.ohs.fhir.model.r4.Id?,
-        instantValue: dev.ohs.fhir.model.r4.Instant?,
-        integerValue: dev.ohs.fhir.model.r4.Integer?,
-        markdownValue: dev.ohs.fhir.model.r4.Markdown?,
-        oidValue: dev.ohs.fhir.model.r4.Oid?,
-        positiveIntValue: dev.ohs.fhir.model.r4.PositiveInt?,
-        stringValue: dev.ohs.fhir.model.r4.String?,
-        timeValue: dev.ohs.fhir.model.r4.Time?,
-        unsignedIntValue: dev.ohs.fhir.model.r4.UnsignedInt?,
-        uriValue: dev.ohs.fhir.model.r4.Uri?,
-        urlValue: dev.ohs.fhir.model.r4.Url?,
-        uuidValue: dev.ohs.fhir.model.r4.Uuid?,
-        addressValue: dev.ohs.fhir.model.r4.Address?,
-        ageValue: dev.ohs.fhir.model.r4.Age?,
-        annotationValue: dev.ohs.fhir.model.r4.Annotation?,
-        attachmentValue: dev.ohs.fhir.model.r4.Attachment?,
-        codeableConceptValue: dev.ohs.fhir.model.r4.CodeableConcept?,
-        codingValue: dev.ohs.fhir.model.r4.Coding?,
-        contactPointValue: dev.ohs.fhir.model.r4.ContactPoint?,
-        countValue: dev.ohs.fhir.model.r4.Count?,
-        distanceValue: dev.ohs.fhir.model.r4.Distance?,
-        durationValue: dev.ohs.fhir.model.r4.Duration?,
-        humanNameValue: dev.ohs.fhir.model.r4.HumanName?,
-        identifierValue: dev.ohs.fhir.model.r4.Identifier?,
-        moneyValue: dev.ohs.fhir.model.r4.Money?,
-        periodValue: dev.ohs.fhir.model.r4.Period?,
-        quantityValue: dev.ohs.fhir.model.r4.Quantity?,
-        rangeValue: dev.ohs.fhir.model.r4.Range?,
-        ratioValue: dev.ohs.fhir.model.r4.Ratio?,
-        referenceValue: dev.ohs.fhir.model.r4.Reference?,
-        sampledDataValue: dev.ohs.fhir.model.r4.SampledData?,
-        signatureValue: dev.ohs.fhir.model.r4.Signature?,
-        timingValue: dev.ohs.fhir.model.r4.Timing?,
-        contactDetailValue: dev.ohs.fhir.model.r4.ContactDetail?,
-        contributorValue: dev.ohs.fhir.model.r4.Contributor?,
-        dataRequirementValue: dev.ohs.fhir.model.r4.DataRequirement?,
-        expressionValue: dev.ohs.fhir.model.r4.Expression?,
-        parameterDefinitionValue: dev.ohs.fhir.model.r4.ParameterDefinition?,
-        relatedArtifactValue: dev.ohs.fhir.model.r4.RelatedArtifact?,
-        triggerDefinitionValue: dev.ohs.fhir.model.r4.TriggerDefinition?,
-        usageContextValue: dev.ohs.fhir.model.r4.UsageContext?,
-        dosageValue: dev.ohs.fhir.model.r4.Dosage?,
-        metaValue: dev.ohs.fhir.model.r4.Meta?,
-      ): DefaultValue? {
-        if (base64BinaryValue != null) return Base64Binary(base64BinaryValue)
-        if (booleanValue != null) return Boolean(booleanValue)
-        if (canonicalValue != null) return Canonical(canonicalValue)
-        if (codeValue != null) return Code(codeValue)
-        if (dateValue != null) return Date(dateValue)
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        if (decimalValue != null) return Decimal(decimalValue)
-        if (idValue != null) return Id(idValue)
-        if (instantValue != null) return Instant(instantValue)
-        if (integerValue != null) return Integer(integerValue)
-        if (markdownValue != null) return Markdown(markdownValue)
-        if (oidValue != null) return Oid(oidValue)
-        if (positiveIntValue != null) return PositiveInt(positiveIntValue)
-        if (stringValue != null) return String(stringValue)
-        if (timeValue != null) return Time(timeValue)
-        if (unsignedIntValue != null) return UnsignedInt(unsignedIntValue)
-        if (uriValue != null) return Uri(uriValue)
-        if (urlValue != null) return Url(urlValue)
-        if (uuidValue != null) return Uuid(uuidValue)
-        if (addressValue != null) return Address(addressValue)
-        if (ageValue != null) return Age(ageValue)
-        if (annotationValue != null) return Annotation(annotationValue)
-        if (attachmentValue != null) return Attachment(attachmentValue)
-        if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-        if (codingValue != null) return Coding(codingValue)
-        if (contactPointValue != null) return ContactPoint(contactPointValue)
-        if (countValue != null) return Count(countValue)
-        if (distanceValue != null) return Distance(distanceValue)
-        if (durationValue != null) return Duration(durationValue)
-        if (humanNameValue != null) return HumanName(humanNameValue)
-        if (identifierValue != null) return Identifier(identifierValue)
-        if (moneyValue != null) return Money(moneyValue)
-        if (periodValue != null) return Period(periodValue)
-        if (quantityValue != null) return Quantity(quantityValue)
-        if (rangeValue != null) return Range(rangeValue)
-        if (ratioValue != null) return Ratio(ratioValue)
-        if (referenceValue != null) return Reference(referenceValue)
-        if (sampledDataValue != null) return SampledData(sampledDataValue)
-        if (signatureValue != null) return Signature(signatureValue)
-        if (timingValue != null) return Timing(timingValue)
-        if (contactDetailValue != null) return ContactDetail(contactDetailValue)
-        if (contributorValue != null) return Contributor(contributorValue)
-        if (dataRequirementValue != null) return DataRequirement(dataRequirementValue)
-        if (expressionValue != null) return Expression(expressionValue)
-        if (parameterDefinitionValue != null) return ParameterDefinition(parameterDefinitionValue)
-        if (relatedArtifactValue != null) return RelatedArtifact(relatedArtifactValue)
-        if (triggerDefinitionValue != null) return TriggerDefinition(triggerDefinitionValue)
-        if (usageContextValue != null) return UsageContext(usageContextValue)
-        if (dosageValue != null) return Dosage(dosageValue)
-        if (metaValue != null) return Meta(metaValue)
-        return null
-      }
-    }
-  }
-
-  public sealed interface Fixed {
-    public fun asBase64Binary(): Base64Binary? = this as? Base64Binary
-
-    public fun asBoolean(): Boolean? = this as? Boolean
-
-    public fun asCanonical(): Canonical? = this as? Canonical
-
-    public fun asCode(): Code? = this as? Code
-
-    public fun asDate(): Date? = this as? Date
-
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    public fun asDecimal(): Decimal? = this as? Decimal
-
-    public fun asId(): Id? = this as? Id
-
-    public fun asInstant(): Instant? = this as? Instant
-
-    public fun asInteger(): Integer? = this as? Integer
-
-    public fun asMarkdown(): Markdown? = this as? Markdown
-
-    public fun asOid(): Oid? = this as? Oid
-
-    public fun asPositiveInt(): PositiveInt? = this as? PositiveInt
-
-    public fun asString(): String? = this as? String
-
-    public fun asTime(): Time? = this as? Time
-
-    public fun asUnsignedInt(): UnsignedInt? = this as? UnsignedInt
-
-    public fun asUri(): Uri? = this as? Uri
-
-    public fun asUrl(): Url? = this as? Url
-
-    public fun asUuid(): Uuid? = this as? Uuid
-
-    public fun asAddress(): Address? = this as? Address
-
-    public fun asAge(): Age? = this as? Age
-
-    public fun asAnnotation(): Annotation? = this as? Annotation
-
-    public fun asAttachment(): Attachment? = this as? Attachment
-
-    public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-    public fun asCoding(): Coding? = this as? Coding
-
-    public fun asContactPoint(): ContactPoint? = this as? ContactPoint
-
-    public fun asCount(): Count? = this as? Count
-
-    public fun asDistance(): Distance? = this as? Distance
-
-    public fun asDuration(): Duration? = this as? Duration
-
-    public fun asHumanName(): HumanName? = this as? HumanName
-
-    public fun asIdentifier(): Identifier? = this as? Identifier
-
-    public fun asMoney(): Money? = this as? Money
-
-    public fun asPeriod(): Period? = this as? Period
-
-    public fun asQuantity(): Quantity? = this as? Quantity
-
-    public fun asRange(): Range? = this as? Range
-
-    public fun asRatio(): Ratio? = this as? Ratio
-
-    public fun asReference(): Reference? = this as? Reference
-
-    public fun asSampledData(): SampledData? = this as? SampledData
-
-    public fun asSignature(): Signature? = this as? Signature
-
-    public fun asTiming(): Timing? = this as? Timing
-
-    public fun asContactDetail(): ContactDetail? = this as? ContactDetail
-
-    public fun asContributor(): Contributor? = this as? Contributor
-
-    public fun asDataRequirement(): DataRequirement? = this as? DataRequirement
-
-    public fun asExpression(): Expression? = this as? Expression
-
-    public fun asParameterDefinition(): ParameterDefinition? = this as? ParameterDefinition
-
-    public fun asRelatedArtifact(): RelatedArtifact? = this as? RelatedArtifact
-
-    public fun asTriggerDefinition(): TriggerDefinition? = this as? TriggerDefinition
-
-    public fun asUsageContext(): UsageContext? = this as? UsageContext
-
-    public fun asDosage(): Dosage? = this as? Dosage
-
-    public fun asMeta(): Meta? = this as? Meta
-
-    @JvmInline
-    public value class Base64Binary(public val `value`: dev.ohs.fhir.model.r4.Base64Binary) : Fixed
-
-    @JvmInline
-    public value class Boolean(public val `value`: dev.ohs.fhir.model.r4.Boolean) : Fixed
-
-    @JvmInline
-    public value class Canonical(public val `value`: dev.ohs.fhir.model.r4.Canonical) : Fixed
-
-    @JvmInline public value class Code(public val `value`: dev.ohs.fhir.model.r4.Code) : Fixed
-
-    @JvmInline public value class Date(public val `value`: dev.ohs.fhir.model.r4.Date) : Fixed
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r4.DateTime) : Fixed
-
-    @JvmInline
-    public value class Decimal(public val `value`: dev.ohs.fhir.model.r4.Decimal) : Fixed
-
-    @JvmInline public value class Id(public val `value`: dev.ohs.fhir.model.r4.Id) : Fixed
-
-    @JvmInline
-    public value class Instant(public val `value`: dev.ohs.fhir.model.r4.Instant) : Fixed
-
-    @JvmInline
-    public value class Integer(public val `value`: dev.ohs.fhir.model.r4.Integer) : Fixed
-
-    @JvmInline
-    public value class Markdown(public val `value`: dev.ohs.fhir.model.r4.Markdown) : Fixed
-
-    @JvmInline public value class Oid(public val `value`: dev.ohs.fhir.model.r4.Oid) : Fixed
-
-    @JvmInline
-    public value class PositiveInt(public val `value`: dev.ohs.fhir.model.r4.PositiveInt) : Fixed
-
-    @JvmInline public value class String(public val `value`: dev.ohs.fhir.model.r4.String) : Fixed
-
-    @JvmInline public value class Time(public val `value`: dev.ohs.fhir.model.r4.Time) : Fixed
-
-    @JvmInline
-    public value class UnsignedInt(public val `value`: dev.ohs.fhir.model.r4.UnsignedInt) : Fixed
-
-    @JvmInline public value class Uri(public val `value`: dev.ohs.fhir.model.r4.Uri) : Fixed
-
-    @JvmInline public value class Url(public val `value`: dev.ohs.fhir.model.r4.Url) : Fixed
-
-    @JvmInline public value class Uuid(public val `value`: dev.ohs.fhir.model.r4.Uuid) : Fixed
-
-    @JvmInline
-    public value class Address(public val `value`: dev.ohs.fhir.model.r4.Address) : Fixed
-
-    @JvmInline public value class Age(public val `value`: dev.ohs.fhir.model.r4.Age) : Fixed
-
-    @JvmInline
-    public value class Annotation(public val `value`: dev.ohs.fhir.model.r4.Annotation) : Fixed
-
-    @JvmInline
-    public value class Attachment(public val `value`: dev.ohs.fhir.model.r4.Attachment) : Fixed
-
-    @JvmInline
-    public value class CodeableConcept(public val `value`: dev.ohs.fhir.model.r4.CodeableConcept) :
-      Fixed
-
-    @JvmInline public value class Coding(public val `value`: dev.ohs.fhir.model.r4.Coding) : Fixed
-
-    @JvmInline
-    public value class ContactPoint(public val `value`: dev.ohs.fhir.model.r4.ContactPoint) : Fixed
-
-    @JvmInline public value class Count(public val `value`: dev.ohs.fhir.model.r4.Count) : Fixed
-
-    @JvmInline
-    public value class Distance(public val `value`: dev.ohs.fhir.model.r4.Distance) : Fixed
-
-    @JvmInline
-    public value class Duration(public val `value`: dev.ohs.fhir.model.r4.Duration) : Fixed
-
-    @JvmInline
-    public value class HumanName(public val `value`: dev.ohs.fhir.model.r4.HumanName) : Fixed
-
-    @JvmInline
-    public value class Identifier(public val `value`: dev.ohs.fhir.model.r4.Identifier) : Fixed
-
-    @JvmInline public value class Money(public val `value`: dev.ohs.fhir.model.r4.Money) : Fixed
-
-    @JvmInline public value class Period(public val `value`: dev.ohs.fhir.model.r4.Period) : Fixed
-
-    @JvmInline
-    public value class Quantity(public val `value`: dev.ohs.fhir.model.r4.Quantity) : Fixed
-
-    @JvmInline public value class Range(public val `value`: dev.ohs.fhir.model.r4.Range) : Fixed
-
-    @JvmInline public value class Ratio(public val `value`: dev.ohs.fhir.model.r4.Ratio) : Fixed
-
-    @JvmInline
-    public value class Reference(public val `value`: dev.ohs.fhir.model.r4.Reference) : Fixed
-
-    @JvmInline
-    public value class SampledData(public val `value`: dev.ohs.fhir.model.r4.SampledData) : Fixed
-
-    @JvmInline
-    public value class Signature(public val `value`: dev.ohs.fhir.model.r4.Signature) : Fixed
-
-    @JvmInline public value class Timing(public val `value`: dev.ohs.fhir.model.r4.Timing) : Fixed
-
-    @JvmInline
-    public value class ContactDetail(public val `value`: dev.ohs.fhir.model.r4.ContactDetail) :
-      Fixed
-
-    @JvmInline
-    public value class Contributor(public val `value`: dev.ohs.fhir.model.r4.Contributor) : Fixed
-
-    @JvmInline
-    public value class DataRequirement(public val `value`: dev.ohs.fhir.model.r4.DataRequirement) :
-      Fixed
-
-    @JvmInline
-    public value class Expression(public val `value`: dev.ohs.fhir.model.r4.Expression) : Fixed
-
-    @JvmInline
-    public value class ParameterDefinition(
-      public val `value`: dev.ohs.fhir.model.r4.ParameterDefinition
-    ) : Fixed
-
-    @JvmInline
-    public value class RelatedArtifact(public val `value`: dev.ohs.fhir.model.r4.RelatedArtifact) :
-      Fixed
-
-    @JvmInline
-    public value class TriggerDefinition(
-      public val `value`: dev.ohs.fhir.model.r4.TriggerDefinition
-    ) : Fixed
-
-    @JvmInline
-    public value class UsageContext(public val `value`: dev.ohs.fhir.model.r4.UsageContext) : Fixed
-
-    @JvmInline public value class Dosage(public val `value`: dev.ohs.fhir.model.r4.Dosage) : Fixed
-
-    @JvmInline public value class Meta(public val `value`: dev.ohs.fhir.model.r4.Meta) : Fixed
-
-    public companion object {
-      internal fun from(
-        base64BinaryValue: dev.ohs.fhir.model.r4.Base64Binary?,
-        booleanValue: dev.ohs.fhir.model.r4.Boolean?,
-        canonicalValue: dev.ohs.fhir.model.r4.Canonical?,
-        codeValue: dev.ohs.fhir.model.r4.Code?,
-        dateValue: dev.ohs.fhir.model.r4.Date?,
-        dateTimeValue: dev.ohs.fhir.model.r4.DateTime?,
-        decimalValue: dev.ohs.fhir.model.r4.Decimal?,
-        idValue: dev.ohs.fhir.model.r4.Id?,
-        instantValue: dev.ohs.fhir.model.r4.Instant?,
-        integerValue: dev.ohs.fhir.model.r4.Integer?,
-        markdownValue: dev.ohs.fhir.model.r4.Markdown?,
-        oidValue: dev.ohs.fhir.model.r4.Oid?,
-        positiveIntValue: dev.ohs.fhir.model.r4.PositiveInt?,
-        stringValue: dev.ohs.fhir.model.r4.String?,
-        timeValue: dev.ohs.fhir.model.r4.Time?,
-        unsignedIntValue: dev.ohs.fhir.model.r4.UnsignedInt?,
-        uriValue: dev.ohs.fhir.model.r4.Uri?,
-        urlValue: dev.ohs.fhir.model.r4.Url?,
-        uuidValue: dev.ohs.fhir.model.r4.Uuid?,
-        addressValue: dev.ohs.fhir.model.r4.Address?,
-        ageValue: dev.ohs.fhir.model.r4.Age?,
-        annotationValue: dev.ohs.fhir.model.r4.Annotation?,
-        attachmentValue: dev.ohs.fhir.model.r4.Attachment?,
-        codeableConceptValue: dev.ohs.fhir.model.r4.CodeableConcept?,
-        codingValue: dev.ohs.fhir.model.r4.Coding?,
-        contactPointValue: dev.ohs.fhir.model.r4.ContactPoint?,
-        countValue: dev.ohs.fhir.model.r4.Count?,
-        distanceValue: dev.ohs.fhir.model.r4.Distance?,
-        durationValue: dev.ohs.fhir.model.r4.Duration?,
-        humanNameValue: dev.ohs.fhir.model.r4.HumanName?,
-        identifierValue: dev.ohs.fhir.model.r4.Identifier?,
-        moneyValue: dev.ohs.fhir.model.r4.Money?,
-        periodValue: dev.ohs.fhir.model.r4.Period?,
-        quantityValue: dev.ohs.fhir.model.r4.Quantity?,
-        rangeValue: dev.ohs.fhir.model.r4.Range?,
-        ratioValue: dev.ohs.fhir.model.r4.Ratio?,
-        referenceValue: dev.ohs.fhir.model.r4.Reference?,
-        sampledDataValue: dev.ohs.fhir.model.r4.SampledData?,
-        signatureValue: dev.ohs.fhir.model.r4.Signature?,
-        timingValue: dev.ohs.fhir.model.r4.Timing?,
-        contactDetailValue: dev.ohs.fhir.model.r4.ContactDetail?,
-        contributorValue: dev.ohs.fhir.model.r4.Contributor?,
-        dataRequirementValue: dev.ohs.fhir.model.r4.DataRequirement?,
-        expressionValue: dev.ohs.fhir.model.r4.Expression?,
-        parameterDefinitionValue: dev.ohs.fhir.model.r4.ParameterDefinition?,
-        relatedArtifactValue: dev.ohs.fhir.model.r4.RelatedArtifact?,
-        triggerDefinitionValue: dev.ohs.fhir.model.r4.TriggerDefinition?,
-        usageContextValue: dev.ohs.fhir.model.r4.UsageContext?,
-        dosageValue: dev.ohs.fhir.model.r4.Dosage?,
-        metaValue: dev.ohs.fhir.model.r4.Meta?,
-      ): Fixed? {
-        if (base64BinaryValue != null) return Base64Binary(base64BinaryValue)
-        if (booleanValue != null) return Boolean(booleanValue)
-        if (canonicalValue != null) return Canonical(canonicalValue)
-        if (codeValue != null) return Code(codeValue)
-        if (dateValue != null) return Date(dateValue)
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        if (decimalValue != null) return Decimal(decimalValue)
-        if (idValue != null) return Id(idValue)
-        if (instantValue != null) return Instant(instantValue)
-        if (integerValue != null) return Integer(integerValue)
-        if (markdownValue != null) return Markdown(markdownValue)
-        if (oidValue != null) return Oid(oidValue)
-        if (positiveIntValue != null) return PositiveInt(positiveIntValue)
-        if (stringValue != null) return String(stringValue)
-        if (timeValue != null) return Time(timeValue)
-        if (unsignedIntValue != null) return UnsignedInt(unsignedIntValue)
-        if (uriValue != null) return Uri(uriValue)
-        if (urlValue != null) return Url(urlValue)
-        if (uuidValue != null) return Uuid(uuidValue)
-        if (addressValue != null) return Address(addressValue)
-        if (ageValue != null) return Age(ageValue)
-        if (annotationValue != null) return Annotation(annotationValue)
-        if (attachmentValue != null) return Attachment(attachmentValue)
-        if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-        if (codingValue != null) return Coding(codingValue)
-        if (contactPointValue != null) return ContactPoint(contactPointValue)
-        if (countValue != null) return Count(countValue)
-        if (distanceValue != null) return Distance(distanceValue)
-        if (durationValue != null) return Duration(durationValue)
-        if (humanNameValue != null) return HumanName(humanNameValue)
-        if (identifierValue != null) return Identifier(identifierValue)
-        if (moneyValue != null) return Money(moneyValue)
-        if (periodValue != null) return Period(periodValue)
-        if (quantityValue != null) return Quantity(quantityValue)
-        if (rangeValue != null) return Range(rangeValue)
-        if (ratioValue != null) return Ratio(ratioValue)
-        if (referenceValue != null) return Reference(referenceValue)
-        if (sampledDataValue != null) return SampledData(sampledDataValue)
-        if (signatureValue != null) return Signature(signatureValue)
-        if (timingValue != null) return Timing(timingValue)
-        if (contactDetailValue != null) return ContactDetail(contactDetailValue)
-        if (contributorValue != null) return Contributor(contributorValue)
-        if (dataRequirementValue != null) return DataRequirement(dataRequirementValue)
-        if (expressionValue != null) return Expression(expressionValue)
-        if (parameterDefinitionValue != null) return ParameterDefinition(parameterDefinitionValue)
-        if (relatedArtifactValue != null) return RelatedArtifact(relatedArtifactValue)
-        if (triggerDefinitionValue != null) return TriggerDefinition(triggerDefinitionValue)
-        if (usageContextValue != null) return UsageContext(usageContextValue)
-        if (dosageValue != null) return Dosage(dosageValue)
-        if (metaValue != null) return Meta(metaValue)
-        return null
-      }
-    }
-  }
-
-  public sealed interface Pattern {
-    public fun asBase64Binary(): Base64Binary? = this as? Base64Binary
-
-    public fun asBoolean(): Boolean? = this as? Boolean
-
-    public fun asCanonical(): Canonical? = this as? Canonical
-
-    public fun asCode(): Code? = this as? Code
-
-    public fun asDate(): Date? = this as? Date
-
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    public fun asDecimal(): Decimal? = this as? Decimal
-
-    public fun asId(): Id? = this as? Id
-
-    public fun asInstant(): Instant? = this as? Instant
-
-    public fun asInteger(): Integer? = this as? Integer
-
-    public fun asMarkdown(): Markdown? = this as? Markdown
-
-    public fun asOid(): Oid? = this as? Oid
-
-    public fun asPositiveInt(): PositiveInt? = this as? PositiveInt
-
-    public fun asString(): String? = this as? String
-
-    public fun asTime(): Time? = this as? Time
-
-    public fun asUnsignedInt(): UnsignedInt? = this as? UnsignedInt
-
-    public fun asUri(): Uri? = this as? Uri
-
-    public fun asUrl(): Url? = this as? Url
-
-    public fun asUuid(): Uuid? = this as? Uuid
-
-    public fun asAddress(): Address? = this as? Address
-
-    public fun asAge(): Age? = this as? Age
-
-    public fun asAnnotation(): Annotation? = this as? Annotation
-
-    public fun asAttachment(): Attachment? = this as? Attachment
-
-    public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-    public fun asCoding(): Coding? = this as? Coding
-
-    public fun asContactPoint(): ContactPoint? = this as? ContactPoint
-
-    public fun asCount(): Count? = this as? Count
-
-    public fun asDistance(): Distance? = this as? Distance
-
-    public fun asDuration(): Duration? = this as? Duration
-
-    public fun asHumanName(): HumanName? = this as? HumanName
-
-    public fun asIdentifier(): Identifier? = this as? Identifier
-
-    public fun asMoney(): Money? = this as? Money
-
-    public fun asPeriod(): Period? = this as? Period
-
-    public fun asQuantity(): Quantity? = this as? Quantity
-
-    public fun asRange(): Range? = this as? Range
-
-    public fun asRatio(): Ratio? = this as? Ratio
-
-    public fun asReference(): Reference? = this as? Reference
-
-    public fun asSampledData(): SampledData? = this as? SampledData
-
-    public fun asSignature(): Signature? = this as? Signature
-
-    public fun asTiming(): Timing? = this as? Timing
-
-    public fun asContactDetail(): ContactDetail? = this as? ContactDetail
-
-    public fun asContributor(): Contributor? = this as? Contributor
-
-    public fun asDataRequirement(): DataRequirement? = this as? DataRequirement
-
-    public fun asExpression(): Expression? = this as? Expression
-
-    public fun asParameterDefinition(): ParameterDefinition? = this as? ParameterDefinition
-
-    public fun asRelatedArtifact(): RelatedArtifact? = this as? RelatedArtifact
-
-    public fun asTriggerDefinition(): TriggerDefinition? = this as? TriggerDefinition
-
-    public fun asUsageContext(): UsageContext? = this as? UsageContext
-
-    public fun asDosage(): Dosage? = this as? Dosage
-
-    public fun asMeta(): Meta? = this as? Meta
-
-    @JvmInline
-    public value class Base64Binary(public val `value`: dev.ohs.fhir.model.r4.Base64Binary) :
-      Pattern
-
-    @JvmInline
-    public value class Boolean(public val `value`: dev.ohs.fhir.model.r4.Boolean) : Pattern
-
-    @JvmInline
-    public value class Canonical(public val `value`: dev.ohs.fhir.model.r4.Canonical) : Pattern
-
-    @JvmInline public value class Code(public val `value`: dev.ohs.fhir.model.r4.Code) : Pattern
-
-    @JvmInline public value class Date(public val `value`: dev.ohs.fhir.model.r4.Date) : Pattern
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r4.DateTime) : Pattern
-
-    @JvmInline
-    public value class Decimal(public val `value`: dev.ohs.fhir.model.r4.Decimal) : Pattern
-
-    @JvmInline public value class Id(public val `value`: dev.ohs.fhir.model.r4.Id) : Pattern
-
-    @JvmInline
-    public value class Instant(public val `value`: dev.ohs.fhir.model.r4.Instant) : Pattern
-
-    @JvmInline
-    public value class Integer(public val `value`: dev.ohs.fhir.model.r4.Integer) : Pattern
-
-    @JvmInline
-    public value class Markdown(public val `value`: dev.ohs.fhir.model.r4.Markdown) : Pattern
-
-    @JvmInline public value class Oid(public val `value`: dev.ohs.fhir.model.r4.Oid) : Pattern
-
-    @JvmInline
-    public value class PositiveInt(public val `value`: dev.ohs.fhir.model.r4.PositiveInt) : Pattern
-
-    @JvmInline
-    public value class String(public val `value`: dev.ohs.fhir.model.r4.String) : Pattern
-
-    @JvmInline public value class Time(public val `value`: dev.ohs.fhir.model.r4.Time) : Pattern
-
-    @JvmInline
-    public value class UnsignedInt(public val `value`: dev.ohs.fhir.model.r4.UnsignedInt) : Pattern
-
-    @JvmInline public value class Uri(public val `value`: dev.ohs.fhir.model.r4.Uri) : Pattern
-
-    @JvmInline public value class Url(public val `value`: dev.ohs.fhir.model.r4.Url) : Pattern
-
-    @JvmInline public value class Uuid(public val `value`: dev.ohs.fhir.model.r4.Uuid) : Pattern
-
-    @JvmInline
-    public value class Address(public val `value`: dev.ohs.fhir.model.r4.Address) : Pattern
-
-    @JvmInline public value class Age(public val `value`: dev.ohs.fhir.model.r4.Age) : Pattern
-
-    @JvmInline
-    public value class Annotation(public val `value`: dev.ohs.fhir.model.r4.Annotation) : Pattern
-
-    @JvmInline
-    public value class Attachment(public val `value`: dev.ohs.fhir.model.r4.Attachment) : Pattern
-
-    @JvmInline
-    public value class CodeableConcept(public val `value`: dev.ohs.fhir.model.r4.CodeableConcept) :
-      Pattern
-
-    @JvmInline
-    public value class Coding(public val `value`: dev.ohs.fhir.model.r4.Coding) : Pattern
-
-    @JvmInline
-    public value class ContactPoint(public val `value`: dev.ohs.fhir.model.r4.ContactPoint) :
-      Pattern
-
-    @JvmInline public value class Count(public val `value`: dev.ohs.fhir.model.r4.Count) : Pattern
-
-    @JvmInline
-    public value class Distance(public val `value`: dev.ohs.fhir.model.r4.Distance) : Pattern
-
-    @JvmInline
-    public value class Duration(public val `value`: dev.ohs.fhir.model.r4.Duration) : Pattern
-
-    @JvmInline
-    public value class HumanName(public val `value`: dev.ohs.fhir.model.r4.HumanName) : Pattern
-
-    @JvmInline
-    public value class Identifier(public val `value`: dev.ohs.fhir.model.r4.Identifier) : Pattern
-
-    @JvmInline public value class Money(public val `value`: dev.ohs.fhir.model.r4.Money) : Pattern
-
-    @JvmInline
-    public value class Period(public val `value`: dev.ohs.fhir.model.r4.Period) : Pattern
-
-    @JvmInline
-    public value class Quantity(public val `value`: dev.ohs.fhir.model.r4.Quantity) : Pattern
-
-    @JvmInline public value class Range(public val `value`: dev.ohs.fhir.model.r4.Range) : Pattern
-
-    @JvmInline public value class Ratio(public val `value`: dev.ohs.fhir.model.r4.Ratio) : Pattern
-
-    @JvmInline
-    public value class Reference(public val `value`: dev.ohs.fhir.model.r4.Reference) : Pattern
-
-    @JvmInline
-    public value class SampledData(public val `value`: dev.ohs.fhir.model.r4.SampledData) : Pattern
-
-    @JvmInline
-    public value class Signature(public val `value`: dev.ohs.fhir.model.r4.Signature) : Pattern
-
-    @JvmInline
-    public value class Timing(public val `value`: dev.ohs.fhir.model.r4.Timing) : Pattern
-
-    @JvmInline
-    public value class ContactDetail(public val `value`: dev.ohs.fhir.model.r4.ContactDetail) :
-      Pattern
-
-    @JvmInline
-    public value class Contributor(public val `value`: dev.ohs.fhir.model.r4.Contributor) : Pattern
-
-    @JvmInline
-    public value class DataRequirement(public val `value`: dev.ohs.fhir.model.r4.DataRequirement) :
-      Pattern
-
-    @JvmInline
-    public value class Expression(public val `value`: dev.ohs.fhir.model.r4.Expression) : Pattern
-
-    @JvmInline
-    public value class ParameterDefinition(
-      public val `value`: dev.ohs.fhir.model.r4.ParameterDefinition
-    ) : Pattern
-
-    @JvmInline
-    public value class RelatedArtifact(public val `value`: dev.ohs.fhir.model.r4.RelatedArtifact) :
-      Pattern
-
-    @JvmInline
-    public value class TriggerDefinition(
-      public val `value`: dev.ohs.fhir.model.r4.TriggerDefinition
-    ) : Pattern
-
-    @JvmInline
-    public value class UsageContext(public val `value`: dev.ohs.fhir.model.r4.UsageContext) :
-      Pattern
-
-    @JvmInline
-    public value class Dosage(public val `value`: dev.ohs.fhir.model.r4.Dosage) : Pattern
-
-    @JvmInline public value class Meta(public val `value`: dev.ohs.fhir.model.r4.Meta) : Pattern
-
-    public companion object {
-      internal fun from(
-        base64BinaryValue: dev.ohs.fhir.model.r4.Base64Binary?,
-        booleanValue: dev.ohs.fhir.model.r4.Boolean?,
-        canonicalValue: dev.ohs.fhir.model.r4.Canonical?,
-        codeValue: dev.ohs.fhir.model.r4.Code?,
-        dateValue: dev.ohs.fhir.model.r4.Date?,
-        dateTimeValue: dev.ohs.fhir.model.r4.DateTime?,
-        decimalValue: dev.ohs.fhir.model.r4.Decimal?,
-        idValue: dev.ohs.fhir.model.r4.Id?,
-        instantValue: dev.ohs.fhir.model.r4.Instant?,
-        integerValue: dev.ohs.fhir.model.r4.Integer?,
-        markdownValue: dev.ohs.fhir.model.r4.Markdown?,
-        oidValue: dev.ohs.fhir.model.r4.Oid?,
-        positiveIntValue: dev.ohs.fhir.model.r4.PositiveInt?,
-        stringValue: dev.ohs.fhir.model.r4.String?,
-        timeValue: dev.ohs.fhir.model.r4.Time?,
-        unsignedIntValue: dev.ohs.fhir.model.r4.UnsignedInt?,
-        uriValue: dev.ohs.fhir.model.r4.Uri?,
-        urlValue: dev.ohs.fhir.model.r4.Url?,
-        uuidValue: dev.ohs.fhir.model.r4.Uuid?,
-        addressValue: dev.ohs.fhir.model.r4.Address?,
-        ageValue: dev.ohs.fhir.model.r4.Age?,
-        annotationValue: dev.ohs.fhir.model.r4.Annotation?,
-        attachmentValue: dev.ohs.fhir.model.r4.Attachment?,
-        codeableConceptValue: dev.ohs.fhir.model.r4.CodeableConcept?,
-        codingValue: dev.ohs.fhir.model.r4.Coding?,
-        contactPointValue: dev.ohs.fhir.model.r4.ContactPoint?,
-        countValue: dev.ohs.fhir.model.r4.Count?,
-        distanceValue: dev.ohs.fhir.model.r4.Distance?,
-        durationValue: dev.ohs.fhir.model.r4.Duration?,
-        humanNameValue: dev.ohs.fhir.model.r4.HumanName?,
-        identifierValue: dev.ohs.fhir.model.r4.Identifier?,
-        moneyValue: dev.ohs.fhir.model.r4.Money?,
-        periodValue: dev.ohs.fhir.model.r4.Period?,
-        quantityValue: dev.ohs.fhir.model.r4.Quantity?,
-        rangeValue: dev.ohs.fhir.model.r4.Range?,
-        ratioValue: dev.ohs.fhir.model.r4.Ratio?,
-        referenceValue: dev.ohs.fhir.model.r4.Reference?,
-        sampledDataValue: dev.ohs.fhir.model.r4.SampledData?,
-        signatureValue: dev.ohs.fhir.model.r4.Signature?,
-        timingValue: dev.ohs.fhir.model.r4.Timing?,
-        contactDetailValue: dev.ohs.fhir.model.r4.ContactDetail?,
-        contributorValue: dev.ohs.fhir.model.r4.Contributor?,
-        dataRequirementValue: dev.ohs.fhir.model.r4.DataRequirement?,
-        expressionValue: dev.ohs.fhir.model.r4.Expression?,
-        parameterDefinitionValue: dev.ohs.fhir.model.r4.ParameterDefinition?,
-        relatedArtifactValue: dev.ohs.fhir.model.r4.RelatedArtifact?,
-        triggerDefinitionValue: dev.ohs.fhir.model.r4.TriggerDefinition?,
-        usageContextValue: dev.ohs.fhir.model.r4.UsageContext?,
-        dosageValue: dev.ohs.fhir.model.r4.Dosage?,
-        metaValue: dev.ohs.fhir.model.r4.Meta?,
-      ): Pattern? {
-        if (base64BinaryValue != null) return Base64Binary(base64BinaryValue)
-        if (booleanValue != null) return Boolean(booleanValue)
-        if (canonicalValue != null) return Canonical(canonicalValue)
-        if (codeValue != null) return Code(codeValue)
-        if (dateValue != null) return Date(dateValue)
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        if (decimalValue != null) return Decimal(decimalValue)
-        if (idValue != null) return Id(idValue)
-        if (instantValue != null) return Instant(instantValue)
-        if (integerValue != null) return Integer(integerValue)
-        if (markdownValue != null) return Markdown(markdownValue)
-        if (oidValue != null) return Oid(oidValue)
-        if (positiveIntValue != null) return PositiveInt(positiveIntValue)
-        if (stringValue != null) return String(stringValue)
-        if (timeValue != null) return Time(timeValue)
-        if (unsignedIntValue != null) return UnsignedInt(unsignedIntValue)
-        if (uriValue != null) return Uri(uriValue)
-        if (urlValue != null) return Url(urlValue)
-        if (uuidValue != null) return Uuid(uuidValue)
-        if (addressValue != null) return Address(addressValue)
-        if (ageValue != null) return Age(ageValue)
-        if (annotationValue != null) return Annotation(annotationValue)
-        if (attachmentValue != null) return Attachment(attachmentValue)
-        if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-        if (codingValue != null) return Coding(codingValue)
-        if (contactPointValue != null) return ContactPoint(contactPointValue)
-        if (countValue != null) return Count(countValue)
-        if (distanceValue != null) return Distance(distanceValue)
-        if (durationValue != null) return Duration(durationValue)
-        if (humanNameValue != null) return HumanName(humanNameValue)
-        if (identifierValue != null) return Identifier(identifierValue)
-        if (moneyValue != null) return Money(moneyValue)
-        if (periodValue != null) return Period(periodValue)
-        if (quantityValue != null) return Quantity(quantityValue)
-        if (rangeValue != null) return Range(rangeValue)
-        if (ratioValue != null) return Ratio(ratioValue)
-        if (referenceValue != null) return Reference(referenceValue)
-        if (sampledDataValue != null) return SampledData(sampledDataValue)
-        if (signatureValue != null) return Signature(signatureValue)
-        if (timingValue != null) return Timing(timingValue)
-        if (contactDetailValue != null) return ContactDetail(contactDetailValue)
-        if (contributorValue != null) return Contributor(contributorValue)
-        if (dataRequirementValue != null) return DataRequirement(dataRequirementValue)
-        if (expressionValue != null) return Expression(expressionValue)
-        if (parameterDefinitionValue != null) return ParameterDefinition(parameterDefinitionValue)
-        if (relatedArtifactValue != null) return RelatedArtifact(relatedArtifactValue)
-        if (triggerDefinitionValue != null) return TriggerDefinition(triggerDefinitionValue)
-        if (usageContextValue != null) return UsageContext(usageContextValue)
-        if (dosageValue != null) return Dosage(dosageValue)
-        if (metaValue != null) return Meta(metaValue)
-        return null
-      }
-    }
-  }
-
-  public sealed interface MinValue {
-    public fun asDate(): Date? = this as? Date
-
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    public fun asInstant(): Instant? = this as? Instant
-
-    public fun asTime(): Time? = this as? Time
-
-    public fun asDecimal(): Decimal? = this as? Decimal
-
-    public fun asInteger(): Integer? = this as? Integer
-
-    public fun asPositiveInt(): PositiveInt? = this as? PositiveInt
-
-    public fun asUnsignedInt(): UnsignedInt? = this as? UnsignedInt
-
-    public fun asQuantity(): Quantity? = this as? Quantity
-
-    @JvmInline public value class Date(public val `value`: dev.ohs.fhir.model.r4.Date) : MinValue
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r4.DateTime) : MinValue
-
-    @JvmInline
-    public value class Instant(public val `value`: dev.ohs.fhir.model.r4.Instant) : MinValue
-
-    @JvmInline public value class Time(public val `value`: dev.ohs.fhir.model.r4.Time) : MinValue
-
-    @JvmInline
-    public value class Decimal(public val `value`: dev.ohs.fhir.model.r4.Decimal) : MinValue
-
-    @JvmInline
-    public value class Integer(public val `value`: dev.ohs.fhir.model.r4.Integer) : MinValue
-
-    @JvmInline
-    public value class PositiveInt(public val `value`: dev.ohs.fhir.model.r4.PositiveInt) :
-      MinValue
-
-    @JvmInline
-    public value class UnsignedInt(public val `value`: dev.ohs.fhir.model.r4.UnsignedInt) :
-      MinValue
-
-    @JvmInline
-    public value class Quantity(public val `value`: dev.ohs.fhir.model.r4.Quantity) : MinValue
-
-    public companion object {
-      internal fun from(
-        dateValue: dev.ohs.fhir.model.r4.Date?,
-        dateTimeValue: dev.ohs.fhir.model.r4.DateTime?,
-        instantValue: dev.ohs.fhir.model.r4.Instant?,
-        timeValue: dev.ohs.fhir.model.r4.Time?,
-        decimalValue: dev.ohs.fhir.model.r4.Decimal?,
-        integerValue: dev.ohs.fhir.model.r4.Integer?,
-        positiveIntValue: dev.ohs.fhir.model.r4.PositiveInt?,
-        unsignedIntValue: dev.ohs.fhir.model.r4.UnsignedInt?,
-        quantityValue: dev.ohs.fhir.model.r4.Quantity?,
-      ): MinValue? {
-        if (dateValue != null) return Date(dateValue)
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        if (instantValue != null) return Instant(instantValue)
-        if (timeValue != null) return Time(timeValue)
-        if (decimalValue != null) return Decimal(decimalValue)
-        if (integerValue != null) return Integer(integerValue)
-        if (positiveIntValue != null) return PositiveInt(positiveIntValue)
-        if (unsignedIntValue != null) return UnsignedInt(unsignedIntValue)
-        if (quantityValue != null) return Quantity(quantityValue)
-        return null
-      }
-    }
-  }
-
-  public sealed interface MaxValue {
-    public fun asDate(): Date? = this as? Date
-
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    public fun asInstant(): Instant? = this as? Instant
-
-    public fun asTime(): Time? = this as? Time
-
-    public fun asDecimal(): Decimal? = this as? Decimal
-
-    public fun asInteger(): Integer? = this as? Integer
-
-    public fun asPositiveInt(): PositiveInt? = this as? PositiveInt
-
-    public fun asUnsignedInt(): UnsignedInt? = this as? UnsignedInt
-
-    public fun asQuantity(): Quantity? = this as? Quantity
-
-    @JvmInline public value class Date(public val `value`: dev.ohs.fhir.model.r4.Date) : MaxValue
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r4.DateTime) : MaxValue
-
-    @JvmInline
-    public value class Instant(public val `value`: dev.ohs.fhir.model.r4.Instant) : MaxValue
-
-    @JvmInline public value class Time(public val `value`: dev.ohs.fhir.model.r4.Time) : MaxValue
-
-    @JvmInline
-    public value class Decimal(public val `value`: dev.ohs.fhir.model.r4.Decimal) : MaxValue
-
-    @JvmInline
-    public value class Integer(public val `value`: dev.ohs.fhir.model.r4.Integer) : MaxValue
-
-    @JvmInline
-    public value class PositiveInt(public val `value`: dev.ohs.fhir.model.r4.PositiveInt) :
-      MaxValue
-
-    @JvmInline
-    public value class UnsignedInt(public val `value`: dev.ohs.fhir.model.r4.UnsignedInt) :
-      MaxValue
-
-    @JvmInline
-    public value class Quantity(public val `value`: dev.ohs.fhir.model.r4.Quantity) : MaxValue
-
-    public companion object {
-      internal fun from(
-        dateValue: dev.ohs.fhir.model.r4.Date?,
-        dateTimeValue: dev.ohs.fhir.model.r4.DateTime?,
-        instantValue: dev.ohs.fhir.model.r4.Instant?,
-        timeValue: dev.ohs.fhir.model.r4.Time?,
-        decimalValue: dev.ohs.fhir.model.r4.Decimal?,
-        integerValue: dev.ohs.fhir.model.r4.Integer?,
-        positiveIntValue: dev.ohs.fhir.model.r4.PositiveInt?,
-        unsignedIntValue: dev.ohs.fhir.model.r4.UnsignedInt?,
-        quantityValue: dev.ohs.fhir.model.r4.Quantity?,
-      ): MaxValue? {
-        if (dateValue != null) return Date(dateValue)
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        if (instantValue != null) return Instant(instantValue)
-        if (timeValue != null) return Time(timeValue)
-        if (decimalValue != null) return Decimal(decimalValue)
-        if (integerValue != null) return Integer(integerValue)
-        if (positiveIntValue != null) return PositiveInt(positiveIntValue)
-        if (unsignedIntValue != null) return UnsignedInt(unsignedIntValue)
-        if (quantityValue != null) return Quantity(quantityValue)
-        return null
-      }
-    }
-  }
-
   public open class Builder(
     /**
      * The path identifies the element and is expressed as a "."-separated list of ancestor
@@ -3236,8 +1720,18 @@ public data class ElementDefinition(
      * No default values are ever defined in the FHIR specification, nor can they be defined in
      * constraints ("profiles") on data types or resources. This element only exists so that default
      * values may be defined in logical models.
+     *
+     * A FHIR choice type — one of: [Address] | [AgeBox] | [Annotation] | [Attachment] |
+     * [Base64Binary] | [Boolean] | [CanonicalBox] | [CodeBox] | [CodeableConcept] | [Coding] |
+     * [ContactDetail] | [ContactPoint] | [Contributor] | [CountBox] | [DataRequirement] | [Date] |
+     * [DateTime] | [Decimal] | [DistanceBox] | [Dosage] | [DurationBox] | [Expression] |
+     * [HumanName] | [IdBox] | [Identifier] | [Instant] | [IntegerBox] | [MarkdownBox] | [Meta] |
+     * [Money] | [OidBox] | [ParameterDefinition] | [Period] | [PositiveIntBox] | [QuantityBox] |
+     * [Range] | [Ratio] | [Reference] | [RelatedArtifact] | [SampledData] | [Signature] |
+     * [StringBox] | [Time] | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] |
+     * [UrlBox] | [UsageContext] | [UuidBox]
      */
-    public open var defaultValue: DefaultValue? = null
+    public open var defaultValue: ElementDefinition.DefaultValue? = null
 
     /**
      * The Implicit meaning that is to be understood when this element is missing (e.g. 'when this
@@ -3268,8 +1762,18 @@ public data class ElementDefinition(
      *
      * This is not recommended for Coding and CodeableConcept since these often have highly
      * contextual properties such as version or display.
+     *
+     * A FHIR choice type — one of: [Address] | [AgeBox] | [Annotation] | [Attachment] |
+     * [Base64Binary] | [Boolean] | [CanonicalBox] | [CodeBox] | [CodeableConcept] | [Coding] |
+     * [ContactDetail] | [ContactPoint] | [Contributor] | [CountBox] | [DataRequirement] | [Date] |
+     * [DateTime] | [Decimal] | [DistanceBox] | [Dosage] | [DurationBox] | [Expression] |
+     * [HumanName] | [IdBox] | [Identifier] | [Instant] | [IntegerBox] | [MarkdownBox] | [Meta] |
+     * [Money] | [OidBox] | [ParameterDefinition] | [Period] | [PositiveIntBox] | [QuantityBox] |
+     * [Range] | [Ratio] | [Reference] | [RelatedArtifact] | [SampledData] | [Signature] |
+     * [StringBox] | [Time] | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] |
+     * [UrlBox] | [UsageContext] | [UuidBox]
      */
-    public open var fixed: Fixed? = null
+    public open var fixed: ElementDefinition.Fixed? = null
 
     /**
      * Specifies a value that the value in the instance SHALL follow - that is, any value in the
@@ -3290,8 +1794,18 @@ public data class ElementDefinition(
      *
      * Mostly used for fixing values of CodeableConcept. In general, pattern[x] is not intended for
      * use with primitive types, where is has the same meaning as fixed[x].
+     *
+     * A FHIR choice type — one of: [Address] | [AgeBox] | [Annotation] | [Attachment] |
+     * [Base64Binary] | [Boolean] | [CanonicalBox] | [CodeBox] | [CodeableConcept] | [Coding] |
+     * [ContactDetail] | [ContactPoint] | [Contributor] | [CountBox] | [DataRequirement] | [Date] |
+     * [DateTime] | [Decimal] | [DistanceBox] | [Dosage] | [DurationBox] | [Expression] |
+     * [HumanName] | [IdBox] | [Identifier] | [Instant] | [IntegerBox] | [MarkdownBox] | [Meta] |
+     * [Money] | [OidBox] | [ParameterDefinition] | [Period] | [PositiveIntBox] | [QuantityBox] |
+     * [Range] | [Ratio] | [Reference] | [RelatedArtifact] | [SampledData] | [Signature] |
+     * [StringBox] | [Time] | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] |
+     * [UrlBox] | [UsageContext] | [UuidBox]
      */
-    public open var pattern: Pattern? = null
+    public open var pattern: ElementDefinition.Pattern? = null
 
     /**
      * A sample value for this element demonstrating the type of information that would typically be
@@ -3314,8 +1828,11 @@ public data class ElementDefinition(
      * limit to the current time. The duration value is positive, and is subtracted from the current
      * clock to determine the minimum allowable value. A minimum value for a Quantity is interpreted
      * as an canonical minimum - e.g. you cannot provide 100mg if the minimum value is 10g.
+     *
+     * A FHIR choice type — one of: [Date] | [DateTime] | [Decimal] | [Instant] | [IntegerBox] |
+     * [PositiveIntBox] | [Quantity] | [Time] | [UnsignedIntBox]
      */
-    public open var minValue: MinValue? = null
+    public open var minValue: ElementDefinition.MinValue? = null
 
     /**
      * The maximum allowed value for the element. The value is inclusive. This is allowed for the
@@ -3327,8 +1844,11 @@ public data class ElementDefinition(
      * limit to the current time. The duration value is positive, and is added to the current clock
      * to determine the maximum allowable value. A maximum value for a Quantity is interpreted as an
      * canonical maximum - e.g. you cannot provide 10g if the maximum value is 50mg.
+     *
+     * A FHIR choice type — one of: [Date] | [DateTime] | [Decimal] | [Instant] | [IntegerBox] |
+     * [PositiveIntBox] | [Quantity] | [Time] | [UnsignedIntBox]
      */
-    public open var maxValue: MaxValue? = null
+    public open var maxValue: ElementDefinition.MaxValue? = null
 
     /**
      * Indicates the maximum length in characters that is permitted to be present in conformant
@@ -3664,4 +2184,55 @@ public data class ElementDefinition(
         }
     }
   }
+
+  /**
+   * A FHIR choice type — one of: [Address] | [AgeBox] | [Annotation] | [Attachment] |
+   * [Base64Binary] | [Boolean] | [CanonicalBox] | [CodeBox] | [CodeableConcept] | [Coding] |
+   * [ContactDetail] | [ContactPoint] | [Contributor] | [CountBox] | [DataRequirement] | [Date] |
+   * [DateTime] | [Decimal] | [DistanceBox] | [Dosage] | [DurationBox] | [Expression] | [HumanName]
+   * | [IdBox] | [Identifier] | [Instant] | [IntegerBox] | [MarkdownBox] | [Meta] | [Money] |
+   * [OidBox] | [ParameterDefinition] | [Period] | [PositiveIntBox] | [QuantityBox] | [Range] |
+   * [Ratio] | [Reference] | [RelatedArtifact] | [SampledData] | [Signature] | [StringBox] | [Time]
+   * | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] | [UrlBox] | [UsageContext] |
+   * [UuidBox]
+   */
+  public typealias DefaultValue = FhirChoiceTypes.ElementDefinitionDefaultValueChoice
+
+  /**
+   * A FHIR choice type — one of: [Address] | [AgeBox] | [Annotation] | [Attachment] |
+   * [Base64Binary] | [Boolean] | [CanonicalBox] | [CodeBox] | [CodeableConcept] | [Coding] |
+   * [ContactDetail] | [ContactPoint] | [Contributor] | [CountBox] | [DataRequirement] | [Date] |
+   * [DateTime] | [Decimal] | [DistanceBox] | [Dosage] | [DurationBox] | [Expression] | [HumanName]
+   * | [IdBox] | [Identifier] | [Instant] | [IntegerBox] | [MarkdownBox] | [Meta] | [Money] |
+   * [OidBox] | [ParameterDefinition] | [Period] | [PositiveIntBox] | [QuantityBox] | [Range] |
+   * [Ratio] | [Reference] | [RelatedArtifact] | [SampledData] | [Signature] | [StringBox] | [Time]
+   * | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] | [UrlBox] | [UsageContext] |
+   * [UuidBox]
+   */
+  public typealias Fixed = FhirChoiceTypes.ElementDefinitionDefaultValueChoice
+
+  /**
+   * A FHIR choice type — one of: [Address] | [AgeBox] | [Annotation] | [Attachment] |
+   * [Base64Binary] | [Boolean] | [CanonicalBox] | [CodeBox] | [CodeableConcept] | [Coding] |
+   * [ContactDetail] | [ContactPoint] | [Contributor] | [CountBox] | [DataRequirement] | [Date] |
+   * [DateTime] | [Decimal] | [DistanceBox] | [Dosage] | [DurationBox] | [Expression] | [HumanName]
+   * | [IdBox] | [Identifier] | [Instant] | [IntegerBox] | [MarkdownBox] | [Meta] | [Money] |
+   * [OidBox] | [ParameterDefinition] | [Period] | [PositiveIntBox] | [QuantityBox] | [Range] |
+   * [Ratio] | [Reference] | [RelatedArtifact] | [SampledData] | [Signature] | [StringBox] | [Time]
+   * | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] | [UrlBox] | [UsageContext] |
+   * [UuidBox]
+   */
+  public typealias Pattern = FhirChoiceTypes.ElementDefinitionDefaultValueChoice
+
+  /**
+   * A FHIR choice type — one of: [Date] | [DateTime] | [Decimal] | [Instant] | [IntegerBox] |
+   * [PositiveIntBox] | [Quantity] | [Time] | [UnsignedIntBox]
+   */
+  public typealias MinValue = FhirChoiceTypes.ElementDefinitionMaxValueChoice
+
+  /**
+   * A FHIR choice type — one of: [Date] | [DateTime] | [Decimal] | [Instant] | [IntegerBox] |
+   * [PositiveIntBox] | [Quantity] | [Time] | [UnsignedIntBox]
+   */
+  public typealias MaxValue = FhirChoiceTypes.ElementDefinitionMaxValueChoice
 }

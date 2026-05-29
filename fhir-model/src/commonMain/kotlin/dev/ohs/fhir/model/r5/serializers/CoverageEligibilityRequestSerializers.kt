@@ -124,11 +124,7 @@ internal object CoverageEligibilityRequestEventSerializer :
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
       type = type!!,
-      `when` =
-        CoverageEligibilityRequest.Event.When.from(
-          DateTime.of(FhirDateTime.fromString(whenDateTime), _whenDateTime),
-          whenPeriod,
-        )!!,
+      `when` = (DateTime.of(FhirDateTime.fromString(whenDateTime), _whenDateTime) ?: whenPeriod)!!,
     )
   }
 
@@ -148,14 +144,14 @@ internal object CoverageEligibilityRequestEventSerializer :
       )
     encoder.encodeSerializableElement(descriptor, 3, Hoisted.typeSer, value.type)
     when (val choice = value.`when`) {
-      is CoverageEligibilityRequest.Event.When.DateTime -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 4, it) }
-        (choice.value.toElement())?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 4, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 5, Hoisted.whenDateTimeSer, it)
         }
       }
-      is CoverageEligibilityRequest.Event.When.Period -> {
-        encoder.encodeSerializableElement(descriptor, 6, Hoisted.whenPeriodSer, choice.value)
+      is Period -> {
+        encoder.encodeSerializableElement(descriptor, 6, Hoisted.whenPeriodSer, choice)
       }
     }
   }
@@ -695,11 +691,7 @@ internal object CoverageEligibilityRequestItemDiagnosisSerializer :
       id = id,
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
-      diagnosis =
-        CoverageEligibilityRequest.Item.Diagnosis.Diagnosis.from(
-          diagnosisCodeableConcept,
-          diagnosisReference,
-        ),
+      diagnosis = (diagnosisCodeableConcept ?: diagnosisReference),
     )
   }
 
@@ -719,21 +711,16 @@ internal object CoverageEligibilityRequestItemDiagnosisSerializer :
       )
     when (val choice = value.diagnosis) {
       null -> {}
-      is CoverageEligibilityRequest.Item.Diagnosis.Diagnosis.CodeableConcept -> {
+      is CodeableConcept -> {
         encoder.encodeSerializableElement(
           descriptor,
           3,
           Hoisted.diagnosisCodeableConceptSer,
-          choice.value,
+          choice,
         )
       }
-      is CoverageEligibilityRequest.Item.Diagnosis.Diagnosis.Reference -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          4,
-          Hoisted.diagnosisReferenceSer,
-          choice.value,
-        )
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 4, Hoisted.diagnosisReferenceSer, choice)
       }
     }
   }
@@ -997,11 +984,7 @@ internal object CoverageEligibilityRequestSerializer : KSerializer<CoverageEligi
         }),
       patient = patient!!,
       event = event ?: listOf(),
-      serviced =
-        CoverageEligibilityRequest.Serviced.from(
-          Date.of(FhirDate.fromString(servicedDate), _servicedDate),
-          servicedPeriod,
-        ),
+      serviced = (Date.of(FhirDate.fromString(servicedDate), _servicedDate) ?: servicedPeriod),
       created = DateTime.of(FhirDateTime.fromString(created), _created)!!,
       enterer = enterer,
       provider = provider,
@@ -1111,11 +1094,11 @@ internal object CoverageEligibilityRequestSerializer : KSerializer<CoverageEligi
       )
     when (val choice = value.serviced) {
       null -> {}
-      is CoverageEligibilityRequest.Serviced.Date -> {
-        ((choice.value.value?.toString()))?.let {
+      is Date -> {
+        ((choice.value?.toString()))?.let {
           encoder.encodeStringElement(descriptor, 18 + descriptorOffset, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             19 + descriptorOffset,
@@ -1124,12 +1107,12 @@ internal object CoverageEligibilityRequestSerializer : KSerializer<CoverageEligi
           )
         }
       }
-      is CoverageEligibilityRequest.Serviced.Period -> {
+      is Period -> {
         encoder.encodeSerializableElement(
           descriptor,
           20 + descriptorOffset,
           Hoisted.servicedPeriodSer,
-          choice.value,
+          choice,
         )
       }
     }

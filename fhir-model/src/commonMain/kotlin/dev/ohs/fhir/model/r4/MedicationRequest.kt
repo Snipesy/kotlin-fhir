@@ -23,7 +23,6 @@ import dev.ohs.fhir.model.r4.serializers.MedicationRequestSubstitutionSerializer
 import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -193,8 +192,10 @@ public data class MedicationRequest(
   /**
    * Indicates if this record was captured as a secondary 'reported' record rather than as an
    * original primary source-of-truth record. It may also indicate the source of the report.
+   *
+   * A FHIR choice type — one of: [Boolean] | [Reference]
    */
-  public val reported: Reported? = null,
+  public val reported: MedicationRequest.Reported? = null,
   /**
    * Identifies the medication being requested. This is a link to a resource that represents the
    * medication which may be the details of the medication or simply an attribute carrying a code
@@ -204,8 +205,10 @@ public data class MedicationRequest(
    * information is required, then the use of the Medication resource is recommended. For example,
    * if you require form or lot number or if the medication is compounded or extemporaneously
    * prepared, then you must reference the Medication resource.
+   *
+   * A FHIR choice type — one of: [CodeableConcept] | [Reference]
    */
-  public val medication: Medication,
+  public val medication: FhirChoiceTypes.CodeableConceptOrReference,
   /**
    * A link to a resource representing the person or set of individuals to whom the medication will
    * be given.
@@ -771,8 +774,10 @@ public data class MedicationRequest(
      *
      * This element is labeled as a modifier because whether substitution is allow or not, it cannot
      * be ignored.
+     *
+     * A FHIR choice type — one of: [Boolean] | [CodeableConcept]
      */
-    public val allowed: Allowed,
+    public val allowed: Substitution.Allowed,
     /**
      * Indicates the reason for the substitution, or why substitution must or must not be performed.
      */
@@ -788,39 +793,16 @@ public data class MedicationRequest(
         }
       }
 
-    public sealed interface Allowed {
-      public fun asBoolean(): Boolean? = this as? Boolean
-
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      @JvmInline
-      public value class Boolean(public val `value`: dev.ohs.fhir.model.r4.Boolean) : Allowed
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r4.CodeableConcept
-      ) : Allowed
-
-      public companion object {
-        internal fun from(
-          booleanValue: dev.ohs.fhir.model.r4.Boolean?,
-          codeableConceptValue: dev.ohs.fhir.model.r4.CodeableConcept?,
-        ): Allowed? {
-          if (booleanValue != null) return Boolean(booleanValue)
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          return null
-        }
-      }
-    }
-
     public class Builder(
       /**
        * True if the prescriber allows a different drug to be dispensed from what was prescribed.
        *
        * This element is labeled as a modifier because whether substitution is allow or not, it
        * cannot be ignored.
+       *
+       * A FHIR choice type — one of: [Boolean] | [CodeableConcept]
        */
-      public var allowed: Allowed
+      public var allowed: Substitution.Allowed
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -877,53 +859,9 @@ public data class MedicationRequest(
           reason = reason?.build(),
         )
     }
-  }
 
-  public sealed interface Reported {
-    public fun asBoolean(): Boolean? = this as? Boolean
-
-    public fun asReference(): Reference? = this as? Reference
-
-    @JvmInline
-    public value class Boolean(public val `value`: dev.ohs.fhir.model.r4.Boolean) : Reported
-
-    @JvmInline
-    public value class Reference(public val `value`: dev.ohs.fhir.model.r4.Reference) : Reported
-
-    public companion object {
-      internal fun from(
-        booleanValue: dev.ohs.fhir.model.r4.Boolean?,
-        referenceValue: dev.ohs.fhir.model.r4.Reference?,
-      ): Reported? {
-        if (booleanValue != null) return Boolean(booleanValue)
-        if (referenceValue != null) return Reference(referenceValue)
-        return null
-      }
-    }
-  }
-
-  public sealed interface Medication {
-    public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-    public fun asReference(): Reference? = this as? Reference
-
-    @JvmInline
-    public value class CodeableConcept(public val `value`: dev.ohs.fhir.model.r4.CodeableConcept) :
-      Medication
-
-    @JvmInline
-    public value class Reference(public val `value`: dev.ohs.fhir.model.r4.Reference) : Medication
-
-    public companion object {
-      internal fun from(
-        codeableConceptValue: dev.ohs.fhir.model.r4.CodeableConcept?,
-        referenceValue: dev.ohs.fhir.model.r4.Reference?,
-      ): Medication? {
-        if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-        if (referenceValue != null) return Reference(referenceValue)
-        return null
-      }
-    }
+    /** A FHIR choice type — one of: [Boolean] | [CodeableConcept] */
+    public typealias Allowed = FhirChoiceTypes.BooleanOrCodeableConcept
   }
 
   public class Builder(
@@ -959,8 +897,10 @@ public data class MedicationRequest(
      * information is required, then the use of the Medication resource is recommended. For example,
      * if you require form or lot number or if the medication is compounded or extemporaneously
      * prepared, then you must reference the Medication resource.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public var medication: Medication,
+    public var medication: FhirChoiceTypes.CodeableConceptOrReference,
     /**
      * A link to a resource representing the person or set of individuals to whom the medication
      * will be given.
@@ -1119,8 +1059,10 @@ public data class MedicationRequest(
     /**
      * Indicates if this record was captured as a secondary 'reported' record rather than as an
      * original primary source-of-truth record. It may also indicate the source of the report.
+     *
+     * A FHIR choice type — one of: [Boolean] | [Reference]
      */
-    public var reported: Reported? = null
+    public var reported: MedicationRequest.Reported? = null
 
     /**
      * The Encounter during which this [x] was created or to which the creation of this record is
@@ -1456,4 +1398,7 @@ public data class MedicationRequest(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [Boolean] | [Reference] */
+  public typealias Reported = FhirChoiceTypes.BooleanOrReference
 }

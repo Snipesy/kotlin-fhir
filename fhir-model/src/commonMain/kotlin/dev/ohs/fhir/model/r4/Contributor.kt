@@ -51,7 +51,7 @@ public data class Contributor(
   public val name: String,
   /** Contact details to assist a user in finding and communicating with the contributor. */
   public val contact: List<ContactDetail> = listOf(),
-) : Element() {
+) : Element(), FhirChoiceTypes.ElementDefinitionDefaultValueChoice {
   public fun toBuilder(): Builder =
     with(this) {
       Builder(type, name.toBuilder()).apply {

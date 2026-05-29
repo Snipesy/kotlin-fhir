@@ -50,8 +50,16 @@ internal fun TypeSpec.Builder.addModelBuilderSupport(
   modelClassName: ClassName,
   valueSetMap: Map<String, ValueSet>,
   isBaseClass: Boolean,
+  choiceRegistry: ChoiceTypeRegistry,
 ): TypeSpec.Builder {
-  BuilderSupportGenerator(this, structureDefinition, modelClassName, valueSetMap, isBaseClass)
+  BuilderSupportGenerator(
+      this,
+      structureDefinition,
+      modelClassName,
+      valueSetMap,
+      isBaseClass,
+      choiceRegistry,
+    )
     .addResourceBuilderSupport()
   return this
 }
@@ -65,6 +73,7 @@ internal fun TypeSpec.Builder.addBackboneElementBuilderSupport(
   backboneElementClassName: ClassName,
   valueSetMap: Map<String, ValueSet>,
   elements: List<Element>,
+  choiceRegistry: ChoiceTypeRegistry,
 ): TypeSpec.Builder {
   // Backbone elements are leaf types — no subclasses, so the toBuilder method is never open.
   BuilderSupportGenerator(
@@ -73,6 +82,7 @@ internal fun TypeSpec.Builder.addBackboneElementBuilderSupport(
       backboneElementClassName,
       valueSetMap,
       isBaseClass = false,
+      choiceRegistry,
     )
     .addBackboneElementBuilderSupport(elements)
   return this
@@ -84,6 +94,7 @@ private class BuilderSupportGenerator(
   val baseClassName: ClassName,
   val valueSetMap: Map<String, ValueSet>,
   val isBaseClass: Boolean,
+  val choiceRegistry: ChoiceTypeRegistry,
 ) {
   fun addResourceBuilderSupport() {
     when (structureDefinition.kind) {
@@ -291,7 +302,12 @@ private class BuilderSupportGenerator(
     open: Boolean,
   ) {
     val propertyMapper =
-      PropertyMapper(PropertyMapper.MappingContext.BUILDER, baseClassName, valueSetMap)
+      PropertyMapper(
+        PropertyMapper.MappingContext.BUILDER,
+        baseClassName,
+        valueSetMap,
+        choiceRegistry,
+      )
     val constructorBuilder = FunSpec.constructorBuilder()
     elements.forEach { element ->
       val propertyInfo = propertyMapper.mapToProperty(element)
@@ -307,6 +323,11 @@ private class BuilderSupportGenerator(
             if (modifiers.isNotEmpty()) addModifiers(modifiers)
             addKdoc("%L", element.definition.sanitizeKDoc())
             element.comment?.let { addKdoc("\n\n%L", it.sanitizeKDoc()) }
+            // For a choice property, also document the union of permitted types (the same note the
+            // nested `typealias` carries) so it shows on the field itself.
+            if (element.type != null && element.type.size > 1) {
+              addKdoc("\n\n%L", choiceRegistry.unionDoc(element))
+            }
           }
           .build()
       builderTypeSpecBuilder.addProperty(property)

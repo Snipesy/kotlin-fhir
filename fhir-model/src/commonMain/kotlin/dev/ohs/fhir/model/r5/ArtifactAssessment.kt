@@ -20,7 +20,6 @@ import dev.ohs.fhir.model.r5.serializers.ArtifactAssessmentContentSerializer
 import dev.ohs.fhir.model.r5.serializers.ArtifactAssessmentSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -142,8 +141,10 @@ public data class ArtifactAssessment(
   public val title: String? = null,
   /**
    * Display of or reference to the bibliographic citation of the comment, classifier, or rating.
+   *
+   * A FHIR choice type — one of: [Markdown] | [Reference]
    */
-  public val citeAs: CiteAs? = null,
+  public val citeAs: ArtifactAssessment.CiteAs? = null,
   /**
    * The date (and optionally time) when the artifact assessment was published. The date must change
    * when the disposition changes and it must change if the workflow status code changes. In
@@ -180,8 +181,10 @@ public data class ArtifactAssessment(
   /**
    * A reference to a resource, canonical resource, or non-FHIR resource which the comment or
    * assessment is about.
+   *
+   * A FHIR choice type — one of: [CanonicalBox] | [Reference] | [UriBox]
    */
-  public val artifact: Artifact,
+  public val artifact: ArtifactAssessment.Artifact,
   /** A component comment, classifier, or rating of the artifact. */
   public val content: List<Content> = listOf(),
   /** Indicates the workflow status of the comment or change request. */
@@ -401,64 +404,14 @@ public data class ArtifactAssessment(
     }
   }
 
-  public sealed interface CiteAs {
-    public fun asReference(): Reference? = this as? Reference
-
-    public fun asMarkdown(): Markdown? = this as? Markdown
-
-    @JvmInline
-    public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : CiteAs
-
-    @JvmInline
-    public value class Markdown(public val `value`: dev.ohs.fhir.model.r5.Markdown) : CiteAs
-
-    public companion object {
-      internal fun from(
-        referenceValue: dev.ohs.fhir.model.r5.Reference?,
-        markdownValue: dev.ohs.fhir.model.r5.Markdown?,
-      ): CiteAs? {
-        if (referenceValue != null) return Reference(referenceValue)
-        if (markdownValue != null) return Markdown(markdownValue)
-        return null
-      }
-    }
-  }
-
-  public sealed interface Artifact {
-    public fun asReference(): Reference? = this as? Reference
-
-    public fun asCanonical(): Canonical? = this as? Canonical
-
-    public fun asUri(): Uri? = this as? Uri
-
-    @JvmInline
-    public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : Artifact
-
-    @JvmInline
-    public value class Canonical(public val `value`: dev.ohs.fhir.model.r5.Canonical) : Artifact
-
-    @JvmInline public value class Uri(public val `value`: dev.ohs.fhir.model.r5.Uri) : Artifact
-
-    public companion object {
-      internal fun from(
-        referenceValue: dev.ohs.fhir.model.r5.Reference?,
-        canonicalValue: dev.ohs.fhir.model.r5.Canonical?,
-        uriValue: dev.ohs.fhir.model.r5.Uri?,
-      ): Artifact? {
-        if (referenceValue != null) return Reference(referenceValue)
-        if (canonicalValue != null) return Canonical(canonicalValue)
-        if (uriValue != null) return Uri(uriValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
     /**
      * A reference to a resource, canonical resource, or non-FHIR resource which the comment or
      * assessment is about.
+     *
+     * A FHIR choice type — one of: [CanonicalBox] | [Reference] | [UriBox]
      */
-    public var artifact: Artifact
+    public var artifact: ArtifactAssessment.Artifact
   ) : DomainResource.Builder() {
     /**
      * The logical id of the resource, as used in the URL for the resource. Once assigned, this
@@ -582,8 +535,10 @@ public data class ArtifactAssessment(
 
     /**
      * Display of or reference to the bibliographic citation of the comment, classifier, or rating.
+     *
+     * A FHIR choice type — one of: [Markdown] | [Reference]
      */
-    public var citeAs: CiteAs? = null
+    public var citeAs: ArtifactAssessment.CiteAs? = null
 
     /**
      * The date (and optionally time) when the artifact assessment was published. The date must
@@ -819,4 +774,10 @@ public data class ArtifactAssessment(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [Markdown] | [Reference] */
+  public typealias CiteAs = FhirChoiceTypes.MarkdownOrReference
+
+  /** A FHIR choice type — one of: [CanonicalBox] | [Reference] | [UriBox] */
+  public typealias Artifact = FhirChoiceTypes.CanonicalOrReferenceOrUri
 }

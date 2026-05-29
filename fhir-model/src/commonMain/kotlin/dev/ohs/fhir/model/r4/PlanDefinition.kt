@@ -27,7 +27,6 @@ import dev.ohs.fhir.model.r4.serializers.PlanDefinitionSerializer
 import dev.ohs.fhir.model.r4.terminologies.PublicationStatus
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -216,8 +215,12 @@ public data class PlanDefinition(
    * Allows filtering of plan definitions that are appropriate for use versus not.
    */
   public val experimental: Boolean? = null,
-  /** A code or group definition that describes the intended subject of the plan definition. */
-  public val subject: Subject? = null,
+  /**
+   * A code or group definition that describes the intended subject of the plan definition.
+   *
+   * A FHIR choice type — one of: [CodeableConcept] | [Reference]
+   */
+  public val subject: PlanDefinition.Subject? = null,
   /**
    * The date (and optionally time) when the plan definition was published. The date must change
    * when the business version changes and it must change if the status code changes. In addition,
@@ -540,8 +543,10 @@ public data class PlanDefinition(
        * low value is missing, it indicates that the goal is achieved at any value at or below the
        * high value. Similarly, if the high value is missing, it indicates that the goal is achieved
        * at any value at or above the low value.
+       *
+       * A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Range]
        */
-      public val detail: Detail? = null,
+      public val detail: Target.Detail? = null,
       /** Indicates the timeframe after the start of the goal in which the goal should be met. */
       public val due: Duration? = null,
     ) : BackboneElement() {
@@ -556,38 +561,6 @@ public data class PlanDefinition(
             due = this@with.due?.toBuilder()
           }
         }
-
-      public sealed interface Detail {
-        public fun asQuantity(): Quantity? = this as? Quantity
-
-        public fun asRange(): Range? = this as? Range
-
-        public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-        @JvmInline
-        public value class Quantity(public val `value`: dev.ohs.fhir.model.r4.Quantity) : Detail
-
-        @JvmInline
-        public value class Range(public val `value`: dev.ohs.fhir.model.r4.Range) : Detail
-
-        @JvmInline
-        public value class CodeableConcept(
-          public val `value`: dev.ohs.fhir.model.r4.CodeableConcept
-        ) : Detail
-
-        public companion object {
-          internal fun from(
-            quantityValue: dev.ohs.fhir.model.r4.Quantity?,
-            rangeValue: dev.ohs.fhir.model.r4.Range?,
-            codeableConceptValue: dev.ohs.fhir.model.r4.CodeableConcept?,
-          ): Detail? {
-            if (quantityValue != null) return Quantity(quantityValue)
-            if (rangeValue != null) return Range(rangeValue)
-            if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-            return null
-          }
-        }
-      }
 
       public class Builder() {
         /**
@@ -642,8 +615,10 @@ public data class PlanDefinition(
          * When a low value is missing, it indicates that the goal is achieved at any value at or
          * below the high value. Similarly, if the high value is missing, it indicates that the goal
          * is achieved at any value at or above the low value.
+         *
+         * A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Range]
          */
-        public var detail: Detail? = null
+        public var detail: Target.Detail? = null
 
         /** Indicates the timeframe after the start of the goal in which the goal should be met. */
         public var due: Duration.Builder? = null
@@ -658,6 +633,9 @@ public data class PlanDefinition(
             due = due?.build(),
           )
       }
+
+      /** A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Range] */
+      public typealias Detail = FhirChoiceTypes.CodeableConceptOrQuantityOrRange
     }
 
     public class Builder(
@@ -839,8 +817,10 @@ public data class PlanDefinition(
      * actions (or in the ActivityDefinition referenced by the action) resolves based on the set of
      * subjects supplied in context and by type (i.e. the patient subject would resolve to a
      * resource of type Patient).
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public val subject: Subject? = null,
+    public val subject: Action.Subject? = null,
     /** A description of when the action should be triggered. */
     public val trigger: List<TriggerDefinition> = listOf(),
     /**
@@ -861,8 +841,12 @@ public data class PlanDefinition(
      * rather than that any of the actions are a dependency.
      */
     public val relatedAction: List<RelatedAction> = listOf(),
-    /** An optional value describing when the action should be performed. */
-    public val timing: Timing? = null,
+    /**
+     * An optional value describing when the action should be performed.
+     *
+     * A FHIR choice type — one of: [Age] | [DateTime] | [Duration] | [Period] | [Range] | [Timing]
+     */
+    public val timing: FhirChoiceTypes.AgeOrDateTimeOrDurationOrPeriodOrRangeOrTiming? = null,
     /** Indicates who should participate in performing the action described. */
     public val participant: List<Participant> = listOf(),
     /** The type of action to perform (create, update, remove). */
@@ -883,8 +867,10 @@ public data class PlanDefinition(
      *
      * Note that the definition is optional, and if no definition is specified, a dynamicValue with
      * a root ($this) path can be used to define the entire resource dynamically.
+     *
+     * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
      */
-    public val definition: Definition? = null,
+    public val definition: Action.Definition? = null,
     /**
      * A reference to a StructureMap resource that defines a transform that can be executed to
      * produce the intent resource using the ActivityDefinition instance as the input.
@@ -1135,8 +1121,10 @@ public data class PlanDefinition(
       /**
        * A duration or range of durations to apply to the relationship. For example, 30-60 minutes
        * before.
+       *
+       * A FHIR choice type — one of: [Duration] | [Range]
        */
-      public val offset: Offset? = null,
+      public val offset: RelatedAction.Offset? = null,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -1147,29 +1135,6 @@ public data class PlanDefinition(
             offset = this@with.offset
           }
         }
-
-      public sealed interface Offset {
-        public fun asDuration(): Duration? = this as? Duration
-
-        public fun asRange(): Range? = this as? Range
-
-        @JvmInline
-        public value class Duration(public val `value`: dev.ohs.fhir.model.r4.Duration) : Offset
-
-        @JvmInline
-        public value class Range(public val `value`: dev.ohs.fhir.model.r4.Range) : Offset
-
-        public companion object {
-          internal fun from(
-            durationValue: dev.ohs.fhir.model.r4.Duration?,
-            rangeValue: dev.ohs.fhir.model.r4.Range?,
-          ): Offset? {
-            if (durationValue != null) return Duration(durationValue)
-            if (rangeValue != null) return Range(rangeValue)
-            return null
-          }
-        }
-      }
 
       public class Builder(
         /** The element id of the related action. */
@@ -1220,8 +1185,10 @@ public data class PlanDefinition(
         /**
          * A duration or range of durations to apply to the relationship. For example, 30-60 minutes
          * before.
+         *
+         * A FHIR choice type — one of: [Duration] | [Range]
          */
-        public var offset: Offset? = null
+        public var offset: RelatedAction.Offset? = null
 
         public fun build(): RelatedAction =
           RelatedAction(
@@ -1233,6 +1200,9 @@ public data class PlanDefinition(
             offset = offset,
           )
       }
+
+      /** A FHIR choice type — one of: [Duration] | [Range] */
+      public typealias Offset = FhirChoiceTypes.DurationOrRange
     }
 
     /** Indicates who should participate in performing the action described. */
@@ -1505,107 +1475,6 @@ public data class PlanDefinition(
       }
     }
 
-    public sealed interface Subject {
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asReference(): Reference? = this as? Reference
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r4.CodeableConcept
-      ) : Subject
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r4.Reference) : Subject
-
-      public companion object {
-        internal fun from(
-          codeableConceptValue: dev.ohs.fhir.model.r4.CodeableConcept?,
-          referenceValue: dev.ohs.fhir.model.r4.Reference?,
-        ): Subject? {
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (referenceValue != null) return Reference(referenceValue)
-          return null
-        }
-      }
-    }
-
-    public sealed interface Timing {
-      public fun asDateTime(): DateTime? = this as? DateTime
-
-      public fun asAge(): Age? = this as? Age
-
-      public fun asPeriod(): Period? = this as? Period
-
-      public fun asDuration(): Duration? = this as? Duration
-
-      public fun asRange(): Range? = this as? Range
-
-      public fun asTiming(): Timing? = this as? Timing
-
-      @JvmInline
-      public value class DateTime(public val `value`: dev.ohs.fhir.model.r4.DateTime) :
-        Action.Timing
-
-      @JvmInline
-      public value class Age(public val `value`: dev.ohs.fhir.model.r4.Age) : Action.Timing
-
-      @JvmInline
-      public value class Period(public val `value`: dev.ohs.fhir.model.r4.Period) : Action.Timing
-
-      @JvmInline
-      public value class Duration(public val `value`: dev.ohs.fhir.model.r4.Duration) :
-        Action.Timing
-
-      @JvmInline
-      public value class Range(public val `value`: dev.ohs.fhir.model.r4.Range) : Action.Timing
-
-      @JvmInline
-      public value class Timing(public val `value`: dev.ohs.fhir.model.r4.Timing) : Action.Timing
-
-      public companion object {
-        internal fun from(
-          dateTimeValue: dev.ohs.fhir.model.r4.DateTime?,
-          ageValue: dev.ohs.fhir.model.r4.Age?,
-          periodValue: dev.ohs.fhir.model.r4.Period?,
-          durationValue: dev.ohs.fhir.model.r4.Duration?,
-          rangeValue: dev.ohs.fhir.model.r4.Range?,
-          timingValue: dev.ohs.fhir.model.r4.Timing?,
-        ): Action.Timing? {
-          if (dateTimeValue != null) return DateTime(dateTimeValue)
-          if (ageValue != null) return Age(ageValue)
-          if (periodValue != null) return Period(periodValue)
-          if (durationValue != null) return Duration(durationValue)
-          if (rangeValue != null) return Range(rangeValue)
-          if (timingValue != null) return Timing(timingValue)
-          return null
-        }
-      }
-    }
-
-    public sealed interface Definition {
-      public fun asCanonical(): Canonical? = this as? Canonical
-
-      public fun asUri(): Uri? = this as? Uri
-
-      @JvmInline
-      public value class Canonical(public val `value`: dev.ohs.fhir.model.r4.Canonical) :
-        Definition
-
-      @JvmInline public value class Uri(public val `value`: dev.ohs.fhir.model.r4.Uri) : Definition
-
-      public companion object {
-        internal fun from(
-          canonicalValue: dev.ohs.fhir.model.r4.Canonical?,
-          uriValue: dev.ohs.fhir.model.r4.Uri?,
-        ): Definition? {
-          if (canonicalValue != null) return Canonical(canonicalValue)
-          if (uriValue != null) return Uri(uriValue)
-          return null
-        }
-      }
-    }
-
     public class Builder() {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -1704,8 +1573,10 @@ public data class PlanDefinition(
        * in actions (or in the ActivityDefinition referenced by the action) resolves based on the
        * set of subjects supplied in context and by type (i.e. the patient subject would resolve to
        * a resource of type Patient).
+       *
+       * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public var subject: Subject? = null
+      public var subject: Action.Subject? = null
 
       /** A description of when the action should be triggered. */
       public var trigger: MutableList<TriggerDefinition.Builder> = mutableListOf()
@@ -1733,8 +1604,13 @@ public data class PlanDefinition(
        */
       public var relatedAction: MutableList<RelatedAction.Builder> = mutableListOf()
 
-      /** An optional value describing when the action should be performed. */
-      public var timing: Timing? = null
+      /**
+       * An optional value describing when the action should be performed.
+       *
+       * A FHIR choice type — one of: [Age] | [DateTime] | [Duration] | [Period] | [Range] |
+       * [Timing]
+       */
+      public var timing: FhirChoiceTypes.AgeOrDateTimeOrDurationOrPeriodOrRangeOrTiming? = null
 
       /** Indicates who should participate in performing the action described. */
       public var participant: MutableList<Participant.Builder> = mutableListOf()
@@ -1763,8 +1639,10 @@ public data class PlanDefinition(
        *
        * Note that the definition is optional, and if no definition is specified, a dynamicValue
        * with a root ($this) path can be used to define the entire resource dynamically.
+       *
+       * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
        */
-      public var definition: Definition? = null
+      public var definition: Action.Definition? = null
 
       /**
        * A reference to a StructureMap resource that defines a transform that can be executed to
@@ -1832,30 +1710,12 @@ public data class PlanDefinition(
           action = action.map { it.build() },
         )
     }
-  }
 
-  public sealed interface Subject {
-    public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
+    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+    public typealias Subject = FhirChoiceTypes.CodeableConceptOrReference
 
-    public fun asReference(): Reference? = this as? Reference
-
-    @JvmInline
-    public value class CodeableConcept(public val `value`: dev.ohs.fhir.model.r4.CodeableConcept) :
-      Subject
-
-    @JvmInline
-    public value class Reference(public val `value`: dev.ohs.fhir.model.r4.Reference) : Subject
-
-    public companion object {
-      internal fun from(
-        codeableConceptValue: dev.ohs.fhir.model.r4.CodeableConcept?,
-        referenceValue: dev.ohs.fhir.model.r4.Reference?,
-      ): Subject? {
-        if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-        if (referenceValue != null) return Reference(referenceValue)
-        return null
-      }
-    }
+    /** A FHIR choice type — one of: [CanonicalBox] | [UriBox] */
+    public typealias Definition = FhirChoiceTypes.CanonicalOrUri
   }
 
   public class Builder(
@@ -2056,8 +1916,12 @@ public data class PlanDefinition(
      */
     public var experimental: Boolean.Builder? = null
 
-    /** A code or group definition that describes the intended subject of the plan definition. */
-    public var subject: Subject? = null
+    /**
+     * A code or group definition that describes the intended subject of the plan definition.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Reference]
+     */
+    public var subject: PlanDefinition.Subject? = null
 
     /**
      * The date (and optionally time) when the plan definition was published. The date must change
@@ -2576,4 +2440,7 @@ public data class PlanDefinition(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+  public typealias Subject = FhirChoiceTypes.CodeableConceptOrReference
 }

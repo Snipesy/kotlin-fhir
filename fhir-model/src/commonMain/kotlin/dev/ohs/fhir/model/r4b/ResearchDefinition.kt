@@ -20,7 +20,6 @@ import dev.ohs.fhir.model.r4b.serializers.ResearchDefinitionSerializer
 import dev.ohs.fhir.model.r4b.terminologies.PublicationStatus
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -219,8 +218,10 @@ public data class ResearchDefinition(
    * the logic in the ResearchDefinitions is evaluated with respect to a particular subject. This
    * corresponds roughly to the notion of a Compartment in that it limits what content is available
    * based on its relationship to the subject. In CQL, this corresponds to the context declaration.
+   *
+   * A FHIR choice type — one of: [CodeableConcept] | [Reference]
    */
-  public val subject: Subject? = null,
+  public val subject: ResearchDefinition.Subject? = null,
   /**
    * The date (and optionally time) when the research definition was published. The date must change
    * when the business version changes and it must change if the status code changes. In addition,
@@ -416,30 +417,6 @@ public data class ResearchDefinition(
         outcome = this@with.outcome?.toBuilder()
       }
     }
-
-  public sealed interface Subject {
-    public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-    public fun asReference(): Reference? = this as? Reference
-
-    @JvmInline
-    public value class CodeableConcept(public val `value`: dev.ohs.fhir.model.r4b.CodeableConcept) :
-      Subject
-
-    @JvmInline
-    public value class Reference(public val `value`: dev.ohs.fhir.model.r4b.Reference) : Subject
-
-    public companion object {
-      internal fun from(
-        codeableConceptValue: dev.ohs.fhir.model.r4b.CodeableConcept?,
-        referenceValue: dev.ohs.fhir.model.r4b.Reference?,
-      ): Subject? {
-        if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-        if (referenceValue != null) return Reference(referenceValue)
-        return null
-      }
-    }
-  }
 
   public class Builder(
     /**
@@ -654,8 +631,10 @@ public data class ResearchDefinition(
      * This corresponds roughly to the notion of a Compartment in that it limits what content is
      * available based on its relationship to the subject. In CQL, this corresponds to the context
      * declaration.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public var subject: Subject? = null
+    public var subject: ResearchDefinition.Subject? = null
 
     /**
      * The date (and optionally time) when the research definition was published. The date must
@@ -880,4 +859,7 @@ public data class ResearchDefinition(
         outcome = outcome?.build(),
       )
   }
+
+  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+  public typealias Subject = FhirChoiceTypes.CodeableConceptOrReference
 }

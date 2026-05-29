@@ -999,10 +999,7 @@ internal object DeviceDefinitionSerializer : KSerializer<DeviceDefinition> {
       identifier = identifier ?: listOf(),
       udiDeviceIdentifier = udiDeviceIdentifier ?: listOf(),
       manufacturer =
-        DeviceDefinition.Manufacturer.from(
-          R4String.of(manufacturerString, _manufacturerString),
-          manufacturerReference,
-        ),
+        (R4String.of(manufacturerString, _manufacturerString) ?: manufacturerReference),
       deviceName = deviceName ?: listOf(),
       modelNumber = R4String.of(modelNumber, _modelNumber),
       type = type,
@@ -1100,11 +1097,9 @@ internal object DeviceDefinitionSerializer : KSerializer<DeviceDefinition> {
       )
     when (val choice = value.manufacturer) {
       null -> {}
-      is DeviceDefinition.Manufacturer.String -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 12 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is R4String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 12 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             13 + descriptorOffset,
@@ -1113,12 +1108,12 @@ internal object DeviceDefinitionSerializer : KSerializer<DeviceDefinition> {
           )
         }
       }
-      is DeviceDefinition.Manufacturer.Reference -> {
+      is Reference -> {
         encoder.encodeSerializableElement(
           descriptor,
           14 + descriptorOffset,
           Hoisted.manufacturerReferenceSer,
-          choice.value,
+          choice,
         )
       }
     }

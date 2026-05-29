@@ -101,7 +101,7 @@ public data class Signature(
    * Signature" form.
    */
   public val `data`: Base64Binary? = null,
-) : Element() {
+) : Element(), FhirChoiceParticipants.SignatureChoices {
   public fun toBuilder(): Builder =
     with(this) {
       Builder(type.map { it.toBuilder() }.toMutableList(), `when`.toBuilder(), who.toBuilder())

@@ -21,7 +21,6 @@ import dev.ohs.fhir.model.r4b.serializers.QuestionnaireResponseItemSerializer
 import dev.ohs.fhir.model.r4b.serializers.QuestionnaireResponseSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -374,8 +373,11 @@ public data class QuestionnaireResponse(
        * and enforce the constraints of a complex data type. Additional complex types can be
        * introduced through extensions. Must match the datatype specified by Questionnaire.item.type
        * in the corresponding Questionnaire.
+       *
+       * A FHIR choice type — one of: [Attachment] | [Boolean] | [Coding] | [Date] | [DateTime] |
+       * [Decimal] | [Integer] | [Quantity] | [Reference] | [String] | [Time] | [Uri]
        */
-      public val `value`: Value? = null,
+      public val `value`: Answer.Value? = null,
       /** Nested groups and/or questions found within this particular answer. */
       public val item: List<Item> = listOf(),
     ) : BackboneElement() {
@@ -389,97 +391,6 @@ public data class QuestionnaireResponse(
             item = this@with.item.map { it.toBuilder() }.toMutableList()
           }
         }
-
-      public sealed interface Value {
-        public fun asBoolean(): Boolean? = this as? Boolean
-
-        public fun asDecimal(): Decimal? = this as? Decimal
-
-        public fun asInteger(): Integer? = this as? Integer
-
-        public fun asDate(): Date? = this as? Date
-
-        public fun asDateTime(): DateTime? = this as? DateTime
-
-        public fun asTime(): Time? = this as? Time
-
-        public fun asString(): String? = this as? String
-
-        public fun asUri(): Uri? = this as? Uri
-
-        public fun asAttachment(): Attachment? = this as? Attachment
-
-        public fun asCoding(): Coding? = this as? Coding
-
-        public fun asQuantity(): Quantity? = this as? Quantity
-
-        public fun asReference(): Reference? = this as? Reference
-
-        @JvmInline
-        public value class Boolean(public val `value`: dev.ohs.fhir.model.r4b.Boolean) : Value
-
-        @JvmInline
-        public value class Decimal(public val `value`: dev.ohs.fhir.model.r4b.Decimal) : Value
-
-        @JvmInline
-        public value class Integer(public val `value`: dev.ohs.fhir.model.r4b.Integer) : Value
-
-        @JvmInline public value class Date(public val `value`: dev.ohs.fhir.model.r4b.Date) : Value
-
-        @JvmInline
-        public value class DateTime(public val `value`: dev.ohs.fhir.model.r4b.DateTime) : Value
-
-        @JvmInline public value class Time(public val `value`: dev.ohs.fhir.model.r4b.Time) : Value
-
-        @JvmInline
-        public value class String(public val `value`: dev.ohs.fhir.model.r4b.String) : Value
-
-        @JvmInline public value class Uri(public val `value`: dev.ohs.fhir.model.r4b.Uri) : Value
-
-        @JvmInline
-        public value class Attachment(public val `value`: dev.ohs.fhir.model.r4b.Attachment) :
-          Value
-
-        @JvmInline
-        public value class Coding(public val `value`: dev.ohs.fhir.model.r4b.Coding) : Value
-
-        @JvmInline
-        public value class Quantity(public val `value`: dev.ohs.fhir.model.r4b.Quantity) : Value
-
-        @JvmInline
-        public value class Reference(public val `value`: dev.ohs.fhir.model.r4b.Reference) : Value
-
-        public companion object {
-          internal fun from(
-            booleanValue: dev.ohs.fhir.model.r4b.Boolean?,
-            decimalValue: dev.ohs.fhir.model.r4b.Decimal?,
-            integerValue: dev.ohs.fhir.model.r4b.Integer?,
-            dateValue: dev.ohs.fhir.model.r4b.Date?,
-            dateTimeValue: dev.ohs.fhir.model.r4b.DateTime?,
-            timeValue: dev.ohs.fhir.model.r4b.Time?,
-            stringValue: dev.ohs.fhir.model.r4b.String?,
-            uriValue: dev.ohs.fhir.model.r4b.Uri?,
-            attachmentValue: dev.ohs.fhir.model.r4b.Attachment?,
-            codingValue: dev.ohs.fhir.model.r4b.Coding?,
-            quantityValue: dev.ohs.fhir.model.r4b.Quantity?,
-            referenceValue: dev.ohs.fhir.model.r4b.Reference?,
-          ): Value? {
-            if (booleanValue != null) return Boolean(booleanValue)
-            if (decimalValue != null) return Decimal(decimalValue)
-            if (integerValue != null) return Integer(integerValue)
-            if (dateValue != null) return Date(dateValue)
-            if (dateTimeValue != null) return DateTime(dateTimeValue)
-            if (timeValue != null) return Time(timeValue)
-            if (stringValue != null) return String(stringValue)
-            if (uriValue != null) return Uri(uriValue)
-            if (attachmentValue != null) return Attachment(attachmentValue)
-            if (codingValue != null) return Coding(codingValue)
-            if (quantityValue != null) return Quantity(quantityValue)
-            if (referenceValue != null) return Reference(referenceValue)
-            return null
-          }
-        }
-      }
 
       public class Builder() {
         /**
@@ -530,8 +441,11 @@ public data class QuestionnaireResponse(
          * and enforce the constraints of a complex data type. Additional complex types can be
          * introduced through extensions. Must match the datatype specified by
          * Questionnaire.item.type in the corresponding Questionnaire.
+         *
+         * A FHIR choice type — one of: [Attachment] | [Boolean] | [Coding] | [Date] | [DateTime] |
+         * [Decimal] | [Integer] | [Quantity] | [Reference] | [String] | [Time] | [Uri]
          */
-        public var `value`: Value? = null
+        public var `value`: Answer.Value? = null
 
         /** Nested groups and/or questions found within this particular answer. */
         public var item: MutableList<Item.Builder> = mutableListOf()
@@ -545,6 +459,12 @@ public data class QuestionnaireResponse(
             item = item.map { it.build() },
           )
       }
+
+      /**
+       * A FHIR choice type — one of: [Attachment] | [Boolean] | [Coding] | [Date] | [DateTime] |
+       * [Decimal] | [Integer] | [Quantity] | [Reference] | [String] | [Time] | [Uri]
+       */
+      public typealias Value = FhirChoiceTypes.ContractTermOfferAnswerValueChoice
     }
 
     public class Builder(

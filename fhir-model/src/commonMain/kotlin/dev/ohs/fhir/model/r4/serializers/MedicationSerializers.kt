@@ -128,7 +128,7 @@ internal object MedicationIngredientSerializer : KSerializer<Medication.Ingredie
       id = id,
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
-      item = Medication.Ingredient.Item.from(itemCodeableConcept, itemReference)!!,
+      item = (itemCodeableConcept ?: itemReference)!!,
       isActive = R4Boolean.of(isActive, _isActive),
       strength = strength,
     )
@@ -146,16 +146,11 @@ internal object MedicationIngredientSerializer : KSerializer<Medication.Ingredie
         value.modifierExtension,
       )
     when (val choice = value.item) {
-      is Medication.Ingredient.Item.CodeableConcept -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          3,
-          Hoisted.itemCodeableConceptSer,
-          choice.value,
-        )
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 3, Hoisted.itemCodeableConceptSer, choice)
       }
-      is Medication.Ingredient.Item.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 4, Hoisted.itemReferenceSer, choice.value)
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 4, Hoisted.itemReferenceSer, choice)
       }
     }
     ((value.isActive?.value))?.let { encoder.encodeBooleanElement(descriptor, 5, it) }

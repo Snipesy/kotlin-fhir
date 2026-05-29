@@ -24,7 +24,6 @@ import dev.ohs.fhir.model.r4.terminologies.AdministrativeGender
 import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -197,8 +196,10 @@ public data class Patient(
    * If there's no value in the instance, it means there is no statement on whether or not the
    * individual is deceased. Most systems will interpret the absence of a value as a sign of the
    * person being alive.
+   *
+   * A FHIR choice type — one of: [Boolean] | [DateTime]
    */
-  public val deceased: Deceased? = null,
+  public val deceased: Patient.Deceased? = null,
   /**
    * An address for the individual.
    *
@@ -215,8 +216,10 @@ public data class Patient(
    * middle birth in triplets would be valueInteger=2 and the third born would have valueInteger=3
    * If a boolean value was provided for this triplets example, then all 3 patient records would
    * have valueBoolean=true (the ordering is not indicated).
+   *
+   * A FHIR choice type — one of: [Boolean] | [Integer]
    */
-  public val multipleBirth: MultipleBirth? = null,
+  public val multipleBirth: Patient.MultipleBirth? = null,
   /**
    * Image of the patient.
    *
@@ -739,52 +742,6 @@ public data class Patient(
     }
   }
 
-  public sealed interface Deceased {
-    public fun asBoolean(): Boolean? = this as? Boolean
-
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    @JvmInline
-    public value class Boolean(public val `value`: dev.ohs.fhir.model.r4.Boolean) : Deceased
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r4.DateTime) : Deceased
-
-    public companion object {
-      internal fun from(
-        booleanValue: dev.ohs.fhir.model.r4.Boolean?,
-        dateTimeValue: dev.ohs.fhir.model.r4.DateTime?,
-      ): Deceased? {
-        if (booleanValue != null) return Boolean(booleanValue)
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        return null
-      }
-    }
-  }
-
-  public sealed interface MultipleBirth {
-    public fun asBoolean(): Boolean? = this as? Boolean
-
-    public fun asInteger(): Integer? = this as? Integer
-
-    @JvmInline
-    public value class Boolean(public val `value`: dev.ohs.fhir.model.r4.Boolean) : MultipleBirth
-
-    @JvmInline
-    public value class Integer(public val `value`: dev.ohs.fhir.model.r4.Integer) : MultipleBirth
-
-    public companion object {
-      internal fun from(
-        booleanValue: dev.ohs.fhir.model.r4.Boolean?,
-        integerValue: dev.ohs.fhir.model.r4.Integer?,
-      ): MultipleBirth? {
-        if (booleanValue != null) return Boolean(booleanValue)
-        if (integerValue != null) return Integer(integerValue)
-        return null
-      }
-    }
-  }
-
   public class Builder() : DomainResource.Builder() {
     /**
      * The logical id of the resource, as used in the URL for the resource. Once assigned, this
@@ -963,8 +920,10 @@ public data class Patient(
      * If there's no value in the instance, it means there is no statement on whether or not the
      * individual is deceased. Most systems will interpret the absence of a value as a sign of the
      * person being alive.
+     *
+     * A FHIR choice type — one of: [Boolean] | [DateTime]
      */
-    public var deceased: Deceased? = null
+    public var deceased: Patient.Deceased? = null
 
     /**
      * An address for the individual.
@@ -984,8 +943,10 @@ public data class Patient(
      * middle birth in triplets would be valueInteger=2 and the third born would have valueInteger=3
      * If a boolean value was provided for this triplets example, then all 3 patient records would
      * have valueBoolean=true (the ordering is not indicated).
+     *
+     * A FHIR choice type — one of: [Boolean] | [Integer]
      */
-    public var multipleBirth: MultipleBirth? = null
+    public var multipleBirth: Patient.MultipleBirth? = null
 
     /**
      * Image of the patient.
@@ -1107,4 +1068,10 @@ public data class Patient(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [Boolean] | [DateTime] */
+  public typealias Deceased = FhirChoiceTypes.BooleanOrDateTime
+
+  /** A FHIR choice type — one of: [Boolean] | [Integer] */
+  public typealias MultipleBirth = FhirChoiceTypes.BooleanOrInteger
 }

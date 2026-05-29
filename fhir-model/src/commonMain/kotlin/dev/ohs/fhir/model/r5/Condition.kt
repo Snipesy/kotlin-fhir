@@ -19,10 +19,8 @@ package dev.ohs.fhir.model.r5
 import dev.ohs.fhir.model.r5.serializers.ConditionParticipantSerializer
 import dev.ohs.fhir.model.r5.serializers.ConditionSerializer
 import dev.ohs.fhir.model.r5.serializers.ConditionStageSerializer
-import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -41,7 +39,7 @@ public data class Condition(
    * like the create and conditional update. Otherwise, the use of the resouce id depends on the
    * given use case.
    */
-  override val id: String? = null,
+  override val id: kotlin.String? = null,
   /**
    * The metadata about the resource. This is content that is maintained by the infrastructure.
    * Changes to the content might not always be associated with version changes to the resource.
@@ -219,8 +217,10 @@ public data class Condition(
    * Condition.code was initially documented as severe asthma, then it is ambiguous whether the
    * onset and abatement dates apply to asthma (overall in that subject's lifetime) or when asthma
    * transitioned to become severe.
+   *
+   * A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String]
    */
-  public val onset: Onset? = null,
+  public val onset: Condition.Onset? = null,
   /**
    * The date or estimated date that the condition resolved or went into remission. This is called
    * "abatement" because of the many overloaded connotations associated with "remission" or
@@ -238,8 +238,10 @@ public data class Condition(
    * Condition.code was initially documented as severe asthma, then it is ambiguous whether the
    * onset and abatement dates apply to asthma (overall in that subject's lifetime) or when asthma
    * transitioned to become severe.
+   *
+   * A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String]
    */
-  public val abatement: Abatement? = null,
+  public val abatement: Condition.Abatement? = null,
   /**
    * The recordedDate represents when this particular Condition record was created in the system,
    * which is often a system-generated date.
@@ -318,7 +320,7 @@ public data class Condition(
      * Unique id for the element within a resource (for internal references). This may be any string
      * value that does not contain spaces.
      */
-    override val id: String? = null,
+    override val id: kotlin.String? = null,
     /**
      * May be used to represent additional information that is not part of the basic definition of
      * the element. To make the use of extensions safe and managable, there is a strict set of
@@ -377,7 +379,7 @@ public data class Condition(
        * Unique id for the element within a resource (for internal references). This may be any
        * string value that does not contain spaces.
        */
-      public var id: String? = null
+      public var id: kotlin.String? = null
 
       /**
        * May be used to represent additional information that is not part of the basic definition of
@@ -441,7 +443,7 @@ public data class Condition(
      * Unique id for the element within a resource (for internal references). This may be any string
      * value that does not contain spaces.
      */
-    override val id: String? = null,
+    override val id: kotlin.String? = null,
     /**
      * May be used to represent additional information that is not part of the basic definition of
      * the element. To make the use of extensions safe and managable, there is a strict set of
@@ -502,7 +504,7 @@ public data class Condition(
        * Unique id for the element within a resource (for internal references). This may be any
        * string value that does not contain spaces.
        */
-      public var id: String? = null
+      public var id: kotlin.String? = null
 
       /**
        * May be used to represent additional information that is not part of the basic definition of
@@ -563,89 +565,6 @@ public data class Condition(
     }
   }
 
-  public sealed interface Onset {
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    public fun asAge(): Age? = this as? Age
-
-    public fun asPeriod(): Period? = this as? Period
-
-    public fun asRange(): Range? = this as? Range
-
-    public fun asString(): String? = this as? String
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) : Onset
-
-    @JvmInline public value class Age(public val `value`: dev.ohs.fhir.model.r5.Age) : Onset
-
-    @JvmInline public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) : Onset
-
-    @JvmInline public value class Range(public val `value`: dev.ohs.fhir.model.r5.Range) : Onset
-
-    @JvmInline public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : Onset
-
-    public companion object {
-      internal fun from(
-        dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-        ageValue: dev.ohs.fhir.model.r5.Age?,
-        periodValue: dev.ohs.fhir.model.r5.Period?,
-        rangeValue: dev.ohs.fhir.model.r5.Range?,
-        stringValue: dev.ohs.fhir.model.r5.String?,
-      ): Onset? {
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        if (ageValue != null) return Age(ageValue)
-        if (periodValue != null) return Period(periodValue)
-        if (rangeValue != null) return Range(rangeValue)
-        if (stringValue != null) return String(stringValue)
-        return null
-      }
-    }
-  }
-
-  public sealed interface Abatement {
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    public fun asAge(): Age? = this as? Age
-
-    public fun asPeriod(): Period? = this as? Period
-
-    public fun asRange(): Range? = this as? Range
-
-    public fun asString(): String? = this as? String
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) : Abatement
-
-    @JvmInline public value class Age(public val `value`: dev.ohs.fhir.model.r5.Age) : Abatement
-
-    @JvmInline
-    public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) : Abatement
-
-    @JvmInline
-    public value class Range(public val `value`: dev.ohs.fhir.model.r5.Range) : Abatement
-
-    @JvmInline
-    public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : Abatement
-
-    public companion object {
-      internal fun from(
-        dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-        ageValue: dev.ohs.fhir.model.r5.Age?,
-        periodValue: dev.ohs.fhir.model.r5.Period?,
-        rangeValue: dev.ohs.fhir.model.r5.Range?,
-        stringValue: dev.ohs.fhir.model.r5.String?,
-      ): Abatement? {
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        if (ageValue != null) return Age(ageValue)
-        if (periodValue != null) return Period(periodValue)
-        if (rangeValue != null) return Range(rangeValue)
-        if (stringValue != null) return String(stringValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
     /**
      * The clinical status of the condition.
@@ -670,7 +589,7 @@ public data class Condition(
      * like the create and conditional update. Otherwise, the use of the resouce id depends on the
      * given use case.
      */
-    public var id: String? = null
+    public var id: kotlin.String? = null
 
     /**
      * The metadata about the resource. This is content that is maintained by the infrastructure.
@@ -850,8 +769,10 @@ public data class Condition(
      * example, if the Condition.code was initially documented as severe asthma, then it is
      * ambiguous whether the onset and abatement dates apply to asthma (overall in that subject's
      * lifetime) or when asthma transitioned to become severe.
+     *
+     * A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String]
      */
-    public var onset: Onset? = null
+    public var onset: Condition.Onset? = null
 
     /**
      * The date or estimated date that the condition resolved or went into remission. This is called
@@ -870,8 +791,10 @@ public data class Condition(
      * the Condition.code was initially documented as severe asthma, then it is ambiguous whether
      * the onset and abatement dates apply to asthma (overall in that subject's lifetime) or when
      * asthma transitioned to become severe.
+     *
+     * A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String]
      */
-    public var abatement: Abatement? = null
+    public var abatement: Condition.Abatement? = null
 
     /**
      * The recordedDate represents when this particular Condition record was created in the system,
@@ -945,4 +868,10 @@ public data class Condition(
         note = note.map { it.build() },
       )
   }
+
+  /** A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String] */
+  public typealias Onset = FhirChoiceTypes.AgeOrDateTimeOrPeriodOrRangeOrString
+
+  /** A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String] */
+  public typealias Abatement = FhirChoiceTypes.AgeOrDateTimeOrPeriodOrRangeOrString
 }

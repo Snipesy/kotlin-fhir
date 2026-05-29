@@ -319,7 +319,7 @@ internal object MedicationKnowledgeIngredientSerializer :
       id = id,
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
-      item = MedicationKnowledge.Ingredient.Item.from(itemCodeableConcept, itemReference)!!,
+      item = (itemCodeableConcept ?: itemReference)!!,
       isActive = R4bBoolean.of(isActive, _isActive),
       strength = strength,
     )
@@ -340,16 +340,11 @@ internal object MedicationKnowledgeIngredientSerializer :
         value.modifierExtension,
       )
     when (val choice = value.item) {
-      is MedicationKnowledge.Ingredient.Item.CodeableConcept -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          3,
-          Hoisted.itemCodeableConceptSer,
-          choice.value,
-        )
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 3, Hoisted.itemCodeableConceptSer, choice)
       }
-      is MedicationKnowledge.Ingredient.Item.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 4, Hoisted.itemReferenceSer, choice.value)
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 4, Hoisted.itemReferenceSer, choice)
       }
     }
     ((value.isActive?.value))?.let { encoder.encodeBooleanElement(descriptor, 5, it) }
@@ -674,11 +669,7 @@ internal object MedicationKnowledgeAdministrationGuidelinesSerializer :
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
       dosage = dosage ?: listOf(),
-      indication =
-        MedicationKnowledge.AdministrationGuidelines.Indication.from(
-          indicationCodeableConcept,
-          indicationReference,
-        ),
+      indication = (indicationCodeableConcept ?: indicationReference),
       patientCharacteristics = patientCharacteristics ?: listOf(),
     )
   }
@@ -701,21 +692,16 @@ internal object MedicationKnowledgeAdministrationGuidelinesSerializer :
       encoder.encodeSerializableElement(descriptor, 3, Hoisted.dosageSer, value.dosage)
     when (val choice = value.indication) {
       null -> {}
-      is MedicationKnowledge.AdministrationGuidelines.Indication.CodeableConcept -> {
+      is CodeableConcept -> {
         encoder.encodeSerializableElement(
           descriptor,
           4,
           Hoisted.indicationCodeableConceptSer,
-          choice.value,
+          choice,
         )
       }
-      is MedicationKnowledge.AdministrationGuidelines.Indication.Reference -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          5,
-          Hoisted.indicationReferenceSer,
-          choice.value,
-        )
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 5, Hoisted.indicationReferenceSer, choice)
       }
     }
     if (value.patientCharacteristics.isNotEmpty())
@@ -938,11 +924,7 @@ internal object MedicationKnowledgeAdministrationGuidelinesPatientCharacteristic
       id = id,
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
-      characteristic =
-        MedicationKnowledge.AdministrationGuidelines.PatientCharacteristics.Characteristic.from(
-          characteristicCodeableConcept,
-          characteristicQuantity,
-        )!!,
+      characteristic = (characteristicCodeableConcept ?: characteristicQuantity)!!,
       `value` =
         (kotlin.collections.List(maxOf(`value`?.size ?: 0, _value?.size ?: 0)) { index ->
           R4bString.of(`value`?.getOrNull(index)?.let { it }, _value?.getOrNull(index))!!
@@ -965,21 +947,16 @@ internal object MedicationKnowledgeAdministrationGuidelinesPatientCharacteristic
         value.modifierExtension,
       )
     when (val choice = value.characteristic) {
-      is MedicationKnowledge.AdministrationGuidelines.PatientCharacteristics.Characteristic.CodeableConcept -> {
+      is CodeableConcept -> {
         encoder.encodeSerializableElement(
           descriptor,
           3,
           Hoisted.characteristicCodeableConceptSer,
-          choice.value,
+          choice,
         )
       }
-      is MedicationKnowledge.AdministrationGuidelines.PatientCharacteristics.Characteristic.Quantity -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          4,
-          Hoisted.characteristicQuantitySer,
-          choice.value,
-        )
+      is Quantity -> {
+        encoder.encodeSerializableElement(descriptor, 4, Hoisted.characteristicQuantitySer, choice)
       }
     }
     (value.`value`.map { it.value }.takeUnless { it.all { it == null } })?.let {
@@ -1285,12 +1262,10 @@ internal object MedicationKnowledgeDrugCharacteristicSerializer :
       modifierExtension = modifierExtension ?: listOf(),
       type = type,
       `value` =
-        MedicationKnowledge.DrugCharacteristic.Value.from(
-          valueCodeableConcept,
-          R4bString.of(valueString, _valueString),
-          valueQuantity,
-          Base64Binary.of(valueBase64Binary, _valueBase64Binary),
-        ),
+        (valueCodeableConcept
+          ?: R4bString.of(valueString, _valueString)
+          ?: valueQuantity
+          ?: Base64Binary.of(valueBase64Binary, _valueBase64Binary)),
     )
   }
 
@@ -1311,21 +1286,21 @@ internal object MedicationKnowledgeDrugCharacteristicSerializer :
     (value.type)?.let { encoder.encodeSerializableElement(descriptor, 3, Hoisted.typeSer, it) }
     when (val choice = value.`value`) {
       null -> {}
-      is MedicationKnowledge.DrugCharacteristic.Value.CodeableConcept -> {
-        encoder.encodeSerializableElement(descriptor, 4, Hoisted.typeSer, choice.value)
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 4, Hoisted.typeSer, choice)
       }
-      is MedicationKnowledge.DrugCharacteristic.Value.String -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
-        (choice.value.toElement())?.let {
+      is R4bString -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 6, Hoisted.valueStringSer, it)
         }
       }
-      is MedicationKnowledge.DrugCharacteristic.Value.Quantity -> {
-        encoder.encodeSerializableElement(descriptor, 7, Hoisted.valueQuantitySer, choice.value)
+      is Quantity -> {
+        encoder.encodeSerializableElement(descriptor, 7, Hoisted.valueQuantitySer, choice)
       }
-      is MedicationKnowledge.DrugCharacteristic.Value.Base64Binary -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 8, it) }
-        (choice.value.toElement())?.let {
+      is Base64Binary -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 8, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 9, Hoisted.valueStringSer, it)
         }
       }

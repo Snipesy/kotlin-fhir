@@ -19,7 +19,6 @@ package dev.ohs.fhir.model.r4
 import dev.ohs.fhir.model.r4.serializers.MediaSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -174,8 +173,12 @@ public data class Media(
    * This will typically be the encounter the media occurred within.
    */
   public val encounter: Reference? = null,
-  /** The date and time(s) at which the media was collected. */
-  public val created: Created? = null,
+  /**
+   * The date and time(s) at which the media was collected.
+   *
+   * A FHIR choice type — one of: [DateTime] | [Period]
+   */
+  public val created: Media.Created? = null,
   /**
    * The date and time this version of the media was made available to providers, typically after
    * having been reviewed.
@@ -285,29 +288,6 @@ public data class Media(
         note = this@with.note.map { it.toBuilder() }.toMutableList()
       }
     }
-
-  public sealed interface Created {
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    public fun asPeriod(): Period? = this as? Period
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r4.DateTime) : Created
-
-    @JvmInline
-    public value class Period(public val `value`: dev.ohs.fhir.model.r4.Period) : Created
-
-    public companion object {
-      internal fun from(
-        dateTimeValue: dev.ohs.fhir.model.r4.DateTime?,
-        periodValue: dev.ohs.fhir.model.r4.Period?,
-      ): Created? {
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        if (periodValue != null) return Period(periodValue)
-        return null
-      }
-    }
-  }
 
   public class Builder(
     /**
@@ -482,8 +462,12 @@ public data class Media(
      */
     public var encounter: Reference.Builder? = null
 
-    /** The date and time(s) at which the media was collected. */
-    public var created: Created? = null
+    /**
+     * The date and time(s) at which the media was collected.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Period]
+     */
+    public var created: Media.Created? = null
 
     /**
      * The date and time this version of the media was made available to providers, typically after
@@ -636,4 +620,7 @@ public data class Media(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [DateTime] | [Period] */
+  public typealias Created = FhirChoiceTypes.DateTimeOrPeriod
 }

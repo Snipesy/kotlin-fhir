@@ -24,7 +24,6 @@ import dev.ohs.fhir.model.r4.serializers.MedicinalProductSerializer
 import dev.ohs.fhir.model.r4.serializers.MedicinalProductSpecialDesignationSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -752,8 +751,12 @@ public data class MedicinalProduct(
     public val type: CodeableConcept? = null,
     /** The intended use of the product, e.g. prevention, treatment. */
     public val intendedUse: CodeableConcept? = null,
-    /** Condition for which the medicinal use applies. */
-    public val indication: Indication? = null,
+    /**
+     * Condition for which the medicinal use applies.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Reference]
+     */
+    public val indication: SpecialDesignation.Indication? = null,
     /** For example granted, pending, expired or withdrawn. */
     public val status: CodeableConcept? = null,
     /** Date when the designation was granted. */
@@ -776,32 +779,6 @@ public data class MedicinalProduct(
           species = this@with.species?.toBuilder()
         }
       }
-
-    public sealed interface Indication {
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asReference(): Reference? = this as? Reference
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r4.CodeableConcept
-      ) : Indication
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r4.Reference) :
-        Indication
-
-      public companion object {
-        internal fun from(
-          codeableConceptValue: dev.ohs.fhir.model.r4.CodeableConcept?,
-          referenceValue: dev.ohs.fhir.model.r4.Reference?,
-        ): Indication? {
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (referenceValue != null) return Reference(referenceValue)
-          return null
-        }
-      }
-    }
 
     public class Builder() {
       /**
@@ -853,8 +830,12 @@ public data class MedicinalProduct(
       /** The intended use of the product, e.g. prevention, treatment. */
       public var intendedUse: CodeableConcept.Builder? = null
 
-      /** Condition for which the medicinal use applies. */
-      public var indication: Indication? = null
+      /**
+       * Condition for which the medicinal use applies.
+       *
+       * A FHIR choice type — one of: [CodeableConcept] | [Reference]
+       */
+      public var indication: SpecialDesignation.Indication? = null
 
       /** For example granted, pending, expired or withdrawn. */
       public var status: CodeableConcept.Builder? = null
@@ -879,6 +860,9 @@ public data class MedicinalProduct(
           species = species?.build(),
         )
     }
+
+    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+    public typealias Indication = FhirChoiceTypes.CodeableConceptOrReference
   }
 
   public class Builder(

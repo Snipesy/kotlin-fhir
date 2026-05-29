@@ -24,7 +24,6 @@ import dev.ohs.fhir.model.r5.serializers.GenomicStudyAnalysisSerializer
 import dev.ohs.fhir.model.r5.serializers.GenomicStudySerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -354,8 +353,12 @@ public data class GenomicStudy(
       public val `file`: Reference? = null,
       /** Type of input data, e.g., BAM, CRAM, or FASTA. */
       public val type: CodeableConcept? = null,
-      /** The analysis event or other GenomicStudy that generated this input file. */
-      public val generatedBy: GeneratedBy? = null,
+      /**
+       * The analysis event or other GenomicStudy that generated this input file.
+       *
+       * A FHIR choice type — one of: [Identifier] | [Reference]
+       */
+      public val generatedBy: Input.GeneratedBy? = null,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -368,31 +371,6 @@ public data class GenomicStudy(
             generatedBy = this@with.generatedBy
           }
         }
-
-      public sealed interface GeneratedBy {
-        public fun asIdentifier(): Identifier? = this as? Identifier
-
-        public fun asReference(): Reference? = this as? Reference
-
-        @JvmInline
-        public value class Identifier(public val `value`: dev.ohs.fhir.model.r5.Identifier) :
-          GeneratedBy
-
-        @JvmInline
-        public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) :
-          GeneratedBy
-
-        public companion object {
-          internal fun from(
-            identifierValue: dev.ohs.fhir.model.r5.Identifier?,
-            referenceValue: dev.ohs.fhir.model.r5.Reference?,
-          ): GeneratedBy? {
-            if (identifierValue != null) return Identifier(identifierValue)
-            if (referenceValue != null) return Reference(referenceValue)
-            return null
-          }
-        }
-      }
 
       public class Builder() {
         /**
@@ -441,8 +419,12 @@ public data class GenomicStudy(
         /** Type of input data, e.g., BAM, CRAM, or FASTA. */
         public var type: CodeableConcept.Builder? = null
 
-        /** The analysis event or other GenomicStudy that generated this input file. */
-        public var generatedBy: GeneratedBy? = null
+        /**
+         * The analysis event or other GenomicStudy that generated this input file.
+         *
+         * A FHIR choice type — one of: [Identifier] | [Reference]
+         */
+        public var generatedBy: Input.GeneratedBy? = null
 
         public fun build(): Input =
           Input(
@@ -454,6 +436,9 @@ public data class GenomicStudy(
             generatedBy = generatedBy,
           )
       }
+
+      /** A FHIR choice type — one of: [Identifier] | [Reference] */
+      public typealias GeneratedBy = FhirChoiceTypes.IdentifierOrReference
     }
 
     /** Outputs for the analysis event. */

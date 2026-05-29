@@ -23,7 +23,6 @@ import dev.ohs.fhir.model.r5.serializers.NutritionIntakeSerializer
 import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -192,15 +191,19 @@ public data class NutritionIntake(
    * "end" date will be omitted. If the end date is known, then it is included as the "end date".
    * The date/time attribute supports a variety of dates - year, year/month and exact date. If
    * something more than this is required, this should be conveyed as text.
+   *
+   * A FHIR choice type — one of: [DateTime] | [Period]
    */
-  public val occurrence: Occurrence? = null,
+  public val occurrence: NutritionIntake.Occurrence? = null,
   /** The date when the Nutrition Intake was asserted by the information source. */
   public val recorded: DateTime? = null,
   /**
    * The person or organization that provided the information about the consumption of this food or
    * fluid. Note: Use derivedFrom when a NutritionIntake is derived from other resources.
+   *
+   * A FHIR choice type — one of: [Boolean] | [Reference]
    */
-  public val reported: Reported? = null,
+  public val reported: NutritionIntake.Reported? = null,
   /** What food or fluid product or item was consumed. */
   public val consumedItem: List<ConsumedItem>,
   /**
@@ -662,52 +665,6 @@ public data class NutritionIntake(
     }
   }
 
-  public sealed interface Occurrence {
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    public fun asPeriod(): Period? = this as? Period
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) : Occurrence
-
-    @JvmInline
-    public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) : Occurrence
-
-    public companion object {
-      internal fun from(
-        dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-        periodValue: dev.ohs.fhir.model.r5.Period?,
-      ): Occurrence? {
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        if (periodValue != null) return Period(periodValue)
-        return null
-      }
-    }
-  }
-
-  public sealed interface Reported {
-    public fun asBoolean(): Boolean? = this as? Boolean
-
-    public fun asReference(): Reference? = this as? Reference
-
-    @JvmInline
-    public value class Boolean(public val `value`: dev.ohs.fhir.model.r5.Boolean) : Reported
-
-    @JvmInline
-    public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : Reported
-
-    public companion object {
-      internal fun from(
-        booleanValue: dev.ohs.fhir.model.r5.Boolean?,
-        referenceValue: dev.ohs.fhir.model.r5.Reference?,
-      ): Reported? {
-        if (booleanValue != null) return Boolean(booleanValue)
-        if (referenceValue != null) return Reference(referenceValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
     /**
      * A code representing the patient or other source's judgment about the state of the intake that
@@ -883,8 +840,10 @@ public data class NutritionIntake(
      * "end" date will be omitted. If the end date is known, then it is included as the "end date".
      * The date/time attribute supports a variety of dates - year, year/month and exact date. If
      * something more than this is required, this should be conveyed as text.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Period]
      */
-    public var occurrence: Occurrence? = null
+    public var occurrence: NutritionIntake.Occurrence? = null
 
     /** The date when the Nutrition Intake was asserted by the information source. */
     public var recorded: DateTime.Builder? = null
@@ -892,8 +851,10 @@ public data class NutritionIntake(
     /**
      * The person or organization that provided the information about the consumption of this food
      * or fluid. Note: Use derivedFrom when a NutritionIntake is derived from other resources.
+     *
+     * A FHIR choice type — one of: [Boolean] | [Reference]
      */
-    public var reported: Reported? = null
+    public var reported: NutritionIntake.Reported? = null
 
     /**
      * Total nutrient amounts for the whole meal, product, serving, etc.
@@ -997,4 +958,10 @@ public data class NutritionIntake(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [DateTime] | [Period] */
+  public typealias Occurrence = FhirChoiceTypes.DateTimeOrPeriod
+
+  /** A FHIR choice type — one of: [Boolean] | [Reference] */
+  public typealias Reported = FhirChoiceTypes.BooleanOrReference
 }

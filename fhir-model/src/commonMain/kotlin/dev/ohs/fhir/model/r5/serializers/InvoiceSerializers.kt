@@ -253,13 +253,8 @@ internal object InvoiceLineItemSerializer : KSerializer<Invoice.LineItem> {
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
       sequence = PositiveInt.of(sequence, _sequence),
-      serviced =
-        Invoice.LineItem.Serviced.from(
-          Date.of(FhirDate.fromString(servicedDate), _servicedDate),
-          servicedPeriod,
-        ),
-      chargeItem =
-        Invoice.LineItem.ChargeItem.from(chargeItemReference, chargeItemCodeableConcept)!!,
+      serviced = (Date.of(FhirDate.fromString(servicedDate), _servicedDate) ?: servicedPeriod),
+      chargeItem = (chargeItemReference ?: chargeItemCodeableConcept)!!,
       priceComponent = priceComponent ?: listOf(),
     )
   }
@@ -281,31 +276,26 @@ internal object InvoiceLineItemSerializer : KSerializer<Invoice.LineItem> {
     }
     when (val choice = value.serviced) {
       null -> {}
-      is Invoice.LineItem.Serviced.Date -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 5, it) }
-        (choice.value.toElement())?.let {
+      is Date -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 5, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 6, Hoisted.sequenceSer, it)
         }
       }
-      is Invoice.LineItem.Serviced.Period -> {
-        encoder.encodeSerializableElement(descriptor, 7, Hoisted.servicedPeriodSer, choice.value)
+      is Period -> {
+        encoder.encodeSerializableElement(descriptor, 7, Hoisted.servicedPeriodSer, choice)
       }
     }
     when (val choice = value.chargeItem) {
-      is Invoice.LineItem.ChargeItem.Reference -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          8,
-          Hoisted.chargeItemReferenceSer,
-          choice.value,
-        )
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 8, Hoisted.chargeItemReferenceSer, choice)
       }
-      is Invoice.LineItem.ChargeItem.CodeableConcept -> {
+      is CodeableConcept -> {
         encoder.encodeSerializableElement(
           descriptor,
           9,
           Hoisted.chargeItemCodeableConceptSer,
-          choice.value,
+          choice,
         )
       }
     }
@@ -573,8 +563,7 @@ internal object InvoiceSerializer : KSerializer<Invoice> {
       recipient = recipient,
       date = DateTime.of(FhirDateTime.fromString(date), _date),
       creation = DateTime.of(FhirDateTime.fromString(creation), _creation),
-      period =
-        Invoice.Period.from(Date.of(FhirDate.fromString(periodDate), _periodDate), periodPeriod),
+      period = (Date.of(FhirDate.fromString(periodDate), _periodDate) ?: periodPeriod),
       participant = participant ?: listOf(),
       issuer = issuer,
       account = account,
@@ -705,11 +694,11 @@ internal object InvoiceSerializer : KSerializer<Invoice> {
     }
     when (val choice = value.period) {
       null -> {}
-      is Invoice.Period.Date -> {
-        ((choice.value.value?.toString()))?.let {
+      is Date -> {
+        ((choice.value?.toString()))?.let {
           encoder.encodeStringElement(descriptor, 22 + descriptorOffset, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             23 + descriptorOffset,
@@ -718,12 +707,12 @@ internal object InvoiceSerializer : KSerializer<Invoice> {
           )
         }
       }
-      is Invoice.Period.Period -> {
+      is Period -> {
         encoder.encodeSerializableElement(
           descriptor,
           24 + descriptorOffset,
           Hoisted.periodPeriodSer,
-          choice.value,
+          choice,
         )
       }
     }

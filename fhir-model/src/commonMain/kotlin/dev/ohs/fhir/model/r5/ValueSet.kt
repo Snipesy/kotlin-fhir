@@ -32,7 +32,6 @@ import dev.ohs.fhir.model.r5.serializers.ValueSetSerializer
 import dev.ohs.fhir.model.r5.terminologies.PublicationStatus
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -190,8 +189,10 @@ public data class ValueSet(
    * passed in - %version1 and %version2 and will return a negative number if version1 is newer, a
    * positive number if version2 and a 0 if the version ordering can't be successfully be
    * determined.
+   *
+   * A FHIR choice type — one of: [Coding] | [String]
    */
-  public val versionAlgorithm: VersionAlgorithm? = null,
+  public val versionAlgorithm: ValueSet.VersionAlgorithm? = null,
   /**
    * A natural language name identifying the value set. This name should be usable as an identifier
    * for the module by machine processing applications such as code generation.
@@ -1582,8 +1583,13 @@ public data class ValueSet(
        * The names are assigned at the discretion of the server.
        */
       public val name: String,
-      /** The value of the parameter. */
-      public val `value`: Value? = null,
+      /**
+       * The value of the parameter.
+       *
+       * A FHIR choice type — one of: [Boolean] | [CodeBox] | [DateTime] | [Decimal] | [Integer] |
+       * [StringBox] | [Uri]
+       */
+      public val `value`: Parameter.Value? = null,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -1594,62 +1600,6 @@ public data class ValueSet(
             `value` = this@with.`value`
           }
         }
-
-      public sealed interface Value {
-        public fun asString(): String? = this as? String
-
-        public fun asBoolean(): Boolean? = this as? Boolean
-
-        public fun asInteger(): Integer? = this as? Integer
-
-        public fun asDecimal(): Decimal? = this as? Decimal
-
-        public fun asUri(): Uri? = this as? Uri
-
-        public fun asCode(): Code? = this as? Code
-
-        public fun asDateTime(): DateTime? = this as? DateTime
-
-        @JvmInline
-        public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : Value
-
-        @JvmInline
-        public value class Boolean(public val `value`: dev.ohs.fhir.model.r5.Boolean) : Value
-
-        @JvmInline
-        public value class Integer(public val `value`: dev.ohs.fhir.model.r5.Integer) : Value
-
-        @JvmInline
-        public value class Decimal(public val `value`: dev.ohs.fhir.model.r5.Decimal) : Value
-
-        @JvmInline public value class Uri(public val `value`: dev.ohs.fhir.model.r5.Uri) : Value
-
-        @JvmInline public value class Code(public val `value`: dev.ohs.fhir.model.r5.Code) : Value
-
-        @JvmInline
-        public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) : Value
-
-        public companion object {
-          internal fun from(
-            stringValue: dev.ohs.fhir.model.r5.String?,
-            booleanValue: dev.ohs.fhir.model.r5.Boolean?,
-            integerValue: dev.ohs.fhir.model.r5.Integer?,
-            decimalValue: dev.ohs.fhir.model.r5.Decimal?,
-            uriValue: dev.ohs.fhir.model.r5.Uri?,
-            codeValue: dev.ohs.fhir.model.r5.Code?,
-            dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-          ): Value? {
-            if (stringValue != null) return String(stringValue)
-            if (booleanValue != null) return Boolean(booleanValue)
-            if (integerValue != null) return Integer(integerValue)
-            if (decimalValue != null) return Decimal(decimalValue)
-            if (uriValue != null) return Uri(uriValue)
-            if (codeValue != null) return Code(codeValue)
-            if (dateTimeValue != null) return DateTime(dateTimeValue)
-            return null
-          }
-        }
-      }
 
       public class Builder(
         /**
@@ -1701,8 +1651,13 @@ public data class ValueSet(
          */
         public var modifierExtension: MutableList<Extension.Builder> = mutableListOf()
 
-        /** The value of the parameter. */
-        public var `value`: Value? = null
+        /**
+         * The value of the parameter.
+         *
+         * A FHIR choice type — one of: [Boolean] | [CodeBox] | [DateTime] | [Decimal] | [Integer] |
+         * [StringBox] | [Uri]
+         */
+        public var `value`: Parameter.Value? = null
 
         public fun build(): Parameter =
           Parameter(
@@ -1713,6 +1668,13 @@ public data class ValueSet(
             `value` = `value`,
           )
       }
+
+      /**
+       * A FHIR choice type — one of: [Boolean] | [CodeBox] | [DateTime] | [Decimal] | [Integer] |
+       * [StringBox] | [Uri]
+       */
+      public typealias Value =
+        FhirChoiceTypes.BooleanOrCodeOrDateTimeOrDecimalOrIntegerOrStringOrUri
     }
 
     /**
@@ -2004,8 +1966,13 @@ public data class ValueSet(
         override val modifierExtension: List<Extension> = listOf(),
         /** A code that is a reference to ValueSet.expansion.property.code. */
         public val code: Code,
-        /** The value of this property. */
-        public val `value`: Value,
+        /**
+         * The value of this property.
+         *
+         * A FHIR choice type — one of: [Boolean] | [CodeBox] | [Coding] | [DateTime] | [Decimal] |
+         * [Integer] | [StringBox]
+         */
+        public val `value`: Property.Value,
         /** A subproperty value for this concept. */
         public val subProperty: List<SubProperty> = listOf(),
       ) : BackboneElement() {
@@ -2061,8 +2028,13 @@ public data class ValueSet(
           override val modifierExtension: List<Extension> = listOf(),
           /** A code that is a reference to ValueSet.expansion.property.code. */
           public val code: Code,
-          /** The value of this subproperty. */
-          public val `value`: Value,
+          /**
+           * The value of this subproperty.
+           *
+           * A FHIR choice type — one of: [Boolean] | [CodeBox] | [Coding] | [DateTime] | [Decimal]
+           * | [Integer] | [StringBox]
+           */
+          public val `value`: SubProperty.Value,
         ) : BackboneElement() {
           public fun toBuilder(): Builder =
             with(this) {
@@ -2074,69 +2046,16 @@ public data class ValueSet(
               }
             }
 
-          public sealed interface Value {
-            public fun asCode(): Code? = this as? Code
-
-            public fun asCoding(): Coding? = this as? Coding
-
-            public fun asString(): String? = this as? String
-
-            public fun asInteger(): Integer? = this as? Integer
-
-            public fun asBoolean(): Boolean? = this as? Boolean
-
-            public fun asDateTime(): DateTime? = this as? DateTime
-
-            public fun asDecimal(): Decimal? = this as? Decimal
-
-            @JvmInline
-            public value class Code(public val `value`: dev.ohs.fhir.model.r5.Code) : Value
-
-            @JvmInline
-            public value class Coding(public val `value`: dev.ohs.fhir.model.r5.Coding) : Value
-
-            @JvmInline
-            public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : Value
-
-            @JvmInline
-            public value class Integer(public val `value`: dev.ohs.fhir.model.r5.Integer) : Value
-
-            @JvmInline
-            public value class Boolean(public val `value`: dev.ohs.fhir.model.r5.Boolean) : Value
-
-            @JvmInline
-            public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) : Value
-
-            @JvmInline
-            public value class Decimal(public val `value`: dev.ohs.fhir.model.r5.Decimal) : Value
-
-            public companion object {
-              internal fun from(
-                codeValue: dev.ohs.fhir.model.r5.Code?,
-                codingValue: dev.ohs.fhir.model.r5.Coding?,
-                stringValue: dev.ohs.fhir.model.r5.String?,
-                integerValue: dev.ohs.fhir.model.r5.Integer?,
-                booleanValue: dev.ohs.fhir.model.r5.Boolean?,
-                dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-                decimalValue: dev.ohs.fhir.model.r5.Decimal?,
-              ): Value? {
-                if (codeValue != null) return Code(codeValue)
-                if (codingValue != null) return Coding(codingValue)
-                if (stringValue != null) return String(stringValue)
-                if (integerValue != null) return Integer(integerValue)
-                if (booleanValue != null) return Boolean(booleanValue)
-                if (dateTimeValue != null) return DateTime(dateTimeValue)
-                if (decimalValue != null) return Decimal(decimalValue)
-                return null
-              }
-            }
-          }
-
           public class Builder(
             /** A code that is a reference to ValueSet.expansion.property.code. */
             public var code: Code.Builder,
-            /** The value of this subproperty. */
-            public var `value`: Value,
+            /**
+             * The value of this subproperty.
+             *
+             * A FHIR choice type — one of: [Boolean] | [CodeBox] | [Coding] | [DateTime] |
+             * [Decimal] | [Integer] | [StringBox]
+             */
+            public var `value`: SubProperty.Value,
           ) {
             /**
              * Unique id for the element within a resource (for internal references). This may be
@@ -2188,71 +2107,25 @@ public data class ValueSet(
                 `value` = `value`,
               )
           }
-        }
 
-        public sealed interface Value {
-          public fun asCode(): Code? = this as? Code
-
-          public fun asCoding(): Coding? = this as? Coding
-
-          public fun asString(): String? = this as? String
-
-          public fun asInteger(): Integer? = this as? Integer
-
-          public fun asBoolean(): Boolean? = this as? Boolean
-
-          public fun asDateTime(): DateTime? = this as? DateTime
-
-          public fun asDecimal(): Decimal? = this as? Decimal
-
-          @JvmInline
-          public value class Code(public val `value`: dev.ohs.fhir.model.r5.Code) : Value
-
-          @JvmInline
-          public value class Coding(public val `value`: dev.ohs.fhir.model.r5.Coding) : Value
-
-          @JvmInline
-          public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : Value
-
-          @JvmInline
-          public value class Integer(public val `value`: dev.ohs.fhir.model.r5.Integer) : Value
-
-          @JvmInline
-          public value class Boolean(public val `value`: dev.ohs.fhir.model.r5.Boolean) : Value
-
-          @JvmInline
-          public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) : Value
-
-          @JvmInline
-          public value class Decimal(public val `value`: dev.ohs.fhir.model.r5.Decimal) : Value
-
-          public companion object {
-            internal fun from(
-              codeValue: dev.ohs.fhir.model.r5.Code?,
-              codingValue: dev.ohs.fhir.model.r5.Coding?,
-              stringValue: dev.ohs.fhir.model.r5.String?,
-              integerValue: dev.ohs.fhir.model.r5.Integer?,
-              booleanValue: dev.ohs.fhir.model.r5.Boolean?,
-              dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-              decimalValue: dev.ohs.fhir.model.r5.Decimal?,
-            ): Value? {
-              if (codeValue != null) return Code(codeValue)
-              if (codingValue != null) return Coding(codingValue)
-              if (stringValue != null) return String(stringValue)
-              if (integerValue != null) return Integer(integerValue)
-              if (booleanValue != null) return Boolean(booleanValue)
-              if (dateTimeValue != null) return DateTime(dateTimeValue)
-              if (decimalValue != null) return Decimal(decimalValue)
-              return null
-            }
-          }
+          /**
+           * A FHIR choice type — one of: [Boolean] | [CodeBox] | [Coding] | [DateTime] | [Decimal]
+           * | [Integer] | [StringBox]
+           */
+          public typealias Value =
+            FhirChoiceTypes.BooleanOrCodeOrCodingOrDateTimeOrDecimalOrIntegerOrString
         }
 
         public class Builder(
           /** A code that is a reference to ValueSet.expansion.property.code. */
           public var code: Code.Builder,
-          /** The value of this property. */
-          public var `value`: Value,
+          /**
+           * The value of this property.
+           *
+           * A FHIR choice type — one of: [Boolean] | [CodeBox] | [Coding] | [DateTime] | [Decimal]
+           * | [Integer] | [StringBox]
+           */
+          public var `value`: Property.Value,
         ) {
           /**
            * Unique id for the element within a resource (for internal references). This may be any
@@ -2307,6 +2180,13 @@ public data class ValueSet(
               subProperty = subProperty.map { it.build() },
             )
         }
+
+        /**
+         * A FHIR choice type — one of: [Boolean] | [CodeBox] | [Coding] | [DateTime] | [Decimal] |
+         * [Integer] | [StringBox]
+         */
+        public typealias Value =
+          FhirChoiceTypes.BooleanOrCodeOrCodingOrDateTimeOrDecimalOrIntegerOrString
       }
 
       public class Builder() {
@@ -2687,29 +2567,6 @@ public data class ValueSet(
     }
   }
 
-  public sealed interface VersionAlgorithm {
-    public fun asString(): String? = this as? String
-
-    public fun asCoding(): Coding? = this as? Coding
-
-    @JvmInline
-    public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : VersionAlgorithm
-
-    @JvmInline
-    public value class Coding(public val `value`: dev.ohs.fhir.model.r5.Coding) : VersionAlgorithm
-
-    public companion object {
-      internal fun from(
-        stringValue: dev.ohs.fhir.model.r5.String?,
-        codingValue: dev.ohs.fhir.model.r5.Coding?,
-      ): VersionAlgorithm? {
-        if (stringValue != null) return String(stringValue)
-        if (codingValue != null) return Coding(codingValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
     /**
      * The status of this value set. Enables tracking the life-cycle of the content. The status of
@@ -2883,8 +2740,10 @@ public data class ValueSet(
      * passed in - %version1 and %version2 and will return a negative number if version1 is newer, a
      * positive number if version2 and a 0 if the version ordering can't be successfully be
      * determined.
+     *
+     * A FHIR choice type — one of: [Coding] | [String]
      */
-    public var versionAlgorithm: VersionAlgorithm? = null
+    public var versionAlgorithm: ValueSet.VersionAlgorithm? = null
 
     /**
      * A natural language name identifying the value set. This name should be usable as an
@@ -3233,4 +3092,7 @@ public data class ValueSet(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [Coding] | [String] */
+  public typealias VersionAlgorithm = FhirChoiceTypes.CodingOrString
 }

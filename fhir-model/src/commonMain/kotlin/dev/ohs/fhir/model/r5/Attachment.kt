@@ -114,7 +114,7 @@ public data class Attachment(
   public val duration: Decimal? = null,
   /** The number of pages when printed. */
   public val pages: PositiveInt? = null,
-) : DataType() {
+) : DataType(), FhirChoiceParticipants.AttachmentChoices {
   public fun toBuilder(): Builder =
     with(this) {
       Builder().apply {

@@ -27,7 +27,6 @@ import dev.ohs.fhir.model.r5.serializers.EvidenceVariableDefinitionSerializer
 import dev.ohs.fhir.model.r5.terminologies.PublicationStatus
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -178,8 +177,10 @@ public data class Evidence(
    * passed in - %version1 and %version2 and will return a negative number if version1 is newer, a
    * positive number if version2 is newer, and a 0 if the version ordering can't successfully be
    * determined.
+   *
+   * A FHIR choice type — one of: [Coding] | [String]
    */
-  public val versionAlgorithm: VersionAlgorithm? = null,
+  public val versionAlgorithm: Evidence.VersionAlgorithm? = null,
   /**
    * A natural language name identifying the evidence. This name should be usable as an identifier
    * for the module by machine processing applications such as code generation.
@@ -190,8 +191,12 @@ public data class Evidence(
   public val name: String? = null,
   /** A short, descriptive, user-friendly title for the summary. */
   public val title: String? = null,
-  /** Citation Resource or display of suggested citation for this evidence. */
-  public val citeAs: CiteAs? = null,
+  /**
+   * Citation Resource or display of suggested citation for this evidence.
+   *
+   * A FHIR choice type — one of: [Markdown] | [Reference]
+   */
+  public val citeAs: Evidence.CiteAs? = null,
   /**
    * The status of this summary. Enables tracking the life-cycle of the content.
    *
@@ -1491,52 +1496,6 @@ public data class Evidence(
     }
   }
 
-  public sealed interface VersionAlgorithm {
-    public fun asString(): String? = this as? String
-
-    public fun asCoding(): Coding? = this as? Coding
-
-    @JvmInline
-    public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : VersionAlgorithm
-
-    @JvmInline
-    public value class Coding(public val `value`: dev.ohs.fhir.model.r5.Coding) : VersionAlgorithm
-
-    public companion object {
-      internal fun from(
-        stringValue: dev.ohs.fhir.model.r5.String?,
-        codingValue: dev.ohs.fhir.model.r5.Coding?,
-      ): VersionAlgorithm? {
-        if (stringValue != null) return String(stringValue)
-        if (codingValue != null) return Coding(codingValue)
-        return null
-      }
-    }
-  }
-
-  public sealed interface CiteAs {
-    public fun asReference(): Reference? = this as? Reference
-
-    public fun asMarkdown(): Markdown? = this as? Markdown
-
-    @JvmInline
-    public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : CiteAs
-
-    @JvmInline
-    public value class Markdown(public val `value`: dev.ohs.fhir.model.r5.Markdown) : CiteAs
-
-    public companion object {
-      internal fun from(
-        referenceValue: dev.ohs.fhir.model.r5.Reference?,
-        markdownValue: dev.ohs.fhir.model.r5.Markdown?,
-      ): CiteAs? {
-        if (referenceValue != null) return Reference(referenceValue)
-        if (markdownValue != null) return Markdown(markdownValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
     /**
      * The status of this summary. Enables tracking the life-cycle of the content.
@@ -1700,8 +1659,10 @@ public data class Evidence(
      * passed in - %version1 and %version2 and will return a negative number if version1 is newer, a
      * positive number if version2 is newer, and a 0 if the version ordering can't successfully be
      * determined.
+     *
+     * A FHIR choice type — one of: [Coding] | [String]
      */
-    public var versionAlgorithm: VersionAlgorithm? = null
+    public var versionAlgorithm: Evidence.VersionAlgorithm? = null
 
     /**
      * A natural language name identifying the evidence. This name should be usable as an identifier
@@ -1715,8 +1676,12 @@ public data class Evidence(
     /** A short, descriptive, user-friendly title for the summary. */
     public var title: String.Builder? = null
 
-    /** Citation Resource or display of suggested citation for this evidence. */
-    public var citeAs: CiteAs? = null
+    /**
+     * Citation Resource or display of suggested citation for this evidence.
+     *
+     * A FHIR choice type — one of: [Markdown] | [Reference]
+     */
+    public var citeAs: Evidence.CiteAs? = null
 
     /**
      * A Boolean value to indicate that this resource is authored for testing purposes (or
@@ -1987,4 +1952,10 @@ public data class Evidence(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [Coding] | [String] */
+  public typealias VersionAlgorithm = FhirChoiceTypes.CodingOrString
+
+  /** A FHIR choice type — one of: [Markdown] | [Reference] */
+  public typealias CiteAs = FhirChoiceTypes.MarkdownOrReference
 }

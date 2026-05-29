@@ -267,13 +267,11 @@ internal object EvidenceReportSubjectCharacteristicSerializer :
       modifierExtension = modifierExtension ?: listOf(),
       code = code!!,
       `value` =
-        EvidenceReport.Subject.Characteristic.Value.from(
-          valueReference,
-          valueCodeableConcept,
-          R5Boolean.of(valueBoolean, _valueBoolean),
-          valueQuantity,
-          valueRange,
-        )!!,
+        (valueReference
+          ?: valueCodeableConcept
+          ?: R5Boolean.of(valueBoolean, _valueBoolean)
+          ?: valueQuantity
+          ?: valueRange)!!,
       exclude = R5Boolean.of(exclude, _exclude),
       period = period,
     )
@@ -295,23 +293,23 @@ internal object EvidenceReportSubjectCharacteristicSerializer :
       )
     encoder.encodeSerializableElement(descriptor, 3, Hoisted.codeSer, value.code)
     when (val choice = value.`value`) {
-      is EvidenceReport.Subject.Characteristic.Value.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 4, Hoisted.valueReferenceSer, choice.value)
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 4, Hoisted.valueReferenceSer, choice)
       }
-      is EvidenceReport.Subject.Characteristic.Value.CodeableConcept -> {
-        encoder.encodeSerializableElement(descriptor, 5, Hoisted.codeSer, choice.value)
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 5, Hoisted.codeSer, choice)
       }
-      is EvidenceReport.Subject.Characteristic.Value.Boolean -> {
-        ((choice.value.value))?.let { encoder.encodeBooleanElement(descriptor, 6, it) }
-        (choice.value.toElement())?.let {
+      is R5Boolean -> {
+        ((choice.value))?.let { encoder.encodeBooleanElement(descriptor, 6, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 7, Hoisted.valueBooleanSer, it)
         }
       }
-      is EvidenceReport.Subject.Characteristic.Value.Quantity -> {
-        encoder.encodeSerializableElement(descriptor, 8, Hoisted.valueQuantitySer, choice.value)
+      is Quantity -> {
+        encoder.encodeSerializableElement(descriptor, 8, Hoisted.valueQuantitySer, choice)
       }
-      is EvidenceReport.Subject.Characteristic.Value.Range -> {
-        encoder.encodeSerializableElement(descriptor, 9, Hoisted.valueRangeSer, choice.value)
+      is Range -> {
+        encoder.encodeSerializableElement(descriptor, 9, Hoisted.valueRangeSer, choice)
       }
     }
     ((value.exclude?.value))?.let { encoder.encodeBooleanElement(descriptor, 10, it) }
@@ -1043,8 +1041,7 @@ internal object EvidenceReportSerializer : KSerializer<EvidenceReport> {
       useContext = useContext ?: listOf(),
       identifier = identifier ?: listOf(),
       relatedIdentifier = relatedIdentifier ?: listOf(),
-      citeAs =
-        EvidenceReport.CiteAs.from(citeAsReference, Markdown.of(citeAsMarkdown, _citeAsMarkdown)),
+      citeAs = (citeAsReference ?: Markdown.of(citeAsMarkdown, _citeAsMarkdown)),
       type = type,
       note = note ?: listOf(),
       relatedArtifact = relatedArtifact ?: listOf(),
@@ -1159,19 +1156,17 @@ internal object EvidenceReportSerializer : KSerializer<EvidenceReport> {
       )
     when (val choice = value.citeAs) {
       null -> {}
-      is EvidenceReport.CiteAs.Reference -> {
+      is Reference -> {
         encoder.encodeSerializableElement(
           descriptor,
           17 + descriptorOffset,
           Hoisted.citeAsReferenceSer,
-          choice.value,
+          choice,
         )
       }
-      is EvidenceReport.CiteAs.Markdown -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 18 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is Markdown -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 18 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             19 + descriptorOffset,

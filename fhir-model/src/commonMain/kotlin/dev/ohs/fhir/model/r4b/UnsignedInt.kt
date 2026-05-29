@@ -46,7 +46,7 @@ public data class UnsignedInt(
   override val extension: List<Extension> = listOf(),
   /** Primitive value for unsignedInt */
   override val `value`: Int? = null,
-) : Integer(id, extension, `value`) {
+) : Integer(id, extension, `value`), FhirChoiceParticipants.UnsignedIntChoices {
   override fun toBuilder(): Builder =
     with(this) {
       Builder().apply {

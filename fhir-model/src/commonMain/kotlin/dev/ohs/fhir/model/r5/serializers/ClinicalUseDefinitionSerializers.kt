@@ -480,11 +480,7 @@ internal object ClinicalUseDefinitionIndicationSerializer :
       diseaseStatus = diseaseStatus,
       comorbidity = comorbidity ?: listOf(),
       intendedEffect = intendedEffect,
-      duration =
-        ClinicalUseDefinition.Indication.Duration.from(
-          durationRange,
-          R5String.of(durationString, _durationString),
-        ),
+      duration = (durationRange ?: R5String.of(durationString, _durationString)),
       undesirableEffect = undesirableEffect ?: listOf(),
       applicability = applicability,
       otherTherapy = otherTherapy ?: listOf(),
@@ -518,12 +514,12 @@ internal object ClinicalUseDefinitionIndicationSerializer :
     }
     when (val choice = value.duration) {
       null -> {}
-      is ClinicalUseDefinition.Indication.Duration.Range -> {
-        encoder.encodeSerializableElement(descriptor, 7, Hoisted.durationRangeSer, choice.value)
+      is Range -> {
+        encoder.encodeSerializableElement(descriptor, 7, Hoisted.durationRangeSer, choice)
       }
-      is ClinicalUseDefinition.Indication.Duration.String -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 8, it) }
-        (choice.value.toElement())?.let {
+      is R5String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 8, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 9, Hoisted.durationStringSer, it)
         }
       }
@@ -765,11 +761,7 @@ internal object ClinicalUseDefinitionInteractionInteractantSerializer :
       id = id,
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
-      item =
-        ClinicalUseDefinition.Interaction.Interactant.Item.from(
-          itemReference,
-          itemCodeableConcept,
-        )!!,
+      item = (itemReference ?: itemCodeableConcept)!!,
     )
   }
 
@@ -788,16 +780,11 @@ internal object ClinicalUseDefinitionInteractionInteractantSerializer :
         value.modifierExtension,
       )
     when (val choice = value.item) {
-      is ClinicalUseDefinition.Interaction.Interactant.Item.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 3, Hoisted.itemReferenceSer, choice.value)
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 3, Hoisted.itemReferenceSer, choice)
       }
-      is ClinicalUseDefinition.Interaction.Interactant.Item.CodeableConcept -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          4,
-          Hoisted.itemCodeableConceptSer,
-          choice.value,
-        )
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 4, Hoisted.itemCodeableConceptSer, choice)
       }
     }
   }

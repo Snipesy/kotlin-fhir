@@ -43,7 +43,6 @@ import dev.ohs.fhir.model.r4b.serializers.CitationSummarySerializer
 import dev.ohs.fhir.model.r4b.terminologies.PublicationStatus
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -761,8 +760,12 @@ public data class Citation(
     public val relationshipType: CodeableConcept,
     /** The clasification of the related artifact. */
     public val targetClassifier: List<CodeableConcept> = listOf(),
-    /** The article or artifact that the Citation Resource is related to. */
-    public val target: Target,
+    /**
+     * The article or artifact that the Citation Resource is related to.
+     *
+     * A FHIR choice type — one of: [Attachment] | [Identifier] | [Reference] | [Uri]
+     */
+    public val target: RelatesTo.Target,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -774,47 +777,15 @@ public data class Citation(
         }
       }
 
-    public sealed interface Target {
-      public fun asUri(): Uri? = this as? Uri
-
-      public fun asIdentifier(): Identifier? = this as? Identifier
-
-      public fun asReference(): Reference? = this as? Reference
-
-      public fun asAttachment(): Attachment? = this as? Attachment
-
-      @JvmInline public value class Uri(public val `value`: dev.ohs.fhir.model.r4b.Uri) : Target
-
-      @JvmInline
-      public value class Identifier(public val `value`: dev.ohs.fhir.model.r4b.Identifier) : Target
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r4b.Reference) : Target
-
-      @JvmInline
-      public value class Attachment(public val `value`: dev.ohs.fhir.model.r4b.Attachment) : Target
-
-      public companion object {
-        internal fun from(
-          uriValue: dev.ohs.fhir.model.r4b.Uri?,
-          identifierValue: dev.ohs.fhir.model.r4b.Identifier?,
-          referenceValue: dev.ohs.fhir.model.r4b.Reference?,
-          attachmentValue: dev.ohs.fhir.model.r4b.Attachment?,
-        ): Target? {
-          if (uriValue != null) return Uri(uriValue)
-          if (identifierValue != null) return Identifier(identifierValue)
-          if (referenceValue != null) return Reference(referenceValue)
-          if (attachmentValue != null) return Attachment(attachmentValue)
-          return null
-        }
-      }
-    }
-
     public class Builder(
       /** How the Citation resource relates to the target artifact. */
       public var relationshipType: CodeableConcept.Builder,
-      /** The article or artifact that the Citation Resource is related to. */
-      public var target: Target,
+      /**
+       * The article or artifact that the Citation Resource is related to.
+       *
+       * A FHIR choice type — one of: [Attachment] | [Identifier] | [Reference] | [Uri]
+       */
+      public var target: RelatesTo.Target,
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -869,6 +840,9 @@ public data class Citation(
           target = target,
         )
     }
+
+    /** A FHIR choice type — one of: [Attachment] | [Identifier] | [Reference] | [Uri] */
+    public typealias Target = FhirChoiceTypes.AttachmentOrIdentifierOrReferenceOrUri
   }
 
   /** The article or artifact being described. */
@@ -1637,8 +1611,12 @@ public data class Citation(
       public val relationshipType: CodeableConcept,
       /** The clasification of the related artifact. */
       public val targetClassifier: List<CodeableConcept> = listOf(),
-      /** The article or artifact that the cited artifact is related to. */
-      public val target: Target,
+      /**
+       * The article or artifact that the cited artifact is related to.
+       *
+       * A FHIR choice type — one of: [Attachment] | [Identifier] | [Reference] | [Uri]
+       */
+      public val target: RelatesTo.Target,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -1650,49 +1628,15 @@ public data class Citation(
           }
         }
 
-      public sealed interface Target {
-        public fun asUri(): Uri? = this as? Uri
-
-        public fun asIdentifier(): Identifier? = this as? Identifier
-
-        public fun asReference(): Reference? = this as? Reference
-
-        public fun asAttachment(): Attachment? = this as? Attachment
-
-        @JvmInline public value class Uri(public val `value`: dev.ohs.fhir.model.r4b.Uri) : Target
-
-        @JvmInline
-        public value class Identifier(public val `value`: dev.ohs.fhir.model.r4b.Identifier) :
-          Target
-
-        @JvmInline
-        public value class Reference(public val `value`: dev.ohs.fhir.model.r4b.Reference) : Target
-
-        @JvmInline
-        public value class Attachment(public val `value`: dev.ohs.fhir.model.r4b.Attachment) :
-          Target
-
-        public companion object {
-          internal fun from(
-            uriValue: dev.ohs.fhir.model.r4b.Uri?,
-            identifierValue: dev.ohs.fhir.model.r4b.Identifier?,
-            referenceValue: dev.ohs.fhir.model.r4b.Reference?,
-            attachmentValue: dev.ohs.fhir.model.r4b.Attachment?,
-          ): Target? {
-            if (uriValue != null) return Uri(uriValue)
-            if (identifierValue != null) return Identifier(identifierValue)
-            if (referenceValue != null) return Reference(referenceValue)
-            if (attachmentValue != null) return Attachment(attachmentValue)
-            return null
-          }
-        }
-      }
-
       public class Builder(
         /** How the cited artifact relates to the target artifact. */
         public var relationshipType: CodeableConcept.Builder,
-        /** The article or artifact that the cited artifact is related to. */
-        public var target: Target,
+        /**
+         * The article or artifact that the cited artifact is related to.
+         *
+         * A FHIR choice type — one of: [Attachment] | [Identifier] | [Reference] | [Uri]
+         */
+        public var target: RelatesTo.Target,
       ) {
         /**
          * Unique id for the element within a resource (for internal references). This may be any
@@ -1747,6 +1691,9 @@ public data class Citation(
             target = target,
           )
       }
+
+      /** A FHIR choice type — one of: [Attachment] | [Identifier] | [Reference] | [Uri] */
+      public typealias Target = FhirChoiceTypes.AttachmentOrIdentifierOrReferenceOrUri
     }
 
     /**

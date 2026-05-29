@@ -20,7 +20,6 @@ import dev.ohs.fhir.model.r4.serializers.ChargeItemPerformerSerializer
 import dev.ohs.fhir.model.r4.serializers.ChargeItemSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -163,8 +162,10 @@ public data class ChargeItem(
    * Date/time(s) or duration when the charged service was applied.
    *
    * The list of types may be constrained as appropriate for the type of charge item.
+   *
+   * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
    */
-  public val occurrence: Occurrence? = null,
+  public val occurrence: ChargeItem.Occurrence? = null,
   /** Indicates who or what performed or participated in the charged service. */
   public val performer: List<Performer> = listOf(),
   /**
@@ -257,8 +258,10 @@ public data class ChargeItem(
   /**
    * Identifies the device, food, drug or other product being charged either by type code or
    * reference to an instance.
+   *
+   * A FHIR choice type — one of: [CodeableConcept] | [Reference]
    */
-  public val product: Product? = null,
+  public val product: ChargeItem.Product? = null,
   /**
    * Account into which this ChargeItems belongs.
    *
@@ -430,60 +433,6 @@ public data class ChargeItem(
     }
   }
 
-  public sealed interface Occurrence {
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    public fun asPeriod(): Period? = this as? Period
-
-    public fun asTiming(): Timing? = this as? Timing
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r4.DateTime) : Occurrence
-
-    @JvmInline
-    public value class Period(public val `value`: dev.ohs.fhir.model.r4.Period) : Occurrence
-
-    @JvmInline
-    public value class Timing(public val `value`: dev.ohs.fhir.model.r4.Timing) : Occurrence
-
-    public companion object {
-      internal fun from(
-        dateTimeValue: dev.ohs.fhir.model.r4.DateTime?,
-        periodValue: dev.ohs.fhir.model.r4.Period?,
-        timingValue: dev.ohs.fhir.model.r4.Timing?,
-      ): Occurrence? {
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        if (periodValue != null) return Period(periodValue)
-        if (timingValue != null) return Timing(timingValue)
-        return null
-      }
-    }
-  }
-
-  public sealed interface Product {
-    public fun asReference(): Reference? = this as? Reference
-
-    public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-    @JvmInline
-    public value class Reference(public val `value`: dev.ohs.fhir.model.r4.Reference) : Product
-
-    @JvmInline
-    public value class CodeableConcept(public val `value`: dev.ohs.fhir.model.r4.CodeableConcept) :
-      Product
-
-    public companion object {
-      internal fun from(
-        referenceValue: dev.ohs.fhir.model.r4.Reference?,
-        codeableConceptValue: dev.ohs.fhir.model.r4.CodeableConcept?,
-      ): Product? {
-        if (referenceValue != null) return Reference(referenceValue)
-        if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
     /**
      * The current state of the ChargeItem.
@@ -630,8 +579,10 @@ public data class ChargeItem(
      * Date/time(s) or duration when the charged service was applied.
      *
      * The list of types may be constrained as appropriate for the type of charge item.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
      */
-    public var occurrence: Occurrence? = null
+    public var occurrence: ChargeItem.Occurrence? = null
 
     /** Indicates who or what performed or participated in the charged service. */
     public var performer: MutableList<Performer.Builder> = mutableListOf()
@@ -740,8 +691,10 @@ public data class ChargeItem(
     /**
      * Identifies the device, food, drug or other product being charged either by type code or
      * reference to an instance.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public var product: Product? = null
+    public var product: ChargeItem.Product? = null
 
     /**
      * Account into which this ChargeItems belongs.
@@ -838,4 +791,10 @@ public data class ChargeItem(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [DateTime] | [Period] | [Timing] */
+  public typealias Occurrence = FhirChoiceTypes.DateTimeOrPeriodOrTiming
+
+  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+  public typealias Product = FhirChoiceTypes.CodeableConceptOrReference
 }

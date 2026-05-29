@@ -20,25 +20,31 @@ package dev.ohs.fhir.model.r4.serializers
 
 import dev.ohs.fhir.model.r4.Address
 import dev.ohs.fhir.model.r4.Age
+import dev.ohs.fhir.model.r4.AgeBox
 import dev.ohs.fhir.model.r4.Annotation
 import dev.ohs.fhir.model.r4.Attachment
 import dev.ohs.fhir.model.r4.Base64Binary
 import dev.ohs.fhir.model.r4.Boolean as R4Boolean
 import dev.ohs.fhir.model.r4.Canonical
+import dev.ohs.fhir.model.r4.CanonicalBox
 import dev.ohs.fhir.model.r4.Code
+import dev.ohs.fhir.model.r4.CodeBox
 import dev.ohs.fhir.model.r4.CodeableConcept
 import dev.ohs.fhir.model.r4.Coding
 import dev.ohs.fhir.model.r4.ContactDetail
 import dev.ohs.fhir.model.r4.ContactPoint
 import dev.ohs.fhir.model.r4.Contributor
 import dev.ohs.fhir.model.r4.Count
+import dev.ohs.fhir.model.r4.CountBox
 import dev.ohs.fhir.model.r4.DataRequirement
 import dev.ohs.fhir.model.r4.Date
 import dev.ohs.fhir.model.r4.DateTime
 import dev.ohs.fhir.model.r4.Decimal
 import dev.ohs.fhir.model.r4.Distance
+import dev.ohs.fhir.model.r4.DistanceBox
 import dev.ohs.fhir.model.r4.Dosage
 import dev.ohs.fhir.model.r4.Duration
+import dev.ohs.fhir.model.r4.DurationBox
 import dev.ohs.fhir.model.r4.Element
 import dev.ohs.fhir.model.r4.Enumeration
 import dev.ohs.fhir.model.r4.Expression
@@ -48,18 +54,24 @@ import dev.ohs.fhir.model.r4.FhirDateTime
 import dev.ohs.fhir.model.r4.FhirDecimal
 import dev.ohs.fhir.model.r4.HumanName
 import dev.ohs.fhir.model.r4.Id
+import dev.ohs.fhir.model.r4.IdBox
 import dev.ohs.fhir.model.r4.Identifier
 import dev.ohs.fhir.model.r4.Instant
 import dev.ohs.fhir.model.r4.Integer
+import dev.ohs.fhir.model.r4.IntegerBox
 import dev.ohs.fhir.model.r4.Markdown
+import dev.ohs.fhir.model.r4.MarkdownBox
 import dev.ohs.fhir.model.r4.Meta
 import dev.ohs.fhir.model.r4.Money
 import dev.ohs.fhir.model.r4.Narrative
 import dev.ohs.fhir.model.r4.Oid
+import dev.ohs.fhir.model.r4.OidBox
 import dev.ohs.fhir.model.r4.ParameterDefinition
 import dev.ohs.fhir.model.r4.Period
 import dev.ohs.fhir.model.r4.PositiveInt
+import dev.ohs.fhir.model.r4.PositiveIntBox
 import dev.ohs.fhir.model.r4.Quantity
+import dev.ohs.fhir.model.r4.QuantityBox
 import dev.ohs.fhir.model.r4.Range
 import dev.ohs.fhir.model.r4.Ratio
 import dev.ohs.fhir.model.r4.Reference
@@ -68,15 +80,20 @@ import dev.ohs.fhir.model.r4.Resource
 import dev.ohs.fhir.model.r4.SampledData
 import dev.ohs.fhir.model.r4.Signature
 import dev.ohs.fhir.model.r4.String as R4String
+import dev.ohs.fhir.model.r4.StringBox
 import dev.ohs.fhir.model.r4.StructureMap
 import dev.ohs.fhir.model.r4.Time
 import dev.ohs.fhir.model.r4.Timing
 import dev.ohs.fhir.model.r4.TriggerDefinition
 import dev.ohs.fhir.model.r4.UnsignedInt
+import dev.ohs.fhir.model.r4.UnsignedIntBox
 import dev.ohs.fhir.model.r4.Uri
+import dev.ohs.fhir.model.r4.UriBox
 import dev.ohs.fhir.model.r4.Url
+import dev.ohs.fhir.model.r4.UrlBox
 import dev.ohs.fhir.model.r4.UsageContext
 import dev.ohs.fhir.model.r4.Uuid
+import dev.ohs.fhir.model.r4.UuidBox
 import dev.ohs.fhir.model.r4.terminologies.PublicationStatus
 import kotlin.Boolean as KotlinBoolean
 import kotlin.Int
@@ -1267,58 +1284,60 @@ internal object StructureMapGroupRuleSourceSerializer :
       max = R4String.of(max, _max),
       type = R4String.of(type, _type),
       defaultValue =
-        StructureMap.Group.Rule.Source.DefaultValue.from(
-          Base64Binary.of(defaultValueBase64Binary, _defaultValueBase64Binary),
-          R4Boolean.of(defaultValueBoolean, _defaultValueBoolean),
-          Canonical.of(defaultValueCanonical, _defaultValueCanonical),
-          Code.of(defaultValueCode, _defaultValueCode),
-          Date.of(FhirDate.fromString(defaultValueDate), _defaultValueDate),
-          DateTime.of(FhirDateTime.fromString(defaultValueDateTime), _defaultValueDateTime),
-          Decimal.of(defaultValueDecimal, _defaultValueDecimal),
-          Id.of(defaultValueId, _defaultValueId),
-          Instant.of(FhirDateTime.fromString(defaultValueInstant), _defaultValueInstant),
-          Integer.of(defaultValueInteger, _defaultValueInteger),
-          Markdown.of(defaultValueMarkdown, _defaultValueMarkdown),
-          Oid.of(defaultValueOid, _defaultValueOid),
-          PositiveInt.of(defaultValuePositiveInt, _defaultValuePositiveInt),
-          R4String.of(defaultValueString, _defaultValueString),
-          Time.of(defaultValueTime, _defaultValueTime),
-          UnsignedInt.of(defaultValueUnsignedInt, _defaultValueUnsignedInt),
-          Uri.of(defaultValueUri, _defaultValueUri),
-          Url.of(defaultValueUrl, _defaultValueUrl),
-          Uuid.of(defaultValueUuid, _defaultValueUuid),
-          defaultValueAddress,
-          defaultValueAge,
-          defaultValueAnnotation,
-          defaultValueAttachment,
-          defaultValueCodeableConcept,
-          defaultValueCoding,
-          defaultValueContactPoint,
-          defaultValueCount,
-          defaultValueDistance,
-          defaultValueDuration,
-          defaultValueHumanName,
-          defaultValueIdentifier,
-          defaultValueMoney,
-          defaultValuePeriod,
-          defaultValueQuantity,
-          defaultValueRange,
-          defaultValueRatio,
-          defaultValueReference,
-          defaultValueSampledData,
-          defaultValueSignature,
-          defaultValueTiming,
-          defaultValueContactDetail,
-          defaultValueContributor,
-          defaultValueDataRequirement,
-          defaultValueExpression,
-          defaultValueParameterDefinition,
-          defaultValueRelatedArtifact,
-          defaultValueTriggerDefinition,
-          defaultValueUsageContext,
-          defaultValueDosage,
-          defaultValueMeta,
-        ),
+        (Base64Binary.of(defaultValueBase64Binary, _defaultValueBase64Binary)
+          ?: R4Boolean.of(defaultValueBoolean, _defaultValueBoolean)
+          ?: (Canonical.of(defaultValueCanonical, _defaultValueCanonical))?.let { CanonicalBox(it) }
+          ?: (Code.of(defaultValueCode, _defaultValueCode))?.let { CodeBox(it) }
+          ?: Date.of(FhirDate.fromString(defaultValueDate), _defaultValueDate)
+          ?: DateTime.of(FhirDateTime.fromString(defaultValueDateTime), _defaultValueDateTime)
+          ?: Decimal.of(defaultValueDecimal, _defaultValueDecimal)
+          ?: (Id.of(defaultValueId, _defaultValueId))?.let { IdBox(it) }
+          ?: Instant.of(FhirDateTime.fromString(defaultValueInstant), _defaultValueInstant)
+          ?: (Integer.of(defaultValueInteger, _defaultValueInteger))?.let { IntegerBox(it) }
+          ?: (Markdown.of(defaultValueMarkdown, _defaultValueMarkdown))?.let { MarkdownBox(it) }
+          ?: (Oid.of(defaultValueOid, _defaultValueOid))?.let { OidBox(it) }
+          ?: (PositiveInt.of(defaultValuePositiveInt, _defaultValuePositiveInt))?.let {
+            PositiveIntBox(it)
+          }
+          ?: (R4String.of(defaultValueString, _defaultValueString))?.let { StringBox(it) }
+          ?: Time.of(defaultValueTime, _defaultValueTime)
+          ?: (UnsignedInt.of(defaultValueUnsignedInt, _defaultValueUnsignedInt))?.let {
+            UnsignedIntBox(it)
+          }
+          ?: (Uri.of(defaultValueUri, _defaultValueUri))?.let { UriBox(it) }
+          ?: (Url.of(defaultValueUrl, _defaultValueUrl))?.let { UrlBox(it) }
+          ?: (Uuid.of(defaultValueUuid, _defaultValueUuid))?.let { UuidBox(it) }
+          ?: defaultValueAddress
+          ?: (defaultValueAge)?.let { AgeBox(it) }
+          ?: defaultValueAnnotation
+          ?: defaultValueAttachment
+          ?: defaultValueCodeableConcept
+          ?: defaultValueCoding
+          ?: defaultValueContactPoint
+          ?: (defaultValueCount)?.let { CountBox(it) }
+          ?: (defaultValueDistance)?.let { DistanceBox(it) }
+          ?: (defaultValueDuration)?.let { DurationBox(it) }
+          ?: defaultValueHumanName
+          ?: defaultValueIdentifier
+          ?: defaultValueMoney
+          ?: defaultValuePeriod
+          ?: (defaultValueQuantity)?.let { QuantityBox(it) }
+          ?: defaultValueRange
+          ?: defaultValueRatio
+          ?: defaultValueReference
+          ?: defaultValueSampledData
+          ?: defaultValueSignature
+          ?: defaultValueTiming
+          ?: defaultValueContactDetail
+          ?: defaultValueContributor
+          ?: defaultValueDataRequirement
+          ?: defaultValueExpression
+          ?: defaultValueParameterDefinition
+          ?: defaultValueRelatedArtifact
+          ?: defaultValueTriggerDefinition
+          ?: defaultValueUsageContext
+          ?: defaultValueDosage
+          ?: defaultValueMeta),
       element = R4String.of(element, _element),
       listMode =
         listMode?.let {
@@ -1363,176 +1382,156 @@ internal object StructureMapGroupRuleSourceSerializer :
     }
     when (val choice = value.defaultValue) {
       null -> {}
-      is StructureMap.Group.Rule.Source.DefaultValue.Base64Binary -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 11, it) }
-        (choice.value.toElement())?.let {
+      is Base64Binary -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 11, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 12, Hoisted.contextSer, it)
         }
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.Boolean -> {
-        ((choice.value.value))?.let { encoder.encodeBooleanElement(descriptor, 13, it) }
-        (choice.value.toElement())?.let {
+      is R4Boolean -> {
+        ((choice.value))?.let { encoder.encodeBooleanElement(descriptor, 13, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 14, Hoisted.contextSer, it)
         }
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.Canonical -> {
+      is CanonicalBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 15, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 16, Hoisted.contextSer, it)
         }
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.Code -> {
+      is CodeBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 17, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 18, Hoisted.contextSer, it)
         }
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.Date -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 19, it) }
-        (choice.value.toElement())?.let {
+      is Date -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 19, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 20, Hoisted.contextSer, it)
         }
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.DateTime -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 21, it) }
-        (choice.value.toElement())?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 21, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 22, Hoisted.contextSer, it)
         }
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.Decimal -> {
-        ((choice.value.value))?.let {
+      is Decimal -> {
+        ((choice.value))?.let {
           encoder.encodeSerializableElement(descriptor, 23, FhirDecimalSerializer, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 24, Hoisted.contextSer, it)
         }
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.Id -> {
+      is IdBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 25, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 26, Hoisted.contextSer, it)
         }
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.Instant -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 27, it) }
-        (choice.value.toElement())?.let {
+      is Instant -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 27, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 28, Hoisted.contextSer, it)
         }
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.Integer -> {
+      is IntegerBox -> {
         ((choice.value.value))?.let { encoder.encodeIntElement(descriptor, 29, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 30, Hoisted.contextSer, it)
         }
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.Markdown -> {
+      is MarkdownBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 31, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 32, Hoisted.contextSer, it)
         }
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.Oid -> {
+      is OidBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 33, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 34, Hoisted.contextSer, it)
         }
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.PositiveInt -> {
+      is PositiveIntBox -> {
         ((choice.value.value))?.let { encoder.encodeIntElement(descriptor, 35, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 36, Hoisted.contextSer, it)
         }
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.String -> {
+      is StringBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 37, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 38, Hoisted.contextSer, it)
         }
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.Time -> {
-        ((choice.value.value))?.let {
+      is Time -> {
+        ((choice.value))?.let {
           encoder.encodeSerializableElement(descriptor, 39, LocalTimeSerializer, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 40, Hoisted.contextSer, it)
         }
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.UnsignedInt -> {
+      is UnsignedIntBox -> {
         ((choice.value.value))?.let { encoder.encodeIntElement(descriptor, 41, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 42, Hoisted.contextSer, it)
         }
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.Uri -> {
+      is UriBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 43, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 44, Hoisted.contextSer, it)
         }
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.Url -> {
+      is UrlBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 45, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 46, Hoisted.contextSer, it)
         }
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.Uuid -> {
+      is UuidBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 47, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 48, Hoisted.contextSer, it)
         }
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.Address -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          49,
-          Hoisted.defaultValueAddressSer,
-          choice.value,
-        )
+      is Address -> {
+        encoder.encodeSerializableElement(descriptor, 49, Hoisted.defaultValueAddressSer, choice)
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.Age -> {
+      is AgeBox -> {
         encoder.encodeSerializableElement(descriptor, 50, Hoisted.defaultValueAgeSer, choice.value)
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.Annotation -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          51,
-          Hoisted.defaultValueAnnotationSer,
-          choice.value,
-        )
+      is Annotation -> {
+        encoder.encodeSerializableElement(descriptor, 51, Hoisted.defaultValueAnnotationSer, choice)
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.Attachment -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          52,
-          Hoisted.defaultValueAttachmentSer,
-          choice.value,
-        )
+      is Attachment -> {
+        encoder.encodeSerializableElement(descriptor, 52, Hoisted.defaultValueAttachmentSer, choice)
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.CodeableConcept -> {
+      is CodeableConcept -> {
         encoder.encodeSerializableElement(
           descriptor,
           53,
           Hoisted.defaultValueCodeableConceptSer,
-          choice.value,
+          choice,
         )
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.Coding -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          54,
-          Hoisted.defaultValueCodingSer,
-          choice.value,
-        )
+      is Coding -> {
+        encoder.encodeSerializableElement(descriptor, 54, Hoisted.defaultValueCodingSer, choice)
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.ContactPoint -> {
+      is ContactPoint -> {
         encoder.encodeSerializableElement(
           descriptor,
           55,
           Hoisted.defaultValueContactPointSer,
-          choice.value,
+          choice,
         )
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.Count -> {
+      is CountBox -> {
         encoder.encodeSerializableElement(
           descriptor,
           56,
@@ -1540,7 +1539,7 @@ internal object StructureMapGroupRuleSourceSerializer :
           choice.value,
         )
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.Distance -> {
+      is DistanceBox -> {
         encoder.encodeSerializableElement(
           descriptor,
           57,
@@ -1548,7 +1547,7 @@ internal object StructureMapGroupRuleSourceSerializer :
           choice.value,
         )
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.Duration -> {
+      is DurationBox -> {
         encoder.encodeSerializableElement(
           descriptor,
           58,
@@ -1556,39 +1555,19 @@ internal object StructureMapGroupRuleSourceSerializer :
           choice.value,
         )
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.HumanName -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          59,
-          Hoisted.defaultValueHumanNameSer,
-          choice.value,
-        )
+      is HumanName -> {
+        encoder.encodeSerializableElement(descriptor, 59, Hoisted.defaultValueHumanNameSer, choice)
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.Identifier -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          60,
-          Hoisted.defaultValueIdentifierSer,
-          choice.value,
-        )
+      is Identifier -> {
+        encoder.encodeSerializableElement(descriptor, 60, Hoisted.defaultValueIdentifierSer, choice)
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.Money -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          61,
-          Hoisted.defaultValueMoneySer,
-          choice.value,
-        )
+      is Money -> {
+        encoder.encodeSerializableElement(descriptor, 61, Hoisted.defaultValueMoneySer, choice)
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.Period -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          62,
-          Hoisted.defaultValuePeriodSer,
-          choice.value,
-        )
+      is Period -> {
+        encoder.encodeSerializableElement(descriptor, 62, Hoisted.defaultValuePeriodSer, choice)
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.Quantity -> {
+      is QuantityBox -> {
         encoder.encodeSerializableElement(
           descriptor,
           63,
@@ -1596,128 +1575,93 @@ internal object StructureMapGroupRuleSourceSerializer :
           choice.value,
         )
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.Range -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          64,
-          Hoisted.defaultValueRangeSer,
-          choice.value,
-        )
+      is Range -> {
+        encoder.encodeSerializableElement(descriptor, 64, Hoisted.defaultValueRangeSer, choice)
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.Ratio -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          65,
-          Hoisted.defaultValueRatioSer,
-          choice.value,
-        )
+      is Ratio -> {
+        encoder.encodeSerializableElement(descriptor, 65, Hoisted.defaultValueRatioSer, choice)
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.Reference -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          66,
-          Hoisted.defaultValueReferenceSer,
-          choice.value,
-        )
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 66, Hoisted.defaultValueReferenceSer, choice)
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.SampledData -> {
+      is SampledData -> {
         encoder.encodeSerializableElement(
           descriptor,
           67,
           Hoisted.defaultValueSampledDataSer,
-          choice.value,
+          choice,
         )
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.Signature -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          68,
-          Hoisted.defaultValueSignatureSer,
-          choice.value,
-        )
+      is Signature -> {
+        encoder.encodeSerializableElement(descriptor, 68, Hoisted.defaultValueSignatureSer, choice)
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.Timing -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          69,
-          Hoisted.defaultValueTimingSer,
-          choice.value,
-        )
+      is Timing -> {
+        encoder.encodeSerializableElement(descriptor, 69, Hoisted.defaultValueTimingSer, choice)
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.ContactDetail -> {
+      is ContactDetail -> {
         encoder.encodeSerializableElement(
           descriptor,
           70,
           Hoisted.defaultValueContactDetailSer,
-          choice.value,
+          choice,
         )
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.Contributor -> {
+      is Contributor -> {
         encoder.encodeSerializableElement(
           descriptor,
           71,
           Hoisted.defaultValueContributorSer,
-          choice.value,
+          choice,
         )
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.DataRequirement -> {
+      is DataRequirement -> {
         encoder.encodeSerializableElement(
           descriptor,
           72,
           Hoisted.defaultValueDataRequirementSer,
-          choice.value,
+          choice,
         )
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.Expression -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          73,
-          Hoisted.defaultValueExpressionSer,
-          choice.value,
-        )
+      is Expression -> {
+        encoder.encodeSerializableElement(descriptor, 73, Hoisted.defaultValueExpressionSer, choice)
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.ParameterDefinition -> {
+      is ParameterDefinition -> {
         encoder.encodeSerializableElement(
           descriptor,
           74,
           Hoisted.defaultValueParameterDefinitionSer,
-          choice.value,
+          choice,
         )
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.RelatedArtifact -> {
+      is RelatedArtifact -> {
         encoder.encodeSerializableElement(
           descriptor,
           75,
           Hoisted.defaultValueRelatedArtifactSer,
-          choice.value,
+          choice,
         )
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.TriggerDefinition -> {
+      is TriggerDefinition -> {
         encoder.encodeSerializableElement(
           descriptor,
           76,
           Hoisted.defaultValueTriggerDefinitionSer,
-          choice.value,
+          choice,
         )
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.UsageContext -> {
+      is UsageContext -> {
         encoder.encodeSerializableElement(
           descriptor,
           77,
           Hoisted.defaultValueUsageContextSer,
-          choice.value,
+          choice,
         )
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.Dosage -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          78,
-          Hoisted.defaultValueDosageSer,
-          choice.value,
-        )
+      is Dosage -> {
+        encoder.encodeSerializableElement(descriptor, 78, Hoisted.defaultValueDosageSer, choice)
       }
-      is StructureMap.Group.Rule.Source.DefaultValue.Meta -> {
-        encoder.encodeSerializableElement(descriptor, 79, Hoisted.defaultValueMetaSer, choice.value)
+      is Meta -> {
+        encoder.encodeSerializableElement(descriptor, 79, Hoisted.defaultValueMetaSer, choice)
       }
     }
     ((value.element?.value))?.let { encoder.encodeStringElement(descriptor, 80, it) }
@@ -2126,13 +2070,11 @@ internal object StructureMapGroupRuleTargetParameterSerializer :
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
       `value` =
-        StructureMap.Group.Rule.Target.Parameter.Value.from(
-          Id.of(valueId, _valueId),
-          R4String.of(valueString, _valueString),
-          R4Boolean.of(valueBoolean, _valueBoolean),
-          Integer.of(valueInteger, _valueInteger),
-          Decimal.of(valueDecimal, _valueDecimal),
-        )!!,
+        ((Id.of(valueId, _valueId))?.let { IdBox(it) }
+          ?: (R4String.of(valueString, _valueString))?.let { StringBox(it) }
+          ?: R4Boolean.of(valueBoolean, _valueBoolean)
+          ?: Integer.of(valueInteger, _valueInteger)
+          ?: Decimal.of(valueDecimal, _valueDecimal))!!,
     )
   }
 
@@ -2151,35 +2093,35 @@ internal object StructureMapGroupRuleTargetParameterSerializer :
         value.modifierExtension,
       )
     when (val choice = value.`value`) {
-      is StructureMap.Group.Rule.Target.Parameter.Value.Id -> {
+      is IdBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 3, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 4, Hoisted.valueIdSer, it)
         }
       }
-      is StructureMap.Group.Rule.Target.Parameter.Value.String -> {
+      is StringBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 6, Hoisted.valueIdSer, it)
         }
       }
-      is StructureMap.Group.Rule.Target.Parameter.Value.Boolean -> {
-        ((choice.value.value))?.let { encoder.encodeBooleanElement(descriptor, 7, it) }
-        (choice.value.toElement())?.let {
+      is R4Boolean -> {
+        ((choice.value))?.let { encoder.encodeBooleanElement(descriptor, 7, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 8, Hoisted.valueIdSer, it)
         }
       }
-      is StructureMap.Group.Rule.Target.Parameter.Value.Integer -> {
-        ((choice.value.value))?.let { encoder.encodeIntElement(descriptor, 9, it) }
-        (choice.value.toElement())?.let {
+      is Integer -> {
+        ((choice.value))?.let { encoder.encodeIntElement(descriptor, 9, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 10, Hoisted.valueIdSer, it)
         }
       }
-      is StructureMap.Group.Rule.Target.Parameter.Value.Decimal -> {
-        ((choice.value.value))?.let {
+      is Decimal -> {
+        ((choice.value))?.let {
           encoder.encodeSerializableElement(descriptor, 11, FhirDecimalSerializer, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 12, Hoisted.valueIdSer, it)
         }
       }

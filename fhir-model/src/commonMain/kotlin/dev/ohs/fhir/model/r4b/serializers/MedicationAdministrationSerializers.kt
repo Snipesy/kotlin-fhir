@@ -228,7 +228,7 @@ internal object MedicationAdministrationDosageSerializer :
       route = route,
       method = method,
       dose = dose,
-      rate = MedicationAdministration.Dosage.Rate.from(rateRatio, rateQuantity),
+      rate = (rateRatio ?: rateQuantity),
     )
   }
 
@@ -256,11 +256,11 @@ internal object MedicationAdministrationDosageSerializer :
     (value.dose)?.let { encoder.encodeSerializableElement(descriptor, 8, Hoisted.doseSer, it) }
     when (val choice = value.rate) {
       null -> {}
-      is MedicationAdministration.Dosage.Rate.Ratio -> {
-        encoder.encodeSerializableElement(descriptor, 9, Hoisted.rateRatioSer, choice.value)
+      is Ratio -> {
+        encoder.encodeSerializableElement(descriptor, 9, Hoisted.rateRatioSer, choice)
       }
-      is MedicationAdministration.Dosage.Rate.Quantity -> {
-        encoder.encodeSerializableElement(descriptor, 10, Hoisted.doseSer, choice.value)
+      is Quantity -> {
+        encoder.encodeSerializableElement(descriptor, 10, Hoisted.doseSer, choice)
       }
     }
   }
@@ -562,16 +562,13 @@ internal object MedicationAdministrationSerializer : KSerializer<MedicationAdmin
         ),
       statusReason = statusReason ?: listOf(),
       category = category,
-      medication =
-        MedicationAdministration.Medication.from(medicationCodeableConcept, medicationReference)!!,
+      medication = (medicationCodeableConcept ?: medicationReference)!!,
       subject = subject!!,
       context = context,
       supportingInformation = supportingInformation ?: listOf(),
       effective =
-        MedicationAdministration.Effective.from(
-          DateTime.of(FhirDateTime.fromString(effectiveDateTime), _effectiveDateTime),
-          effectivePeriod,
-        )!!,
+        (DateTime.of(FhirDateTime.fromString(effectiveDateTime), _effectiveDateTime)
+          ?: effectivePeriod)!!,
       performer = performer ?: listOf(),
       reasonCode = reasonCode ?: listOf(),
       reasonReference = reasonReference ?: listOf(),
@@ -696,20 +693,20 @@ internal object MedicationAdministrationSerializer : KSerializer<MedicationAdmin
       )
     }
     when (val choice = value.medication) {
-      is MedicationAdministration.Medication.CodeableConcept -> {
+      is CodeableConcept -> {
         encoder.encodeSerializableElement(
           descriptor,
           18 + descriptorOffset,
           Hoisted.statusReasonSerInner,
-          choice.value,
+          choice,
         )
       }
-      is MedicationAdministration.Medication.Reference -> {
+      is Reference -> {
         encoder.encodeSerializableElement(
           descriptor,
           19 + descriptorOffset,
           Hoisted.partOfSerInner,
-          choice.value,
+          choice,
         )
       }
     }
@@ -735,11 +732,11 @@ internal object MedicationAdministrationSerializer : KSerializer<MedicationAdmin
         value.supportingInformation,
       )
     when (val choice = value.effective) {
-      is MedicationAdministration.Effective.DateTime -> {
-        ((choice.value.value?.toString()))?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let {
           encoder.encodeStringElement(descriptor, 23 + descriptorOffset, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             24 + descriptorOffset,
@@ -748,12 +745,12 @@ internal object MedicationAdministrationSerializer : KSerializer<MedicationAdmin
           )
         }
       }
-      is MedicationAdministration.Effective.Period -> {
+      is Period -> {
         encoder.encodeSerializableElement(
           descriptor,
           25 + descriptorOffset,
           Hoisted.effectivePeriodSer,
-          choice.value,
+          choice,
         )
       }
     }

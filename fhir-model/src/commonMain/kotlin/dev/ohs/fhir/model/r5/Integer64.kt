@@ -43,7 +43,7 @@ public data class Integer64(
   override val extension: List<Extension> = listOf(),
   /** The actual value */
   public val `value`: Long? = null,
-) : PrimitiveType() {
+) : PrimitiveType(), FhirChoiceParticipants.Integer64Choices {
   public fun toBuilder(): Builder =
     with(this) {
       Builder().apply {

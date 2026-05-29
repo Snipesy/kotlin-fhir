@@ -446,10 +446,8 @@ internal object DetectedIssueSerializer : KSerializer<DetectedIssue> {
         },
       patient = patient,
       identified =
-        DetectedIssue.Identified.from(
-          DateTime.of(FhirDateTime.fromString(identifiedDateTime), _identifiedDateTime),
-          identifiedPeriod,
-        ),
+        (DateTime.of(FhirDateTime.fromString(identifiedDateTime), _identifiedDateTime)
+          ?: identifiedPeriod),
       author = author,
       implicated = implicated ?: listOf(),
       evidence = evidence ?: listOf(),
@@ -552,11 +550,11 @@ internal object DetectedIssueSerializer : KSerializer<DetectedIssue> {
     }
     when (val choice = value.identified) {
       null -> {}
-      is DetectedIssue.Identified.DateTime -> {
-        ((choice.value.value?.toString()))?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let {
           encoder.encodeStringElement(descriptor, 17 + descriptorOffset, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             18 + descriptorOffset,
@@ -565,12 +563,12 @@ internal object DetectedIssueSerializer : KSerializer<DetectedIssue> {
           )
         }
       }
-      is DetectedIssue.Identified.Period -> {
+      is Period -> {
         encoder.encodeSerializableElement(
           descriptor,
           19 + descriptorOffset,
           Hoisted.identifiedPeriodSer,
-          choice.value,
+          choice,
         )
       }
     }

@@ -55,7 +55,7 @@ public data class CodeableReference(
    * A reference to a resource the provides exact details about the information being referenced.
    */
   public val reference: Reference? = null,
-) : DataType() {
+) : DataType(), FhirChoiceTypes.ElementDefinitionDefaultValueChoice {
   public fun toBuilder(): Builder =
     with(this) {
       Builder().apply {

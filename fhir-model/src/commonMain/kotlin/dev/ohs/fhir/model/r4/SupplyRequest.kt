@@ -21,7 +21,6 @@ import dev.ohs.fhir.model.r4.serializers.SupplyRequestSerializer
 import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -151,14 +150,20 @@ public data class SupplyRequest(
    * Note that there's a difference between a prescription - an instruction to take a medication,
    * along with a (sometimes) implicit supply, and an explicit request to supply, with no explicit
    * instructions.
+   *
+   * A FHIR choice type — one of: [CodeableConcept] | [Reference]
    */
-  public val item: Item,
+  public val item: SupplyRequest.Item,
   /** The amount that is being ordered of the indicated item. */
   public val quantity: Quantity,
   /** Specific parameters for the ordered item. For example, the size of the indicated item. */
   public val parameter: List<Parameter> = listOf(),
-  /** When the request should be fulfilled. */
-  public val occurrence: Occurrence? = null,
+  /**
+   * When the request should be fulfilled.
+   *
+   * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
+   */
+  public val occurrence: SupplyRequest.Occurrence? = null,
   /** When the request was made. */
   public val authoredOn: DateTime? = null,
   /** The device, practitioner, etc. who initiated the request. */
@@ -247,8 +252,10 @@ public data class SupplyRequest(
      * The value of the device detail.
      *
      * Range means device should have a value that falls somewhere within the specified range.
+     *
+     * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range]
      */
-    public val `value`: Value? = null,
+    public val `value`: Parameter.Value? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -260,44 +267,6 @@ public data class SupplyRequest(
           `value` = this@with.`value`
         }
       }
-
-    public sealed interface Value {
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asQuantity(): Quantity? = this as? Quantity
-
-      public fun asRange(): Range? = this as? Range
-
-      public fun asBoolean(): Boolean? = this as? Boolean
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r4.CodeableConcept
-      ) : Value
-
-      @JvmInline
-      public value class Quantity(public val `value`: dev.ohs.fhir.model.r4.Quantity) : Value
-
-      @JvmInline public value class Range(public val `value`: dev.ohs.fhir.model.r4.Range) : Value
-
-      @JvmInline
-      public value class Boolean(public val `value`: dev.ohs.fhir.model.r4.Boolean) : Value
-
-      public companion object {
-        internal fun from(
-          codeableConceptValue: dev.ohs.fhir.model.r4.CodeableConcept?,
-          quantityValue: dev.ohs.fhir.model.r4.Quantity?,
-          rangeValue: dev.ohs.fhir.model.r4.Range?,
-          booleanValue: dev.ohs.fhir.model.r4.Boolean?,
-        ): Value? {
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (quantityValue != null) return Quantity(quantityValue)
-          if (rangeValue != null) return Range(rangeValue)
-          if (booleanValue != null) return Boolean(booleanValue)
-          return null
-        }
-      }
-    }
 
     public class Builder() {
       /**
@@ -347,8 +316,10 @@ public data class SupplyRequest(
        * The value of the device detail.
        *
        * Range means device should have a value that falls somewhere within the specified range.
+       *
+       * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range]
        */
-      public var `value`: Value? = null
+      public var `value`: Parameter.Value? = null
 
       public fun build(): Parameter =
         Parameter(
@@ -359,60 +330,9 @@ public data class SupplyRequest(
           `value` = `value`,
         )
     }
-  }
 
-  public sealed interface Item {
-    public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-    public fun asReference(): Reference? = this as? Reference
-
-    @JvmInline
-    public value class CodeableConcept(public val `value`: dev.ohs.fhir.model.r4.CodeableConcept) :
-      Item
-
-    @JvmInline
-    public value class Reference(public val `value`: dev.ohs.fhir.model.r4.Reference) : Item
-
-    public companion object {
-      internal fun from(
-        codeableConceptValue: dev.ohs.fhir.model.r4.CodeableConcept?,
-        referenceValue: dev.ohs.fhir.model.r4.Reference?,
-      ): Item? {
-        if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-        if (referenceValue != null) return Reference(referenceValue)
-        return null
-      }
-    }
-  }
-
-  public sealed interface Occurrence {
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    public fun asPeriod(): Period? = this as? Period
-
-    public fun asTiming(): Timing? = this as? Timing
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r4.DateTime) : Occurrence
-
-    @JvmInline
-    public value class Period(public val `value`: dev.ohs.fhir.model.r4.Period) : Occurrence
-
-    @JvmInline
-    public value class Timing(public val `value`: dev.ohs.fhir.model.r4.Timing) : Occurrence
-
-    public companion object {
-      internal fun from(
-        dateTimeValue: dev.ohs.fhir.model.r4.DateTime?,
-        periodValue: dev.ohs.fhir.model.r4.Period?,
-        timingValue: dev.ohs.fhir.model.r4.Timing?,
-      ): Occurrence? {
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        if (periodValue != null) return Period(periodValue)
-        if (timingValue != null) return Timing(timingValue)
-        return null
-      }
-    }
+    /** A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range] */
+    public typealias Value = FhirChoiceTypes.BooleanOrCodeableConceptOrQuantityOrRange
   }
 
   public class Builder(
@@ -423,8 +343,10 @@ public data class SupplyRequest(
      * Note that there's a difference between a prescription - an instruction to take a medication,
      * along with a (sometimes) implicit supply, and an explicit request to supply, with no explicit
      * instructions.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public var item: Item,
+    public var item: SupplyRequest.Item,
     /** The amount that is being ordered of the indicated item. */
     public var quantity: Quantity.Builder,
   ) : DomainResource.Builder() {
@@ -559,8 +481,12 @@ public data class SupplyRequest(
     /** Specific parameters for the ordered item. For example, the size of the indicated item. */
     public var parameter: MutableList<Parameter.Builder> = mutableListOf()
 
-    /** When the request should be fulfilled. */
-    public var occurrence: Occurrence? = null
+    /**
+     * When the request should be fulfilled.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
+     */
+    public var occurrence: SupplyRequest.Occurrence? = null
 
     /** When the request was made. */
     public var authoredOn: DateTime.Builder? = null
@@ -682,4 +608,10 @@ public data class SupplyRequest(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+  public typealias Item = FhirChoiceTypes.CodeableConceptOrReference
+
+  /** A FHIR choice type — one of: [DateTime] | [Period] | [Timing] */
+  public typealias Occurrence = FhirChoiceTypes.DateTimeOrPeriodOrTiming
 }

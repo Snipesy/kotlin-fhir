@@ -23,7 +23,6 @@ import dev.ohs.fhir.model.r4b.serializers.SpecimenDefinitionTypeTestedHandlingSe
 import dev.ohs.fhir.model.r4b.serializers.SpecimenDefinitionTypeTestedSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -289,8 +288,12 @@ public data class SpecimenDefinition(
       public val description: String? = null,
       /** The capacity (volume or other measure) of this kind of container. */
       public val capacity: Quantity? = null,
-      /** The minimum volume to be conditioned in the container. */
-      public val minimumVolume: MinimumVolume? = null,
+      /**
+       * The minimum volume to be conditioned in the container.
+       *
+       * A FHIR choice type — one of: [Quantity] | [String]
+       */
+      public val minimumVolume: Container.MinimumVolume? = null,
       /**
        * Substance introduced in the kind of container to preserve, maintain or enhance the
        * specimen. Examples: Formalin, Citrate, EDTA.
@@ -362,8 +365,10 @@ public data class SpecimenDefinition(
         /**
          * Substance introduced in the kind of container to preserve, maintain or enhance the
          * specimen. Examples: Formalin, Citrate, EDTA.
+         *
+         * A FHIR choice type — one of: [CodeableConcept] | [Reference]
          */
-        public val additive: Additive,
+        public val additive: FhirChoiceTypes.CodeableConceptOrReference,
       ) : BackboneElement() {
         public fun toBuilder(): Builder =
           with(this) {
@@ -374,38 +379,14 @@ public data class SpecimenDefinition(
             }
           }
 
-        public sealed interface Additive {
-          public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-          public fun asReference(): Reference? = this as? Reference
-
-          @JvmInline
-          public value class CodeableConcept(
-            public val `value`: dev.ohs.fhir.model.r4b.CodeableConcept
-          ) : Additive
-
-          @JvmInline
-          public value class Reference(public val `value`: dev.ohs.fhir.model.r4b.Reference) :
-            Additive
-
-          public companion object {
-            internal fun from(
-              codeableConceptValue: dev.ohs.fhir.model.r4b.CodeableConcept?,
-              referenceValue: dev.ohs.fhir.model.r4b.Reference?,
-            ): Additive? {
-              if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-              if (referenceValue != null) return Reference(referenceValue)
-              return null
-            }
-          }
-        }
-
         public class Builder(
           /**
            * Substance introduced in the kind of container to preserve, maintain or enhance the
            * specimen. Examples: Formalin, Citrate, EDTA.
+           *
+           * A FHIR choice type — one of: [CodeableConcept] | [Reference]
            */
-          public var additive: Additive
+          public var additive: FhirChoiceTypes.CodeableConceptOrReference
         ) {
           /**
            * Unique id for the element within a resource (for internal references). This may be any
@@ -447,38 +428,13 @@ public data class SpecimenDefinition(
            */
           public var modifierExtension: MutableList<Extension.Builder> = mutableListOf()
 
-          public fun build(): Container.Additive =
-            Container.Additive(
+          public fun build(): Additive =
+            Additive(
               id = id,
               extension = extension.map { it.build() },
               modifierExtension = modifierExtension.map { it.build() },
               additive = additive,
             )
-        }
-      }
-
-      public sealed interface MinimumVolume {
-        public fun asQuantity(): Quantity? = this as? Quantity
-
-        public fun asString(): String? = this as? String
-
-        @JvmInline
-        public value class Quantity(public val `value`: dev.ohs.fhir.model.r4b.Quantity) :
-          MinimumVolume
-
-        @JvmInline
-        public value class String(public val `value`: dev.ohs.fhir.model.r4b.String) :
-          MinimumVolume
-
-        public companion object {
-          internal fun from(
-            quantityValue: dev.ohs.fhir.model.r4b.Quantity?,
-            stringValue: dev.ohs.fhir.model.r4b.String?,
-          ): MinimumVolume? {
-            if (quantityValue != null) return Quantity(quantityValue)
-            if (stringValue != null) return String(stringValue)
-            return null
-          }
         }
       }
 
@@ -538,8 +494,12 @@ public data class SpecimenDefinition(
         /** The capacity (volume or other measure) of this kind of container. */
         public var capacity: Quantity.Builder? = null
 
-        /** The minimum volume to be conditioned in the container. */
-        public var minimumVolume: MinimumVolume? = null
+        /**
+         * The minimum volume to be conditioned in the container.
+         *
+         * A FHIR choice type — one of: [Quantity] | [String]
+         */
+        public var minimumVolume: Container.MinimumVolume? = null
 
         /**
          * Substance introduced in the kind of container to preserve, maintain or enhance the
@@ -565,6 +525,9 @@ public data class SpecimenDefinition(
             preparation = preparation?.build(),
           )
       }
+
+      /** A FHIR choice type — one of: [Quantity] | [String] */
+      public typealias MinimumVolume = FhirChoiceTypes.QuantityOrString
     }
 
     /**

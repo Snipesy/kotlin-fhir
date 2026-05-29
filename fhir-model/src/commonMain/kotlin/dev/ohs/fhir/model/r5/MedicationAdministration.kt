@@ -21,7 +21,6 @@ import dev.ohs.fhir.model.r5.serializers.MedicationAdministrationPerformerSerial
 import dev.ohs.fhir.model.r5.serializers.MedicationAdministrationSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -195,8 +194,10 @@ public data class MedicationAdministration(
    * A specific date/time or interval of time during which the administration took place (or did not
    * take place). For many administrations, such as swallowing a tablet the use of dateTime is more
    * appropriate.
+   *
+   * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
    */
-  public val occurence: Occurence,
+  public val occurence: MedicationAdministration.Occurence,
   /**
    * The date the occurrence of the MedicationAdministration was first captured in the record -
    * potentially significantly after the occurrence of the event.
@@ -495,8 +496,10 @@ public data class MedicationAdministration(
      * MedicationAdministration.dosage.rate, and the date time when the rate change occurred.
      * Typically, the MedicationAdministration.dosage.rate element is not used to convey an average
      * rate.
+     *
+     * A FHIR choice type — one of: [Quantity] | [Ratio]
      */
-    public val rate: Rate? = null,
+    public val rate: Dosage.Rate? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -512,28 +515,6 @@ public data class MedicationAdministration(
           rate = this@with.rate
         }
       }
-
-    public sealed interface Rate {
-      public fun asRatio(): Ratio? = this as? Ratio
-
-      public fun asQuantity(): Quantity? = this as? Quantity
-
-      @JvmInline public value class Ratio(public val `value`: dev.ohs.fhir.model.r5.Ratio) : Rate
-
-      @JvmInline
-      public value class Quantity(public val `value`: dev.ohs.fhir.model.r5.Quantity) : Rate
-
-      public companion object {
-        internal fun from(
-          ratioValue: dev.ohs.fhir.model.r5.Ratio?,
-          quantityValue: dev.ohs.fhir.model.r5.Quantity?,
-        ): Rate? {
-          if (ratioValue != null) return Ratio(ratioValue)
-          if (quantityValue != null) return Quantity(quantityValue)
-          return null
-        }
-      }
-    }
 
     public class Builder() {
       /**
@@ -639,8 +620,10 @@ public data class MedicationAdministration(
        * MedicationAdministration.dosage.rate, and the date time when the rate change occurred.
        * Typically, the MedicationAdministration.dosage.rate element is not used to convey an
        * average rate.
+       *
+       * A FHIR choice type — one of: [Quantity] | [Ratio]
        */
-      public var rate: Rate? = null
+      public var rate: Dosage.Rate? = null
 
       public fun build(): Dosage =
         Dosage(
@@ -655,36 +638,9 @@ public data class MedicationAdministration(
           rate = rate,
         )
     }
-  }
 
-  public sealed interface Occurence {
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    public fun asPeriod(): Period? = this as? Period
-
-    public fun asTiming(): Timing? = this as? Timing
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) : Occurence
-
-    @JvmInline
-    public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) : Occurence
-
-    @JvmInline
-    public value class Timing(public val `value`: dev.ohs.fhir.model.r5.Timing) : Occurence
-
-    public companion object {
-      internal fun from(
-        dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-        periodValue: dev.ohs.fhir.model.r5.Period?,
-        timingValue: dev.ohs.fhir.model.r5.Timing?,
-      ): Occurence? {
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        if (periodValue != null) return Period(periodValue)
-        if (timingValue != null) return Timing(timingValue)
-        return null
-      }
-    }
+    /** A FHIR choice type — one of: [Quantity] | [Ratio] */
+    public typealias Rate = FhirChoiceTypes.QuantityOrRatio
   }
 
   public class Builder(
@@ -713,8 +669,10 @@ public data class MedicationAdministration(
      * A specific date/time or interval of time during which the administration took place (or did
      * not take place). For many administrations, such as swallowing a tablet the use of dateTime is
      * more appropriate.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
      */
-    public var occurence: Occurence,
+    public var occurence: MedicationAdministration.Occurence,
   ) : DomainResource.Builder() {
     /**
      * The logical id of the resource, as used in the URL for the resource. Once assigned, this
@@ -1009,4 +967,7 @@ public data class MedicationAdministration(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [DateTime] | [Period] | [Timing] */
+  public typealias Occurence = FhirChoiceTypes.DateTimeOrPeriodOrTiming
 }

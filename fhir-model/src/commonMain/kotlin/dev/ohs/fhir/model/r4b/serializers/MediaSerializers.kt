@@ -305,10 +305,7 @@ internal object MediaSerializer : KSerializer<Media> {
       subject = subject,
       encounter = encounter,
       created =
-        Media.Created.from(
-          DateTime.of(FhirDateTime.fromString(createdDateTime), _createdDateTime),
-          createdPeriod,
-        ),
+        (DateTime.of(FhirDateTime.fromString(createdDateTime), _createdDateTime) ?: createdPeriod),
       issued = Instant.of(FhirDateTime.fromString(issued), _issued),
       `operator` = `operator`,
       reasonCode = reasonCode ?: listOf(),
@@ -439,11 +436,11 @@ internal object MediaSerializer : KSerializer<Media> {
     }
     when (val choice = value.created) {
       null -> {}
-      is Media.Created.DateTime -> {
-        ((choice.value.value?.toString()))?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let {
           encoder.encodeStringElement(descriptor, 20 + descriptorOffset, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             21 + descriptorOffset,
@@ -452,12 +449,12 @@ internal object MediaSerializer : KSerializer<Media> {
           )
         }
       }
-      is Media.Created.Period -> {
+      is Period -> {
         encoder.encodeSerializableElement(
           descriptor,
           22 + descriptorOffset,
           Hoisted.createdPeriodSer,
-          choice.value,
+          choice,
         )
       }
     }

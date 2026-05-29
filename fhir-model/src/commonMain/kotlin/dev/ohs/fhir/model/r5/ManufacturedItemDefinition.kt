@@ -23,7 +23,6 @@ import dev.ohs.fhir.model.r5.serializers.ManufacturedItemDefinitionSerializer
 import dev.ohs.fhir.model.r5.terminologies.PublicationStatus
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -230,8 +229,13 @@ public data class ManufacturedItemDefinition(
     override val modifierExtension: List<Extension> = listOf(),
     /** A code expressing the type of characteristic. */
     public val type: CodeableConcept,
-    /** A value for the characteristic. */
-    public val `value`: Value? = null,
+    /**
+     * A value for the characteristic.
+     *
+     * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
+     * [Markdown] | [Quantity] | [Reference]
+     */
+    public val `value`: Property.Value? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -242,65 +246,6 @@ public data class ManufacturedItemDefinition(
           `value` = this@with.`value`
         }
       }
-
-    public sealed interface Value {
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asQuantity(): Quantity? = this as? Quantity
-
-      public fun asDate(): Date? = this as? Date
-
-      public fun asBoolean(): Boolean? = this as? Boolean
-
-      public fun asMarkdown(): Markdown? = this as? Markdown
-
-      public fun asAttachment(): Attachment? = this as? Attachment
-
-      public fun asReference(): Reference? = this as? Reference
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r5.CodeableConcept
-      ) : Value
-
-      @JvmInline
-      public value class Quantity(public val `value`: dev.ohs.fhir.model.r5.Quantity) : Value
-
-      @JvmInline public value class Date(public val `value`: dev.ohs.fhir.model.r5.Date) : Value
-
-      @JvmInline
-      public value class Boolean(public val `value`: dev.ohs.fhir.model.r5.Boolean) : Value
-
-      @JvmInline
-      public value class Markdown(public val `value`: dev.ohs.fhir.model.r5.Markdown) : Value
-
-      @JvmInline
-      public value class Attachment(public val `value`: dev.ohs.fhir.model.r5.Attachment) : Value
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : Value
-
-      public companion object {
-        internal fun from(
-          codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-          quantityValue: dev.ohs.fhir.model.r5.Quantity?,
-          dateValue: dev.ohs.fhir.model.r5.Date?,
-          booleanValue: dev.ohs.fhir.model.r5.Boolean?,
-          markdownValue: dev.ohs.fhir.model.r5.Markdown?,
-          attachmentValue: dev.ohs.fhir.model.r5.Attachment?,
-          referenceValue: dev.ohs.fhir.model.r5.Reference?,
-        ): Value? {
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (quantityValue != null) return Quantity(quantityValue)
-          if (dateValue != null) return Date(dateValue)
-          if (booleanValue != null) return Boolean(booleanValue)
-          if (markdownValue != null) return Markdown(markdownValue)
-          if (attachmentValue != null) return Attachment(attachmentValue)
-          if (referenceValue != null) return Reference(referenceValue)
-          return null
-        }
-      }
-    }
 
     public class Builder(
       /** A code expressing the type of characteristic. */
@@ -346,8 +291,13 @@ public data class ManufacturedItemDefinition(
        */
       public var modifierExtension: MutableList<Extension.Builder> = mutableListOf()
 
-      /** A value for the characteristic. */
-      public var `value`: Value? = null
+      /**
+       * A value for the characteristic.
+       *
+       * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
+       * [Markdown] | [Quantity] | [Reference]
+       */
+      public var `value`: Property.Value? = null
 
       public fun build(): Property =
         Property(
@@ -358,6 +308,12 @@ public data class ManufacturedItemDefinition(
           `value` = `value`,
         )
     }
+
+    /**
+     * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
+     * [Markdown] | [Quantity] | [Reference]
+     */
+    public typealias Value = FhirChoiceTypes.AdministrableProductDefinitionPropertyValueChoice
   }
 
   /**

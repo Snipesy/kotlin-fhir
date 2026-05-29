@@ -120,7 +120,7 @@ internal object SupplyDeliverySuppliedItemSerializer : KSerializer<SupplyDeliver
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
       quantity = quantity,
-      item = SupplyDelivery.SuppliedItem.Item.from(itemCodeableConcept, itemReference),
+      item = (itemCodeableConcept ?: itemReference),
     )
   }
 
@@ -140,16 +140,11 @@ internal object SupplyDeliverySuppliedItemSerializer : KSerializer<SupplyDeliver
     }
     when (val choice = value.item) {
       null -> {}
-      is SupplyDelivery.SuppliedItem.Item.CodeableConcept -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          4,
-          Hoisted.itemCodeableConceptSer,
-          choice.value,
-        )
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 4, Hoisted.itemCodeableConceptSer, choice)
       }
-      is SupplyDelivery.SuppliedItem.Item.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 5, Hoisted.itemReferenceSer, choice.value)
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 5, Hoisted.itemReferenceSer, choice)
       }
     }
   }
@@ -362,11 +357,9 @@ internal object SupplyDeliverySerializer : KSerializer<SupplyDelivery> {
       type = type,
       suppliedItem = suppliedItem ?: listOf(),
       occurrence =
-        SupplyDelivery.Occurrence.from(
-          DateTime.of(FhirDateTime.fromString(occurrenceDateTime), _occurrenceDateTime),
-          occurrencePeriod,
-          occurrenceTiming,
-        ),
+        (DateTime.of(FhirDateTime.fromString(occurrenceDateTime), _occurrenceDateTime)
+          ?: occurrencePeriod
+          ?: occurrenceTiming),
       supplier = supplier,
       destination = destination,
       `receiver` = `receiver` ?: listOf(),
@@ -481,11 +474,11 @@ internal object SupplyDeliverySerializer : KSerializer<SupplyDelivery> {
       )
     when (val choice = value.occurrence) {
       null -> {}
-      is SupplyDelivery.Occurrence.DateTime -> {
-        ((choice.value.value?.toString()))?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let {
           encoder.encodeStringElement(descriptor, 18 + descriptorOffset, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             19 + descriptorOffset,
@@ -494,20 +487,20 @@ internal object SupplyDeliverySerializer : KSerializer<SupplyDelivery> {
           )
         }
       }
-      is SupplyDelivery.Occurrence.Period -> {
+      is Period -> {
         encoder.encodeSerializableElement(
           descriptor,
           20 + descriptorOffset,
           Hoisted.occurrencePeriodSer,
-          choice.value,
+          choice,
         )
       }
-      is SupplyDelivery.Occurrence.Timing -> {
+      is Timing -> {
         encoder.encodeSerializableElement(
           descriptor,
           21 + descriptorOffset,
           Hoisted.occurrenceTimingSer,
-          choice.value,
+          choice,
         )
       }
     }

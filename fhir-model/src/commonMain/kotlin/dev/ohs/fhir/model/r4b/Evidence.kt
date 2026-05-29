@@ -27,7 +27,6 @@ import dev.ohs.fhir.model.r4b.serializers.EvidenceVariableDefinitionSerializer
 import dev.ohs.fhir.model.r4b.terminologies.PublicationStatus
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -175,8 +174,12 @@ public data class Evidence(
    * source of the resource can be found.
    */
   public val title: String? = null,
-  /** Citation Resource or display of suggested citation for this evidence. */
-  public val citeAs: CiteAs? = null,
+  /**
+   * Citation Resource or display of suggested citation for this evidence.
+   *
+   * A FHIR choice type — one of: [Markdown] | [Reference]
+   */
+  public val citeAs: Evidence.CiteAs? = null,
   /**
    * The status of this summary. Enables tracking the life-cycle of the content.
    *
@@ -1414,29 +1417,6 @@ public data class Evidence(
     }
   }
 
-  public sealed interface CiteAs {
-    public fun asReference(): Reference? = this as? Reference
-
-    public fun asMarkdown(): Markdown? = this as? Markdown
-
-    @JvmInline
-    public value class Reference(public val `value`: dev.ohs.fhir.model.r4b.Reference) : CiteAs
-
-    @JvmInline
-    public value class Markdown(public val `value`: dev.ohs.fhir.model.r4b.Markdown) : CiteAs
-
-    public companion object {
-      internal fun from(
-        referenceValue: dev.ohs.fhir.model.r4b.Reference?,
-        markdownValue: dev.ohs.fhir.model.r4b.Markdown?,
-      ): CiteAs? {
-        if (referenceValue != null) return Reference(referenceValue)
-        if (markdownValue != null) return Markdown(markdownValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
     /**
      * The status of this summary. Enables tracking the life-cycle of the content.
@@ -1596,8 +1576,12 @@ public data class Evidence(
      */
     public var title: String.Builder? = null
 
-    /** Citation Resource or display of suggested citation for this evidence. */
-    public var citeAs: CiteAs? = null
+    /**
+     * Citation Resource or display of suggested citation for this evidence.
+     *
+     * A FHIR choice type — one of: [Markdown] | [Reference]
+     */
+    public var citeAs: Evidence.CiteAs? = null
 
     /**
      * The date (and optionally time) when the summary was published. The date must change when the
@@ -1804,4 +1788,7 @@ public data class Evidence(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [Markdown] | [Reference] */
+  public typealias CiteAs = FhirChoiceTypes.MarkdownOrReference
 }

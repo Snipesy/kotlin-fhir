@@ -22,7 +22,6 @@ import dev.ohs.fhir.model.r5.serializers.ObservationSerializer
 import dev.ohs.fhir.model.r5.serializers.ObservationTriggeredBySerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -136,8 +135,10 @@ public data class Observation(
    *
    * ObservationDefinition can be referenced by its canonical url using instantiatesCanonical, or by
    * a name or an identifier using the appropriate sub-elements of instantiatesReference.
+   *
+   * A FHIR choice type — one of: [Canonical] | [Reference]
    */
-  public val instantiates: Instantiates? = null,
+  public val instantiates: Observation.Instantiates? = null,
   /**
    * A plan, proposal or order that is fulfilled in whole or in part by this event. For example, a
    * MedicationRequest may require a patient to have laboratory test performed before it is
@@ -229,8 +230,10 @@ public data class Observation(
    * imprecise or "fuzzy" times (For example, a blood glucose measurement taken "after breakfast")
    * use the [Timing](datatypes.html#timing) datatype which allow the measurement to be tied to
    * regular life events.
+   *
+   * A FHIR choice type — one of: [DateTime] | [Instant] | [Period] | [Timing]
    */
-  public val effective: Effective? = null,
+  public val effective: Observation.Effective? = null,
   /**
    * The date and time this version of the observation was made available to providers, typically
    * after the results have been reviewed and verified.
@@ -261,8 +264,12 @@ public data class Observation(
    * - The usage of valueReference is restricted to the MolecularSequence resource when used as a
    *   definitional resource, not as a patient-specific finding. .
    * - For additional guidance, see the [Notes section](observation.html#notes) below.
+   *
+   * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [DateTime] |
+   * [Integer] | [Period] | [Quantity] | [Range] | [Ratio] | [Reference] | [SampledData] | [String]
+   * | [Time]
    */
-  public val `value`: Value? = null,
+  public val `value`: Observation.Value? = null,
   /**
    * Provides a reason why the expected value in the element Observation.value[x] is missing.
    *
@@ -832,8 +839,12 @@ public data class Observation(
      * - The usage of valueReference is restricted to the MolecularSequence resource when used as a
      *   definitional resource, not as a patient-specific finding. .
      * - For additional guidance, see the [Notes section](observation.html#notes) below.
+     *
+     * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [DateTime] |
+     * [Integer] | [Period] | [Quantity] | [Range] | [Ratio] | [Reference] | [SampledData] |
+     * [String] | [Time]
      */
-    public val `value`: Value? = null,
+    public val `value`: Component.Value? = null,
     /**
      * Provides a reason why the expected value in the element Observation.component.value[x] is
      * missing.
@@ -881,105 +892,6 @@ public data class Observation(
           referenceRange = this@with.referenceRange.map { it.toBuilder() }.toMutableList()
         }
       }
-
-    public sealed interface Value {
-      public fun asQuantity(): Quantity? = this as? Quantity
-
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asString(): String? = this as? String
-
-      public fun asBoolean(): Boolean? = this as? Boolean
-
-      public fun asInteger(): Integer? = this as? Integer
-
-      public fun asRange(): Range? = this as? Range
-
-      public fun asRatio(): Ratio? = this as? Ratio
-
-      public fun asSampledData(): SampledData? = this as? SampledData
-
-      public fun asTime(): Time? = this as? Time
-
-      public fun asDateTime(): DateTime? = this as? DateTime
-
-      public fun asPeriod(): Period? = this as? Period
-
-      public fun asAttachment(): Attachment? = this as? Attachment
-
-      public fun asReference(): Reference? = this as? Reference
-
-      @JvmInline
-      public value class Quantity(public val `value`: dev.ohs.fhir.model.r5.Quantity) : Value
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r5.CodeableConcept
-      ) : Value
-
-      @JvmInline
-      public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : Value
-
-      @JvmInline
-      public value class Boolean(public val `value`: dev.ohs.fhir.model.r5.Boolean) : Value
-
-      @JvmInline
-      public value class Integer(public val `value`: dev.ohs.fhir.model.r5.Integer) : Value
-
-      @JvmInline public value class Range(public val `value`: dev.ohs.fhir.model.r5.Range) : Value
-
-      @JvmInline public value class Ratio(public val `value`: dev.ohs.fhir.model.r5.Ratio) : Value
-
-      @JvmInline
-      public value class SampledData(public val `value`: dev.ohs.fhir.model.r5.SampledData) : Value
-
-      @JvmInline public value class Time(public val `value`: dev.ohs.fhir.model.r5.Time) : Value
-
-      @JvmInline
-      public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) : Value
-
-      @JvmInline
-      public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) : Value
-
-      @JvmInline
-      public value class Attachment(public val `value`: dev.ohs.fhir.model.r5.Attachment) : Value
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : Value
-
-      public companion object {
-        internal fun from(
-          quantityValue: dev.ohs.fhir.model.r5.Quantity?,
-          codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-          stringValue: dev.ohs.fhir.model.r5.String?,
-          booleanValue: dev.ohs.fhir.model.r5.Boolean?,
-          integerValue: dev.ohs.fhir.model.r5.Integer?,
-          rangeValue: dev.ohs.fhir.model.r5.Range?,
-          ratioValue: dev.ohs.fhir.model.r5.Ratio?,
-          sampledDataValue: dev.ohs.fhir.model.r5.SampledData?,
-          timeValue: dev.ohs.fhir.model.r5.Time?,
-          dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-          periodValue: dev.ohs.fhir.model.r5.Period?,
-          attachmentValue: dev.ohs.fhir.model.r5.Attachment?,
-          referenceValue: dev.ohs.fhir.model.r5.Reference?,
-        ): Value? {
-          if (quantityValue != null) return Quantity(quantityValue)
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (stringValue != null) return String(stringValue)
-          if (booleanValue != null) return Boolean(booleanValue)
-          if (integerValue != null) return Integer(integerValue)
-          if (rangeValue != null) return Range(rangeValue)
-          if (ratioValue != null) return Ratio(ratioValue)
-          if (sampledDataValue != null) return SampledData(sampledDataValue)
-          if (timeValue != null) return Time(timeValue)
-          if (dateTimeValue != null) return DateTime(dateTimeValue)
-          if (periodValue != null) return Period(periodValue)
-          if (attachmentValue != null) return Attachment(attachmentValue)
-          if (referenceValue != null) return Reference(referenceValue)
-          return null
-        }
-      }
-    }
 
     public class Builder(
       /**
@@ -1054,8 +966,12 @@ public data class Observation(
        * - The usage of valueReference is restricted to the MolecularSequence resource when used as
        *   a definitional resource, not as a patient-specific finding. .
        * - For additional guidance, see the [Notes section](observation.html#notes) below.
+       *
+       * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [DateTime] |
+       * [Integer] | [Period] | [Quantity] | [Range] | [Ratio] | [Reference] | [SampledData] |
+       * [String] | [Time]
        */
-      public var `value`: Value? = null
+      public var `value`: Component.Value? = null
 
       /**
        * Provides a reason why the expected value in the element Observation.component.value[x] is
@@ -1107,164 +1023,13 @@ public data class Observation(
           referenceRange = referenceRange.map { it.build() },
         )
     }
-  }
 
-  public sealed interface Instantiates {
-    public fun asCanonical(): Canonical? = this as? Canonical
-
-    public fun asReference(): Reference? = this as? Reference
-
-    @JvmInline
-    public value class Canonical(public val `value`: dev.ohs.fhir.model.r5.Canonical) :
-      Instantiates
-
-    @JvmInline
-    public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) :
-      Instantiates
-
-    public companion object {
-      internal fun from(
-        canonicalValue: dev.ohs.fhir.model.r5.Canonical?,
-        referenceValue: dev.ohs.fhir.model.r5.Reference?,
-      ): Instantiates? {
-        if (canonicalValue != null) return Canonical(canonicalValue)
-        if (referenceValue != null) return Reference(referenceValue)
-        return null
-      }
-    }
-  }
-
-  public sealed interface Effective {
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    public fun asPeriod(): Period? = this as? Period
-
-    public fun asTiming(): Timing? = this as? Timing
-
-    public fun asInstant(): Instant? = this as? Instant
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) : Effective
-
-    @JvmInline
-    public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) : Effective
-
-    @JvmInline
-    public value class Timing(public val `value`: dev.ohs.fhir.model.r5.Timing) : Effective
-
-    @JvmInline
-    public value class Instant(public val `value`: dev.ohs.fhir.model.r5.Instant) : Effective
-
-    public companion object {
-      internal fun from(
-        dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-        periodValue: dev.ohs.fhir.model.r5.Period?,
-        timingValue: dev.ohs.fhir.model.r5.Timing?,
-        instantValue: dev.ohs.fhir.model.r5.Instant?,
-      ): Effective? {
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        if (periodValue != null) return Period(periodValue)
-        if (timingValue != null) return Timing(timingValue)
-        if (instantValue != null) return Instant(instantValue)
-        return null
-      }
-    }
-  }
-
-  public sealed interface Value {
-    public fun asQuantity(): Quantity? = this as? Quantity
-
-    public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-    public fun asString(): String? = this as? String
-
-    public fun asBoolean(): Boolean? = this as? Boolean
-
-    public fun asInteger(): Integer? = this as? Integer
-
-    public fun asRange(): Range? = this as? Range
-
-    public fun asRatio(): Ratio? = this as? Ratio
-
-    public fun asSampledData(): SampledData? = this as? SampledData
-
-    public fun asTime(): Time? = this as? Time
-
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    public fun asPeriod(): Period? = this as? Period
-
-    public fun asAttachment(): Attachment? = this as? Attachment
-
-    public fun asReference(): Reference? = this as? Reference
-
-    @JvmInline
-    public value class Quantity(public val `value`: dev.ohs.fhir.model.r5.Quantity) : Value
-
-    @JvmInline
-    public value class CodeableConcept(public val `value`: dev.ohs.fhir.model.r5.CodeableConcept) :
-      Value
-
-    @JvmInline public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : Value
-
-    @JvmInline
-    public value class Boolean(public val `value`: dev.ohs.fhir.model.r5.Boolean) : Value
-
-    @JvmInline
-    public value class Integer(public val `value`: dev.ohs.fhir.model.r5.Integer) : Value
-
-    @JvmInline public value class Range(public val `value`: dev.ohs.fhir.model.r5.Range) : Value
-
-    @JvmInline public value class Ratio(public val `value`: dev.ohs.fhir.model.r5.Ratio) : Value
-
-    @JvmInline
-    public value class SampledData(public val `value`: dev.ohs.fhir.model.r5.SampledData) : Value
-
-    @JvmInline public value class Time(public val `value`: dev.ohs.fhir.model.r5.Time) : Value
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) : Value
-
-    @JvmInline public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) : Value
-
-    @JvmInline
-    public value class Attachment(public val `value`: dev.ohs.fhir.model.r5.Attachment) : Value
-
-    @JvmInline
-    public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : Value
-
-    public companion object {
-      internal fun from(
-        quantityValue: dev.ohs.fhir.model.r5.Quantity?,
-        codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-        stringValue: dev.ohs.fhir.model.r5.String?,
-        booleanValue: dev.ohs.fhir.model.r5.Boolean?,
-        integerValue: dev.ohs.fhir.model.r5.Integer?,
-        rangeValue: dev.ohs.fhir.model.r5.Range?,
-        ratioValue: dev.ohs.fhir.model.r5.Ratio?,
-        sampledDataValue: dev.ohs.fhir.model.r5.SampledData?,
-        timeValue: dev.ohs.fhir.model.r5.Time?,
-        dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-        periodValue: dev.ohs.fhir.model.r5.Period?,
-        attachmentValue: dev.ohs.fhir.model.r5.Attachment?,
-        referenceValue: dev.ohs.fhir.model.r5.Reference?,
-      ): Value? {
-        if (quantityValue != null) return Quantity(quantityValue)
-        if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-        if (stringValue != null) return String(stringValue)
-        if (booleanValue != null) return Boolean(booleanValue)
-        if (integerValue != null) return Integer(integerValue)
-        if (rangeValue != null) return Range(rangeValue)
-        if (ratioValue != null) return Ratio(ratioValue)
-        if (sampledDataValue != null) return SampledData(sampledDataValue)
-        if (timeValue != null) return Time(timeValue)
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        if (periodValue != null) return Period(periodValue)
-        if (attachmentValue != null) return Attachment(attachmentValue)
-        if (referenceValue != null) return Reference(referenceValue)
-        return null
-      }
-    }
+    /**
+     * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [DateTime] |
+     * [Integer] | [Period] | [Quantity] | [Range] | [Ratio] | [Reference] | [SampledData] |
+     * [String] | [Time]
+     */
+    public typealias Value = FhirChoiceTypes.ObservationComponentValueChoice
   }
 
   public class Builder(
@@ -1399,8 +1164,10 @@ public data class Observation(
      *
      * ObservationDefinition can be referenced by its canonical url using instantiatesCanonical, or
      * by a name or an identifier using the appropriate sub-elements of instantiatesReference.
+     *
+     * A FHIR choice type — one of: [Canonical] | [Reference]
      */
-    public var instantiates: Instantiates? = null
+    public var instantiates: Observation.Instantiates? = null
 
     /**
      * A plan, proposal or order that is fulfilled in whole or in part by this event. For example, a
@@ -1488,8 +1255,10 @@ public data class Observation(
      * recording imprecise or "fuzzy" times (For example, a blood glucose measurement taken "after
      * breakfast") use the [Timing](datatypes.html#timing) datatype which allow the measurement to
      * be tied to regular life events.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Instant] | [Period] | [Timing]
      */
-    public var effective: Effective? = null
+    public var effective: Observation.Effective? = null
 
     /**
      * The date and time this version of the observation was made available to providers, typically
@@ -1523,8 +1292,12 @@ public data class Observation(
      * - The usage of valueReference is restricted to the MolecularSequence resource when used as a
      *   definitional resource, not as a patient-specific finding. .
      * - For additional guidance, see the [Notes section](observation.html#notes) below.
+     *
+     * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [DateTime] |
+     * [Integer] | [Period] | [Quantity] | [Range] | [Ratio] | [Reference] | [SampledData] |
+     * [String] | [Time]
      */
-    public var `value`: Value? = null
+    public var `value`: Observation.Value? = null
 
     /**
      * Provides a reason why the expected value in the element Observation.value[x] is missing.
@@ -1767,4 +1540,17 @@ public data class Observation(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [Canonical] | [Reference] */
+  public typealias Instantiates = FhirChoiceTypes.CanonicalOrReference
+
+  /** A FHIR choice type — one of: [DateTime] | [Instant] | [Period] | [Timing] */
+  public typealias Effective = FhirChoiceTypes.DateTimeOrInstantOrPeriodOrTiming
+
+  /**
+   * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [DateTime] |
+   * [Integer] | [Period] | [Quantity] | [Range] | [Ratio] | [Reference] | [SampledData] | [String]
+   * | [Time]
+   */
+  public typealias Value = FhirChoiceTypes.ObservationComponentValueChoice
 }

@@ -29,7 +29,6 @@ import dev.ohs.fhir.model.r4b.terminologies.CommonLanguages
 import dev.ohs.fhir.model.r4b.terminologies.PublicationStatus
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -1386,8 +1385,13 @@ public data class ValueSet(
        * The names are assigned at the discretion of the server.
        */
       public val name: String,
-      /** The value of the parameter. */
-      public val `value`: Value? = null,
+      /**
+       * The value of the parameter.
+       *
+       * A FHIR choice type — one of: [Boolean] | [CodeBox] | [DateTime] | [Decimal] | [Integer] |
+       * [StringBox] | [Uri]
+       */
+      public val `value`: Parameter.Value? = null,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -1398,62 +1402,6 @@ public data class ValueSet(
             `value` = this@with.`value`
           }
         }
-
-      public sealed interface Value {
-        public fun asString(): String? = this as? String
-
-        public fun asBoolean(): Boolean? = this as? Boolean
-
-        public fun asInteger(): Integer? = this as? Integer
-
-        public fun asDecimal(): Decimal? = this as? Decimal
-
-        public fun asUri(): Uri? = this as? Uri
-
-        public fun asCode(): Code? = this as? Code
-
-        public fun asDateTime(): DateTime? = this as? DateTime
-
-        @JvmInline
-        public value class String(public val `value`: dev.ohs.fhir.model.r4b.String) : Value
-
-        @JvmInline
-        public value class Boolean(public val `value`: dev.ohs.fhir.model.r4b.Boolean) : Value
-
-        @JvmInline
-        public value class Integer(public val `value`: dev.ohs.fhir.model.r4b.Integer) : Value
-
-        @JvmInline
-        public value class Decimal(public val `value`: dev.ohs.fhir.model.r4b.Decimal) : Value
-
-        @JvmInline public value class Uri(public val `value`: dev.ohs.fhir.model.r4b.Uri) : Value
-
-        @JvmInline public value class Code(public val `value`: dev.ohs.fhir.model.r4b.Code) : Value
-
-        @JvmInline
-        public value class DateTime(public val `value`: dev.ohs.fhir.model.r4b.DateTime) : Value
-
-        public companion object {
-          internal fun from(
-            stringValue: dev.ohs.fhir.model.r4b.String?,
-            booleanValue: dev.ohs.fhir.model.r4b.Boolean?,
-            integerValue: dev.ohs.fhir.model.r4b.Integer?,
-            decimalValue: dev.ohs.fhir.model.r4b.Decimal?,
-            uriValue: dev.ohs.fhir.model.r4b.Uri?,
-            codeValue: dev.ohs.fhir.model.r4b.Code?,
-            dateTimeValue: dev.ohs.fhir.model.r4b.DateTime?,
-          ): Value? {
-            if (stringValue != null) return String(stringValue)
-            if (booleanValue != null) return Boolean(booleanValue)
-            if (integerValue != null) return Integer(integerValue)
-            if (decimalValue != null) return Decimal(decimalValue)
-            if (uriValue != null) return Uri(uriValue)
-            if (codeValue != null) return Code(codeValue)
-            if (dateTimeValue != null) return DateTime(dateTimeValue)
-            return null
-          }
-        }
-      }
 
       public class Builder(
         /**
@@ -1505,8 +1453,13 @@ public data class ValueSet(
          */
         public var modifierExtension: MutableList<Extension.Builder> = mutableListOf()
 
-        /** The value of the parameter. */
-        public var `value`: Value? = null
+        /**
+         * The value of the parameter.
+         *
+         * A FHIR choice type — one of: [Boolean] | [CodeBox] | [DateTime] | [Decimal] | [Integer] |
+         * [StringBox] | [Uri]
+         */
+        public var `value`: Parameter.Value? = null
 
         public fun build(): Parameter =
           Parameter(
@@ -1517,6 +1470,13 @@ public data class ValueSet(
             `value` = `value`,
           )
       }
+
+      /**
+       * A FHIR choice type — one of: [Boolean] | [CodeBox] | [DateTime] | [Decimal] | [Integer] |
+       * [StringBox] | [Uri]
+       */
+      public typealias Value =
+        FhirChoiceTypes.BooleanOrCodeOrDateTimeOrDecimalOrIntegerOrStringOrUri
     }
 
     /** The codes that are contained in the value set expansion. */

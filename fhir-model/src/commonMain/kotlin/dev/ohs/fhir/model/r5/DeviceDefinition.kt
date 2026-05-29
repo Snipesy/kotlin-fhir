@@ -35,7 +35,6 @@ import dev.ohs.fhir.model.r5.serializers.DeviceDefinitionUdiDeviceIdentifierSeri
 import dev.ohs.fhir.model.r5.serializers.DeviceDefinitionVersionSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -1618,8 +1617,11 @@ public data class DeviceDefinition(
      * not currently an appropriate concept in the vocabulary (e.g., a custom implant size, or a
      * security classification which depends on configuration. Otherwise the valueString choice type
      * is used for textual descriptive device properties that cannot be expressed in other elements.
+     *
+     * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Integer] |
+     * [Quantity] | [Range] | [String]
      */
-    public val `value`: Value,
+    public val `value`: Property.Value,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -1629,65 +1631,6 @@ public data class DeviceDefinition(
           modifierExtension = this@with.modifierExtension.map { it.toBuilder() }.toMutableList()
         }
       }
-
-    public sealed interface Value {
-      public fun asQuantity(): Quantity? = this as? Quantity
-
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asString(): String? = this as? String
-
-      public fun asBoolean(): Boolean? = this as? Boolean
-
-      public fun asInteger(): Integer? = this as? Integer
-
-      public fun asRange(): Range? = this as? Range
-
-      public fun asAttachment(): Attachment? = this as? Attachment
-
-      @JvmInline
-      public value class Quantity(public val `value`: dev.ohs.fhir.model.r5.Quantity) : Value
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r5.CodeableConcept
-      ) : Value
-
-      @JvmInline
-      public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : Value
-
-      @JvmInline
-      public value class Boolean(public val `value`: dev.ohs.fhir.model.r5.Boolean) : Value
-
-      @JvmInline
-      public value class Integer(public val `value`: dev.ohs.fhir.model.r5.Integer) : Value
-
-      @JvmInline public value class Range(public val `value`: dev.ohs.fhir.model.r5.Range) : Value
-
-      @JvmInline
-      public value class Attachment(public val `value`: dev.ohs.fhir.model.r5.Attachment) : Value
-
-      public companion object {
-        internal fun from(
-          quantityValue: dev.ohs.fhir.model.r5.Quantity?,
-          codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-          stringValue: dev.ohs.fhir.model.r5.String?,
-          booleanValue: dev.ohs.fhir.model.r5.Boolean?,
-          integerValue: dev.ohs.fhir.model.r5.Integer?,
-          rangeValue: dev.ohs.fhir.model.r5.Range?,
-          attachmentValue: dev.ohs.fhir.model.r5.Attachment?,
-        ): Value? {
-          if (quantityValue != null) return Quantity(quantityValue)
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (stringValue != null) return String(stringValue)
-          if (booleanValue != null) return Boolean(booleanValue)
-          if (integerValue != null) return Integer(integerValue)
-          if (rangeValue != null) return Range(rangeValue)
-          if (attachmentValue != null) return Attachment(attachmentValue)
-          return null
-        }
-      }
-    }
 
     public class Builder(
       /** Code that specifies the property such as a resolution or color being represented. */
@@ -1702,8 +1645,11 @@ public data class DeviceDefinition(
        * a security classification which depends on configuration. Otherwise the valueString choice
        * type is used for textual descriptive device properties that cannot be expressed in other
        * elements.
+       *
+       * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Integer] |
+       * [Quantity] | [Range] | [String]
        */
-      public var `value`: Value,
+      public var `value`: Property.Value,
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -1754,6 +1700,12 @@ public data class DeviceDefinition(
           `value` = `value`,
         )
     }
+
+    /**
+     * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Integer] |
+     * [Quantity] | [Range] | [String]
+     */
+    public typealias Value = FhirChoiceTypes.DevicePropertyValueChoice
   }
 
   /**

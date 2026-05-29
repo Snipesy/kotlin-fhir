@@ -24,7 +24,6 @@ import dev.ohs.fhir.model.r5.serializers.SpecimenSerializer
 import dev.ohs.fhir.model.r5.terminologies.SpecimenCombined
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -396,8 +395,12 @@ public data class Specimen(
     override val modifierExtension: List<Extension> = listOf(),
     /** Person who collected the specimen. */
     public val collector: Reference? = null,
-    /** Time when specimen was collected from subject - the physiologically relevant time. */
-    public val collected: Collected? = null,
+    /**
+     * Time when specimen was collected from subject - the physiologically relevant time.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Period]
+     */
+    public val collected: Collection.Collected? = null,
     /** The span of time over which the collection of a specimen occurred. */
     public val duration: Duration? = null,
     /**
@@ -432,8 +435,10 @@ public data class Specimen(
      * observation using a 'pre-coordinated code' such as LOINC 2005-7 (Calcium [Moles/​time] in 2
      * hour Urine --12 hours fasting), or using a component observation ` such as
      * `Observation.component code` = LOINC 49541-6 (Fasting status - Reported).
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Duration]
      */
-    public val fastingStatus: FastingStatus? = null,
+    public val fastingStatus: Collection.FastingStatus? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -452,55 +457,6 @@ public data class Specimen(
           fastingStatus = this@with.fastingStatus
         }
       }
-
-    public sealed interface Collected {
-      public fun asDateTime(): DateTime? = this as? DateTime
-
-      public fun asPeriod(): Period? = this as? Period
-
-      @JvmInline
-      public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) : Collected
-
-      @JvmInline
-      public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) : Collected
-
-      public companion object {
-        internal fun from(
-          dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-          periodValue: dev.ohs.fhir.model.r5.Period?,
-        ): Collected? {
-          if (dateTimeValue != null) return DateTime(dateTimeValue)
-          if (periodValue != null) return Period(periodValue)
-          return null
-        }
-      }
-    }
-
-    public sealed interface FastingStatus {
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asDuration(): Duration? = this as? Duration
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r5.CodeableConcept
-      ) : FastingStatus
-
-      @JvmInline
-      public value class Duration(public val `value`: dev.ohs.fhir.model.r5.Duration) :
-        FastingStatus
-
-      public companion object {
-        internal fun from(
-          codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-          durationValue: dev.ohs.fhir.model.r5.Duration?,
-        ): FastingStatus? {
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (durationValue != null) return Duration(durationValue)
-          return null
-        }
-      }
-    }
 
     public class Builder() {
       /**
@@ -546,8 +502,12 @@ public data class Specimen(
       /** Person who collected the specimen. */
       public var collector: Reference.Builder? = null
 
-      /** Time when specimen was collected from subject - the physiologically relevant time. */
-      public var collected: Collected? = null
+      /**
+       * Time when specimen was collected from subject - the physiologically relevant time.
+       *
+       * A FHIR choice type — one of: [DateTime] | [Period]
+       */
+      public var collected: Collection.Collected? = null
 
       /** The span of time over which the collection of a specimen occurred. */
       public var duration: Duration.Builder? = null
@@ -589,8 +549,10 @@ public data class Specimen(
        * observation using a 'pre-coordinated code' such as LOINC 2005-7 (Calcium [Moles/​time] in 2
        * hour Urine --12 hours fasting), or using a component observation ` such as
        * `Observation.component code` = LOINC 49541-6 (Fasting status - Reported).
+       *
+       * A FHIR choice type — one of: [CodeableConcept] | [Duration]
        */
-      public var fastingStatus: FastingStatus? = null
+      public var fastingStatus: Collection.FastingStatus? = null
 
       public fun build(): Collection =
         Collection(
@@ -608,6 +570,12 @@ public data class Specimen(
           fastingStatus = fastingStatus,
         )
     }
+
+    /** A FHIR choice type — one of: [DateTime] | [Period] */
+    public typealias Collected = FhirChoiceTypes.DateTimeOrPeriod
+
+    /** A FHIR choice type — one of: [CodeableConcept] | [Duration] */
+    public typealias FastingStatus = FhirChoiceTypes.CodeableConceptOrDuration
   }
 
   /** Details concerning processing and processing steps for the specimen. */
@@ -659,8 +627,10 @@ public data class Specimen(
     /**
      * A record of the time or period when the specimen processing occurred. For example the time of
      * sample fixation or the period of time the sample was in formalin.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Period]
      */
-    public val time: Time? = null,
+    public val time: FhirChoiceTypes.DateTimeOrPeriod? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -674,28 +644,6 @@ public data class Specimen(
           time = this@with.time
         }
       }
-
-    public sealed interface Time {
-      public fun asDateTime(): DateTime? = this as? DateTime
-
-      public fun asPeriod(): Period? = this as? Period
-
-      @JvmInline
-      public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) : Time
-
-      @JvmInline public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) : Time
-
-      public companion object {
-        internal fun from(
-          dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-          periodValue: dev.ohs.fhir.model.r5.Period?,
-        ): Time? {
-          if (dateTimeValue != null) return DateTime(dateTimeValue)
-          if (periodValue != null) return Period(periodValue)
-          return null
-        }
-      }
-    }
 
     public class Builder() {
       /**
@@ -750,8 +698,10 @@ public data class Specimen(
       /**
        * A record of the time or period when the specimen processing occurred. For example the time
        * of sample fixation or the period of time the sample was in formalin.
+       *
+       * A FHIR choice type — one of: [DateTime] | [Period]
        */
-      public var time: Time? = null
+      public var time: FhirChoiceTypes.DateTimeOrPeriod? = null
 
       public fun build(): Processing =
         Processing(

@@ -21,7 +21,6 @@ import dev.ohs.fhir.model.r4b.serializers.ObservationReferenceRangeSerializer
 import dev.ohs.fhir.model.r4b.serializers.ObservationSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -211,8 +210,10 @@ public data class Observation(
    * imprecise or "fuzzy" times (For example, a blood glucose measurement taken "after breakfast")
    * use the [Timing](datatypes.html#timing) datatype which allow the measurement to be tied to
    * regular life events.
+   *
+   * A FHIR choice type — one of: [DateTime] | [Instant] | [Period] | [Timing]
    */
-  public val effective: Effective? = null,
+  public val effective: Observation.Effective? = null,
   /**
    * The date and time this version of the observation was made available to providers, typically
    * after the results have been reviewed and verified.
@@ -236,8 +237,11 @@ public data class Observation(
    * a text would be used instead of a string if the field was usually coded, or if the type
    * associated with the Observation.code defines a coded value. For additional guidance, see the
    * [Notes section](observation.html#notes) below.
+   *
+   * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [DateTime] | [Integer] | [Period]
+   * | [Quantity] | [Range] | [Ratio] | [SampledData] | [String] | [Time]
    */
-  public val `value`: Value? = null,
+  public val `value`: Observation.Value? = null,
   /**
    * Provides a reason why the expected value in the element Observation.value[x] is missing.
    *
@@ -653,8 +657,11 @@ public data class Observation(
      * by Observation.code. A CodeableConcept with just a text would be used instead of a string if
      * the field was usually coded, or if the type associated with the Observation.code defines a
      * coded value. For additional guidance, see the [Notes section](observation.html#notes) below.
+     *
+     * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [DateTime] | [Integer] |
+     * [Period] | [Quantity] | [Range] | [Ratio] | [SampledData] | [String] | [Time]
      */
-    public val `value`: Value? = null,
+    public val `value`: Component.Value? = null,
     /**
      * Provides a reason why the expected value in the element Observation.component.value[x] is
      * missing.
@@ -702,92 +709,6 @@ public data class Observation(
           referenceRange = this@with.referenceRange.map { it.toBuilder() }.toMutableList()
         }
       }
-
-    public sealed interface Value {
-      public fun asQuantity(): Quantity? = this as? Quantity
-
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asString(): String? = this as? String
-
-      public fun asBoolean(): Boolean? = this as? Boolean
-
-      public fun asInteger(): Integer? = this as? Integer
-
-      public fun asRange(): Range? = this as? Range
-
-      public fun asRatio(): Ratio? = this as? Ratio
-
-      public fun asSampledData(): SampledData? = this as? SampledData
-
-      public fun asTime(): Time? = this as? Time
-
-      public fun asDateTime(): DateTime? = this as? DateTime
-
-      public fun asPeriod(): Period? = this as? Period
-
-      @JvmInline
-      public value class Quantity(public val `value`: dev.ohs.fhir.model.r4b.Quantity) : Value
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r4b.CodeableConcept
-      ) : Value
-
-      @JvmInline
-      public value class String(public val `value`: dev.ohs.fhir.model.r4b.String) : Value
-
-      @JvmInline
-      public value class Boolean(public val `value`: dev.ohs.fhir.model.r4b.Boolean) : Value
-
-      @JvmInline
-      public value class Integer(public val `value`: dev.ohs.fhir.model.r4b.Integer) : Value
-
-      @JvmInline public value class Range(public val `value`: dev.ohs.fhir.model.r4b.Range) : Value
-
-      @JvmInline public value class Ratio(public val `value`: dev.ohs.fhir.model.r4b.Ratio) : Value
-
-      @JvmInline
-      public value class SampledData(public val `value`: dev.ohs.fhir.model.r4b.SampledData) :
-        Value
-
-      @JvmInline public value class Time(public val `value`: dev.ohs.fhir.model.r4b.Time) : Value
-
-      @JvmInline
-      public value class DateTime(public val `value`: dev.ohs.fhir.model.r4b.DateTime) : Value
-
-      @JvmInline
-      public value class Period(public val `value`: dev.ohs.fhir.model.r4b.Period) : Value
-
-      public companion object {
-        internal fun from(
-          quantityValue: dev.ohs.fhir.model.r4b.Quantity?,
-          codeableConceptValue: dev.ohs.fhir.model.r4b.CodeableConcept?,
-          stringValue: dev.ohs.fhir.model.r4b.String?,
-          booleanValue: dev.ohs.fhir.model.r4b.Boolean?,
-          integerValue: dev.ohs.fhir.model.r4b.Integer?,
-          rangeValue: dev.ohs.fhir.model.r4b.Range?,
-          ratioValue: dev.ohs.fhir.model.r4b.Ratio?,
-          sampledDataValue: dev.ohs.fhir.model.r4b.SampledData?,
-          timeValue: dev.ohs.fhir.model.r4b.Time?,
-          dateTimeValue: dev.ohs.fhir.model.r4b.DateTime?,
-          periodValue: dev.ohs.fhir.model.r4b.Period?,
-        ): Value? {
-          if (quantityValue != null) return Quantity(quantityValue)
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (stringValue != null) return String(stringValue)
-          if (booleanValue != null) return Boolean(booleanValue)
-          if (integerValue != null) return Integer(integerValue)
-          if (rangeValue != null) return Range(rangeValue)
-          if (ratioValue != null) return Ratio(ratioValue)
-          if (sampledDataValue != null) return SampledData(sampledDataValue)
-          if (timeValue != null) return Time(timeValue)
-          if (dateTimeValue != null) return DateTime(dateTimeValue)
-          if (periodValue != null) return Period(periodValue)
-          return null
-        }
-      }
-    }
 
     public class Builder(
       /**
@@ -849,8 +770,11 @@ public data class Observation(
        * a string if the field was usually coded, or if the type associated with the
        * Observation.code defines a coded value. For additional guidance, see the
        * [Notes section](observation.html#notes) below.
+       *
+       * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [DateTime] | [Integer] |
+       * [Period] | [Quantity] | [Range] | [Ratio] | [SampledData] | [String] | [Time]
        */
-      public var `value`: Value? = null
+      public var `value`: Component.Value? = null
 
       /**
        * Provides a reason why the expected value in the element Observation.component.value[x] is
@@ -902,125 +826,12 @@ public data class Observation(
           referenceRange = referenceRange.map { it.build() },
         )
     }
-  }
 
-  public sealed interface Effective {
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    public fun asPeriod(): Period? = this as? Period
-
-    public fun asTiming(): Timing? = this as? Timing
-
-    public fun asInstant(): Instant? = this as? Instant
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r4b.DateTime) : Effective
-
-    @JvmInline
-    public value class Period(public val `value`: dev.ohs.fhir.model.r4b.Period) : Effective
-
-    @JvmInline
-    public value class Timing(public val `value`: dev.ohs.fhir.model.r4b.Timing) : Effective
-
-    @JvmInline
-    public value class Instant(public val `value`: dev.ohs.fhir.model.r4b.Instant) : Effective
-
-    public companion object {
-      internal fun from(
-        dateTimeValue: dev.ohs.fhir.model.r4b.DateTime?,
-        periodValue: dev.ohs.fhir.model.r4b.Period?,
-        timingValue: dev.ohs.fhir.model.r4b.Timing?,
-        instantValue: dev.ohs.fhir.model.r4b.Instant?,
-      ): Effective? {
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        if (periodValue != null) return Period(periodValue)
-        if (timingValue != null) return Timing(timingValue)
-        if (instantValue != null) return Instant(instantValue)
-        return null
-      }
-    }
-  }
-
-  public sealed interface Value {
-    public fun asQuantity(): Quantity? = this as? Quantity
-
-    public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-    public fun asString(): String? = this as? String
-
-    public fun asBoolean(): Boolean? = this as? Boolean
-
-    public fun asInteger(): Integer? = this as? Integer
-
-    public fun asRange(): Range? = this as? Range
-
-    public fun asRatio(): Ratio? = this as? Ratio
-
-    public fun asSampledData(): SampledData? = this as? SampledData
-
-    public fun asTime(): Time? = this as? Time
-
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    public fun asPeriod(): Period? = this as? Period
-
-    @JvmInline
-    public value class Quantity(public val `value`: dev.ohs.fhir.model.r4b.Quantity) : Value
-
-    @JvmInline
-    public value class CodeableConcept(public val `value`: dev.ohs.fhir.model.r4b.CodeableConcept) :
-      Value
-
-    @JvmInline public value class String(public val `value`: dev.ohs.fhir.model.r4b.String) : Value
-
-    @JvmInline
-    public value class Boolean(public val `value`: dev.ohs.fhir.model.r4b.Boolean) : Value
-
-    @JvmInline
-    public value class Integer(public val `value`: dev.ohs.fhir.model.r4b.Integer) : Value
-
-    @JvmInline public value class Range(public val `value`: dev.ohs.fhir.model.r4b.Range) : Value
-
-    @JvmInline public value class Ratio(public val `value`: dev.ohs.fhir.model.r4b.Ratio) : Value
-
-    @JvmInline
-    public value class SampledData(public val `value`: dev.ohs.fhir.model.r4b.SampledData) : Value
-
-    @JvmInline public value class Time(public val `value`: dev.ohs.fhir.model.r4b.Time) : Value
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r4b.DateTime) : Value
-
-    @JvmInline public value class Period(public val `value`: dev.ohs.fhir.model.r4b.Period) : Value
-
-    public companion object {
-      internal fun from(
-        quantityValue: dev.ohs.fhir.model.r4b.Quantity?,
-        codeableConceptValue: dev.ohs.fhir.model.r4b.CodeableConcept?,
-        stringValue: dev.ohs.fhir.model.r4b.String?,
-        booleanValue: dev.ohs.fhir.model.r4b.Boolean?,
-        integerValue: dev.ohs.fhir.model.r4b.Integer?,
-        rangeValue: dev.ohs.fhir.model.r4b.Range?,
-        ratioValue: dev.ohs.fhir.model.r4b.Ratio?,
-        sampledDataValue: dev.ohs.fhir.model.r4b.SampledData?,
-        timeValue: dev.ohs.fhir.model.r4b.Time?,
-        dateTimeValue: dev.ohs.fhir.model.r4b.DateTime?,
-        periodValue: dev.ohs.fhir.model.r4b.Period?,
-      ): Value? {
-        if (quantityValue != null) return Quantity(quantityValue)
-        if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-        if (stringValue != null) return String(stringValue)
-        if (booleanValue != null) return Boolean(booleanValue)
-        if (integerValue != null) return Integer(integerValue)
-        if (rangeValue != null) return Range(rangeValue)
-        if (ratioValue != null) return Ratio(ratioValue)
-        if (sampledDataValue != null) return SampledData(sampledDataValue)
-        if (timeValue != null) return Time(timeValue)
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        if (periodValue != null) return Period(periodValue)
-        return null
-      }
-    }
+    /**
+     * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [DateTime] | [Integer] |
+     * [Period] | [Quantity] | [Range] | [Ratio] | [SampledData] | [String] | [Time]
+     */
+    public typealias Value = FhirChoiceTypes.ObservationComponentValueChoice
   }
 
   public class Builder(
@@ -1225,8 +1036,10 @@ public data class Observation(
      * recording imprecise or "fuzzy" times (For example, a blood glucose measurement taken "after
      * breakfast") use the [Timing](datatypes.html#timing) datatype which allow the measurement to
      * be tied to regular life events.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Instant] | [Period] | [Timing]
      */
-    public var effective: Effective? = null
+    public var effective: Observation.Effective? = null
 
     /**
      * The date and time this version of the observation was made available to providers, typically
@@ -1253,8 +1066,11 @@ public data class Observation(
      * just a text would be used instead of a string if the field was usually coded, or if the type
      * associated with the Observation.code defines a coded value. For additional guidance, see the
      * [Notes section](observation.html#notes) below.
+     *
+     * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [DateTime] | [Integer] |
+     * [Period] | [Quantity] | [Range] | [Ratio] | [SampledData] | [String] | [Time]
      */
-    public var `value`: Value? = null
+    public var `value`: Observation.Value? = null
 
     /**
      * Provides a reason why the expected value in the element Observation.value[x] is missing.
@@ -1458,4 +1274,13 @@ public data class Observation(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [DateTime] | [Instant] | [Period] | [Timing] */
+  public typealias Effective = FhirChoiceTypes.DateTimeOrInstantOrPeriodOrTiming
+
+  /**
+   * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [DateTime] | [Integer] | [Period]
+   * | [Quantity] | [Range] | [Ratio] | [SampledData] | [String] | [Time]
+   */
+  public typealias Value = FhirChoiceTypes.ObservationComponentValueChoice
 }

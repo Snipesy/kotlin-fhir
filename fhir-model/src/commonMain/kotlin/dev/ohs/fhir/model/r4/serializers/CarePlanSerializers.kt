@@ -500,14 +500,10 @@ internal object CarePlanActivityDetailSerializer : KSerializer<CarePlan.Activity
       statusReason = statusReason,
       doNotPerform = R4Boolean.of(doNotPerform, _doNotPerform),
       scheduled =
-        CarePlan.Activity.Detail.Scheduled.from(
-          scheduledTiming,
-          scheduledPeriod,
-          R4String.of(scheduledString, _scheduledString),
-        ),
+        (scheduledTiming ?: scheduledPeriod ?: R4String.of(scheduledString, _scheduledString)),
       location = location,
       performer = performer ?: listOf(),
-      product = CarePlan.Activity.Detail.Product.from(productCodeableConcept, productReference),
+      product = (productCodeableConcept ?: productReference),
       dailyAmount = dailyAmount,
       quantity = quantity,
       description = R4String.of(description, _description),
@@ -566,15 +562,15 @@ internal object CarePlanActivityDetailSerializer : KSerializer<CarePlan.Activity
     }
     when (val choice = value.scheduled) {
       null -> {}
-      is CarePlan.Activity.Detail.Scheduled.Timing -> {
-        encoder.encodeSerializableElement(descriptor, 18, Hoisted.scheduledTimingSer, choice.value)
+      is Timing -> {
+        encoder.encodeSerializableElement(descriptor, 18, Hoisted.scheduledTimingSer, choice)
       }
-      is CarePlan.Activity.Detail.Scheduled.Period -> {
-        encoder.encodeSerializableElement(descriptor, 19, Hoisted.scheduledPeriodSer, choice.value)
+      is Period -> {
+        encoder.encodeSerializableElement(descriptor, 19, Hoisted.scheduledPeriodSer, choice)
       }
-      is CarePlan.Activity.Detail.Scheduled.String -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 20, it) }
-        (choice.value.toElement())?.let {
+      is R4String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 20, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 21, Hoisted.kindSer, it)
         }
       }
@@ -586,16 +582,11 @@ internal object CarePlanActivityDetailSerializer : KSerializer<CarePlan.Activity
       encoder.encodeSerializableElement(descriptor, 23, Hoisted.reasonReferenceSer, value.performer)
     when (val choice = value.product) {
       null -> {}
-      is CarePlan.Activity.Detail.Product.CodeableConcept -> {
-        encoder.encodeSerializableElement(descriptor, 24, Hoisted.codeSer, choice.value)
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 24, Hoisted.codeSer, choice)
       }
-      is CarePlan.Activity.Detail.Product.Reference -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          25,
-          Hoisted.reasonReferenceSerInner,
-          choice.value,
-        )
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 25, Hoisted.reasonReferenceSerInner, choice)
       }
     }
     (value.dailyAmount)?.let {

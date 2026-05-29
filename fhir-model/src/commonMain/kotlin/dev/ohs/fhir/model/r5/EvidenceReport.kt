@@ -25,7 +25,6 @@ import dev.ohs.fhir.model.r5.serializers.EvidenceReportSubjectSerializer
 import dev.ohs.fhir.model.r5.terminologies.PublicationStatus
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -185,8 +184,10 @@ public data class EvidenceReport(
    *
    * used for reports for which external citation is expected, such as use in support of scholarly
    * publications.
+   *
+   * A FHIR choice type — one of: [Markdown] | [Reference]
    */
-  public val citeAs: CiteAs? = null,
+  public val citeAs: EvidenceReport.CiteAs? = null,
   /**
    * Specifies the kind of report, such as grouping of classifiers, search results, or
    * human-compiled expression.
@@ -409,8 +410,11 @@ public data class EvidenceReport(
        *
        * Example 1 is Citation #37. Example 2 is selecting clinical outcomes. Example 3 is 1-year
        * mortality.
+       *
+       * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range] |
+       * [Reference]
        */
-      public val `value`: Value,
+      public val `value`: Characteristic.Value,
       /** Is used to express not the characteristic. */
       public val exclude: Boolean? = null,
       /** Timeframe for the characteristic. */
@@ -427,52 +431,6 @@ public data class EvidenceReport(
           }
         }
 
-      public sealed interface Value {
-        public fun asReference(): Reference? = this as? Reference
-
-        public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-        public fun asBoolean(): Boolean? = this as? Boolean
-
-        public fun asQuantity(): Quantity? = this as? Quantity
-
-        public fun asRange(): Range? = this as? Range
-
-        @JvmInline
-        public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : Value
-
-        @JvmInline
-        public value class CodeableConcept(
-          public val `value`: dev.ohs.fhir.model.r5.CodeableConcept
-        ) : Value
-
-        @JvmInline
-        public value class Boolean(public val `value`: dev.ohs.fhir.model.r5.Boolean) : Value
-
-        @JvmInline
-        public value class Quantity(public val `value`: dev.ohs.fhir.model.r5.Quantity) : Value
-
-        @JvmInline
-        public value class Range(public val `value`: dev.ohs.fhir.model.r5.Range) : Value
-
-        public companion object {
-          internal fun from(
-            referenceValue: dev.ohs.fhir.model.r5.Reference?,
-            codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-            booleanValue: dev.ohs.fhir.model.r5.Boolean?,
-            quantityValue: dev.ohs.fhir.model.r5.Quantity?,
-            rangeValue: dev.ohs.fhir.model.r5.Range?,
-          ): Value? {
-            if (referenceValue != null) return Reference(referenceValue)
-            if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-            if (booleanValue != null) return Boolean(booleanValue)
-            if (quantityValue != null) return Quantity(quantityValue)
-            if (rangeValue != null) return Range(rangeValue)
-            return null
-          }
-        }
-      }
-
       public class Builder(
         /**
          * Characteristic code.
@@ -485,8 +443,11 @@ public data class EvidenceReport(
          *
          * Example 1 is Citation #37. Example 2 is selecting clinical outcomes. Example 3 is 1-year
          * mortality.
+         *
+         * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range] |
+         * [Reference]
          */
-        public var `value`: Value,
+        public var `value`: Characteristic.Value,
       ) {
         /**
          * Unique id for the element within a resource (for internal references). This may be any
@@ -545,6 +506,12 @@ public data class EvidenceReport(
             period = period?.build(),
           )
       }
+
+      /**
+       * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range] |
+       * [Reference]
+       */
+      public typealias Value = FhirChoiceTypes.BooleanOrCodeableConceptOrQuantityOrRangeOrReference
     }
 
     public class Builder() {
@@ -1167,29 +1134,6 @@ public data class EvidenceReport(
     }
   }
 
-  public sealed interface CiteAs {
-    public fun asReference(): Reference? = this as? Reference
-
-    public fun asMarkdown(): Markdown? = this as? Markdown
-
-    @JvmInline
-    public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : CiteAs
-
-    @JvmInline
-    public value class Markdown(public val `value`: dev.ohs.fhir.model.r5.Markdown) : CiteAs
-
-    public companion object {
-      internal fun from(
-        referenceValue: dev.ohs.fhir.model.r5.Reference?,
-        markdownValue: dev.ohs.fhir.model.r5.Markdown?,
-      ): CiteAs? {
-        if (referenceValue != null) return Reference(referenceValue)
-        if (markdownValue != null) return Markdown(markdownValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
     /**
      * The status of this summary. Enables tracking the life-cycle of the content.
@@ -1359,8 +1303,10 @@ public data class EvidenceReport(
      *
      * used for reports for which external citation is expected, such as use in support of scholarly
      * publications.
+     *
+     * A FHIR choice type — one of: [Markdown] | [Reference]
      */
-    public var citeAs: CiteAs? = null
+    public var citeAs: EvidenceReport.CiteAs? = null
 
     /**
      * Specifies the kind of report, such as grouping of classifiers, search results, or
@@ -1554,4 +1500,7 @@ public data class EvidenceReport(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [Markdown] | [Reference] */
+  public typealias CiteAs = FhirChoiceTypes.MarkdownOrReference
 }

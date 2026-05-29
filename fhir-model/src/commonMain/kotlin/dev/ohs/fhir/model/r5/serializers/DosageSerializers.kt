@@ -120,8 +120,8 @@ internal object DosageDoseAndRateSerializer : KSerializer<Dosage.DoseAndRate> {
       id = id,
       extension = extension ?: listOf(),
       type = type,
-      dose = Dosage.DoseAndRate.Dose.from(doseRange, doseQuantity),
-      rate = Dosage.DoseAndRate.Rate.from(rateRatio, rateRange, rateQuantity),
+      dose = (doseRange ?: doseQuantity),
+      rate = (rateRatio ?: rateRange ?: rateQuantity),
     )
   }
 
@@ -132,23 +132,23 @@ internal object DosageDoseAndRateSerializer : KSerializer<Dosage.DoseAndRate> {
     (value.type)?.let { encoder.encodeSerializableElement(descriptor, 2, Hoisted.typeSer, it) }
     when (val choice = value.dose) {
       null -> {}
-      is Dosage.DoseAndRate.Dose.Range -> {
-        encoder.encodeSerializableElement(descriptor, 3, Hoisted.doseRangeSer, choice.value)
+      is Range -> {
+        encoder.encodeSerializableElement(descriptor, 3, Hoisted.doseRangeSer, choice)
       }
-      is Dosage.DoseAndRate.Dose.Quantity -> {
-        encoder.encodeSerializableElement(descriptor, 4, Hoisted.doseQuantitySer, choice.value)
+      is Quantity -> {
+        encoder.encodeSerializableElement(descriptor, 4, Hoisted.doseQuantitySer, choice)
       }
     }
     when (val choice = value.rate) {
       null -> {}
-      is Dosage.DoseAndRate.Rate.Ratio -> {
-        encoder.encodeSerializableElement(descriptor, 5, Hoisted.rateRatioSer, choice.value)
+      is Ratio -> {
+        encoder.encodeSerializableElement(descriptor, 5, Hoisted.rateRatioSer, choice)
       }
-      is Dosage.DoseAndRate.Rate.Range -> {
-        encoder.encodeSerializableElement(descriptor, 6, Hoisted.doseRangeSer, choice.value)
+      is Range -> {
+        encoder.encodeSerializableElement(descriptor, 6, Hoisted.doseRangeSer, choice)
       }
-      is Dosage.DoseAndRate.Rate.Quantity -> {
-        encoder.encodeSerializableElement(descriptor, 7, Hoisted.doseQuantitySer, choice.value)
+      is Quantity -> {
+        encoder.encodeSerializableElement(descriptor, 7, Hoisted.doseQuantitySer, choice)
       }
     }
   }

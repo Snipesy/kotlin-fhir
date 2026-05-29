@@ -172,12 +172,10 @@ internal object VirtualServiceDetailSerializer : KSerializer<VirtualServiceDetai
       extension = extension ?: listOf(),
       channelType = channelType,
       address =
-        VirtualServiceDetail.Address.from(
-          Url.of(addressUrl, _addressUrl),
-          R5String.of(addressString, _addressString),
-          addressContactPoint,
-          addressExtendedContactDetail,
-        ),
+        (Url.of(addressUrl, _addressUrl)
+          ?: R5String.of(addressString, _addressString)
+          ?: addressContactPoint
+          ?: addressExtendedContactDetail),
       additionalInfo =
         (kotlin.collections.List(maxOf(additionalInfo?.size ?: 0, _additionalInfo?.size ?: 0)) {
           index ->
@@ -197,32 +195,27 @@ internal object VirtualServiceDetailSerializer : KSerializer<VirtualServiceDetai
     }
     when (val choice = value.address) {
       null -> {}
-      is VirtualServiceDetail.Address.Url -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 3, it) }
-        (choice.value.toElement())?.let {
+      is Url -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 3, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 4, Hoisted.addressUrlSer, it)
         }
       }
-      is VirtualServiceDetail.Address.String -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
-        (choice.value.toElement())?.let {
+      is R5String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 6, Hoisted.addressUrlSer, it)
         }
       }
-      is VirtualServiceDetail.Address.ContactPoint -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          7,
-          Hoisted.addressContactPointSer,
-          choice.value,
-        )
+      is ContactPoint -> {
+        encoder.encodeSerializableElement(descriptor, 7, Hoisted.addressContactPointSer, choice)
       }
-      is VirtualServiceDetail.Address.ExtendedContactDetail -> {
+      is ExtendedContactDetail -> {
         encoder.encodeSerializableElement(
           descriptor,
           8,
           Hoisted.addressExtendedContactDetailSer,
-          choice.value,
+          choice,
         )
       }
     }

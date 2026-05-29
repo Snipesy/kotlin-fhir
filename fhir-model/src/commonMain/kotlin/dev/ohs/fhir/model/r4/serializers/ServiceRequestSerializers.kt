@@ -520,20 +520,14 @@ internal object ServiceRequestSerializer : KSerializer<ServiceRequest> {
       doNotPerform = R4Boolean.of(doNotPerform, _doNotPerform),
       code = code,
       orderDetail = orderDetail ?: listOf(),
-      quantity = ServiceRequest.Quantity.from(quantityQuantity, quantityRatio, quantityRange),
+      quantity = (quantityQuantity ?: quantityRatio ?: quantityRange),
       subject = subject!!,
       encounter = encounter,
       occurrence =
-        ServiceRequest.Occurrence.from(
-          DateTime.of(FhirDateTime.fromString(occurrenceDateTime), _occurrenceDateTime),
-          occurrencePeriod,
-          occurrenceTiming,
-        ),
-      asNeeded =
-        ServiceRequest.AsNeeded.from(
-          R4Boolean.of(asNeededBoolean, _asNeededBoolean),
-          asNeededCodeableConcept,
-        ),
+        (DateTime.of(FhirDateTime.fromString(occurrenceDateTime), _occurrenceDateTime)
+          ?: occurrencePeriod
+          ?: occurrenceTiming),
+      asNeeded = (R4Boolean.of(asNeededBoolean, _asNeededBoolean) ?: asNeededCodeableConcept),
       authoredOn = DateTime.of(FhirDateTime.fromString(authoredOn), _authoredOn),
       requester = requester,
       performerType = performerType,
@@ -737,28 +731,28 @@ internal object ServiceRequestSerializer : KSerializer<ServiceRequest> {
       )
     when (val choice = value.quantity) {
       null -> {}
-      is ServiceRequest.Quantity.Quantity -> {
+      is Quantity -> {
         encoder.encodeSerializableElement(
           descriptor,
           29 + descriptorOffset,
           Hoisted.quantityQuantitySer,
-          choice.value,
+          choice,
         )
       }
-      is ServiceRequest.Quantity.Ratio -> {
+      is Ratio -> {
         encoder.encodeSerializableElement(
           descriptor,
           30 + descriptorOffset,
           Hoisted.quantityRatioSer,
-          choice.value,
+          choice,
         )
       }
-      is ServiceRequest.Quantity.Range -> {
+      is Range -> {
         encoder.encodeSerializableElement(
           descriptor,
           31 + descriptorOffset,
           Hoisted.quantityRangeSer,
-          choice.value,
+          choice,
         )
       }
     }
@@ -778,11 +772,11 @@ internal object ServiceRequestSerializer : KSerializer<ServiceRequest> {
     }
     when (val choice = value.occurrence) {
       null -> {}
-      is ServiceRequest.Occurrence.DateTime -> {
-        ((choice.value.value?.toString()))?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let {
           encoder.encodeStringElement(descriptor, 34 + descriptorOffset, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             35 + descriptorOffset,
@@ -791,30 +785,30 @@ internal object ServiceRequestSerializer : KSerializer<ServiceRequest> {
           )
         }
       }
-      is ServiceRequest.Occurrence.Period -> {
+      is Period -> {
         encoder.encodeSerializableElement(
           descriptor,
           36 + descriptorOffset,
           Hoisted.occurrencePeriodSer,
-          choice.value,
+          choice,
         )
       }
-      is ServiceRequest.Occurrence.Timing -> {
+      is Timing -> {
         encoder.encodeSerializableElement(
           descriptor,
           37 + descriptorOffset,
           Hoisted.occurrenceTimingSer,
-          choice.value,
+          choice,
         )
       }
     }
     when (val choice = value.asNeeded) {
       null -> {}
-      is ServiceRequest.AsNeeded.Boolean -> {
-        ((choice.value.value))?.let {
+      is R4Boolean -> {
+        ((choice.value))?.let {
           encoder.encodeBooleanElement(descriptor, 38 + descriptorOffset, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             39 + descriptorOffset,
@@ -823,12 +817,12 @@ internal object ServiceRequestSerializer : KSerializer<ServiceRequest> {
           )
         }
       }
-      is ServiceRequest.AsNeeded.CodeableConcept -> {
+      is CodeableConcept -> {
         encoder.encodeSerializableElement(
           descriptor,
           40 + descriptorOffset,
           Hoisted.categorySerInner,
-          choice.value,
+          choice,
         )
       }
     }

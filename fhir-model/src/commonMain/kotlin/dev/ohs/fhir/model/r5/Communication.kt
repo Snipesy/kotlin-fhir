@@ -21,7 +21,6 @@ import dev.ohs.fhir.model.r5.serializers.CommunicationSerializer
 import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -348,8 +347,10 @@ public data class Communication(
      *
      * When using contentCodeableConcept, the CodeableConcept is what is being communicated and is
      * not a categorization of the content.
+     *
+     * A FHIR choice type — one of: [Attachment] | [CodeableConcept] | [Reference]
      */
-    public val content: Content,
+    public val content: Payload.Content,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -359,38 +360,6 @@ public data class Communication(
           modifierExtension = this@with.modifierExtension.map { it.toBuilder() }.toMutableList()
         }
       }
-
-    public sealed interface Content {
-      public fun asAttachment(): Attachment? = this as? Attachment
-
-      public fun asReference(): Reference? = this as? Reference
-
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      @JvmInline
-      public value class Attachment(public val `value`: dev.ohs.fhir.model.r5.Attachment) : Content
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : Content
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r5.CodeableConcept
-      ) : Content
-
-      public companion object {
-        internal fun from(
-          attachmentValue: dev.ohs.fhir.model.r5.Attachment?,
-          referenceValue: dev.ohs.fhir.model.r5.Reference?,
-          codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-        ): Content? {
-          if (attachmentValue != null) return Attachment(attachmentValue)
-          if (referenceValue != null) return Reference(referenceValue)
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          return null
-        }
-      }
-    }
 
     public class Builder(
       /**
@@ -406,8 +375,10 @@ public data class Communication(
        *
        * When using contentCodeableConcept, the CodeableConcept is what is being communicated and is
        * not a categorization of the content.
+       *
+       * A FHIR choice type — one of: [Attachment] | [CodeableConcept] | [Reference]
        */
-      public var content: Content
+      public var content: Payload.Content
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -457,6 +428,9 @@ public data class Communication(
           content = content,
         )
     }
+
+    /** A FHIR choice type — one of: [Attachment] | [CodeableConcept] | [Reference] */
+    public typealias Content = FhirChoiceTypes.AttachmentOrCodeableConceptOrReference
   }
 
   public class Builder(

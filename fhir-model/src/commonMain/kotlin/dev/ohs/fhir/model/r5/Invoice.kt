@@ -21,7 +21,6 @@ import dev.ohs.fhir.model.r5.serializers.InvoiceParticipantSerializer
 import dev.ohs.fhir.model.r5.serializers.InvoiceSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -164,8 +163,12 @@ public data class Invoice(
    * The list of types may be constrained as appropriate for the type of charge item.
    */
   public val creation: DateTime? = null,
-  /** Date/time(s) range of services included in this invoice. */
-  public val period: Period? = null,
+  /**
+   * Date/time(s) range of services included in this invoice.
+   *
+   * A FHIR choice type — one of: [Date] | [Period]
+   */
+  public val period: FhirChoiceTypes.DateOrPeriod? = null,
   /** Indicates who or what performed or participated in the charged service. */
   public val participant: List<Participant> = listOf(),
   /**
@@ -420,14 +423,20 @@ public data class Invoice(
     override val modifierExtension: List<Extension> = listOf(),
     /** Sequence in which the items appear on the invoice. */
     public val sequence: PositiveInt? = null,
-    /** Date/time(s) range when this service was delivered or completed. */
-    public val serviced: Serviced? = null,
+    /**
+     * Date/time(s) range when this service was delivered or completed.
+     *
+     * A FHIR choice type — one of: [Date] | [Period]
+     */
+    public val serviced: LineItem.Serviced? = null,
     /**
      * The ChargeItem contains information such as the billing code, date, amount etc. If no further
      * details are required for the lineItem, inline billing codes can be added using the
      * CodeableConcept data type instead of the Reference.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public val chargeItem: ChargeItem,
+    public val chargeItem: FhirChoiceTypes.CodeableConceptOrReference,
     /**
      * The price for a ChargeItem may be calculated as a base price with surcharges/deductions that
      * apply in certain conditions. A ChargeItemDefinition resource that defines the prices, factors
@@ -449,61 +458,15 @@ public data class Invoice(
         }
       }
 
-    public sealed interface Serviced {
-      public fun asDate(): Date? = this as? Date
-
-      public fun asPeriod(): Period? = this as? Period
-
-      @JvmInline public value class Date(public val `value`: dev.ohs.fhir.model.r5.Date) : Serviced
-
-      @JvmInline
-      public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) : Serviced
-
-      public companion object {
-        internal fun from(
-          dateValue: dev.ohs.fhir.model.r5.Date?,
-          periodValue: dev.ohs.fhir.model.r5.Period?,
-        ): Serviced? {
-          if (dateValue != null) return Date(dateValue)
-          if (periodValue != null) return Period(periodValue)
-          return null
-        }
-      }
-    }
-
-    public sealed interface ChargeItem {
-      public fun asReference(): Reference? = this as? Reference
-
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) :
-        ChargeItem
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r5.CodeableConcept
-      ) : ChargeItem
-
-      public companion object {
-        internal fun from(
-          referenceValue: dev.ohs.fhir.model.r5.Reference?,
-          codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-        ): ChargeItem? {
-          if (referenceValue != null) return Reference(referenceValue)
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          return null
-        }
-      }
-    }
-
     public class Builder(
       /**
        * The ChargeItem contains information such as the billing code, date, amount etc. If no
        * further details are required for the lineItem, inline billing codes can be added using the
        * CodeableConcept data type instead of the Reference.
+       *
+       * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public var chargeItem: ChargeItem
+      public var chargeItem: FhirChoiceTypes.CodeableConceptOrReference
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -548,8 +511,12 @@ public data class Invoice(
       /** Sequence in which the items appear on the invoice. */
       public var sequence: PositiveInt.Builder? = null
 
-      /** Date/time(s) range when this service was delivered or completed. */
-      public var serviced: Serviced? = null
+      /**
+       * Date/time(s) range when this service was delivered or completed.
+       *
+       * A FHIR choice type — one of: [Date] | [Period]
+       */
+      public var serviced: LineItem.Serviced? = null
 
       /**
        * The price for a ChargeItem may be calculated as a base price with surcharges/deductions
@@ -571,29 +538,9 @@ public data class Invoice(
           priceComponent = priceComponent.map { it.build() },
         )
     }
-  }
 
-  public sealed interface Period {
-    public fun asDate(): Date? = this as? Date
-
-    public fun asPeriod(): Period? = this as? Period
-
-    @JvmInline
-    public value class Date(public val `value`: dev.ohs.fhir.model.r5.Date) : Invoice.Period
-
-    @JvmInline
-    public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) : Invoice.Period
-
-    public companion object {
-      internal fun from(
-        dateValue: dev.ohs.fhir.model.r5.Date?,
-        periodValue: dev.ohs.fhir.model.r5.Period?,
-      ): Invoice.Period? {
-        if (dateValue != null) return Date(dateValue)
-        if (periodValue != null) return Period(periodValue)
-        return null
-      }
-    }
+    /** A FHIR choice type — one of: [Date] | [Period] */
+    public typealias Serviced = FhirChoiceTypes.DateOrPeriod
   }
 
   public class Builder(
@@ -746,8 +693,12 @@ public data class Invoice(
      */
     public var creation: DateTime.Builder? = null
 
-    /** Date/time(s) range of services included in this invoice. */
-    public var period: Period? = null
+    /**
+     * Date/time(s) range of services included in this invoice.
+     *
+     * A FHIR choice type — one of: [Date] | [Period]
+     */
+    public var period: FhirChoiceTypes.DateOrPeriod? = null
 
     /** Indicates who or what performed or participated in the charged service. */
     public var participant: MutableList<Participant.Builder> = mutableListOf()

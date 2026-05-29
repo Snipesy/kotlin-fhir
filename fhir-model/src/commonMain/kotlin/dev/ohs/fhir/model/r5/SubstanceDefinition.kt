@@ -30,7 +30,6 @@ import dev.ohs.fhir.model.r5.serializers.SubstanceDefinitionStructureRepresentat
 import dev.ohs.fhir.model.r5.serializers.SubstanceDefinitionStructureSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -294,8 +293,12 @@ public data class SubstanceDefinition(
     public val opticalActivity: CodeableConcept? = null,
     /** Molecular formula for this moiety of this substance, typically using the Hill system. */
     public val molecularFormula: String? = null,
-    /** Quantitative value for this moiety. */
-    public val amount: Amount? = null,
+    /**
+     * Quantitative value for this moiety.
+     *
+     * A FHIR choice type — one of: [Quantity] | [String]
+     */
+    public val amount: Moiety.Amount? = null,
     /**
      * The measurement type of the quantitative value. In capturing the actual relative amounts of
      * substances or molecular fragments it may be necessary to indicate whether the amount refers
@@ -319,29 +322,6 @@ public data class SubstanceDefinition(
           measurementType = this@with.measurementType?.toBuilder()
         }
       }
-
-    public sealed interface Amount {
-      public fun asQuantity(): Quantity? = this as? Quantity
-
-      public fun asString(): String? = this as? String
-
-      @JvmInline
-      public value class Quantity(public val `value`: dev.ohs.fhir.model.r5.Quantity) : Amount
-
-      @JvmInline
-      public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : Amount
-
-      public companion object {
-        internal fun from(
-          quantityValue: dev.ohs.fhir.model.r5.Quantity?,
-          stringValue: dev.ohs.fhir.model.r5.String?,
-        ): Amount? {
-          if (quantityValue != null) return Quantity(quantityValue)
-          if (stringValue != null) return String(stringValue)
-          return null
-        }
-      }
-    }
 
     public class Builder() {
       /**
@@ -402,8 +382,12 @@ public data class SubstanceDefinition(
       /** Molecular formula for this moiety of this substance, typically using the Hill system. */
       public var molecularFormula: String.Builder? = null
 
-      /** Quantitative value for this moiety. */
-      public var amount: Amount? = null
+      /**
+       * Quantitative value for this moiety.
+       *
+       * A FHIR choice type — one of: [Quantity] | [String]
+       */
+      public var amount: Moiety.Amount? = null
 
       /**
        * The measurement type of the quantitative value. In capturing the actual relative amounts of
@@ -427,6 +411,9 @@ public data class SubstanceDefinition(
           measurementType = measurementType?.build(),
         )
     }
+
+    /** A FHIR choice type — one of: [Quantity] | [String] */
+    public typealias Amount = FhirChoiceTypes.QuantityOrString
   }
 
   /** General specifications for this substance. */
@@ -611,8 +598,13 @@ public data class SubstanceDefinition(
     override val modifierExtension: List<Extension> = listOf(),
     /** A code expressing the type of property. */
     public val type: CodeableConcept,
-    /** A value for the property. */
-    public val `value`: Value? = null,
+    /**
+     * A value for the property.
+     *
+     * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
+     * [Quantity]
+     */
+    public val `value`: Property.Value? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -623,51 +615,6 @@ public data class SubstanceDefinition(
           `value` = this@with.`value`
         }
       }
-
-    public sealed interface Value {
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asQuantity(): Quantity? = this as? Quantity
-
-      public fun asDate(): Date? = this as? Date
-
-      public fun asBoolean(): Boolean? = this as? Boolean
-
-      public fun asAttachment(): Attachment? = this as? Attachment
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r5.CodeableConcept
-      ) : Value
-
-      @JvmInline
-      public value class Quantity(public val `value`: dev.ohs.fhir.model.r5.Quantity) : Value
-
-      @JvmInline public value class Date(public val `value`: dev.ohs.fhir.model.r5.Date) : Value
-
-      @JvmInline
-      public value class Boolean(public val `value`: dev.ohs.fhir.model.r5.Boolean) : Value
-
-      @JvmInline
-      public value class Attachment(public val `value`: dev.ohs.fhir.model.r5.Attachment) : Value
-
-      public companion object {
-        internal fun from(
-          codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-          quantityValue: dev.ohs.fhir.model.r5.Quantity?,
-          dateValue: dev.ohs.fhir.model.r5.Date?,
-          booleanValue: dev.ohs.fhir.model.r5.Boolean?,
-          attachmentValue: dev.ohs.fhir.model.r5.Attachment?,
-        ): Value? {
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (quantityValue != null) return Quantity(quantityValue)
-          if (dateValue != null) return Date(dateValue)
-          if (booleanValue != null) return Boolean(booleanValue)
-          if (attachmentValue != null) return Attachment(attachmentValue)
-          return null
-        }
-      }
-    }
 
     public class Builder(
       /** A code expressing the type of property. */
@@ -713,8 +660,13 @@ public data class SubstanceDefinition(
        */
       public var modifierExtension: MutableList<Extension.Builder> = mutableListOf()
 
-      /** A value for the property. */
-      public var `value`: Value? = null
+      /**
+       * A value for the property.
+       *
+       * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
+       * [Quantity]
+       */
+      public var `value`: Property.Value? = null
 
       public fun build(): Property =
         Property(
@@ -725,6 +677,12 @@ public data class SubstanceDefinition(
           `value` = `value`,
         )
     }
+
+    /**
+     * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
+     * [Quantity]
+     */
+    public typealias Value = FhirChoiceTypes.AttachmentOrBooleanOrCodeableConceptOrDateOrQuantity
   }
 
   /**
@@ -1655,8 +1613,12 @@ public data class SubstanceDefinition(
      * simplicity for everyone.
      */
     override val modifierExtension: List<Extension> = listOf(),
-    /** A pointer to another substance, as a resource or just a representational code. */
-    public val substanceDefinition: SubstanceDefinition? = null,
+    /**
+     * A pointer to another substance, as a resource or just a representational code.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Reference]
+     */
+    public val substanceDefinition: FhirChoiceTypes.CodeableConceptOrReference? = null,
     /**
      * For example "salt to parent", "active moiety", "starting material", "polymorph", "impurity
      * of".
@@ -1670,8 +1632,10 @@ public data class SubstanceDefinition(
     /**
      * A numeric factor for the relationship, for instance to express that the salt of a substance
      * has some percentage of the active substance in relation to some other.
+     *
+     * A FHIR choice type — one of: [Quantity] | [Ratio] | [String]
      */
-    public val amount: Amount? = null,
+    public val amount: Relationship.Amount? = null,
     /** For use when the numeric has an uncertain range. */
     public val ratioHighLimitAmount: Ratio? = null,
     /** An operator for the amount, for example "average", "approximately", "less than". */
@@ -1693,61 +1657,6 @@ public data class SubstanceDefinition(
           source = this@with.source.map { it.toBuilder() }.toMutableList()
         }
       }
-
-    public sealed interface SubstanceDefinition {
-      public fun asReference(): Reference? = this as? Reference
-
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) :
-        SubstanceDefinition
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r5.CodeableConcept
-      ) : SubstanceDefinition
-
-      public companion object {
-        internal fun from(
-          referenceValue: dev.ohs.fhir.model.r5.Reference?,
-          codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-        ): SubstanceDefinition? {
-          if (referenceValue != null) return Reference(referenceValue)
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          return null
-        }
-      }
-    }
-
-    public sealed interface Amount {
-      public fun asQuantity(): Quantity? = this as? Quantity
-
-      public fun asRatio(): Ratio? = this as? Ratio
-
-      public fun asString(): String? = this as? String
-
-      @JvmInline
-      public value class Quantity(public val `value`: dev.ohs.fhir.model.r5.Quantity) : Amount
-
-      @JvmInline public value class Ratio(public val `value`: dev.ohs.fhir.model.r5.Ratio) : Amount
-
-      @JvmInline
-      public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : Amount
-
-      public companion object {
-        internal fun from(
-          quantityValue: dev.ohs.fhir.model.r5.Quantity?,
-          ratioValue: dev.ohs.fhir.model.r5.Ratio?,
-          stringValue: dev.ohs.fhir.model.r5.String?,
-        ): Amount? {
-          if (quantityValue != null) return Quantity(quantityValue)
-          if (ratioValue != null) return Ratio(ratioValue)
-          if (stringValue != null) return String(stringValue)
-          return null
-        }
-      }
-    }
 
     public class Builder(
       /**
@@ -1796,8 +1705,12 @@ public data class SubstanceDefinition(
        */
       public var modifierExtension: MutableList<Extension.Builder> = mutableListOf()
 
-      /** A pointer to another substance, as a resource or just a representational code. */
-      public var substanceDefinition: SubstanceDefinition? = null
+      /**
+       * A pointer to another substance, as a resource or just a representational code.
+       *
+       * A FHIR choice type — one of: [CodeableConcept] | [Reference]
+       */
+      public var substanceDefinition: FhirChoiceTypes.CodeableConceptOrReference? = null
 
       /**
        * For example where an enzyme strongly bonds with a particular substance, this is a defining
@@ -1808,8 +1721,10 @@ public data class SubstanceDefinition(
       /**
        * A numeric factor for the relationship, for instance to express that the salt of a substance
        * has some percentage of the active substance in relation to some other.
+       *
+       * A FHIR choice type — one of: [Quantity] | [Ratio] | [String]
        */
-      public var amount: Amount? = null
+      public var amount: Relationship.Amount? = null
 
       /** For use when the numeric has an uncertain range. */
       public var ratioHighLimitAmount: Ratio.Builder? = null
@@ -1834,6 +1749,9 @@ public data class SubstanceDefinition(
           source = source.map { it.build() },
         )
     }
+
+    /** A FHIR choice type — one of: [Quantity] | [Ratio] | [String] */
+    public typealias Amount = FhirChoiceTypes.QuantityOrRatioOrString
   }
 
   /** Material or taxonomic/anatomical source for the substance. */

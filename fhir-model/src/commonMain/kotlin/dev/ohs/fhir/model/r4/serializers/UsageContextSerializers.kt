@@ -123,8 +123,7 @@ internal object UsageContextSerializer : KSerializer<UsageContext> {
       id = id,
       extension = extension ?: listOf(),
       code = code!!,
-      `value` =
-        UsageContext.Value.from(valueCodeableConcept, valueQuantity, valueRange, valueReference)!!,
+      `value` = (valueCodeableConcept ?: valueQuantity ?: valueRange ?: valueReference)!!,
     )
   }
 
@@ -134,22 +133,17 @@ internal object UsageContextSerializer : KSerializer<UsageContext> {
       encoder.encodeSerializableElement(descriptor, 1, Hoisted.extensionSer, value.extension)
     encoder.encodeSerializableElement(descriptor, 2, Hoisted.codeSer, value.code)
     when (val choice = value.`value`) {
-      is UsageContext.Value.CodeableConcept -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          3,
-          Hoisted.valueCodeableConceptSer,
-          choice.value,
-        )
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 3, Hoisted.valueCodeableConceptSer, choice)
       }
-      is UsageContext.Value.Quantity -> {
-        encoder.encodeSerializableElement(descriptor, 4, Hoisted.valueQuantitySer, choice.value)
+      is Quantity -> {
+        encoder.encodeSerializableElement(descriptor, 4, Hoisted.valueQuantitySer, choice)
       }
-      is UsageContext.Value.Range -> {
-        encoder.encodeSerializableElement(descriptor, 5, Hoisted.valueRangeSer, choice.value)
+      is Range -> {
+        encoder.encodeSerializableElement(descriptor, 5, Hoisted.valueRangeSer, choice)
       }
-      is UsageContext.Value.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 6, Hoisted.valueReferenceSer, choice.value)
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 6, Hoisted.valueReferenceSer, choice)
       }
     }
   }

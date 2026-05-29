@@ -21,7 +21,6 @@ import dev.ohs.fhir.model.r4.serializers.SupplyDeliverySuppliedItemSerializer
 import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -163,8 +162,10 @@ public data class SupplyDelivery(
    * The date or time(s) the activity occurred.
    *
    * [The list of types may be constrained as appropriate for the type of event].
+   *
+   * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
    */
-  public val occurrence: Occurrence? = null,
+  public val occurrence: SupplyDelivery.Occurrence? = null,
   /** The individual responsible for dispensing the medication, supplier or device. */
   public val supplier: Reference? = null,
   /**
@@ -246,8 +247,10 @@ public data class SupplyDelivery(
      * Identifies the medication, substance or device being dispensed. This is either a link to a
      * resource representing the details of the item or a code that identifies the item from a known
      * list.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public val item: Item? = null,
+    public val item: SuppliedItem.Item? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -259,31 +262,6 @@ public data class SupplyDelivery(
           item = this@with.item
         }
       }
-
-    public sealed interface Item {
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asReference(): Reference? = this as? Reference
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r4.CodeableConcept
-      ) : Item
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r4.Reference) : Item
-
-      public companion object {
-        internal fun from(
-          codeableConceptValue: dev.ohs.fhir.model.r4.CodeableConcept?,
-          referenceValue: dev.ohs.fhir.model.r4.Reference?,
-        ): Item? {
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (referenceValue != null) return Reference(referenceValue)
-          return null
-        }
-      }
-    }
 
     public class Builder() {
       /**
@@ -333,8 +311,10 @@ public data class SupplyDelivery(
        * Identifies the medication, substance or device being dispensed. This is either a link to a
        * resource representing the details of the item or a code that identifies the item from a
        * known list.
+       *
+       * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public var item: Item? = null
+      public var item: SuppliedItem.Item? = null
 
       public fun build(): SuppliedItem =
         SuppliedItem(
@@ -345,36 +325,9 @@ public data class SupplyDelivery(
           item = item,
         )
     }
-  }
 
-  public sealed interface Occurrence {
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    public fun asPeriod(): Period? = this as? Period
-
-    public fun asTiming(): Timing? = this as? Timing
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r4.DateTime) : Occurrence
-
-    @JvmInline
-    public value class Period(public val `value`: dev.ohs.fhir.model.r4.Period) : Occurrence
-
-    @JvmInline
-    public value class Timing(public val `value`: dev.ohs.fhir.model.r4.Timing) : Occurrence
-
-    public companion object {
-      internal fun from(
-        dateTimeValue: dev.ohs.fhir.model.r4.DateTime?,
-        periodValue: dev.ohs.fhir.model.r4.Period?,
-        timingValue: dev.ohs.fhir.model.r4.Timing?,
-      ): Occurrence? {
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        if (periodValue != null) return Period(periodValue)
-        if (timingValue != null) return Timing(timingValue)
-        return null
-      }
-    }
+    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+    public typealias Item = FhirChoiceTypes.CodeableConceptOrReference
   }
 
   public class Builder() : DomainResource.Builder() {
@@ -528,8 +481,10 @@ public data class SupplyDelivery(
      * The date or time(s) the activity occurred.
      *
      * [The list of types may be constrained as appropriate for the type of event].
+     *
+     * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
      */
-    public var occurrence: Occurrence? = null
+    public var occurrence: SupplyDelivery.Occurrence? = null
 
     /** The individual responsible for dispensing the medication, supplier or device. */
     public var supplier: Reference.Builder? = null
@@ -601,4 +556,7 @@ public data class SupplyDelivery(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [DateTime] | [Period] | [Timing] */
+  public typealias Occurrence = FhirChoiceTypes.DateTimeOrPeriodOrTiming
 }

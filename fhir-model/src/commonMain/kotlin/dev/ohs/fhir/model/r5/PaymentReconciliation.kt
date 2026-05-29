@@ -22,7 +22,6 @@ import dev.ohs.fhir.model.r5.serializers.PaymentReconciliationSerializer
 import dev.ohs.fhir.model.r5.terminologies.NoteType
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -319,8 +318,10 @@ public data class PaymentReconciliation(
     /**
      * Identifies the claim line item, encounter or other sub-element being paid. Note payment may
      * be partial, that is not match the then outstanding balance or amount incurred.
+     *
+     * A FHIR choice type — one of: [Identifier] | [PositiveInt] | [String]
      */
-    public val targetItem: TargetItem? = null,
+    public val targetItem: Allocation.TargetItem? = null,
     /**
      * The Encounter to which this payment applies, may be completed by the receiver, used for
      * search.
@@ -373,38 +374,6 @@ public data class PaymentReconciliation(
           amount = this@with.amount?.toBuilder()
         }
       }
-
-    public sealed interface TargetItem {
-      public fun asString(): String? = this as? String
-
-      public fun asIdentifier(): Identifier? = this as? Identifier
-
-      public fun asPositiveInt(): PositiveInt? = this as? PositiveInt
-
-      @JvmInline
-      public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : TargetItem
-
-      @JvmInline
-      public value class Identifier(public val `value`: dev.ohs.fhir.model.r5.Identifier) :
-        TargetItem
-
-      @JvmInline
-      public value class PositiveInt(public val `value`: dev.ohs.fhir.model.r5.PositiveInt) :
-        TargetItem
-
-      public companion object {
-        internal fun from(
-          stringValue: dev.ohs.fhir.model.r5.String?,
-          identifierValue: dev.ohs.fhir.model.r5.Identifier?,
-          positiveIntValue: dev.ohs.fhir.model.r5.PositiveInt?,
-        ): TargetItem? {
-          if (stringValue != null) return String(stringValue)
-          if (identifierValue != null) return Identifier(identifierValue)
-          if (positiveIntValue != null) return PositiveInt(positiveIntValue)
-          return null
-        }
-      }
-    }
 
     public class Builder() {
       /**
@@ -459,8 +428,10 @@ public data class PaymentReconciliation(
       /**
        * Identifies the claim line item, encounter or other sub-element being paid. Note payment may
        * be partial, that is not match the then outstanding balance or amount incurred.
+       *
+       * A FHIR choice type — one of: [Identifier] | [PositiveInt] | [String]
        */
-      public var targetItem: TargetItem? = null
+      public var targetItem: Allocation.TargetItem? = null
 
       /**
        * The Encounter to which this payment applies, may be completed by the receiver, used for
@@ -522,6 +493,9 @@ public data class PaymentReconciliation(
           amount = amount?.build(),
         )
     }
+
+    /** A FHIR choice type — one of: [Identifier] | [PositiveInt] | [String] */
+    public typealias TargetItem = FhirChoiceTypes.IdentifierOrPositiveIntOrString
   }
 
   /** A note that describes or explains the processing in a human readable form. */

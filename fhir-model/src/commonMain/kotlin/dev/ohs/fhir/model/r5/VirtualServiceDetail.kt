@@ -19,7 +19,6 @@ package dev.ohs.fhir.model.r5
 import dev.ohs.fhir.model.r5.serializers.VirtualServiceDetailSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.Serializable
 
 /** VirtualServiceDetail Type: Virtual Service Contact Details. */
@@ -57,8 +56,10 @@ public data class VirtualServiceDetail(
    * What address or number needs to be used for a user to connect to the virtual service to join.
    * The channelType informs as to which datatype is appropriate to use (requires knowledge of the
    * specific type).
+   *
+   * A FHIR choice type — one of: [ContactPoint] | [ExtendedContactDetail] | [String] | [Url]
    */
-  public val address: Address? = null,
+  public val address: FhirChoiceTypes.ContactPointOrExtendedContactDetailOrStringOrUrl? = null,
   /**
    * Address to see alternative connection details.
    *
@@ -98,46 +99,6 @@ public data class VirtualServiceDetail(
       }
     }
 
-  public sealed interface Address {
-    public fun asUrl(): Url? = this as? Url
-
-    public fun asString(): String? = this as? String
-
-    public fun asContactPoint(): ContactPoint? = this as? ContactPoint
-
-    public fun asExtendedContactDetail(): ExtendedContactDetail? = this as? ExtendedContactDetail
-
-    @JvmInline public value class Url(public val `value`: dev.ohs.fhir.model.r5.Url) : Address
-
-    @JvmInline
-    public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : Address
-
-    @JvmInline
-    public value class ContactPoint(public val `value`: dev.ohs.fhir.model.r5.ContactPoint) :
-      Address
-
-    @JvmInline
-    public value class ExtendedContactDetail(
-      public val `value`: dev.ohs.fhir.model.r5.ExtendedContactDetail
-    ) : Address
-
-    public companion object {
-      internal fun from(
-        urlValue: dev.ohs.fhir.model.r5.Url?,
-        stringValue: dev.ohs.fhir.model.r5.String?,
-        contactPointValue: dev.ohs.fhir.model.r5.ContactPoint?,
-        extendedContactDetailValue: dev.ohs.fhir.model.r5.ExtendedContactDetail?,
-      ): Address? {
-        if (urlValue != null) return Url(urlValue)
-        if (stringValue != null) return String(stringValue)
-        if (contactPointValue != null) return ContactPoint(contactPointValue)
-        if (extendedContactDetailValue != null)
-          return ExtendedContactDetail(extendedContactDetailValue)
-        return null
-      }
-    }
-  }
-
   public open class Builder() {
     /**
      * Unique id for the element within a resource (for internal references). This may be any string
@@ -175,8 +136,11 @@ public data class VirtualServiceDetail(
      * What address or number needs to be used for a user to connect to the virtual service to join.
      * The channelType informs as to which datatype is appropriate to use (requires knowledge of the
      * specific type).
+     *
+     * A FHIR choice type — one of: [ContactPoint] | [ExtendedContactDetail] | [String] | [Url]
      */
-    public open var address: Address? = null
+    public open var address: FhirChoiceTypes.ContactPointOrExtendedContactDetailOrStringOrUrl? =
+      null
 
     /**
      * Address to see alternative connection details.

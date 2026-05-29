@@ -55,7 +55,7 @@ public data class Range(
    * If the high element is missing, the high boundary is not known.
    */
   public val high: Quantity? = null,
-) : DataType() {
+) : DataType(), FhirChoiceParticipants.RangeChoices {
   public fun toBuilder(): Builder =
     with(this) {
       Builder().apply {

@@ -79,7 +79,7 @@ public data class ExtendedContactDetail(
    * If the details have multiple periods, then enter in a new ExtendedContact with the new period.
    */
   public val period: Period? = null,
-) : DataType() {
+) : DataType(), FhirChoiceParticipants.ExtendedContactDetailChoices {
   public fun toBuilder(): Builder =
     with(this) {
       Builder().apply {

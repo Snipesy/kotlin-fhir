@@ -22,7 +22,6 @@ import dev.ohs.fhir.model.r4b.serializers.InvoiceParticipantSerializer
 import dev.ohs.fhir.model.r4b.serializers.InvoiceSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -417,8 +416,10 @@ public data class Invoice(
      * The ChargeItem contains information such as the billing code, date, amount etc. If no further
      * details are required for the lineItem, inline billing codes can be added using the
      * CodeableConcept data type instead of the Reference.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public val chargeItem: ChargeItem,
+    public val chargeItem: FhirChoiceTypes.CodeableConceptOrReference,
     /**
      * The price for a ChargeItem may be calculated as a base price with surcharges/deductions that
      * apply in certain conditions. A ChargeItemDefinition resource that defines the prices, factors
@@ -608,39 +609,15 @@ public data class Invoice(
       }
     }
 
-    public sealed interface ChargeItem {
-      public fun asReference(): Reference? = this as? Reference
-
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r4b.Reference) :
-        ChargeItem
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r4b.CodeableConcept
-      ) : ChargeItem
-
-      public companion object {
-        internal fun from(
-          referenceValue: dev.ohs.fhir.model.r4b.Reference?,
-          codeableConceptValue: dev.ohs.fhir.model.r4b.CodeableConcept?,
-        ): ChargeItem? {
-          if (referenceValue != null) return Reference(referenceValue)
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          return null
-        }
-      }
-    }
-
     public class Builder(
       /**
        * The ChargeItem contains information such as the billing code, date, amount etc. If no
        * further details are required for the lineItem, inline billing codes can be added using the
        * CodeableConcept data type instead of the Reference.
+       *
+       * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public var chargeItem: ChargeItem
+      public var chargeItem: FhirChoiceTypes.CodeableConceptOrReference
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any

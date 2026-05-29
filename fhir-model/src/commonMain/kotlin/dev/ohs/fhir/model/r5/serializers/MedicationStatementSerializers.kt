@@ -386,11 +386,9 @@ internal object MedicationStatementSerializer : KSerializer<MedicationStatement>
       subject = subject!!,
       encounter = encounter,
       effective =
-        MedicationStatement.Effective.from(
-          DateTime.of(FhirDateTime.fromString(effectiveDateTime), _effectiveDateTime),
-          effectivePeriod,
-          effectiveTiming,
-        ),
+        (DateTime.of(FhirDateTime.fromString(effectiveDateTime), _effectiveDateTime)
+          ?: effectivePeriod
+          ?: effectiveTiming),
       dateAsserted = DateTime.of(FhirDateTime.fromString(dateAsserted), _dateAsserted),
       informationSource = informationSource ?: listOf(),
       derivedFrom = derivedFrom ?: listOf(),
@@ -514,11 +512,11 @@ internal object MedicationStatementSerializer : KSerializer<MedicationStatement>
     }
     when (val choice = value.effective) {
       null -> {}
-      is MedicationStatement.Effective.DateTime -> {
-        ((choice.value.value?.toString()))?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let {
           encoder.encodeStringElement(descriptor, 18 + descriptorOffset, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             19 + descriptorOffset,
@@ -527,20 +525,20 @@ internal object MedicationStatementSerializer : KSerializer<MedicationStatement>
           )
         }
       }
-      is MedicationStatement.Effective.Period -> {
+      is Period -> {
         encoder.encodeSerializableElement(
           descriptor,
           20 + descriptorOffset,
           Hoisted.effectivePeriodSer,
-          choice.value,
+          choice,
         )
       }
-      is MedicationStatement.Effective.Timing -> {
+      is Timing -> {
         encoder.encodeSerializableElement(
           descriptor,
           21 + descriptorOffset,
           Hoisted.effectiveTimingSer,
-          choice.value,
+          choice,
         )
       }
     }

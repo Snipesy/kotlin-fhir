@@ -20,7 +20,6 @@ import dev.ohs.fhir.model.r4.serializers.DeviceUseStatementSerializer
 import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -155,8 +154,12 @@ public data class DeviceUseStatement(
    * that is available varies from the type resource that you derive the DeviceUseStatement from.
    */
   public val derivedFrom: List<Reference> = listOf(),
-  /** How often the device was used. */
-  public val timing: Timing? = null,
+  /**
+   * How often the device was used.
+   *
+   * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
+   */
+  public val timing: FhirChoiceTypes.DateTimeOrPeriodOrTiming? = null,
   /** The time at which the statement was made/recorded. */
   public val recordedOn: DateTime? = null,
   /** Who reported the device was being used by the patient. */
@@ -202,39 +205,6 @@ public data class DeviceUseStatement(
         note = this@with.note.map { it.toBuilder() }.toMutableList()
       }
     }
-
-  public sealed interface Timing {
-    public fun asTiming(): Timing? = this as? Timing
-
-    public fun asPeriod(): Period? = this as? Period
-
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    @JvmInline
-    public value class Timing(public val `value`: dev.ohs.fhir.model.r4.Timing) :
-      DeviceUseStatement.Timing
-
-    @JvmInline
-    public value class Period(public val `value`: dev.ohs.fhir.model.r4.Period) :
-      DeviceUseStatement.Timing
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r4.DateTime) :
-      DeviceUseStatement.Timing
-
-    public companion object {
-      internal fun from(
-        timingValue: dev.ohs.fhir.model.r4.Timing?,
-        periodValue: dev.ohs.fhir.model.r4.Period?,
-        dateTimeValue: dev.ohs.fhir.model.r4.DateTime?,
-      ): DeviceUseStatement.Timing? {
-        if (timingValue != null) return Timing(timingValue)
-        if (periodValue != null) return Period(periodValue)
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        return null
-      }
-    }
-  }
 
   public class Builder(
     /**
@@ -378,8 +348,12 @@ public data class DeviceUseStatement(
      */
     public var derivedFrom: MutableList<Reference.Builder> = mutableListOf()
 
-    /** How often the device was used. */
-    public var timing: Timing? = null
+    /**
+     * How often the device was used.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
+     */
+    public var timing: FhirChoiceTypes.DateTimeOrPeriodOrTiming? = null
 
     /** The time at which the statement was made/recorded. */
     public var recordedOn: DateTime.Builder? = null

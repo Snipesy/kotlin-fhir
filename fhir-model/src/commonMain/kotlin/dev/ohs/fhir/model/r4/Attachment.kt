@@ -92,7 +92,7 @@ public data class Attachment(
   public val title: String? = null,
   /** The date that the attachment was first created. */
   public val creation: DateTime? = null,
-) : Element() {
+) : Element(), FhirChoiceParticipants.AttachmentChoices {
   public fun toBuilder(): Builder =
     with(this) {
       Builder().apply {

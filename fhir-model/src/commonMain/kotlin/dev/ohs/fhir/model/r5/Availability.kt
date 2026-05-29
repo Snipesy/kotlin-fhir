@@ -48,7 +48,7 @@ public data class Availability(
   public val availableTime: List<AvailableTime> = listOf(),
   /** Not available during this time due to provided reason. */
   public val notAvailableTime: List<NotAvailableTime> = listOf(),
-) : DataType() {
+) : DataType(), FhirChoiceTypes.ElementDefinitionDefaultValueChoice {
   public fun toBuilder(): Builder =
     with(this) {
       Builder().apply {

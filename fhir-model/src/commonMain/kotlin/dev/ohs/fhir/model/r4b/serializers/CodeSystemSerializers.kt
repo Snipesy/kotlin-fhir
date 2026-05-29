@@ -21,6 +21,7 @@ package dev.ohs.fhir.model.r4b.serializers
 import dev.ohs.fhir.model.r4b.Boolean as R4bBoolean
 import dev.ohs.fhir.model.r4b.Canonical
 import dev.ohs.fhir.model.r4b.Code
+import dev.ohs.fhir.model.r4b.CodeBox
 import dev.ohs.fhir.model.r4b.CodeSystem
 import dev.ohs.fhir.model.r4b.CodeableConcept
 import dev.ohs.fhir.model.r4b.Coding
@@ -39,6 +40,7 @@ import dev.ohs.fhir.model.r4b.Meta
 import dev.ohs.fhir.model.r4b.Narrative
 import dev.ohs.fhir.model.r4b.Resource
 import dev.ohs.fhir.model.r4b.String as R4bString
+import dev.ohs.fhir.model.r4b.StringBox
 import dev.ohs.fhir.model.r4b.UnsignedInt
 import dev.ohs.fhir.model.r4b.Uri
 import dev.ohs.fhir.model.r4b.UsageContext
@@ -701,15 +703,13 @@ internal object CodeSystemConceptPropertySerializer : KSerializer<CodeSystem.Con
       modifierExtension = modifierExtension ?: listOf(),
       code = Code.of(code, _code)!!,
       `value` =
-        CodeSystem.Concept.Property.Value.from(
-          Code.of(valueCode, _valueCode),
-          valueCoding,
-          R4bString.of(valueString, _valueString),
-          Integer.of(valueInteger, _valueInteger),
-          R4bBoolean.of(valueBoolean, _valueBoolean),
-          DateTime.of(FhirDateTime.fromString(valueDateTime), _valueDateTime),
-          Decimal.of(valueDecimal, _valueDecimal),
-        )!!,
+        ((Code.of(valueCode, _valueCode))?.let { CodeBox(it) }
+          ?: valueCoding
+          ?: (R4bString.of(valueString, _valueString))?.let { StringBox(it) }
+          ?: Integer.of(valueInteger, _valueInteger)
+          ?: R4bBoolean.of(valueBoolean, _valueBoolean)
+          ?: DateTime.of(FhirDateTime.fromString(valueDateTime), _valueDateTime)
+          ?: Decimal.of(valueDecimal, _valueDecimal))!!,
     )
   }
 
@@ -729,44 +729,44 @@ internal object CodeSystemConceptPropertySerializer : KSerializer<CodeSystem.Con
       encoder.encodeSerializableElement(descriptor, 4, Hoisted.codeSer, it)
     }
     when (val choice = value.`value`) {
-      is CodeSystem.Concept.Property.Value.Code -> {
+      is CodeBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 6, Hoisted.codeSer, it)
         }
       }
-      is CodeSystem.Concept.Property.Value.Coding -> {
-        encoder.encodeSerializableElement(descriptor, 7, Hoisted.valueCodingSer, choice.value)
+      is Coding -> {
+        encoder.encodeSerializableElement(descriptor, 7, Hoisted.valueCodingSer, choice)
       }
-      is CodeSystem.Concept.Property.Value.String -> {
+      is StringBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 8, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 9, Hoisted.codeSer, it)
         }
       }
-      is CodeSystem.Concept.Property.Value.Integer -> {
-        ((choice.value.value))?.let { encoder.encodeIntElement(descriptor, 10, it) }
-        (choice.value.toElement())?.let {
+      is Integer -> {
+        ((choice.value))?.let { encoder.encodeIntElement(descriptor, 10, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 11, Hoisted.codeSer, it)
         }
       }
-      is CodeSystem.Concept.Property.Value.Boolean -> {
-        ((choice.value.value))?.let { encoder.encodeBooleanElement(descriptor, 12, it) }
-        (choice.value.toElement())?.let {
+      is R4bBoolean -> {
+        ((choice.value))?.let { encoder.encodeBooleanElement(descriptor, 12, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 13, Hoisted.codeSer, it)
         }
       }
-      is CodeSystem.Concept.Property.Value.DateTime -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 14, it) }
-        (choice.value.toElement())?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 14, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 15, Hoisted.codeSer, it)
         }
       }
-      is CodeSystem.Concept.Property.Value.Decimal -> {
-        ((choice.value.value))?.let {
+      is Decimal -> {
+        ((choice.value))?.let {
           encoder.encodeSerializableElement(descriptor, 16, FhirDecimalSerializer, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 17, Hoisted.codeSer, it)
         }
       }

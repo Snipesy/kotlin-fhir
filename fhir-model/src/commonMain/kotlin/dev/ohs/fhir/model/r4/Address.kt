@@ -103,7 +103,7 @@ public data class Address(
   public val country: String? = null,
   /** Time period when address was/is in use. */
   public val period: Period? = null,
-) : Element() {
+) : Element(), FhirChoiceParticipants.AddressChoices {
   public fun toBuilder(): Builder =
     with(this) {
       Builder().apply {

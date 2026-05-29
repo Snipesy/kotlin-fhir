@@ -22,7 +22,6 @@ import dev.ohs.fhir.model.r4.serializers.MedicinalProductAuthorizationSerializer
 import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -379,8 +378,12 @@ public data class MedicinalProductAuthorization(
     public val identifier: Identifier? = null,
     /** Type of procedure. */
     public val type: CodeableConcept,
-    /** Date of procedure. */
-    public val date: Date? = null,
+    /**
+     * Date of procedure.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Period]
+     */
+    public val date: FhirChoiceTypes.DateTimeOrPeriod? = null,
     /** Applcations submitted to obtain a marketing authorization. */
     public val application: List<Procedure> = listOf(),
   ) : BackboneElement() {
@@ -395,28 +398,6 @@ public data class MedicinalProductAuthorization(
           application = this@with.application.map { it.toBuilder() }.toMutableList()
         }
       }
-
-    public sealed interface Date {
-      public fun asPeriod(): Period? = this as? Period
-
-      public fun asDateTime(): DateTime? = this as? DateTime
-
-      @JvmInline public value class Period(public val `value`: dev.ohs.fhir.model.r4.Period) : Date
-
-      @JvmInline
-      public value class DateTime(public val `value`: dev.ohs.fhir.model.r4.DateTime) : Date
-
-      public companion object {
-        internal fun from(
-          periodValue: dev.ohs.fhir.model.r4.Period?,
-          dateTimeValue: dev.ohs.fhir.model.r4.DateTime?,
-        ): Date? {
-          if (periodValue != null) return Period(periodValue)
-          if (dateTimeValue != null) return DateTime(dateTimeValue)
-          return null
-        }
-      }
-    }
 
     public class Builder(
       /** Type of procedure. */
@@ -465,8 +446,12 @@ public data class MedicinalProductAuthorization(
       /** Identifier for this procedure. */
       public var identifier: Identifier.Builder? = null
 
-      /** Date of procedure. */
-      public var date: Date? = null
+      /**
+       * Date of procedure.
+       *
+       * A FHIR choice type — one of: [DateTime] | [Period]
+       */
+      public var date: FhirChoiceTypes.DateTimeOrPeriod? = null
 
       /** Applcations submitted to obtain a marketing authorization. */
       public var application: MutableList<Builder> = mutableListOf()

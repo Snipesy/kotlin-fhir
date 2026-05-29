@@ -689,10 +689,7 @@ internal object ChargeItemDefinitionSerializer : KSerializer<ChargeItemDefinitio
       identifier = identifier ?: listOf(),
       version = R5String.of(version, _version),
       versionAlgorithm =
-        ChargeItemDefinition.VersionAlgorithm.from(
-          R5String.of(versionAlgorithmString, _versionAlgorithmString),
-          versionAlgorithmCoding,
-        ),
+        (R5String.of(versionAlgorithmString, _versionAlgorithmString) ?: versionAlgorithmCoding),
       name = R5String.of(name, _name),
       title = R5String.of(title, _title),
       derivedFromUri =
@@ -813,11 +810,9 @@ internal object ChargeItemDefinitionSerializer : KSerializer<ChargeItemDefinitio
     }
     when (val choice = value.versionAlgorithm) {
       null -> {}
-      is ChargeItemDefinition.VersionAlgorithm.String -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 15 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is R5String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 15 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             16 + descriptorOffset,
@@ -826,12 +821,12 @@ internal object ChargeItemDefinitionSerializer : KSerializer<ChargeItemDefinitio
           )
         }
       }
-      is ChargeItemDefinition.VersionAlgorithm.Coding -> {
+      is Coding -> {
         encoder.encodeSerializableElement(
           descriptor,
           17 + descriptorOffset,
           Hoisted.versionAlgorithmCodingSer,
-          choice.value,
+          choice,
         )
       }
     }

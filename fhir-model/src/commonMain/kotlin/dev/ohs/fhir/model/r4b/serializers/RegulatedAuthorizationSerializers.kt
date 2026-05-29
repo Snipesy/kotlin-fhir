@@ -137,11 +137,7 @@ internal object RegulatedAuthorizationCaseSerializer : KSerializer<RegulatedAuth
       identifier = identifier,
       type = type,
       status = status,
-      date =
-        RegulatedAuthorization.Case.Date.from(
-          datePeriod,
-          DateTime.of(FhirDateTime.fromString(dateDateTime), _dateDateTime),
-        ),
+      date = (datePeriod ?: DateTime.of(FhirDateTime.fromString(dateDateTime), _dateDateTime)),
       application = application ?: listOf(),
     )
   }
@@ -164,12 +160,12 @@ internal object RegulatedAuthorizationCaseSerializer : KSerializer<RegulatedAuth
     (value.status)?.let { encoder.encodeSerializableElement(descriptor, 5, Hoisted.typeSer, it) }
     when (val choice = value.date) {
       null -> {}
-      is RegulatedAuthorization.Case.Date.Period -> {
-        encoder.encodeSerializableElement(descriptor, 6, Hoisted.datePeriodSer, choice.value)
+      is Period -> {
+        encoder.encodeSerializableElement(descriptor, 6, Hoisted.datePeriodSer, choice)
       }
-      is RegulatedAuthorization.Case.Date.DateTime -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 7, it) }
-        (choice.value.toElement())?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 7, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 8, Hoisted.dateDateTimeSer, it)
         }
       }

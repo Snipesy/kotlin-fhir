@@ -20,7 +20,6 @@ import dev.ohs.fhir.model.r4b.serializers.AllergyIntoleranceReactionSerializer
 import dev.ohs.fhir.model.r4b.serializers.AllergyIntoleranceSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -243,8 +242,12 @@ public data class AllergyIntolerance(
   public val patient: Reference,
   /** The encounter when the allergy or intolerance was asserted. */
   public val encounter: Reference? = null,
-  /** Estimated or actual date, date-time, or age when allergy or intolerance was identified. */
-  public val onset: Onset? = null,
+  /**
+   * Estimated or actual date, date-time, or age when allergy or intolerance was identified.
+   *
+   * A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String]
+   */
+  public val onset: AllergyIntolerance.Onset? = null,
   /**
    * The recordedDate represents when this particular AllergyIntolerance record was created in the
    * system, which is often a system-generated date.
@@ -569,46 +572,6 @@ public data class AllergyIntolerance(
     }
   }
 
-  public sealed interface Onset {
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    public fun asAge(): Age? = this as? Age
-
-    public fun asPeriod(): Period? = this as? Period
-
-    public fun asRange(): Range? = this as? Range
-
-    public fun asString(): String? = this as? String
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r4b.DateTime) : Onset
-
-    @JvmInline public value class Age(public val `value`: dev.ohs.fhir.model.r4b.Age) : Onset
-
-    @JvmInline public value class Period(public val `value`: dev.ohs.fhir.model.r4b.Period) : Onset
-
-    @JvmInline public value class Range(public val `value`: dev.ohs.fhir.model.r4b.Range) : Onset
-
-    @JvmInline public value class String(public val `value`: dev.ohs.fhir.model.r4b.String) : Onset
-
-    public companion object {
-      internal fun from(
-        dateTimeValue: dev.ohs.fhir.model.r4b.DateTime?,
-        ageValue: dev.ohs.fhir.model.r4b.Age?,
-        periodValue: dev.ohs.fhir.model.r4b.Period?,
-        rangeValue: dev.ohs.fhir.model.r4b.Range?,
-        stringValue: dev.ohs.fhir.model.r4b.String?,
-      ): Onset? {
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        if (ageValue != null) return Age(ageValue)
-        if (periodValue != null) return Period(periodValue)
-        if (rangeValue != null) return Range(rangeValue)
-        if (stringValue != null) return String(stringValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
     /** The patient who has the allergy or intolerance. */
     public var patient: Reference.Builder
@@ -841,8 +804,12 @@ public data class AllergyIntolerance(
     /** The encounter when the allergy or intolerance was asserted. */
     public var encounter: Reference.Builder? = null
 
-    /** Estimated or actual date, date-time, or age when allergy or intolerance was identified. */
-    public var onset: Onset? = null
+    /**
+     * Estimated or actual date, date-time, or age when allergy or intolerance was identified.
+     *
+     * A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String]
+     */
+    public var onset: AllergyIntolerance.Onset? = null
 
     /**
      * The recordedDate represents when this particular AllergyIntolerance record was created in the
@@ -1046,4 +1013,7 @@ public data class AllergyIntolerance(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String] */
+  public typealias Onset = FhirChoiceTypes.AgeOrDateTimeOrPeriodOrRangeOrString
 }

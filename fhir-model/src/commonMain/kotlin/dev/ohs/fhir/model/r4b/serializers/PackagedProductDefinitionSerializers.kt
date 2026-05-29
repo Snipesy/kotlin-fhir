@@ -493,11 +493,7 @@ internal object PackagedProductDefinitionPackageShelfLifeStorageSerializer :
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
       type = type,
-      period =
-        PackagedProductDefinition.Package.ShelfLifeStorage.Period.from(
-          periodDuration,
-          R4bString.of(periodString, _periodString),
-        ),
+      period = (periodDuration ?: R4bString.of(periodString, _periodString)),
       specialPrecautionsForStorage = specialPrecautionsForStorage ?: listOf(),
     )
   }
@@ -519,12 +515,12 @@ internal object PackagedProductDefinitionPackageShelfLifeStorageSerializer :
     (value.type)?.let { encoder.encodeSerializableElement(descriptor, 3, Hoisted.typeSer, it) }
     when (val choice = value.period) {
       null -> {}
-      is PackagedProductDefinition.Package.ShelfLifeStorage.Period.Duration -> {
-        encoder.encodeSerializableElement(descriptor, 4, Hoisted.periodDurationSer, choice.value)
+      is Duration -> {
+        encoder.encodeSerializableElement(descriptor, 4, Hoisted.periodDurationSer, choice)
       }
-      is PackagedProductDefinition.Package.ShelfLifeStorage.Period.String -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
-        (choice.value.toElement())?.let {
+      is R4bString -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 6, Hoisted.periodStringSer, it)
         }
       }
@@ -643,13 +639,11 @@ internal object PackagedProductDefinitionPackagePropertySerializer :
       modifierExtension = modifierExtension ?: listOf(),
       type = type!!,
       `value` =
-        PackagedProductDefinition.Package.Property.Value.from(
-          valueCodeableConcept,
-          valueQuantity,
-          Date.of(FhirDate.fromString(valueDate), _valueDate),
-          R4bBoolean.of(valueBoolean, _valueBoolean),
-          valueAttachment,
-        ),
+        (valueCodeableConcept
+          ?: valueQuantity
+          ?: Date.of(FhirDate.fromString(valueDate), _valueDate)
+          ?: R4bBoolean.of(valueBoolean, _valueBoolean)
+          ?: valueAttachment),
     )
   }
 
@@ -670,26 +664,26 @@ internal object PackagedProductDefinitionPackagePropertySerializer :
     encoder.encodeSerializableElement(descriptor, 3, Hoisted.typeSer, value.type)
     when (val choice = value.`value`) {
       null -> {}
-      is PackagedProductDefinition.Package.Property.Value.CodeableConcept -> {
-        encoder.encodeSerializableElement(descriptor, 4, Hoisted.typeSer, choice.value)
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 4, Hoisted.typeSer, choice)
       }
-      is PackagedProductDefinition.Package.Property.Value.Quantity -> {
-        encoder.encodeSerializableElement(descriptor, 5, Hoisted.valueQuantitySer, choice.value)
+      is Quantity -> {
+        encoder.encodeSerializableElement(descriptor, 5, Hoisted.valueQuantitySer, choice)
       }
-      is PackagedProductDefinition.Package.Property.Value.Date -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 6, it) }
-        (choice.value.toElement())?.let {
+      is Date -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 6, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 7, Hoisted.valueDateSer, it)
         }
       }
-      is PackagedProductDefinition.Package.Property.Value.Boolean -> {
-        ((choice.value.value))?.let { encoder.encodeBooleanElement(descriptor, 8, it) }
-        (choice.value.toElement())?.let {
+      is R4bBoolean -> {
+        ((choice.value))?.let { encoder.encodeBooleanElement(descriptor, 8, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 9, Hoisted.valueDateSer, it)
         }
       }
-      is PackagedProductDefinition.Package.Property.Value.Attachment -> {
-        encoder.encodeSerializableElement(descriptor, 10, Hoisted.valueAttachmentSer, choice.value)
+      is Attachment -> {
+        encoder.encodeSerializableElement(descriptor, 10, Hoisted.valueAttachmentSer, choice)
       }
     }
   }

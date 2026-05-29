@@ -18,10 +18,8 @@ package dev.ohs.fhir.model.r4b
 
 import dev.ohs.fhir.model.r4b.serializers.CommunicationPayloadSerializer
 import dev.ohs.fhir.model.r4b.serializers.CommunicationSerializer
-import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -39,7 +37,7 @@ public data class Communication(
    * The only time that a resource does not have an id is when it is being submitted to the server
    * using a create operation.
    */
-  override val id: String? = null,
+  override val id: kotlin.String? = null,
   /**
    * The metadata about the resource. This is content that is maintained by the infrastructure.
    * Changes to the content might not always be associated with version changes to the resource.
@@ -295,7 +293,7 @@ public data class Communication(
      * Unique id for the element within a resource (for internal references). This may be any string
      * value that does not contain spaces.
      */
-    override val id: String? = null,
+    override val id: kotlin.String? = null,
     /**
      * May be used to represent additional information that is not part of the basic definition of
      * the element. To make the use of extensions safe and manageable, there is a strict set of
@@ -330,8 +328,10 @@ public data class Communication(
     override val modifierExtension: List<Extension> = listOf(),
     /**
      * A communicated content (or for multi-part communications, one portion of the communication).
+     *
+     * A FHIR choice type — one of: [Attachment] | [Reference] | [String]
      */
-    public val content: Content,
+    public val content: Payload.Content,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -342,49 +342,20 @@ public data class Communication(
         }
       }
 
-    public sealed interface Content {
-      public fun asString(): String? = this as? String
-
-      public fun asAttachment(): Attachment? = this as? Attachment
-
-      public fun asReference(): Reference? = this as? Reference
-
-      @JvmInline
-      public value class String(public val `value`: dev.ohs.fhir.model.r4b.String) : Content
-
-      @JvmInline
-      public value class Attachment(public val `value`: dev.ohs.fhir.model.r4b.Attachment) :
-        Content
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r4b.Reference) : Content
-
-      public companion object {
-        internal fun from(
-          stringValue: dev.ohs.fhir.model.r4b.String?,
-          attachmentValue: dev.ohs.fhir.model.r4b.Attachment?,
-          referenceValue: dev.ohs.fhir.model.r4b.Reference?,
-        ): Content? {
-          if (stringValue != null) return String(stringValue)
-          if (attachmentValue != null) return Attachment(attachmentValue)
-          if (referenceValue != null) return Reference(referenceValue)
-          return null
-        }
-      }
-    }
-
     public class Builder(
       /**
        * A communicated content (or for multi-part communications, one portion of the
        * communication).
+       *
+       * A FHIR choice type — one of: [Attachment] | [Reference] | [String]
        */
-      public var content: Content
+      public var content: Payload.Content
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
        * string value that does not contain spaces.
        */
-      public var id: String? = null
+      public var id: kotlin.String? = null
 
       /**
        * May be used to represent additional information that is not part of the basic definition of
@@ -428,6 +399,9 @@ public data class Communication(
           content = content,
         )
     }
+
+    /** A FHIR choice type — one of: [Attachment] | [Reference] | [String] */
+    public typealias Content = FhirChoiceTypes.AttachmentOrReferenceOrString
   }
 
   public class Builder(
@@ -446,7 +420,7 @@ public data class Communication(
      * The only time that a resource does not have an id is when it is being submitted to the server
      * using a create operation.
      */
-    public var id: String? = null
+    public var id: kotlin.String? = null
 
     /**
      * The metadata about the resource. This is content that is maintained by the infrastructure.
@@ -720,9 +694,9 @@ public data class Communication(
 
   /** Codes identifying the lifecycle stage of an event. */
   public enum class EventStatus(
-    private val code: String,
-    private val system: String,
-    private val display: String?,
+    private val code: kotlin.String,
+    private val system: kotlin.String,
+    private val display: kotlin.String?,
   ) {
     Preparation("preparation", "http://hl7.org/fhir/event-status", "Preparation"),
     In_Progress("in-progress", "http://hl7.org/fhir/event-status", "In Progress"),
@@ -733,16 +707,16 @@ public data class Communication(
     Entered_In_Error("entered-in-error", "http://hl7.org/fhir/event-status", "Entered in Error"),
     Unknown("unknown", "http://hl7.org/fhir/event-status", "Unknown");
 
-    override fun toString(): String = code
+    override fun toString(): kotlin.String = code
 
-    public fun getCode(): String = code
+    public fun getCode(): kotlin.String = code
 
-    public fun getSystem(): String = system
+    public fun getSystem(): kotlin.String = system
 
-    public fun getDisplay(): String? = display
+    public fun getDisplay(): kotlin.String? = display
 
     public companion object {
-      public fun fromCode(code: String): EventStatus =
+      public fun fromCode(code: kotlin.String): EventStatus =
         when (code) {
           "preparation" -> Preparation
           "in-progress" -> In_Progress
@@ -759,25 +733,25 @@ public data class Communication(
 
   /** Identifies the level of importance to be assigned to actioning the request. */
   public enum class RequestPriority(
-    private val code: String,
-    private val system: String,
-    private val display: String?,
+    private val code: kotlin.String,
+    private val system: kotlin.String,
+    private val display: kotlin.String?,
   ) {
     Routine("routine", "http://hl7.org/fhir/request-priority", "Routine"),
     Urgent("urgent", "http://hl7.org/fhir/request-priority", "Urgent"),
     Asap("asap", "http://hl7.org/fhir/request-priority", "ASAP"),
     Stat("stat", "http://hl7.org/fhir/request-priority", "STAT");
 
-    override fun toString(): String = code
+    override fun toString(): kotlin.String = code
 
-    public fun getCode(): String = code
+    public fun getCode(): kotlin.String = code
 
-    public fun getSystem(): String = system
+    public fun getSystem(): kotlin.String = system
 
-    public fun getDisplay(): String? = display
+    public fun getDisplay(): kotlin.String? = display
 
     public companion object {
-      public fun fromCode(code: String): RequestPriority =
+      public fun fromCode(code: kotlin.String): RequestPriority =
         when (code) {
           "routine" -> Routine
           "urgent" -> Urgent

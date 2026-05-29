@@ -582,13 +582,11 @@ internal object AllergyIntoleranceSerializer : KSerializer<AllergyIntolerance> {
       patient = patient!!,
       encounter = encounter,
       onset =
-        AllergyIntolerance.Onset.from(
-          DateTime.of(FhirDateTime.fromString(onsetDateTime), _onsetDateTime),
-          onsetAge,
-          onsetPeriod,
-          onsetRange,
-          R5String.of(onsetString, _onsetString),
-        ),
+        (DateTime.of(FhirDateTime.fromString(onsetDateTime), _onsetDateTime)
+          ?: onsetAge
+          ?: onsetPeriod
+          ?: onsetRange
+          ?: R5String.of(onsetString, _onsetString)),
       recordedDate = DateTime.of(FhirDateTime.fromString(recordedDate), _recordedDate),
       participant = participant ?: listOf(),
       lastOccurrence = DateTime.of(FhirDateTime.fromString(lastOccurrence), _lastOccurrence),
@@ -720,11 +718,11 @@ internal object AllergyIntoleranceSerializer : KSerializer<AllergyIntolerance> {
     }
     when (val choice = value.onset) {
       null -> {}
-      is AllergyIntolerance.Onset.DateTime -> {
-        ((choice.value.value?.toString()))?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let {
           encoder.encodeStringElement(descriptor, 21 + descriptorOffset, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             22 + descriptorOffset,
@@ -733,35 +731,33 @@ internal object AllergyIntoleranceSerializer : KSerializer<AllergyIntolerance> {
           )
         }
       }
-      is AllergyIntolerance.Onset.Age -> {
+      is Age -> {
         encoder.encodeSerializableElement(
           descriptor,
           23 + descriptorOffset,
           Hoisted.onsetAgeSer,
-          choice.value,
+          choice,
         )
       }
-      is AllergyIntolerance.Onset.Period -> {
+      is Period -> {
         encoder.encodeSerializableElement(
           descriptor,
           24 + descriptorOffset,
           Hoisted.onsetPeriodSer,
-          choice.value,
+          choice,
         )
       }
-      is AllergyIntolerance.Onset.Range -> {
+      is Range -> {
         encoder.encodeSerializableElement(
           descriptor,
           25 + descriptorOffset,
           Hoisted.onsetRangeSer,
-          choice.value,
+          choice,
         )
       }
-      is AllergyIntolerance.Onset.String -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 26 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is R5String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 26 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             27 + descriptorOffset,

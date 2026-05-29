@@ -20,7 +20,6 @@ import dev.ohs.fhir.model.r4b.serializers.MedicationStatementSerializer
 import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -189,8 +188,10 @@ public data class MedicationStatement(
    * If only a code is specified, then it needs to be a code for a specific product. If more
    * information is required, then the use of the medication resource is recommended. For example,
    * if you require form or lot number, then you must reference the Medication resource.
+   *
+   * A FHIR choice type — one of: [CodeableConcept] | [Reference]
    */
-  public val medication: Medication,
+  public val medication: FhirChoiceTypes.CodeableConceptOrReference,
   /** The person, animal or group who is/was taking the medication. */
   public val subject: Reference,
   /** The encounter or episode of care that establishes the context for this MedicationStatement. */
@@ -204,8 +205,10 @@ public data class MedicationStatement(
    * being taken at the time the statement is recorded, the "end" date will be omitted. The
    * date/time attribute supports a variety of dates - year, year/month and exact date. If something
    * more than this is required, this should be conveyed as text.
+   *
+   * A FHIR choice type — one of: [DateTime] | [Period]
    */
-  public val effective: Effective? = null,
+  public val effective: MedicationStatement.Effective? = null,
   /** The date when the medication statement was asserted by the information source. */
   public val dateAsserted: DateTime? = null,
   /**
@@ -283,53 +286,6 @@ public data class MedicationStatement(
       }
     }
 
-  public sealed interface Medication {
-    public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-    public fun asReference(): Reference? = this as? Reference
-
-    @JvmInline
-    public value class CodeableConcept(public val `value`: dev.ohs.fhir.model.r4b.CodeableConcept) :
-      Medication
-
-    @JvmInline
-    public value class Reference(public val `value`: dev.ohs.fhir.model.r4b.Reference) : Medication
-
-    public companion object {
-      internal fun from(
-        codeableConceptValue: dev.ohs.fhir.model.r4b.CodeableConcept?,
-        referenceValue: dev.ohs.fhir.model.r4b.Reference?,
-      ): Medication? {
-        if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-        if (referenceValue != null) return Reference(referenceValue)
-        return null
-      }
-    }
-  }
-
-  public sealed interface Effective {
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    public fun asPeriod(): Period? = this as? Period
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r4b.DateTime) : Effective
-
-    @JvmInline
-    public value class Period(public val `value`: dev.ohs.fhir.model.r4b.Period) : Effective
-
-    public companion object {
-      internal fun from(
-        dateTimeValue: dev.ohs.fhir.model.r4b.DateTime?,
-        periodValue: dev.ohs.fhir.model.r4b.Period?,
-      ): Effective? {
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        if (periodValue != null) return Period(periodValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
     /**
      * A code representing the patient or other source's judgment about the state of the medication
@@ -353,8 +309,10 @@ public data class MedicationStatement(
      * If only a code is specified, then it needs to be a code for a specific product. If more
      * information is required, then the use of the medication resource is recommended. For example,
      * if you require form or lot number, then you must reference the Medication resource.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public var medication: Medication,
+    public var medication: FhirChoiceTypes.CodeableConceptOrReference,
     /** The person, animal or group who is/was taking the medication. */
     public var subject: Reference.Builder,
   ) : DomainResource.Builder() {
@@ -506,8 +464,10 @@ public data class MedicationStatement(
      * being taken at the time the statement is recorded, the "end" date will be omitted. The
      * date/time attribute supports a variety of dates - year, year/month and exact date. If
      * something more than this is required, this should be conveyed as text.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Period]
      */
-    public var effective: Effective? = null
+    public var effective: MedicationStatement.Effective? = null
 
     /** The date when the medication statement was asserted by the information source. */
     public var dateAsserted: DateTime.Builder? = null
@@ -647,4 +607,7 @@ public data class MedicationStatement(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [DateTime] | [Period] */
+  public typealias Effective = FhirChoiceTypes.DateTimeOrPeriod
 }

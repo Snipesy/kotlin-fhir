@@ -166,11 +166,7 @@ internal object SubstanceDefinitionMoietySerializer : KSerializer<SubstanceDefin
       stereochemistry = stereochemistry,
       opticalActivity = opticalActivity,
       molecularFormula = R4bString.of(molecularFormula, _molecularFormula),
-      amount =
-        SubstanceDefinition.Moiety.Amount.from(
-          amountQuantity,
-          R4bString.of(amountString, _amountString),
-        ),
+      amount = (amountQuantity ?: R4bString.of(amountString, _amountString)),
       measurementType = measurementType,
     )
   }
@@ -206,12 +202,12 @@ internal object SubstanceDefinitionMoietySerializer : KSerializer<SubstanceDefin
     }
     when (val choice = value.amount) {
       null -> {}
-      is SubstanceDefinition.Moiety.Amount.Quantity -> {
-        encoder.encodeSerializableElement(descriptor, 11, Hoisted.amountQuantitySer, choice.value)
+      is Quantity -> {
+        encoder.encodeSerializableElement(descriptor, 11, Hoisted.amountQuantitySer, choice)
       }
-      is SubstanceDefinition.Moiety.Amount.String -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 12, it) }
-        (choice.value.toElement())?.let {
+      is R4bString -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 12, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 13, Hoisted.nameSer, it)
         }
       }
@@ -322,13 +318,11 @@ internal object SubstanceDefinitionPropertySerializer : KSerializer<SubstanceDef
       modifierExtension = modifierExtension ?: listOf(),
       type = type!!,
       `value` =
-        SubstanceDefinition.Property.Value.from(
-          valueCodeableConcept,
-          valueQuantity,
-          Date.of(FhirDate.fromString(valueDate), _valueDate),
-          R4bBoolean.of(valueBoolean, _valueBoolean),
-          valueAttachment,
-        ),
+        (valueCodeableConcept
+          ?: valueQuantity
+          ?: Date.of(FhirDate.fromString(valueDate), _valueDate)
+          ?: R4bBoolean.of(valueBoolean, _valueBoolean)
+          ?: valueAttachment),
     )
   }
 
@@ -346,26 +340,26 @@ internal object SubstanceDefinitionPropertySerializer : KSerializer<SubstanceDef
     encoder.encodeSerializableElement(descriptor, 3, Hoisted.typeSer, value.type)
     when (val choice = value.`value`) {
       null -> {}
-      is SubstanceDefinition.Property.Value.CodeableConcept -> {
-        encoder.encodeSerializableElement(descriptor, 4, Hoisted.typeSer, choice.value)
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 4, Hoisted.typeSer, choice)
       }
-      is SubstanceDefinition.Property.Value.Quantity -> {
-        encoder.encodeSerializableElement(descriptor, 5, Hoisted.valueQuantitySer, choice.value)
+      is Quantity -> {
+        encoder.encodeSerializableElement(descriptor, 5, Hoisted.valueQuantitySer, choice)
       }
-      is SubstanceDefinition.Property.Value.Date -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 6, it) }
-        (choice.value.toElement())?.let {
+      is Date -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 6, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 7, Hoisted.valueDateSer, it)
         }
       }
-      is SubstanceDefinition.Property.Value.Boolean -> {
-        ((choice.value.value))?.let { encoder.encodeBooleanElement(descriptor, 8, it) }
-        (choice.value.toElement())?.let {
+      is R4bBoolean -> {
+        ((choice.value))?.let { encoder.encodeBooleanElement(descriptor, 8, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 9, Hoisted.valueDateSer, it)
         }
       }
-      is SubstanceDefinition.Property.Value.Attachment -> {
-        encoder.encodeSerializableElement(descriptor, 10, Hoisted.valueAttachmentSer, choice.value)
+      is Attachment -> {
+        encoder.encodeSerializableElement(descriptor, 10, Hoisted.valueAttachmentSer, choice)
       }
     }
   }
@@ -1387,19 +1381,10 @@ internal object SubstanceDefinitionRelationshipSerializer :
       id = id,
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
-      substanceDefinition =
-        SubstanceDefinition.Relationship.SubstanceDefinition.from(
-          substanceDefinitionReference,
-          substanceDefinitionCodeableConcept,
-        ),
+      substanceDefinition = (substanceDefinitionReference ?: substanceDefinitionCodeableConcept),
       type = type!!,
       isDefining = R4bBoolean.of(isDefining, _isDefining),
-      amount =
-        SubstanceDefinition.Relationship.Amount.from(
-          amountQuantity,
-          amountRatio,
-          R4bString.of(amountString, _amountString),
-        ),
+      amount = (amountQuantity ?: amountRatio ?: R4bString.of(amountString, _amountString)),
       ratioHighLimitAmount = ratioHighLimitAmount,
       comparator = comparator,
       source = source ?: listOf(),
@@ -1422,20 +1407,20 @@ internal object SubstanceDefinitionRelationshipSerializer :
       )
     when (val choice = value.substanceDefinition) {
       null -> {}
-      is SubstanceDefinition.Relationship.SubstanceDefinition.Reference -> {
+      is Reference -> {
         encoder.encodeSerializableElement(
           descriptor,
           3,
           Hoisted.substanceDefinitionReferenceSer,
-          choice.value,
+          choice,
         )
       }
-      is SubstanceDefinition.Relationship.SubstanceDefinition.CodeableConcept -> {
+      is CodeableConcept -> {
         encoder.encodeSerializableElement(
           descriptor,
           4,
           Hoisted.substanceDefinitionCodeableConceptSer,
-          choice.value,
+          choice,
         )
       }
     }
@@ -1451,15 +1436,15 @@ internal object SubstanceDefinitionRelationshipSerializer :
     }
     when (val choice = value.amount) {
       null -> {}
-      is SubstanceDefinition.Relationship.Amount.Quantity -> {
-        encoder.encodeSerializableElement(descriptor, 8, Hoisted.amountQuantitySer, choice.value)
+      is Quantity -> {
+        encoder.encodeSerializableElement(descriptor, 8, Hoisted.amountQuantitySer, choice)
       }
-      is SubstanceDefinition.Relationship.Amount.Ratio -> {
-        encoder.encodeSerializableElement(descriptor, 9, Hoisted.amountRatioSer, choice.value)
+      is Ratio -> {
+        encoder.encodeSerializableElement(descriptor, 9, Hoisted.amountRatioSer, choice)
       }
-      is SubstanceDefinition.Relationship.Amount.String -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 10, it) }
-        (choice.value.toElement())?.let {
+      is R4bString -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 10, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 11, Hoisted.isDefiningSer, it)
         }
       }

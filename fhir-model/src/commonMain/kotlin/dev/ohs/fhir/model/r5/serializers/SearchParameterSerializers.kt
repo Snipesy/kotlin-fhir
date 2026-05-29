@@ -541,10 +541,7 @@ internal object SearchParameterSerializer : KSerializer<SearchParameter> {
       identifier = identifier ?: listOf(),
       version = R5String.of(version, _version),
       versionAlgorithm =
-        SearchParameter.VersionAlgorithm.from(
-          R5String.of(versionAlgorithmString, _versionAlgorithmString),
-          versionAlgorithmCoding,
-        ),
+        (R5String.of(versionAlgorithmString, _versionAlgorithmString) ?: versionAlgorithmCoding),
       name = R5String.of(name, _name)!!,
       title = R5String.of(title, _title),
       derivedFrom = Canonical.of(derivedFrom, _derivedFrom),
@@ -690,11 +687,9 @@ internal object SearchParameterSerializer : KSerializer<SearchParameter> {
     }
     when (val choice = value.versionAlgorithm) {
       null -> {}
-      is SearchParameter.VersionAlgorithm.String -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 15 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is R5String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 15 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             16 + descriptorOffset,
@@ -703,12 +698,12 @@ internal object SearchParameterSerializer : KSerializer<SearchParameter> {
           )
         }
       }
-      is SearchParameter.VersionAlgorithm.Coding -> {
+      is Coding -> {
         encoder.encodeSerializableElement(
           descriptor,
           17 + descriptorOffset,
           Hoisted.versionAlgorithmCodingSer,
-          choice.value,
+          choice,
         )
       }
     }

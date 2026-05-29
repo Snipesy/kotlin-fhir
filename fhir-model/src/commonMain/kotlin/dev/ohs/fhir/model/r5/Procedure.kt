@@ -19,10 +19,8 @@ package dev.ohs.fhir.model.r5
 import dev.ohs.fhir.model.r5.serializers.ProcedureFocalDeviceSerializer
 import dev.ohs.fhir.model.r5.serializers.ProcedurePerformerSerializer
 import dev.ohs.fhir.model.r5.serializers.ProcedureSerializer
-import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -44,7 +42,7 @@ public data class Procedure(
    * like the create and conditional update. Otherwise, the use of the resouce id depends on the
    * given use case.
    */
-  override val id: String? = null,
+  override val id: kotlin.String? = null,
   /**
    * The metadata about the resource. This is content that is maintained by the infrastructure.
    * Changes to the content might not always be associated with version changes to the resource.
@@ -244,8 +242,10 @@ public data class Procedure(
    * procedures being reported as past procedures that might not have millisecond precision while
    * other procedures performed and documented during the encounter might have more precise UTC
    * timestamps with timezone.
+   *
+   * A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String] | [Timing]
    */
-  public val occurrence: Occurrence? = null,
+  public val occurrence: Procedure.Occurrence? = null,
   /**
    * The date the occurrence of the procedure was first captured in the record regardless of
    * Procedure.status (potentially after the occurrence of the event).
@@ -256,8 +256,10 @@ public data class Procedure(
   /**
    * Indicates if this record was captured as a secondary 'reported' record rather than as an
    * original primary source-of-truth record. It may also indicate the source of the report.
+   *
+   * A FHIR choice type — one of: [Boolean] | [Reference]
    */
-  public val reported: Reported? = null,
+  public val reported: Procedure.Reported? = null,
   /** Indicates who or what performed the procedure and how they were involved. */
   public val performer: List<Performer> = listOf(),
   /**
@@ -382,7 +384,7 @@ public data class Procedure(
      * Unique id for the element within a resource (for internal references). This may be any string
      * value that does not contain spaces.
      */
-    override val id: String? = null,
+    override val id: kotlin.String? = null,
     /**
      * May be used to represent additional information that is not part of the basic definition of
      * the element. To make the use of extensions safe and managable, there is a strict set of
@@ -454,7 +456,7 @@ public data class Procedure(
        * Unique id for the element within a resource (for internal references). This may be any
        * string value that does not contain spaces.
        */
-      public var id: String? = null
+      public var id: kotlin.String? = null
 
       /**
        * May be used to represent additional information that is not part of the basic definition of
@@ -532,7 +534,7 @@ public data class Procedure(
      * Unique id for the element within a resource (for internal references). This may be any string
      * value that does not contain spaces.
      */
-    override val id: String? = null,
+    override val id: kotlin.String? = null,
     /**
      * May be used to represent additional information that is not part of the basic definition of
      * the element. To make the use of extensions safe and managable, there is a strict set of
@@ -588,7 +590,7 @@ public data class Procedure(
        * Unique id for the element within a resource (for internal references). This may be any
        * string value that does not contain spaces.
        */
-      public var id: String? = null
+      public var id: kotlin.String? = null
 
       /**
        * May be used to represent additional information that is not part of the basic definition of
@@ -638,79 +640,6 @@ public data class Procedure(
     }
   }
 
-  public sealed interface Occurrence {
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    public fun asPeriod(): Period? = this as? Period
-
-    public fun asString(): String? = this as? String
-
-    public fun asAge(): Age? = this as? Age
-
-    public fun asRange(): Range? = this as? Range
-
-    public fun asTiming(): Timing? = this as? Timing
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) : Occurrence
-
-    @JvmInline
-    public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) : Occurrence
-
-    @JvmInline
-    public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : Occurrence
-
-    @JvmInline public value class Age(public val `value`: dev.ohs.fhir.model.r5.Age) : Occurrence
-
-    @JvmInline
-    public value class Range(public val `value`: dev.ohs.fhir.model.r5.Range) : Occurrence
-
-    @JvmInline
-    public value class Timing(public val `value`: dev.ohs.fhir.model.r5.Timing) : Occurrence
-
-    public companion object {
-      internal fun from(
-        dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-        periodValue: dev.ohs.fhir.model.r5.Period?,
-        stringValue: dev.ohs.fhir.model.r5.String?,
-        ageValue: dev.ohs.fhir.model.r5.Age?,
-        rangeValue: dev.ohs.fhir.model.r5.Range?,
-        timingValue: dev.ohs.fhir.model.r5.Timing?,
-      ): Occurrence? {
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        if (periodValue != null) return Period(periodValue)
-        if (stringValue != null) return String(stringValue)
-        if (ageValue != null) return Age(ageValue)
-        if (rangeValue != null) return Range(rangeValue)
-        if (timingValue != null) return Timing(timingValue)
-        return null
-      }
-    }
-  }
-
-  public sealed interface Reported {
-    public fun asBoolean(): Boolean? = this as? Boolean
-
-    public fun asReference(): Reference? = this as? Reference
-
-    @JvmInline
-    public value class Boolean(public val `value`: dev.ohs.fhir.model.r5.Boolean) : Reported
-
-    @JvmInline
-    public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : Reported
-
-    public companion object {
-      internal fun from(
-        booleanValue: dev.ohs.fhir.model.r5.Boolean?,
-        referenceValue: dev.ohs.fhir.model.r5.Reference?,
-      ): Reported? {
-        if (booleanValue != null) return Boolean(booleanValue)
-        if (referenceValue != null) return Reference(referenceValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
     /**
      * A code specifying the state of the procedure. Generally, this will be the in-progress or
@@ -741,7 +670,7 @@ public data class Procedure(
      * like the create and conditional update. Otherwise, the use of the resouce id depends on the
      * given use case.
      */
-    public var id: String? = null
+    public var id: kotlin.String? = null
 
     /**
      * The metadata about the resource. This is content that is maintained by the infrastructure.
@@ -940,8 +869,10 @@ public data class Procedure(
      * due to some procedures being reported as past procedures that might not have millisecond
      * precision while other procedures performed and documented during the encounter might have
      * more precise UTC timestamps with timezone.
+     *
+     * A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String] | [Timing]
      */
-    public var occurrence: Occurrence? = null
+    public var occurrence: Procedure.Occurrence? = null
 
     /**
      * The date the occurrence of the procedure was first captured in the record regardless of
@@ -955,8 +886,10 @@ public data class Procedure(
     /**
      * Indicates if this record was captured as a secondary 'reported' record rather than as an
      * original primary source-of-truth record. It may also indicate the source of the report.
+     *
+     * A FHIR choice type — one of: [Boolean] | [Reference]
      */
-    public var reported: Reported? = null
+    public var reported: Procedure.Reported? = null
 
     /** Indicates who or what performed the procedure and how they were involved. */
     public var performer: MutableList<Performer.Builder> = mutableListOf()
@@ -1090,9 +1023,9 @@ public data class Procedure(
 
   /** Codes identifying the lifecycle stage of an event. */
   public enum class EventStatus(
-    private val code: String,
-    private val system: String,
-    private val display: String?,
+    private val code: kotlin.String,
+    private val system: kotlin.String,
+    private val display: kotlin.String?,
   ) {
     Preparation("preparation", "http://hl7.org/fhir/event-status", "Preparation"),
     In_Progress("in-progress", "http://hl7.org/fhir/event-status", "In Progress"),
@@ -1103,16 +1036,16 @@ public data class Procedure(
     Entered_In_Error("entered-in-error", "http://hl7.org/fhir/event-status", "Entered in Error"),
     Unknown("unknown", "http://hl7.org/fhir/event-status", "Unknown");
 
-    override fun toString(): String = code
+    override fun toString(): kotlin.String = code
 
-    public fun getCode(): String = code
+    public fun getCode(): kotlin.String = code
 
-    public fun getSystem(): String = system
+    public fun getSystem(): kotlin.String = system
 
-    public fun getDisplay(): String? = display
+    public fun getDisplay(): kotlin.String? = display
 
     public companion object {
-      public fun fromCode(code: String): EventStatus =
+      public fun fromCode(code: kotlin.String): EventStatus =
         when (code) {
           "preparation" -> Preparation
           "in-progress" -> In_Progress
@@ -1126,4 +1059,10 @@ public data class Procedure(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String] | [Timing] */
+  public typealias Occurrence = FhirChoiceTypes.AgeOrDateTimeOrPeriodOrRangeOrStringOrTiming
+
+  /** A FHIR choice type — one of: [Boolean] | [Reference] */
+  public typealias Reported = FhirChoiceTypes.BooleanOrReference
 }

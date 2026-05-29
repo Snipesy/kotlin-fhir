@@ -362,10 +362,7 @@ internal object SpecimenDefinitionTypeTestedContainerSerializer :
       description = R4bString.of(description, _description),
       capacity = capacity,
       minimumVolume =
-        SpecimenDefinition.TypeTested.Container.MinimumVolume.from(
-          minimumVolumeQuantity,
-          R4bString.of(minimumVolumeString, _minimumVolumeString),
-        ),
+        (minimumVolumeQuantity ?: R4bString.of(minimumVolumeString, _minimumVolumeString)),
       additive = additive ?: listOf(),
       preparation = R4bString.of(preparation, _preparation),
     )
@@ -399,12 +396,12 @@ internal object SpecimenDefinitionTypeTestedContainerSerializer :
     }
     when (val choice = value.minimumVolume) {
       null -> {}
-      is SpecimenDefinition.TypeTested.Container.MinimumVolume.Quantity -> {
-        encoder.encodeSerializableElement(descriptor, 9, Hoisted.capacitySer, choice.value)
+      is Quantity -> {
+        encoder.encodeSerializableElement(descriptor, 9, Hoisted.capacitySer, choice)
       }
-      is SpecimenDefinition.TypeTested.Container.MinimumVolume.String -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 10, it) }
-        (choice.value.toElement())?.let {
+      is R4bString -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 10, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 11, Hoisted.descriptionSer, it)
         }
       }
@@ -507,11 +504,7 @@ internal object SpecimenDefinitionTypeTestedContainerAdditiveSerializer :
       id = id,
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
-      additive =
-        SpecimenDefinition.TypeTested.Container.Additive.Additive.from(
-          additiveCodeableConcept,
-          additiveReference,
-        )!!,
+      additive = (additiveCodeableConcept ?: additiveReference)!!,
     )
   }
 
@@ -530,16 +523,11 @@ internal object SpecimenDefinitionTypeTestedContainerAdditiveSerializer :
         value.modifierExtension,
       )
     when (val choice = value.additive) {
-      is SpecimenDefinition.TypeTested.Container.Additive.Additive.CodeableConcept -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          3,
-          Hoisted.additiveCodeableConceptSer,
-          choice.value,
-        )
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 3, Hoisted.additiveCodeableConceptSer, choice)
       }
-      is SpecimenDefinition.TypeTested.Container.Additive.Additive.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 4, Hoisted.additiveReferenceSer, choice.value)
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 4, Hoisted.additiveReferenceSer, choice)
       }
     }
   }

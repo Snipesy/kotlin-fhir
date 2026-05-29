@@ -25,7 +25,6 @@ import dev.ohs.fhir.model.r4.serializers.ConsentVerificationSerializer
 import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -192,8 +191,10 @@ public data class Consent(
    * The source can be contained inline (Attachment), referenced directly (Consent), referenced in a
    * consent repository (DocumentReference), or simply by an identifier (Identifier), e.g. a CDA
    * document id.
+   *
+   * A FHIR choice type — one of: [Attachment] | [Reference]
    */
-  public val source: Source? = null,
+  public val source: Consent.Source? = null,
   /**
    * The references to the policies that are included in this consent scope. Policies may be
    * organizational, but are often defined jurisdictionally, or in law.
@@ -1007,29 +1008,6 @@ public data class Consent(
     }
   }
 
-  public sealed interface Source {
-    public fun asAttachment(): Attachment? = this as? Attachment
-
-    public fun asReference(): Reference? = this as? Reference
-
-    @JvmInline
-    public value class Attachment(public val `value`: dev.ohs.fhir.model.r4.Attachment) : Source
-
-    @JvmInline
-    public value class Reference(public val `value`: dev.ohs.fhir.model.r4.Reference) : Source
-
-    public companion object {
-      internal fun from(
-        attachmentValue: dev.ohs.fhir.model.r4.Attachment?,
-        referenceValue: dev.ohs.fhir.model.r4.Reference?,
-      ): Source? {
-        if (attachmentValue != null) return Attachment(attachmentValue)
-        if (referenceValue != null) return Reference(referenceValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
     /**
      * Indicates the current state of this consent.
@@ -1201,8 +1179,10 @@ public data class Consent(
      * The source can be contained inline (Attachment), referenced directly (Consent), referenced in
      * a consent repository (DocumentReference), or simply by an identifier (Identifier), e.g. a CDA
      * document id.
+     *
+     * A FHIR choice type — one of: [Attachment] | [Reference]
      */
-    public var source: Source? = null
+    public var source: Consent.Source? = null
 
     /**
      * The references to the policies that are included in this consent scope. Policies may be
@@ -1352,4 +1332,7 @@ public data class Consent(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [Attachment] | [Reference] */
+  public typealias Source = FhirChoiceTypes.AttachmentOrReference
 }

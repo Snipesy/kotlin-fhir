@@ -489,7 +489,7 @@ internal object ResearchDefinitionSerializer : KSerializer<ResearchDefinition> {
       subtitle = R4String.of(subtitle, _subtitle),
       status = Enumeration.of(PublicationStatus.fromCode(status!!), _status),
       experimental = R4Boolean.of(experimental, _experimental),
-      subject = ResearchDefinition.Subject.from(subjectCodeableConcept, subjectReference),
+      subject = (subjectCodeableConcept ?: subjectReference),
       date = DateTime.of(FhirDateTime.fromString(date), _date),
       publisher = R4String.of(publisher, _publisher),
       contact = contact ?: listOf(),
@@ -674,20 +674,20 @@ internal object ResearchDefinitionSerializer : KSerializer<ResearchDefinition> {
     }
     when (val choice = value.subject) {
       null -> {}
-      is ResearchDefinition.Subject.CodeableConcept -> {
+      is CodeableConcept -> {
         encoder.encodeSerializableElement(
           descriptor,
           27 + descriptorOffset,
           Hoisted.subjectCodeableConceptSer,
-          choice.value,
+          choice,
         )
       }
-      is ResearchDefinition.Subject.Reference -> {
+      is Reference -> {
         encoder.encodeSerializableElement(
           descriptor,
           28 + descriptorOffset,
           Hoisted.subjectReferenceSer,
-          choice.value,
+          choice,
         )
       }
     }

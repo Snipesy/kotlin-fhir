@@ -23,7 +23,6 @@ import dev.ohs.fhir.model.r5.serializers.ImmunizationReactionSerializer
 import dev.ohs.fhir.model.r5.serializers.ImmunizationSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -206,8 +205,10 @@ public data class Immunization(
    * are given as a series of patient self-administered dose over a span of time. In cases like
    * this, often, only the first dose (typically a provider supervised dose) is recorded with the
    * occurrence indicating the date/time of the first dose.
+   *
+   * A FHIR choice type — one of: [DateTime] | [String]
    */
-  public val occurrence: Occurrence,
+  public val occurrence: Immunization.Occurrence,
   /**
    * Indicates whether the data contained in the resource was captured by the
    * individual/organization which was responsible for the administration of the vaccine rather than
@@ -833,29 +834,6 @@ public data class Immunization(
     }
   }
 
-  public sealed interface Occurrence {
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    public fun asString(): String? = this as? String
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) : Occurrence
-
-    @JvmInline
-    public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : Occurrence
-
-    public companion object {
-      internal fun from(
-        dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-        stringValue: dev.ohs.fhir.model.r5.String?,
-      ): Occurrence? {
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        if (stringValue != null) return String(stringValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
     /**
      * Indicates the current status of the immunization event.
@@ -890,8 +868,10 @@ public data class Immunization(
      * oral typhoid vaccine) are given as a series of patient self-administered dose over a span of
      * time. In cases like this, often, only the first dose (typically a provider supervised dose)
      * is recorded with the occurrence indicating the date/time of the first dose.
+     *
+     * A FHIR choice type — one of: [DateTime] | [String]
      */
-    public var occurrence: Occurrence,
+    public var occurrence: Immunization.Occurrence,
   ) : DomainResource.Builder() {
     /**
      * The logical id of the resource, as used in the URL for the resource. Once assigned, this
@@ -1209,4 +1189,7 @@ public data class Immunization(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [DateTime] | [String] */
+  public typealias Occurrence = FhirChoiceTypes.DateTimeOrString
 }

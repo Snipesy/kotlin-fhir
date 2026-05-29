@@ -21,7 +21,6 @@ import dev.ohs.fhir.model.r4b.serializers.MedicationIngredientSerializer
 import dev.ohs.fhir.model.r4b.serializers.MedicationSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -259,8 +258,10 @@ public data class Medication(
     /**
      * The actual ingredient - either a substance (simple ingredient) or another medication of a
      * medication.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public val item: Item,
+    public val item: Ingredient.Item,
     /** Indication of whether this ingredient affects the therapeutic action of the drug. */
     public val isActive: Boolean? = null,
     /**
@@ -281,37 +282,14 @@ public data class Medication(
         }
       }
 
-    public sealed interface Item {
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asReference(): Reference? = this as? Reference
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r4b.CodeableConcept
-      ) : Item
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r4b.Reference) : Item
-
-      public companion object {
-        internal fun from(
-          codeableConceptValue: dev.ohs.fhir.model.r4b.CodeableConcept?,
-          referenceValue: dev.ohs.fhir.model.r4b.Reference?,
-        ): Item? {
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (referenceValue != null) return Reference(referenceValue)
-          return null
-        }
-      }
-    }
-
     public class Builder(
       /**
        * The actual ingredient - either a substance (simple ingredient) or another medication of a
        * medication.
+       *
+       * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public var item: Item
+      public var item: Ingredient.Item
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -373,6 +351,9 @@ public data class Medication(
           strength = strength?.build(),
         )
     }
+
+    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+    public typealias Item = FhirChoiceTypes.CodeableConceptOrReference
   }
 
   /** Information that only applies to packages (not products). */

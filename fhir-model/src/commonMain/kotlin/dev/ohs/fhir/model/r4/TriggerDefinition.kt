@@ -19,7 +19,6 @@ package dev.ohs.fhir.model.r4
 import dev.ohs.fhir.model.r4.serializers.TriggerDefinitionSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.Serializable
 
 /**
@@ -59,8 +58,12 @@ public data class TriggerDefinition(
    * semantics described by the formal description of the event.
    */
   public val name: String? = null,
-  /** The timing of the event (if this is a periodic trigger). */
-  public val timing: Timing? = null,
+  /**
+   * The timing of the event (if this is a periodic trigger).
+   *
+   * A FHIR choice type — one of: [Date] | [DateTime] | [Reference] | [Timing]
+   */
+  public val timing: FhirChoiceTypes.DateOrDateTimeOrReferenceOrTiming? = null,
   /**
    * The triggering data of the event (if this is a data trigger). If more than one data is
    * requirement is specified, then all the data requirements must be true.
@@ -84,7 +87,7 @@ public data class TriggerDefinition(
    * always have the same type.
    */
   public val condition: Expression? = null,
-) : Element() {
+) : Element(), FhirChoiceParticipants.TriggerDefinitionChoices {
   public fun toBuilder(): Builder =
     with(this) {
       Builder(type).apply {
@@ -96,47 +99,6 @@ public data class TriggerDefinition(
         condition = this@with.condition?.toBuilder()
       }
     }
-
-  public sealed interface Timing {
-    public fun asTiming(): Timing? = this as? Timing
-
-    public fun asReference(): Reference? = this as? Reference
-
-    public fun asDate(): Date? = this as? Date
-
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    @JvmInline
-    public value class Timing(public val `value`: dev.ohs.fhir.model.r4.Timing) :
-      TriggerDefinition.Timing
-
-    @JvmInline
-    public value class Reference(public val `value`: dev.ohs.fhir.model.r4.Reference) :
-      TriggerDefinition.Timing
-
-    @JvmInline
-    public value class Date(public val `value`: dev.ohs.fhir.model.r4.Date) :
-      TriggerDefinition.Timing
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r4.DateTime) :
-      TriggerDefinition.Timing
-
-    public companion object {
-      internal fun from(
-        timingValue: dev.ohs.fhir.model.r4.Timing?,
-        referenceValue: dev.ohs.fhir.model.r4.Reference?,
-        dateValue: dev.ohs.fhir.model.r4.Date?,
-        dateTimeValue: dev.ohs.fhir.model.r4.DateTime?,
-      ): TriggerDefinition.Timing? {
-        if (timingValue != null) return Timing(timingValue)
-        if (referenceValue != null) return Reference(referenceValue)
-        if (dateValue != null) return Date(dateValue)
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        return null
-      }
-    }
-  }
 
   public open class Builder(
     /** The type of triggering event. */
@@ -173,8 +135,12 @@ public data class TriggerDefinition(
      */
     public open var name: String.Builder? = null
 
-    /** The timing of the event (if this is a periodic trigger). */
-    public open var timing: Timing? = null
+    /**
+     * The timing of the event (if this is a periodic trigger).
+     *
+     * A FHIR choice type — one of: [Date] | [DateTime] | [Reference] | [Timing]
+     */
+    public open var timing: FhirChoiceTypes.DateOrDateTimeOrReferenceOrTiming? = null
 
     /**
      * The triggering data of the event (if this is a data trigger). If more than one data is

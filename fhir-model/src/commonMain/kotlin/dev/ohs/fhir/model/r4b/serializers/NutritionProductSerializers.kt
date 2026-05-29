@@ -330,14 +330,12 @@ internal object NutritionProductProductCharacteristicSerializer :
       modifierExtension = modifierExtension ?: listOf(),
       type = type!!,
       `value` =
-        NutritionProduct.ProductCharacteristic.Value.from(
-          valueCodeableConcept,
-          R4bString.of(valueString, _valueString),
-          valueQuantity,
-          Base64Binary.of(valueBase64Binary, _valueBase64Binary),
-          valueAttachment,
-          R4bBoolean.of(valueBoolean, _valueBoolean),
-        )!!,
+        (valueCodeableConcept
+          ?: R4bString.of(valueString, _valueString)
+          ?: valueQuantity
+          ?: Base64Binary.of(valueBase64Binary, _valueBase64Binary)
+          ?: valueAttachment
+          ?: R4bBoolean.of(valueBoolean, _valueBoolean))!!,
     )
   }
 
@@ -357,30 +355,30 @@ internal object NutritionProductProductCharacteristicSerializer :
       )
     encoder.encodeSerializableElement(descriptor, 3, Hoisted.typeSer, value.type)
     when (val choice = value.`value`) {
-      is NutritionProduct.ProductCharacteristic.Value.CodeableConcept -> {
-        encoder.encodeSerializableElement(descriptor, 4, Hoisted.typeSer, choice.value)
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 4, Hoisted.typeSer, choice)
       }
-      is NutritionProduct.ProductCharacteristic.Value.String -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
-        (choice.value.toElement())?.let {
+      is R4bString -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 6, Hoisted.valueStringSer, it)
         }
       }
-      is NutritionProduct.ProductCharacteristic.Value.Quantity -> {
-        encoder.encodeSerializableElement(descriptor, 7, Hoisted.valueQuantitySer, choice.value)
+      is Quantity -> {
+        encoder.encodeSerializableElement(descriptor, 7, Hoisted.valueQuantitySer, choice)
       }
-      is NutritionProduct.ProductCharacteristic.Value.Base64Binary -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 8, it) }
-        (choice.value.toElement())?.let {
+      is Base64Binary -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 8, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 9, Hoisted.valueStringSer, it)
         }
       }
-      is NutritionProduct.ProductCharacteristic.Value.Attachment -> {
-        encoder.encodeSerializableElement(descriptor, 10, Hoisted.valueAttachmentSer, choice.value)
+      is Attachment -> {
+        encoder.encodeSerializableElement(descriptor, 10, Hoisted.valueAttachmentSer, choice)
       }
-      is NutritionProduct.ProductCharacteristic.Value.Boolean -> {
-        ((choice.value.value))?.let { encoder.encodeBooleanElement(descriptor, 11, it) }
-        (choice.value.toElement())?.let {
+      is R4bBoolean -> {
+        ((choice.value))?.let { encoder.encodeBooleanElement(descriptor, 11, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 12, Hoisted.valueStringSer, it)
         }
       }

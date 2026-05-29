@@ -259,11 +259,9 @@ internal object DeviceUseStatementSerializer : KSerializer<DeviceUseStatement> {
       subject = subject!!,
       derivedFrom = derivedFrom ?: listOf(),
       timing =
-        DeviceUseStatement.Timing.from(
-          timingTiming,
-          timingPeriod,
-          DateTime.of(FhirDateTime.fromString(timingDateTime), _timingDateTime),
-        ),
+        (timingTiming
+          ?: timingPeriod
+          ?: DateTime.of(FhirDateTime.fromString(timingDateTime), _timingDateTime)),
       recordedOn = DateTime.of(FhirDateTime.fromString(recordedOn), _recordedOn),
       source = source,
       device = device!!,
@@ -370,27 +368,27 @@ internal object DeviceUseStatementSerializer : KSerializer<DeviceUseStatement> {
       )
     when (val choice = value.timing) {
       null -> {}
-      is DeviceUseStatement.Timing.Timing -> {
+      is Timing -> {
         encoder.encodeSerializableElement(
           descriptor,
           16 + descriptorOffset,
           Hoisted.timingTimingSer,
-          choice.value,
+          choice,
         )
       }
-      is DeviceUseStatement.Timing.Period -> {
+      is Period -> {
         encoder.encodeSerializableElement(
           descriptor,
           17 + descriptorOffset,
           Hoisted.timingPeriodSer,
-          choice.value,
+          choice,
         )
       }
-      is DeviceUseStatement.Timing.DateTime -> {
-        ((choice.value.value?.toString()))?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let {
           encoder.encodeStringElement(descriptor, 18 + descriptorOffset, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             19 + descriptorOffset,

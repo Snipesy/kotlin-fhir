@@ -42,7 +42,7 @@ public data class Boolean(
   override val extension: List<Extension> = listOf(),
   /** The actual value */
   public val `value`: kotlin.Boolean? = null,
-) : PrimitiveType() {
+) : PrimitiveType(), FhirChoiceParticipants.BooleanChoices {
   public fun toBuilder(): Builder =
     with(this) {
       Builder().apply {

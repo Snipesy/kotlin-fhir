@@ -24,6 +24,7 @@ import dev.ohs.fhir.model.r5.Code
 import dev.ohs.fhir.model.r5.CodeableConcept
 import dev.ohs.fhir.model.r5.DateTime
 import dev.ohs.fhir.model.r5.Duration
+import dev.ohs.fhir.model.r5.DurationBox
 import dev.ohs.fhir.model.r5.Element
 import dev.ohs.fhir.model.r5.Enumeration
 import dev.ohs.fhir.model.r5.Extension
@@ -35,6 +36,7 @@ import dev.ohs.fhir.model.r5.Meta
 import dev.ohs.fhir.model.r5.Narrative
 import dev.ohs.fhir.model.r5.Period
 import dev.ohs.fhir.model.r5.Quantity
+import dev.ohs.fhir.model.r5.QuantityBox
 import dev.ohs.fhir.model.r5.Range
 import dev.ohs.fhir.model.r5.Reference
 import dev.ohs.fhir.model.r5.Resource
@@ -205,14 +207,12 @@ internal object MeasureReportGroupSerializer : KSerializer<MeasureReport.Group> 
       subject = subject,
       population = population ?: listOf(),
       measureScore =
-        MeasureReport.Group.MeasureScore.from(
-          measureScoreQuantity,
-          DateTime.of(FhirDateTime.fromString(measureScoreDateTime), _measureScoreDateTime),
-          measureScoreCodeableConcept,
-          measureScorePeriod,
-          measureScoreRange,
-          measureScoreDuration,
-        ),
+        ((measureScoreQuantity)?.let { QuantityBox(it) }
+          ?: DateTime.of(FhirDateTime.fromString(measureScoreDateTime), _measureScoreDateTime)
+          ?: measureScoreCodeableConcept
+          ?: measureScorePeriod
+          ?: measureScoreRange
+          ?: (measureScoreDuration)?.let { DurationBox(it) }),
       stratifier = stratifier ?: listOf(),
     )
   }
@@ -240,7 +240,7 @@ internal object MeasureReportGroupSerializer : KSerializer<MeasureReport.Group> 
       encoder.encodeSerializableElement(descriptor, 7, Hoisted.populationSer, value.population)
     when (val choice = value.measureScore) {
       null -> {}
-      is MeasureReport.Group.MeasureScore.Quantity -> {
+      is QuantityBox -> {
         encoder.encodeSerializableElement(
           descriptor,
           8,
@@ -248,32 +248,22 @@ internal object MeasureReportGroupSerializer : KSerializer<MeasureReport.Group> 
           choice.value,
         )
       }
-      is MeasureReport.Group.MeasureScore.DateTime -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 9, it) }
-        (choice.value.toElement())?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 9, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 10, Hoisted.linkIdSer, it)
         }
       }
-      is MeasureReport.Group.MeasureScore.CodeableConcept -> {
-        encoder.encodeSerializableElement(descriptor, 11, Hoisted.codeSer, choice.value)
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 11, Hoisted.codeSer, choice)
       }
-      is MeasureReport.Group.MeasureScore.Period -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          12,
-          Hoisted.measureScorePeriodSer,
-          choice.value,
-        )
+      is Period -> {
+        encoder.encodeSerializableElement(descriptor, 12, Hoisted.measureScorePeriodSer, choice)
       }
-      is MeasureReport.Group.MeasureScore.Range -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          13,
-          Hoisted.measureScoreRangeSer,
-          choice.value,
-        )
+      is Range -> {
+        encoder.encodeSerializableElement(descriptor, 13, Hoisted.measureScoreRangeSer, choice)
       }
-      is MeasureReport.Group.MeasureScore.Duration -> {
+      is DurationBox -> {
         encoder.encodeSerializableElement(
           descriptor,
           14,
@@ -754,24 +744,20 @@ internal object MeasureReportGroupStratifierStratumSerializer :
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
       `value` =
-        MeasureReport.Group.Stratifier.Stratum.Value.from(
-          valueCodeableConcept,
-          R5Boolean.of(valueBoolean, _valueBoolean),
-          valueQuantity,
-          valueRange,
-          valueReference,
-        ),
+        (valueCodeableConcept
+          ?: R5Boolean.of(valueBoolean, _valueBoolean)
+          ?: valueQuantity
+          ?: valueRange
+          ?: valueReference),
       component = component ?: listOf(),
       population = population ?: listOf(),
       measureScore =
-        MeasureReport.Group.Stratifier.Stratum.MeasureScore.from(
-          measureScoreQuantity,
-          DateTime.of(FhirDateTime.fromString(measureScoreDateTime), _measureScoreDateTime),
-          measureScoreCodeableConcept,
-          measureScorePeriod,
-          measureScoreRange,
-          measureScoreDuration,
-        ),
+        ((measureScoreQuantity)?.let { QuantityBox(it) }
+          ?: DateTime.of(FhirDateTime.fromString(measureScoreDateTime), _measureScoreDateTime)
+          ?: measureScoreCodeableConcept
+          ?: measureScorePeriod
+          ?: measureScoreRange
+          ?: (measureScoreDuration)?.let { DurationBox(it) }),
     )
   }
 
@@ -791,28 +777,23 @@ internal object MeasureReportGroupStratifierStratumSerializer :
       )
     when (val choice = value.`value`) {
       null -> {}
-      is MeasureReport.Group.Stratifier.Stratum.Value.CodeableConcept -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          3,
-          Hoisted.valueCodeableConceptSer,
-          choice.value,
-        )
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 3, Hoisted.valueCodeableConceptSer, choice)
       }
-      is MeasureReport.Group.Stratifier.Stratum.Value.Boolean -> {
-        ((choice.value.value))?.let { encoder.encodeBooleanElement(descriptor, 4, it) }
-        (choice.value.toElement())?.let {
+      is R5Boolean -> {
+        ((choice.value))?.let { encoder.encodeBooleanElement(descriptor, 4, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 5, Hoisted.valueBooleanSer, it)
         }
       }
-      is MeasureReport.Group.Stratifier.Stratum.Value.Quantity -> {
-        encoder.encodeSerializableElement(descriptor, 6, Hoisted.valueQuantitySer, choice.value)
+      is Quantity -> {
+        encoder.encodeSerializableElement(descriptor, 6, Hoisted.valueQuantitySer, choice)
       }
-      is MeasureReport.Group.Stratifier.Stratum.Value.Range -> {
-        encoder.encodeSerializableElement(descriptor, 7, Hoisted.valueRangeSer, choice.value)
+      is Range -> {
+        encoder.encodeSerializableElement(descriptor, 7, Hoisted.valueRangeSer, choice)
       }
-      is MeasureReport.Group.Stratifier.Stratum.Value.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 8, Hoisted.valueReferenceSer, choice.value)
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 8, Hoisted.valueReferenceSer, choice)
       }
     }
     if (value.component.isNotEmpty())
@@ -821,35 +802,25 @@ internal object MeasureReportGroupStratifierStratumSerializer :
       encoder.encodeSerializableElement(descriptor, 10, Hoisted.populationSer, value.population)
     when (val choice = value.measureScore) {
       null -> {}
-      is MeasureReport.Group.Stratifier.Stratum.MeasureScore.Quantity -> {
+      is QuantityBox -> {
         encoder.encodeSerializableElement(descriptor, 11, Hoisted.valueQuantitySer, choice.value)
       }
-      is MeasureReport.Group.Stratifier.Stratum.MeasureScore.DateTime -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 12, it) }
-        (choice.value.toElement())?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 12, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 13, Hoisted.valueBooleanSer, it)
         }
       }
-      is MeasureReport.Group.Stratifier.Stratum.MeasureScore.CodeableConcept -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          14,
-          Hoisted.valueCodeableConceptSer,
-          choice.value,
-        )
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 14, Hoisted.valueCodeableConceptSer, choice)
       }
-      is MeasureReport.Group.Stratifier.Stratum.MeasureScore.Period -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          15,
-          Hoisted.measureScorePeriodSer,
-          choice.value,
-        )
+      is Period -> {
+        encoder.encodeSerializableElement(descriptor, 15, Hoisted.measureScorePeriodSer, choice)
       }
-      is MeasureReport.Group.Stratifier.Stratum.MeasureScore.Range -> {
-        encoder.encodeSerializableElement(descriptor, 16, Hoisted.valueRangeSer, choice.value)
+      is Range -> {
+        encoder.encodeSerializableElement(descriptor, 16, Hoisted.valueRangeSer, choice)
       }
-      is MeasureReport.Group.Stratifier.Stratum.MeasureScore.Duration -> {
+      is DurationBox -> {
         encoder.encodeSerializableElement(
           descriptor,
           17,
@@ -991,13 +962,11 @@ internal object MeasureReportGroupStratifierStratumComponentSerializer :
       linkId = R5String.of(linkId, _linkId),
       code = code!!,
       `value` =
-        MeasureReport.Group.Stratifier.Stratum.Component.Value.from(
-          valueCodeableConcept,
-          R5Boolean.of(valueBoolean, _valueBoolean),
-          valueQuantity,
-          valueRange,
-          valueReference,
-        )!!,
+        (valueCodeableConcept
+          ?: R5Boolean.of(valueBoolean, _valueBoolean)
+          ?: valueQuantity
+          ?: valueRange
+          ?: valueReference)!!,
     )
   }
 
@@ -1021,23 +990,23 @@ internal object MeasureReportGroupStratifierStratumComponentSerializer :
     }
     encoder.encodeSerializableElement(descriptor, 5, Hoisted.codeSer, value.code)
     when (val choice = value.`value`) {
-      is MeasureReport.Group.Stratifier.Stratum.Component.Value.CodeableConcept -> {
-        encoder.encodeSerializableElement(descriptor, 6, Hoisted.codeSer, choice.value)
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 6, Hoisted.codeSer, choice)
       }
-      is MeasureReport.Group.Stratifier.Stratum.Component.Value.Boolean -> {
-        ((choice.value.value))?.let { encoder.encodeBooleanElement(descriptor, 7, it) }
-        (choice.value.toElement())?.let {
+      is R5Boolean -> {
+        ((choice.value))?.let { encoder.encodeBooleanElement(descriptor, 7, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 8, Hoisted.linkIdSer, it)
         }
       }
-      is MeasureReport.Group.Stratifier.Stratum.Component.Value.Quantity -> {
-        encoder.encodeSerializableElement(descriptor, 9, Hoisted.valueQuantitySer, choice.value)
+      is Quantity -> {
+        encoder.encodeSerializableElement(descriptor, 9, Hoisted.valueQuantitySer, choice)
       }
-      is MeasureReport.Group.Stratifier.Stratum.Component.Value.Range -> {
-        encoder.encodeSerializableElement(descriptor, 10, Hoisted.valueRangeSer, choice.value)
+      is Range -> {
+        encoder.encodeSerializableElement(descriptor, 10, Hoisted.valueRangeSer, choice)
       }
-      is MeasureReport.Group.Stratifier.Stratum.Component.Value.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 11, Hoisted.valueReferenceSer, choice.value)
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 11, Hoisted.valueReferenceSer, choice)
       }
     }
   }

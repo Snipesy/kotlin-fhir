@@ -67,7 +67,7 @@ public data class Duration(
    * for currency. The context of use may additionally require a code from a particular system.
    */
   override val code: Code? = null,
-) : Quantity() {
+) : Quantity(), FhirChoiceParticipants.DurationChoices {
   override fun toBuilder(): Builder =
     with(this) {
       Builder().apply {

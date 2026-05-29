@@ -20,26 +20,32 @@ package dev.ohs.fhir.model.r5.serializers
 
 import dev.ohs.fhir.model.r5.Address
 import dev.ohs.fhir.model.r5.Age
+import dev.ohs.fhir.model.r5.AgeBox
 import dev.ohs.fhir.model.r5.Annotation
 import dev.ohs.fhir.model.r5.Attachment
 import dev.ohs.fhir.model.r5.Availability
 import dev.ohs.fhir.model.r5.Base64Binary
 import dev.ohs.fhir.model.r5.Boolean as R5Boolean
 import dev.ohs.fhir.model.r5.Canonical
+import dev.ohs.fhir.model.r5.CanonicalBox
 import dev.ohs.fhir.model.r5.Code
+import dev.ohs.fhir.model.r5.CodeBox
 import dev.ohs.fhir.model.r5.CodeableConcept
 import dev.ohs.fhir.model.r5.CodeableReference
 import dev.ohs.fhir.model.r5.Coding
 import dev.ohs.fhir.model.r5.ContactDetail
 import dev.ohs.fhir.model.r5.ContactPoint
 import dev.ohs.fhir.model.r5.Count
+import dev.ohs.fhir.model.r5.CountBox
 import dev.ohs.fhir.model.r5.DataRequirement
 import dev.ohs.fhir.model.r5.Date
 import dev.ohs.fhir.model.r5.DateTime
 import dev.ohs.fhir.model.r5.Decimal
 import dev.ohs.fhir.model.r5.Distance
+import dev.ohs.fhir.model.r5.DistanceBox
 import dev.ohs.fhir.model.r5.Dosage
 import dev.ohs.fhir.model.r5.Duration
+import dev.ohs.fhir.model.r5.DurationBox
 import dev.ohs.fhir.model.r5.Element
 import dev.ohs.fhir.model.r5.Expression
 import dev.ohs.fhir.model.r5.ExtendedContactDetail
@@ -49,18 +55,24 @@ import dev.ohs.fhir.model.r5.FhirDateTime
 import dev.ohs.fhir.model.r5.FhirDecimal
 import dev.ohs.fhir.model.r5.HumanName
 import dev.ohs.fhir.model.r5.Id
+import dev.ohs.fhir.model.r5.IdBox
 import dev.ohs.fhir.model.r5.Identifier
 import dev.ohs.fhir.model.r5.Instant
 import dev.ohs.fhir.model.r5.Integer
 import dev.ohs.fhir.model.r5.Integer64
+import dev.ohs.fhir.model.r5.IntegerBox
 import dev.ohs.fhir.model.r5.Markdown
+import dev.ohs.fhir.model.r5.MarkdownBox
 import dev.ohs.fhir.model.r5.Meta
 import dev.ohs.fhir.model.r5.Money
 import dev.ohs.fhir.model.r5.Oid
+import dev.ohs.fhir.model.r5.OidBox
 import dev.ohs.fhir.model.r5.ParameterDefinition
 import dev.ohs.fhir.model.r5.Period
 import dev.ohs.fhir.model.r5.PositiveInt
+import dev.ohs.fhir.model.r5.PositiveIntBox
 import dev.ohs.fhir.model.r5.Quantity
+import dev.ohs.fhir.model.r5.QuantityBox
 import dev.ohs.fhir.model.r5.Range
 import dev.ohs.fhir.model.r5.Ratio
 import dev.ohs.fhir.model.r5.RatioRange
@@ -69,14 +81,19 @@ import dev.ohs.fhir.model.r5.RelatedArtifact
 import dev.ohs.fhir.model.r5.SampledData
 import dev.ohs.fhir.model.r5.Signature
 import dev.ohs.fhir.model.r5.String as R5String
+import dev.ohs.fhir.model.r5.StringBox
 import dev.ohs.fhir.model.r5.Time
 import dev.ohs.fhir.model.r5.Timing
 import dev.ohs.fhir.model.r5.TriggerDefinition
 import dev.ohs.fhir.model.r5.UnsignedInt
+import dev.ohs.fhir.model.r5.UnsignedIntBox
 import dev.ohs.fhir.model.r5.Uri
+import dev.ohs.fhir.model.r5.UriBox
 import dev.ohs.fhir.model.r5.Url
+import dev.ohs.fhir.model.r5.UrlBox
 import dev.ohs.fhir.model.r5.UsageContext
 import dev.ohs.fhir.model.r5.Uuid
+import dev.ohs.fhir.model.r5.UuidBox
 import kotlin.Boolean as KotlinBoolean
 import kotlin.Int
 import kotlin.OptIn
@@ -807,62 +824,60 @@ internal object ExtensionSerializer : KSerializer<Extension> {
       extension = extension ?: listOf(),
       url = url!!,
       `value` =
-        Extension.Value.from(
-          Base64Binary.of(valueBase64Binary, _valueBase64Binary),
-          R5Boolean.of(valueBoolean, _valueBoolean),
-          Canonical.of(valueCanonical, _valueCanonical),
-          Code.of(valueCode, _valueCode),
-          Date.of(FhirDate.fromString(valueDate), _valueDate),
-          DateTime.of(FhirDateTime.fromString(valueDateTime), _valueDateTime),
-          Decimal.of(valueDecimal, _valueDecimal),
-          Id.of(valueId, _valueId),
-          Instant.of(FhirDateTime.fromString(valueInstant), _valueInstant),
-          Integer.of(valueInteger, _valueInteger),
-          Integer64.of(valueInteger64?.toLong(), _valueInteger64),
-          Markdown.of(valueMarkdown, _valueMarkdown),
-          Oid.of(valueOid, _valueOid),
-          PositiveInt.of(valuePositiveInt, _valuePositiveInt),
-          R5String.of(valueString, _valueString),
-          Time.of(valueTime, _valueTime),
-          UnsignedInt.of(valueUnsignedInt, _valueUnsignedInt),
-          Uri.of(valueUri, _valueUri),
-          Url.of(valueUrl, _valueUrl),
-          Uuid.of(valueUuid, _valueUuid),
-          valueAddress,
-          valueAge,
-          valueAnnotation,
-          valueAttachment,
-          valueCodeableConcept,
-          valueCodeableReference,
-          valueCoding,
-          valueContactPoint,
-          valueCount,
-          valueDistance,
-          valueDuration,
-          valueHumanName,
-          valueIdentifier,
-          valueMoney,
-          valuePeriod,
-          valueQuantity,
-          valueRange,
-          valueRatio,
-          valueRatioRange,
-          valueReference,
-          valueSampledData,
-          valueSignature,
-          valueTiming,
-          valueContactDetail,
-          valueDataRequirement,
-          valueExpression,
-          valueParameterDefinition,
-          valueRelatedArtifact,
-          valueTriggerDefinition,
-          valueUsageContext,
-          valueAvailability,
-          valueExtendedContactDetail,
-          valueDosage,
-          valueMeta,
-        ),
+        (Base64Binary.of(valueBase64Binary, _valueBase64Binary)
+          ?: R5Boolean.of(valueBoolean, _valueBoolean)
+          ?: (Canonical.of(valueCanonical, _valueCanonical))?.let { CanonicalBox(it) }
+          ?: (Code.of(valueCode, _valueCode))?.let { CodeBox(it) }
+          ?: Date.of(FhirDate.fromString(valueDate), _valueDate)
+          ?: DateTime.of(FhirDateTime.fromString(valueDateTime), _valueDateTime)
+          ?: Decimal.of(valueDecimal, _valueDecimal)
+          ?: (Id.of(valueId, _valueId))?.let { IdBox(it) }
+          ?: Instant.of(FhirDateTime.fromString(valueInstant), _valueInstant)
+          ?: (Integer.of(valueInteger, _valueInteger))?.let { IntegerBox(it) }
+          ?: Integer64.of(valueInteger64?.toLong(), _valueInteger64)
+          ?: (Markdown.of(valueMarkdown, _valueMarkdown))?.let { MarkdownBox(it) }
+          ?: (Oid.of(valueOid, _valueOid))?.let { OidBox(it) }
+          ?: (PositiveInt.of(valuePositiveInt, _valuePositiveInt))?.let { PositiveIntBox(it) }
+          ?: (R5String.of(valueString, _valueString))?.let { StringBox(it) }
+          ?: Time.of(valueTime, _valueTime)
+          ?: (UnsignedInt.of(valueUnsignedInt, _valueUnsignedInt))?.let { UnsignedIntBox(it) }
+          ?: (Uri.of(valueUri, _valueUri))?.let { UriBox(it) }
+          ?: (Url.of(valueUrl, _valueUrl))?.let { UrlBox(it) }
+          ?: (Uuid.of(valueUuid, _valueUuid))?.let { UuidBox(it) }
+          ?: valueAddress
+          ?: (valueAge)?.let { AgeBox(it) }
+          ?: valueAnnotation
+          ?: valueAttachment
+          ?: valueCodeableConcept
+          ?: valueCodeableReference
+          ?: valueCoding
+          ?: valueContactPoint
+          ?: (valueCount)?.let { CountBox(it) }
+          ?: (valueDistance)?.let { DistanceBox(it) }
+          ?: (valueDuration)?.let { DurationBox(it) }
+          ?: valueHumanName
+          ?: valueIdentifier
+          ?: valueMoney
+          ?: valuePeriod
+          ?: (valueQuantity)?.let { QuantityBox(it) }
+          ?: valueRange
+          ?: valueRatio
+          ?: valueRatioRange
+          ?: valueReference
+          ?: valueSampledData
+          ?: valueSignature
+          ?: valueTiming
+          ?: valueContactDetail
+          ?: valueDataRequirement
+          ?: valueExpression
+          ?: valueParameterDefinition
+          ?: valueRelatedArtifact
+          ?: valueTriggerDefinition
+          ?: valueUsageContext
+          ?: valueAvailability
+          ?: valueExtendedContactDetail
+          ?: valueDosage
+          ?: valueMeta),
     )
   }
 
@@ -873,286 +888,241 @@ internal object ExtensionSerializer : KSerializer<Extension> {
     encoder.encodeStringElement(descriptor, 2, value.url)
     when (val choice = value.`value`) {
       null -> {}
-      is Extension.Value.Base64Binary -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 3, it) }
-        (choice.value.toElement())?.let {
+      is Base64Binary -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 3, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 4, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Extension.Value.Boolean -> {
-        ((choice.value.value))?.let { encoder.encodeBooleanElement(descriptor, 5, it) }
-        (choice.value.toElement())?.let {
+      is R5Boolean -> {
+        ((choice.value))?.let { encoder.encodeBooleanElement(descriptor, 5, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 6, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Extension.Value.Canonical -> {
+      is CanonicalBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 7, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 8, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Extension.Value.Code -> {
+      is CodeBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 9, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 10, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Extension.Value.Date -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 11, it) }
-        (choice.value.toElement())?.let {
+      is Date -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 11, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 12, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Extension.Value.DateTime -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 13, it) }
-        (choice.value.toElement())?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 13, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 14, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Extension.Value.Decimal -> {
-        ((choice.value.value))?.let {
+      is Decimal -> {
+        ((choice.value))?.let {
           encoder.encodeSerializableElement(descriptor, 15, FhirDecimalSerializer, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 16, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Extension.Value.Id -> {
+      is IdBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 17, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 18, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Extension.Value.Instant -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 19, it) }
-        (choice.value.toElement())?.let {
+      is Instant -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 19, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 20, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Extension.Value.Integer -> {
+      is IntegerBox -> {
         ((choice.value.value))?.let { encoder.encodeIntElement(descriptor, 21, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 22, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Extension.Value.Integer64 -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 23, it) }
-        (choice.value.toElement())?.let {
+      is Integer64 -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 23, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 24, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Extension.Value.Markdown -> {
+      is MarkdownBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 25, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 26, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Extension.Value.Oid -> {
+      is OidBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 27, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 28, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Extension.Value.PositiveInt -> {
+      is PositiveIntBox -> {
         ((choice.value.value))?.let { encoder.encodeIntElement(descriptor, 29, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 30, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Extension.Value.String -> {
+      is StringBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 31, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 32, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Extension.Value.Time -> {
-        ((choice.value.value))?.let {
+      is Time -> {
+        ((choice.value))?.let {
           encoder.encodeSerializableElement(descriptor, 33, LocalTimeSerializer, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 34, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Extension.Value.UnsignedInt -> {
+      is UnsignedIntBox -> {
         ((choice.value.value))?.let { encoder.encodeIntElement(descriptor, 35, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 36, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Extension.Value.Uri -> {
+      is UriBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 37, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 38, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Extension.Value.Url -> {
+      is UrlBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 39, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 40, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Extension.Value.Uuid -> {
+      is UuidBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 41, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 42, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Extension.Value.Address -> {
-        encoder.encodeSerializableElement(descriptor, 43, Hoisted.valueAddressSer, choice.value)
+      is Address -> {
+        encoder.encodeSerializableElement(descriptor, 43, Hoisted.valueAddressSer, choice)
       }
-      is Extension.Value.Age -> {
+      is AgeBox -> {
         encoder.encodeSerializableElement(descriptor, 44, Hoisted.valueAgeSer, choice.value)
       }
-      is Extension.Value.Annotation -> {
-        encoder.encodeSerializableElement(descriptor, 45, Hoisted.valueAnnotationSer, choice.value)
+      is Annotation -> {
+        encoder.encodeSerializableElement(descriptor, 45, Hoisted.valueAnnotationSer, choice)
       }
-      is Extension.Value.Attachment -> {
-        encoder.encodeSerializableElement(descriptor, 46, Hoisted.valueAttachmentSer, choice.value)
+      is Attachment -> {
+        encoder.encodeSerializableElement(descriptor, 46, Hoisted.valueAttachmentSer, choice)
       }
-      is Extension.Value.CodeableConcept -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          47,
-          Hoisted.valueCodeableConceptSer,
-          choice.value,
-        )
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 47, Hoisted.valueCodeableConceptSer, choice)
       }
-      is Extension.Value.CodeableReference -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          48,
-          Hoisted.valueCodeableReferenceSer,
-          choice.value,
-        )
+      is CodeableReference -> {
+        encoder.encodeSerializableElement(descriptor, 48, Hoisted.valueCodeableReferenceSer, choice)
       }
-      is Extension.Value.Coding -> {
-        encoder.encodeSerializableElement(descriptor, 49, Hoisted.valueCodingSer, choice.value)
+      is Coding -> {
+        encoder.encodeSerializableElement(descriptor, 49, Hoisted.valueCodingSer, choice)
       }
-      is Extension.Value.ContactPoint -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          50,
-          Hoisted.valueContactPointSer,
-          choice.value,
-        )
+      is ContactPoint -> {
+        encoder.encodeSerializableElement(descriptor, 50, Hoisted.valueContactPointSer, choice)
       }
-      is Extension.Value.Count -> {
+      is CountBox -> {
         encoder.encodeSerializableElement(descriptor, 51, Hoisted.valueCountSer, choice.value)
       }
-      is Extension.Value.Distance -> {
+      is DistanceBox -> {
         encoder.encodeSerializableElement(descriptor, 52, Hoisted.valueDistanceSer, choice.value)
       }
-      is Extension.Value.Duration -> {
+      is DurationBox -> {
         encoder.encodeSerializableElement(descriptor, 53, Hoisted.valueDurationSer, choice.value)
       }
-      is Extension.Value.HumanName -> {
-        encoder.encodeSerializableElement(descriptor, 54, Hoisted.valueHumanNameSer, choice.value)
+      is HumanName -> {
+        encoder.encodeSerializableElement(descriptor, 54, Hoisted.valueHumanNameSer, choice)
       }
-      is Extension.Value.Identifier -> {
-        encoder.encodeSerializableElement(descriptor, 55, Hoisted.valueIdentifierSer, choice.value)
+      is Identifier -> {
+        encoder.encodeSerializableElement(descriptor, 55, Hoisted.valueIdentifierSer, choice)
       }
-      is Extension.Value.Money -> {
-        encoder.encodeSerializableElement(descriptor, 56, Hoisted.valueMoneySer, choice.value)
+      is Money -> {
+        encoder.encodeSerializableElement(descriptor, 56, Hoisted.valueMoneySer, choice)
       }
-      is Extension.Value.Period -> {
-        encoder.encodeSerializableElement(descriptor, 57, Hoisted.valuePeriodSer, choice.value)
+      is Period -> {
+        encoder.encodeSerializableElement(descriptor, 57, Hoisted.valuePeriodSer, choice)
       }
-      is Extension.Value.Quantity -> {
+      is QuantityBox -> {
         encoder.encodeSerializableElement(descriptor, 58, Hoisted.valueQuantitySer, choice.value)
       }
-      is Extension.Value.Range -> {
-        encoder.encodeSerializableElement(descriptor, 59, Hoisted.valueRangeSer, choice.value)
+      is Range -> {
+        encoder.encodeSerializableElement(descriptor, 59, Hoisted.valueRangeSer, choice)
       }
-      is Extension.Value.Ratio -> {
-        encoder.encodeSerializableElement(descriptor, 60, Hoisted.valueRatioSer, choice.value)
+      is Ratio -> {
+        encoder.encodeSerializableElement(descriptor, 60, Hoisted.valueRatioSer, choice)
       }
-      is Extension.Value.RatioRange -> {
-        encoder.encodeSerializableElement(descriptor, 61, Hoisted.valueRatioRangeSer, choice.value)
+      is RatioRange -> {
+        encoder.encodeSerializableElement(descriptor, 61, Hoisted.valueRatioRangeSer, choice)
       }
-      is Extension.Value.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 62, Hoisted.valueReferenceSer, choice.value)
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 62, Hoisted.valueReferenceSer, choice)
       }
-      is Extension.Value.SampledData -> {
-        encoder.encodeSerializableElement(descriptor, 63, Hoisted.valueSampledDataSer, choice.value)
+      is SampledData -> {
+        encoder.encodeSerializableElement(descriptor, 63, Hoisted.valueSampledDataSer, choice)
       }
-      is Extension.Value.Signature -> {
-        encoder.encodeSerializableElement(descriptor, 64, Hoisted.valueSignatureSer, choice.value)
+      is Signature -> {
+        encoder.encodeSerializableElement(descriptor, 64, Hoisted.valueSignatureSer, choice)
       }
-      is Extension.Value.Timing -> {
-        encoder.encodeSerializableElement(descriptor, 65, Hoisted.valueTimingSer, choice.value)
+      is Timing -> {
+        encoder.encodeSerializableElement(descriptor, 65, Hoisted.valueTimingSer, choice)
       }
-      is Extension.Value.ContactDetail -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          66,
-          Hoisted.valueContactDetailSer,
-          choice.value,
-        )
+      is ContactDetail -> {
+        encoder.encodeSerializableElement(descriptor, 66, Hoisted.valueContactDetailSer, choice)
       }
-      is Extension.Value.DataRequirement -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          67,
-          Hoisted.valueDataRequirementSer,
-          choice.value,
-        )
+      is DataRequirement -> {
+        encoder.encodeSerializableElement(descriptor, 67, Hoisted.valueDataRequirementSer, choice)
       }
-      is Extension.Value.Expression -> {
-        encoder.encodeSerializableElement(descriptor, 68, Hoisted.valueExpressionSer, choice.value)
+      is Expression -> {
+        encoder.encodeSerializableElement(descriptor, 68, Hoisted.valueExpressionSer, choice)
       }
-      is Extension.Value.ParameterDefinition -> {
+      is ParameterDefinition -> {
         encoder.encodeSerializableElement(
           descriptor,
           69,
           Hoisted.valueParameterDefinitionSer,
-          choice.value,
+          choice,
         )
       }
-      is Extension.Value.RelatedArtifact -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          70,
-          Hoisted.valueRelatedArtifactSer,
-          choice.value,
-        )
+      is RelatedArtifact -> {
+        encoder.encodeSerializableElement(descriptor, 70, Hoisted.valueRelatedArtifactSer, choice)
       }
-      is Extension.Value.TriggerDefinition -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          71,
-          Hoisted.valueTriggerDefinitionSer,
-          choice.value,
-        )
+      is TriggerDefinition -> {
+        encoder.encodeSerializableElement(descriptor, 71, Hoisted.valueTriggerDefinitionSer, choice)
       }
-      is Extension.Value.UsageContext -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          72,
-          Hoisted.valueUsageContextSer,
-          choice.value,
-        )
+      is UsageContext -> {
+        encoder.encodeSerializableElement(descriptor, 72, Hoisted.valueUsageContextSer, choice)
       }
-      is Extension.Value.Availability -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          73,
-          Hoisted.valueAvailabilitySer,
-          choice.value,
-        )
+      is Availability -> {
+        encoder.encodeSerializableElement(descriptor, 73, Hoisted.valueAvailabilitySer, choice)
       }
-      is Extension.Value.ExtendedContactDetail -> {
+      is ExtendedContactDetail -> {
         encoder.encodeSerializableElement(
           descriptor,
           74,
           Hoisted.valueExtendedContactDetailSer,
-          choice.value,
+          choice,
         )
       }
-      is Extension.Value.Dosage -> {
-        encoder.encodeSerializableElement(descriptor, 75, Hoisted.valueDosageSer, choice.value)
+      is Dosage -> {
+        encoder.encodeSerializableElement(descriptor, 75, Hoisted.valueDosageSer, choice)
       }
-      is Extension.Value.Meta -> {
-        encoder.encodeSerializableElement(descriptor, 76, Hoisted.valueMetaSer, choice.value)
+      is Meta -> {
+        encoder.encodeSerializableElement(descriptor, 76, Hoisted.valueMetaSer, choice)
       }
     }
   }

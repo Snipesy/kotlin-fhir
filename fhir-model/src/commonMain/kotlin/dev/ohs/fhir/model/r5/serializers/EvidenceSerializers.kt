@@ -1552,13 +1552,10 @@ internal object EvidenceSerializer : KSerializer<Evidence> {
       identifier = identifier ?: listOf(),
       version = R5String.of(version, _version),
       versionAlgorithm =
-        Evidence.VersionAlgorithm.from(
-          R5String.of(versionAlgorithmString, _versionAlgorithmString),
-          versionAlgorithmCoding,
-        ),
+        (R5String.of(versionAlgorithmString, _versionAlgorithmString) ?: versionAlgorithmCoding),
       name = R5String.of(name, _name),
       title = R5String.of(title, _title),
-      citeAs = Evidence.CiteAs.from(citeAsReference, Markdown.of(citeAsMarkdown, _citeAsMarkdown)),
+      citeAs = (citeAsReference ?: Markdown.of(citeAsMarkdown, _citeAsMarkdown)),
       status = Enumeration.of(PublicationStatus.fromCode(status!!), _status),
       experimental = R5Boolean.of(experimental, _experimental),
       date = DateTime.of(FhirDateTime.fromString(date), _date),
@@ -1671,11 +1668,9 @@ internal object EvidenceSerializer : KSerializer<Evidence> {
     }
     when (val choice = value.versionAlgorithm) {
       null -> {}
-      is Evidence.VersionAlgorithm.String -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 15 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is R5String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 15 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             16 + descriptorOffset,
@@ -1684,12 +1679,12 @@ internal object EvidenceSerializer : KSerializer<Evidence> {
           )
         }
       }
-      is Evidence.VersionAlgorithm.Coding -> {
+      is Coding -> {
         encoder.encodeSerializableElement(
           descriptor,
           17 + descriptorOffset,
           Hoisted.versionAlgorithmCodingSer,
-          choice.value,
+          choice,
         )
       }
     }
@@ -1717,19 +1712,17 @@ internal object EvidenceSerializer : KSerializer<Evidence> {
     }
     when (val choice = value.citeAs) {
       null -> {}
-      is Evidence.CiteAs.Reference -> {
+      is Reference -> {
         encoder.encodeSerializableElement(
           descriptor,
           22 + descriptorOffset,
           Hoisted.citeAsReferenceSer,
-          choice.value,
+          choice,
         )
       }
-      is Evidence.CiteAs.Markdown -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 23 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is Markdown -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 23 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             24 + descriptorOffset,

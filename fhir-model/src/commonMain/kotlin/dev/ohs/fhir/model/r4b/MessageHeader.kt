@@ -22,7 +22,6 @@ import dev.ohs.fhir.model.r4b.serializers.MessageHeaderSerializer
 import dev.ohs.fhir.model.r4b.serializers.MessageHeaderSourceSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -139,8 +138,10 @@ public data class MessageHeader(
    *
    * The time of the event will be found in the focus resource. The time of the message will be
    * found in [Bundle.timestamp](bundle-definitions.html#Bundle.timestamp).
+   *
+   * A FHIR choice type — one of: [Coding] | [Uri]
    */
-  public val event: Event,
+  public val event: MessageHeader.Event,
   /**
    * The destination application which the message is intended for.
    *
@@ -674,27 +675,6 @@ public data class MessageHeader(
     }
   }
 
-  public sealed interface Event {
-    public fun asCoding(): Coding? = this as? Coding
-
-    public fun asUri(): Uri? = this as? Uri
-
-    @JvmInline public value class Coding(public val `value`: dev.ohs.fhir.model.r4b.Coding) : Event
-
-    @JvmInline public value class Uri(public val `value`: dev.ohs.fhir.model.r4b.Uri) : Event
-
-    public companion object {
-      internal fun from(
-        codingValue: dev.ohs.fhir.model.r4b.Coding?,
-        uriValue: dev.ohs.fhir.model.r4b.Uri?,
-      ): Event? {
-        if (codingValue != null) return Coding(codingValue)
-        if (uriValue != null) return Uri(uriValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
     /**
      * Code that identifies the event this message represents and connects it with its definition.
@@ -704,8 +684,10 @@ public data class MessageHeader(
      *
      * The time of the event will be found in the focus resource. The time of the message will be
      * found in [Bundle.timestamp](bundle-definitions.html#Bundle.timestamp).
+     *
+     * A FHIR choice type — one of: [Coding] | [Uri]
      */
-    public var event: Event,
+    public var event: MessageHeader.Event,
     /** The source application from which this message originated. */
     public var source: Source.Builder,
   ) : DomainResource.Builder() {
@@ -935,4 +917,7 @@ public data class MessageHeader(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [Coding] | [Uri] */
+  public typealias Event = FhirChoiceTypes.CodingOrUri
 }

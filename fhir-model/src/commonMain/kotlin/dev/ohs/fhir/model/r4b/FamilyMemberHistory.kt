@@ -20,7 +20,6 @@ import dev.ohs.fhir.model.r4b.serializers.FamilyMemberHistoryConditionSerializer
 import dev.ohs.fhir.model.r4b.serializers.FamilyMemberHistorySerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -186,14 +185,20 @@ public data class FamilyMemberHistory(
    * should also allow for the possibility of imprecision with this element.
    */
   public val sex: CodeableConcept? = null,
-  /** The actual or approximate date of birth of the relative. */
-  public val born: Born? = null,
+  /**
+   * The actual or approximate date of birth of the relative.
+   *
+   * A FHIR choice type — one of: [Date] | [Period] | [String]
+   */
+  public val born: FamilyMemberHistory.Born? = null,
   /**
    * The age of the relative at the time the family member history is recorded.
    *
    * use estimatedAge to indicate whether the age is actual or not.
+   *
+   * A FHIR choice type — one of: [Age] | [Range] | [String]
    */
-  public val age: Age? = null,
+  public val age: FhirChoiceTypes.AgeOrRangeOrString? = null,
   /**
    * If true, indicates that the age value specified is an estimated value.
    *
@@ -204,8 +209,10 @@ public data class FamilyMemberHistory(
   /**
    * Deceased flag or the actual or approximate age of the relative at the time of death for the
    * family member history record.
+   *
+   * A FHIR choice type — one of: [Age] | [Boolean] | [Date] | [Range] | [String]
    */
-  public val deceased: Deceased? = null,
+  public val deceased: FamilyMemberHistory.Deceased? = null,
   /**
    * Describes why the family member history occurred in coded or textual form.
    *
@@ -322,8 +329,10 @@ public data class FamilyMemberHistory(
     /**
      * Either the age of onset, range of approximate age or descriptive string can be recorded. For
      * conditions with multiple occurrences, this describes the first known occurrence.
+     *
+     * A FHIR choice type — one of: [Age] | [Period] | [Range] | [String]
      */
-    public val onset: Onset? = null,
+    public val onset: Condition.Onset? = null,
     /** An area where general notes can be placed about this specific condition. */
     public val note: List<Annotation> = listOf(),
   ) : BackboneElement() {
@@ -339,41 +348,6 @@ public data class FamilyMemberHistory(
           note = this@with.note.map { it.toBuilder() }.toMutableList()
         }
       }
-
-    public sealed interface Onset {
-      public fun asAge(): Age? = this as? Age
-
-      public fun asRange(): Range? = this as? Range
-
-      public fun asPeriod(): Period? = this as? Period
-
-      public fun asString(): String? = this as? String
-
-      @JvmInline public value class Age(public val `value`: dev.ohs.fhir.model.r4b.Age) : Onset
-
-      @JvmInline public value class Range(public val `value`: dev.ohs.fhir.model.r4b.Range) : Onset
-
-      @JvmInline
-      public value class Period(public val `value`: dev.ohs.fhir.model.r4b.Period) : Onset
-
-      @JvmInline
-      public value class String(public val `value`: dev.ohs.fhir.model.r4b.String) : Onset
-
-      public companion object {
-        internal fun from(
-          ageValue: dev.ohs.fhir.model.r4b.Age?,
-          rangeValue: dev.ohs.fhir.model.r4b.Range?,
-          periodValue: dev.ohs.fhir.model.r4b.Period?,
-          stringValue: dev.ohs.fhir.model.r4b.String?,
-        ): Onset? {
-          if (ageValue != null) return Age(ageValue)
-          if (rangeValue != null) return Range(rangeValue)
-          if (periodValue != null) return Period(periodValue)
-          if (stringValue != null) return String(stringValue)
-          return null
-        }
-      }
-    }
 
     public class Builder(
       /**
@@ -438,8 +412,10 @@ public data class FamilyMemberHistory(
       /**
        * Either the age of onset, range of approximate age or descriptive string can be recorded.
        * For conditions with multiple occurrences, this describes the first known occurrence.
+       *
+       * A FHIR choice type — one of: [Age] | [Period] | [Range] | [String]
        */
-      public var onset: Onset? = null
+      public var onset: Condition.Onset? = null
 
       /** An area where general notes can be placed about this specific condition. */
       public var note: MutableList<Annotation.Builder> = mutableListOf()
@@ -456,108 +432,9 @@ public data class FamilyMemberHistory(
           note = note.map { it.build() },
         )
     }
-  }
 
-  public sealed interface Born {
-    public fun asPeriod(): Period? = this as? Period
-
-    public fun asDate(): Date? = this as? Date
-
-    public fun asString(): String? = this as? String
-
-    @JvmInline public value class Period(public val `value`: dev.ohs.fhir.model.r4b.Period) : Born
-
-    @JvmInline public value class Date(public val `value`: dev.ohs.fhir.model.r4b.Date) : Born
-
-    @JvmInline public value class String(public val `value`: dev.ohs.fhir.model.r4b.String) : Born
-
-    public companion object {
-      internal fun from(
-        periodValue: dev.ohs.fhir.model.r4b.Period?,
-        dateValue: dev.ohs.fhir.model.r4b.Date?,
-        stringValue: dev.ohs.fhir.model.r4b.String?,
-      ): Born? {
-        if (periodValue != null) return Period(periodValue)
-        if (dateValue != null) return Date(dateValue)
-        if (stringValue != null) return String(stringValue)
-        return null
-      }
-    }
-  }
-
-  public sealed interface Age {
-    public fun asAge(): Age? = this as? Age
-
-    public fun asRange(): Range? = this as? Range
-
-    public fun asString(): String? = this as? String
-
-    @JvmInline
-    public value class Age(public val `value`: dev.ohs.fhir.model.r4b.Age) :
-      FamilyMemberHistory.Age
-
-    @JvmInline
-    public value class Range(public val `value`: dev.ohs.fhir.model.r4b.Range) :
-      FamilyMemberHistory.Age
-
-    @JvmInline
-    public value class String(public val `value`: dev.ohs.fhir.model.r4b.String) :
-      FamilyMemberHistory.Age
-
-    public companion object {
-      internal fun from(
-        ageValue: dev.ohs.fhir.model.r4b.Age?,
-        rangeValue: dev.ohs.fhir.model.r4b.Range?,
-        stringValue: dev.ohs.fhir.model.r4b.String?,
-      ): FamilyMemberHistory.Age? {
-        if (ageValue != null) return Age(ageValue)
-        if (rangeValue != null) return Range(rangeValue)
-        if (stringValue != null) return String(stringValue)
-        return null
-      }
-    }
-  }
-
-  public sealed interface Deceased {
-    public fun asBoolean(): Boolean? = this as? Boolean
-
-    public fun asAge(): Age? = this as? Age
-
-    public fun asRange(): Range? = this as? Range
-
-    public fun asDate(): Date? = this as? Date
-
-    public fun asString(): String? = this as? String
-
-    @JvmInline
-    public value class Boolean(public val `value`: dev.ohs.fhir.model.r4b.Boolean) : Deceased
-
-    @JvmInline public value class Age(public val `value`: dev.ohs.fhir.model.r4b.Age) : Deceased
-
-    @JvmInline
-    public value class Range(public val `value`: dev.ohs.fhir.model.r4b.Range) : Deceased
-
-    @JvmInline public value class Date(public val `value`: dev.ohs.fhir.model.r4b.Date) : Deceased
-
-    @JvmInline
-    public value class String(public val `value`: dev.ohs.fhir.model.r4b.String) : Deceased
-
-    public companion object {
-      internal fun from(
-        booleanValue: dev.ohs.fhir.model.r4b.Boolean?,
-        ageValue: dev.ohs.fhir.model.r4b.Age?,
-        rangeValue: dev.ohs.fhir.model.r4b.Range?,
-        dateValue: dev.ohs.fhir.model.r4b.Date?,
-        stringValue: dev.ohs.fhir.model.r4b.String?,
-      ): Deceased? {
-        if (booleanValue != null) return Boolean(booleanValue)
-        if (ageValue != null) return Age(ageValue)
-        if (rangeValue != null) return Range(rangeValue)
-        if (dateValue != null) return Date(dateValue)
-        if (stringValue != null) return String(stringValue)
-        return null
-      }
-    }
+    /** A FHIR choice type — one of: [Age] | [Period] | [Range] | [String] */
+    public typealias Onset = FhirChoiceTypes.AgeOrPeriodOrRangeOrString
   }
 
   public class Builder(
@@ -734,15 +611,21 @@ public data class FamilyMemberHistory(
      */
     public var sex: CodeableConcept.Builder? = null
 
-    /** The actual or approximate date of birth of the relative. */
-    public var born: Born? = null
+    /**
+     * The actual or approximate date of birth of the relative.
+     *
+     * A FHIR choice type — one of: [Date] | [Period] | [String]
+     */
+    public var born: FamilyMemberHistory.Born? = null
 
     /**
      * The age of the relative at the time the family member history is recorded.
      *
      * use estimatedAge to indicate whether the age is actual or not.
+     *
+     * A FHIR choice type — one of: [Age] | [Range] | [String]
      */
-    public var age: Age? = null
+    public var age: FhirChoiceTypes.AgeOrRangeOrString? = null
 
     /**
      * If true, indicates that the age value specified is an estimated value.
@@ -755,8 +638,10 @@ public data class FamilyMemberHistory(
     /**
      * Deceased flag or the actual or approximate age of the relative at the time of death for the
      * family member history record.
+     *
+     * A FHIR choice type — one of: [Age] | [Boolean] | [Date] | [Range] | [String]
      */
-    public var deceased: Deceased? = null
+    public var deceased: FamilyMemberHistory.Deceased? = null
 
     /**
      * Describes why the family member history occurred in coded or textual form.
@@ -845,4 +730,10 @@ public data class FamilyMemberHistory(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [Date] | [Period] | [String] */
+  public typealias Born = FhirChoiceTypes.DateOrPeriodOrString
+
+  /** A FHIR choice type — one of: [Age] | [Boolean] | [Date] | [Range] | [String] */
+  public typealias Deceased = FhirChoiceTypes.AgeOrBooleanOrDateOrRangeOrString
 }

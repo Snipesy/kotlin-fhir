@@ -33,7 +33,6 @@ import dev.ohs.fhir.model.r4.terminologies.PublicationStatus
 import dev.ohs.fhir.model.r4.terminologies.ResourceType
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -901,8 +900,10 @@ public data class ImplementationGuide(
        * * ValueSet -> expansion
        * * OperationDefinition -> Parameters
        * * Questionnaire -> QuestionnaireResponse.
+       *
+       * A FHIR choice type — one of: [Boolean] | [Canonical]
        */
-      public val example: Example? = null,
+      public val example: Resource.Example? = null,
       /**
        * Reference to the id of the grouping this resource appears in.
        *
@@ -923,29 +924,6 @@ public data class ImplementationGuide(
             groupingId = this@with.groupingId?.toBuilder()
           }
         }
-
-      public sealed interface Example {
-        public fun asBoolean(): Boolean? = this as? Boolean
-
-        public fun asCanonical(): Canonical? = this as? Canonical
-
-        @JvmInline
-        public value class Boolean(public val `value`: dev.ohs.fhir.model.r4.Boolean) : Example
-
-        @JvmInline
-        public value class Canonical(public val `value`: dev.ohs.fhir.model.r4.Canonical) : Example
-
-        public companion object {
-          internal fun from(
-            booleanValue: dev.ohs.fhir.model.r4.Boolean?,
-            canonicalValue: dev.ohs.fhir.model.r4.Canonical?,
-          ): Example? {
-            if (booleanValue != null) return Boolean(booleanValue)
-            if (canonicalValue != null) return Canonical(canonicalValue)
-            return null
-          }
-        }
-      }
 
       public class Builder(
         /**
@@ -1036,8 +1014,10 @@ public data class ImplementationGuide(
          * * ValueSet -> expansion
          * * OperationDefinition -> Parameters
          * * Questionnaire -> QuestionnaireResponse.
+         *
+         * A FHIR choice type — one of: [Boolean] | [Canonical]
          */
-        public var example: Example? = null
+        public var example: Resource.Example? = null
 
         /**
          * Reference to the id of the grouping this resource appears in.
@@ -1059,6 +1039,9 @@ public data class ImplementationGuide(
             groupingId = groupingId?.build(),
           )
       }
+
+      /** A FHIR choice type — one of: [Boolean] | [Canonical] */
+      public typealias Example = FhirChoiceTypes.BooleanOrCanonical
     }
 
     /**
@@ -1109,8 +1092,10 @@ public data class ImplementationGuide(
        *
        * The publishing tool will autogenerate source for list (source = n/a) and inject included
        * implementations for include (source = uri of guide to include).
+       *
+       * A FHIR choice type — one of: [Reference] | [Url]
        */
-      public val name: Name,
+      public val name: Page.Name,
       /**
        * A short title used to represent this page in navigational structures such as table of
        * contents, bread crumbs, etc.
@@ -1135,36 +1120,16 @@ public data class ImplementationGuide(
           }
         }
 
-      public sealed interface Name {
-        public fun asUrl(): Url? = this as? Url
-
-        public fun asReference(): Reference? = this as? Reference
-
-        @JvmInline public value class Url(public val `value`: dev.ohs.fhir.model.r4.Url) : Name
-
-        @JvmInline
-        public value class Reference(public val `value`: dev.ohs.fhir.model.r4.Reference) : Name
-
-        public companion object {
-          internal fun from(
-            urlValue: dev.ohs.fhir.model.r4.Url?,
-            referenceValue: dev.ohs.fhir.model.r4.Reference?,
-          ): Name? {
-            if (urlValue != null) return Url(urlValue)
-            if (referenceValue != null) return Reference(referenceValue)
-            return null
-          }
-        }
-      }
-
       public class Builder(
         /**
          * The source address for the page.
          *
          * The publishing tool will autogenerate source for list (source = n/a) and inject included
          * implementations for include (source = uri of guide to include).
+         *
+         * A FHIR choice type — one of: [Reference] | [Url]
          */
-        public var name: Name,
+        public var name: Page.Name,
         /**
          * A short title used to represent this page in navigational structures such as table of
          * contents, bread crumbs, etc.
@@ -1231,6 +1196,9 @@ public data class ImplementationGuide(
             page = page.map { it.build() },
           )
       }
+
+      /** A FHIR choice type — one of: [Reference] | [Url] */
+      public typealias Name = FhirChoiceTypes.ReferenceOrUrl
     }
 
     /** Defines how IG is built by tools. */
@@ -1684,8 +1652,10 @@ public data class ImplementationGuide(
        * Typically, conformance resources and knowledge resources are directly part of the
        * implementation guide, with their normal meaning, and patient linked resources are usually
        * examples. However this is not always true.
+       *
+       * A FHIR choice type — one of: [Boolean] | [Canonical]
        */
-      public val example: Example? = null,
+      public val example: Resource.Example? = null,
       /**
        * The relative path for primary page for this resource within the IG.
        *
@@ -1703,29 +1673,6 @@ public data class ImplementationGuide(
             relativePath = this@with.relativePath?.toBuilder()
           }
         }
-
-      public sealed interface Example {
-        public fun asBoolean(): Boolean? = this as? Boolean
-
-        public fun asCanonical(): Canonical? = this as? Canonical
-
-        @JvmInline
-        public value class Boolean(public val `value`: dev.ohs.fhir.model.r4.Boolean) : Example
-
-        @JvmInline
-        public value class Canonical(public val `value`: dev.ohs.fhir.model.r4.Canonical) : Example
-
-        public companion object {
-          internal fun from(
-            booleanValue: dev.ohs.fhir.model.r4.Boolean?,
-            canonicalValue: dev.ohs.fhir.model.r4.Canonical?,
-          ): Example? {
-            if (booleanValue != null) return Boolean(booleanValue)
-            if (canonicalValue != null) return Canonical(canonicalValue)
-            return null
-          }
-        }
-      }
 
       public class Builder(
         /**
@@ -1785,8 +1732,10 @@ public data class ImplementationGuide(
          * Typically, conformance resources and knowledge resources are directly part of the
          * implementation guide, with their normal meaning, and patient linked resources are usually
          * examples. However this is not always true.
+         *
+         * A FHIR choice type — one of: [Boolean] | [Canonical]
          */
-        public var example: Example? = null
+        public var example: Resource.Example? = null
 
         /**
          * The relative path for primary page for this resource within the IG.
@@ -1805,6 +1754,9 @@ public data class ImplementationGuide(
             relativePath = relativePath?.build(),
           )
       }
+
+      /** A FHIR choice type — one of: [Boolean] | [Canonical] */
+      public typealias Example = FhirChoiceTypes.BooleanOrCanonical
     }
 
     /** Information about a page within the IG. */

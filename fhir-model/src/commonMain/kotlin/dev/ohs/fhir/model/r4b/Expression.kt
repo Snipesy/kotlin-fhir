@@ -67,7 +67,7 @@ public data class Expression(
    * expression.
    */
   public val reference: Uri? = null,
-) : Element() {
+) : Element(), FhirChoiceParticipants.ExpressionChoices {
   public fun toBuilder(): Builder =
     with(this) {
       Builder(language).apply {

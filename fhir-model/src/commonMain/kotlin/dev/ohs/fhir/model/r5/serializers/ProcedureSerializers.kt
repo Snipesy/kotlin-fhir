@@ -656,18 +656,15 @@ internal object ProcedureSerializer : KSerializer<Procedure> {
       focus = focus,
       encounter = encounter,
       occurrence =
-        Procedure.Occurrence.from(
-          DateTime.of(FhirDateTime.fromString(occurrenceDateTime), _occurrenceDateTime),
-          occurrencePeriod,
-          R5String.of(occurrenceString, _occurrenceString),
-          occurrenceAge,
-          occurrenceRange,
-          occurrenceTiming,
-        ),
+        (DateTime.of(FhirDateTime.fromString(occurrenceDateTime), _occurrenceDateTime)
+          ?: occurrencePeriod
+          ?: R5String.of(occurrenceString, _occurrenceString)
+          ?: occurrenceAge
+          ?: occurrenceRange
+          ?: occurrenceTiming),
       recorded = DateTime.of(FhirDateTime.fromString(recorded), _recorded),
       recorder = recorder,
-      reported =
-        Procedure.Reported.from(R5Boolean.of(reportedBoolean, _reportedBoolean), reportedReference),
+      reported = (R5Boolean.of(reportedBoolean, _reportedBoolean) ?: reportedReference),
       performer = performer ?: listOf(),
       location = location,
       reason = reason ?: listOf(),
@@ -850,11 +847,11 @@ internal object ProcedureSerializer : KSerializer<Procedure> {
     }
     when (val choice = value.occurrence) {
       null -> {}
-      is Procedure.Occurrence.DateTime -> {
-        ((choice.value.value?.toString()))?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let {
           encoder.encodeStringElement(descriptor, 25 + descriptorOffset, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             26 + descriptorOffset,
@@ -863,19 +860,17 @@ internal object ProcedureSerializer : KSerializer<Procedure> {
           )
         }
       }
-      is Procedure.Occurrence.Period -> {
+      is Period -> {
         encoder.encodeSerializableElement(
           descriptor,
           27 + descriptorOffset,
           Hoisted.occurrencePeriodSer,
-          choice.value,
+          choice,
         )
       }
-      is Procedure.Occurrence.String -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 28 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is R5String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 28 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             29 + descriptorOffset,
@@ -884,28 +879,28 @@ internal object ProcedureSerializer : KSerializer<Procedure> {
           )
         }
       }
-      is Procedure.Occurrence.Age -> {
+      is Age -> {
         encoder.encodeSerializableElement(
           descriptor,
           30 + descriptorOffset,
           Hoisted.occurrenceAgeSer,
-          choice.value,
+          choice,
         )
       }
-      is Procedure.Occurrence.Range -> {
+      is Range -> {
         encoder.encodeSerializableElement(
           descriptor,
           31 + descriptorOffset,
           Hoisted.occurrenceRangeSer,
-          choice.value,
+          choice,
         )
       }
-      is Procedure.Occurrence.Timing -> {
+      is Timing -> {
         encoder.encodeSerializableElement(
           descriptor,
           32 + descriptorOffset,
           Hoisted.occurrenceTimingSer,
-          choice.value,
+          choice,
         )
       }
     }
@@ -930,11 +925,11 @@ internal object ProcedureSerializer : KSerializer<Procedure> {
     }
     when (val choice = value.reported) {
       null -> {}
-      is Procedure.Reported.Boolean -> {
-        ((choice.value.value))?.let {
+      is R5Boolean -> {
+        ((choice.value))?.let {
           encoder.encodeBooleanElement(descriptor, 36 + descriptorOffset, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             37 + descriptorOffset,
@@ -943,12 +938,12 @@ internal object ProcedureSerializer : KSerializer<Procedure> {
           )
         }
       }
-      is Procedure.Reported.Reference -> {
+      is Reference -> {
         encoder.encodeSerializableElement(
           descriptor,
           38 + descriptorOffset,
           Hoisted.basedOnSerInner,
-          choice.value,
+          choice,
         )
       }
     }

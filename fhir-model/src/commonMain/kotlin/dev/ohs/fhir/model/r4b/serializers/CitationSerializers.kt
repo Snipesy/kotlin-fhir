@@ -455,12 +455,7 @@ internal object CitationRelatesToSerializer : KSerializer<Citation.RelatesTo> {
       relationshipType = relationshipType!!,
       targetClassifier = targetClassifier ?: listOf(),
       target =
-        Citation.RelatesTo.Target.from(
-          Uri.of(targetUri, _targetUri),
-          targetIdentifier,
-          targetReference,
-          targetAttachment,
-        )!!,
+        (Uri.of(targetUri, _targetUri) ?: targetIdentifier ?: targetReference ?: targetAttachment)!!,
     )
   }
 
@@ -489,20 +484,20 @@ internal object CitationRelatesToSerializer : KSerializer<Citation.RelatesTo> {
         value.targetClassifier,
       )
     when (val choice = value.target) {
-      is Citation.RelatesTo.Target.Uri -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
-        (choice.value.toElement())?.let {
+      is Uri -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 6, Hoisted.targetUriSer, it)
         }
       }
-      is Citation.RelatesTo.Target.Identifier -> {
-        encoder.encodeSerializableElement(descriptor, 7, Hoisted.targetIdentifierSer, choice.value)
+      is Identifier -> {
+        encoder.encodeSerializableElement(descriptor, 7, Hoisted.targetIdentifierSer, choice)
       }
-      is Citation.RelatesTo.Target.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 8, Hoisted.targetReferenceSer, choice.value)
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 8, Hoisted.targetReferenceSer, choice)
       }
-      is Citation.RelatesTo.Target.Attachment -> {
-        encoder.encodeSerializableElement(descriptor, 9, Hoisted.targetAttachmentSer, choice.value)
+      is Attachment -> {
+        encoder.encodeSerializableElement(descriptor, 9, Hoisted.targetAttachmentSer, choice)
       }
     }
   }
@@ -1508,12 +1503,7 @@ internal object CitationCitedArtifactRelatesToSerializer :
       relationshipType = relationshipType!!,
       targetClassifier = targetClassifier ?: listOf(),
       target =
-        Citation.CitedArtifact.RelatesTo.Target.from(
-          Uri.of(targetUri, _targetUri),
-          targetIdentifier,
-          targetReference,
-          targetAttachment,
-        )!!,
+        (Uri.of(targetUri, _targetUri) ?: targetIdentifier ?: targetReference ?: targetAttachment)!!,
     )
   }
 
@@ -1545,20 +1535,20 @@ internal object CitationCitedArtifactRelatesToSerializer :
         value.targetClassifier,
       )
     when (val choice = value.target) {
-      is Citation.CitedArtifact.RelatesTo.Target.Uri -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
-        (choice.value.toElement())?.let {
+      is Uri -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 6, Hoisted.targetUriSer, it)
         }
       }
-      is Citation.CitedArtifact.RelatesTo.Target.Identifier -> {
-        encoder.encodeSerializableElement(descriptor, 7, Hoisted.targetIdentifierSer, choice.value)
+      is Identifier -> {
+        encoder.encodeSerializableElement(descriptor, 7, Hoisted.targetIdentifierSer, choice)
       }
-      is Citation.CitedArtifact.RelatesTo.Target.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 8, Hoisted.targetReferenceSer, choice.value)
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 8, Hoisted.targetReferenceSer, choice)
       }
-      is Citation.CitedArtifact.RelatesTo.Target.Attachment -> {
-        encoder.encodeSerializableElement(descriptor, 9, Hoisted.targetAttachmentSer, choice.value)
+      is Attachment -> {
+        encoder.encodeSerializableElement(descriptor, 9, Hoisted.targetAttachmentSer, choice)
       }
     }
   }

@@ -144,10 +144,8 @@ internal object BiologicallyDerivedProductCollectionSerializer :
       collector = collector,
       source = source,
       collected =
-        BiologicallyDerivedProduct.Collection.Collected.from(
-          DateTime.of(FhirDateTime.fromString(collectedDateTime), _collectedDateTime),
-          collectedPeriod,
-        ),
+        (DateTime.of(FhirDateTime.fromString(collectedDateTime), _collectedDateTime)
+          ?: collectedPeriod),
     )
   }
 
@@ -173,14 +171,14 @@ internal object BiologicallyDerivedProductCollectionSerializer :
     }
     when (val choice = value.collected) {
       null -> {}
-      is BiologicallyDerivedProduct.Collection.Collected.DateTime -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 5, it) }
-        (choice.value.toElement())?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 5, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 6, Hoisted.collectedDateTimeSer, it)
         }
       }
-      is BiologicallyDerivedProduct.Collection.Collected.Period -> {
-        encoder.encodeSerializableElement(descriptor, 7, Hoisted.collectedPeriodSer, choice.value)
+      is Period -> {
+        encoder.encodeSerializableElement(descriptor, 7, Hoisted.collectedPeriodSer, choice)
       }
     }
   }
@@ -308,17 +306,15 @@ internal object BiologicallyDerivedProductPropertySerializer :
       modifierExtension = modifierExtension ?: listOf(),
       type = type!!,
       `value` =
-        BiologicallyDerivedProduct.Property.Value.from(
-          R5Boolean.of(valueBoolean, _valueBoolean),
-          Integer.of(valueInteger, _valueInteger),
-          valueCodeableConcept,
-          valuePeriod,
-          valueQuantity,
-          valueRange,
-          valueRatio,
-          R5String.of(valueString, _valueString),
-          valueAttachment,
-        )!!,
+        (R5Boolean.of(valueBoolean, _valueBoolean)
+          ?: Integer.of(valueInteger, _valueInteger)
+          ?: valueCodeableConcept
+          ?: valuePeriod
+          ?: valueQuantity
+          ?: valueRange
+          ?: valueRatio
+          ?: R5String.of(valueString, _valueString)
+          ?: valueAttachment)!!,
     )
   }
 
@@ -338,41 +334,41 @@ internal object BiologicallyDerivedProductPropertySerializer :
       )
     encoder.encodeSerializableElement(descriptor, 3, Hoisted.typeSer, value.type)
     when (val choice = value.`value`) {
-      is BiologicallyDerivedProduct.Property.Value.Boolean -> {
-        ((choice.value.value))?.let { encoder.encodeBooleanElement(descriptor, 4, it) }
-        (choice.value.toElement())?.let {
+      is R5Boolean -> {
+        ((choice.value))?.let { encoder.encodeBooleanElement(descriptor, 4, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 5, Hoisted.valueBooleanSer, it)
         }
       }
-      is BiologicallyDerivedProduct.Property.Value.Integer -> {
-        ((choice.value.value))?.let { encoder.encodeIntElement(descriptor, 6, it) }
-        (choice.value.toElement())?.let {
+      is Integer -> {
+        ((choice.value))?.let { encoder.encodeIntElement(descriptor, 6, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 7, Hoisted.valueBooleanSer, it)
         }
       }
-      is BiologicallyDerivedProduct.Property.Value.CodeableConcept -> {
-        encoder.encodeSerializableElement(descriptor, 8, Hoisted.typeSer, choice.value)
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 8, Hoisted.typeSer, choice)
       }
-      is BiologicallyDerivedProduct.Property.Value.Period -> {
-        encoder.encodeSerializableElement(descriptor, 9, Hoisted.valuePeriodSer, choice.value)
+      is Period -> {
+        encoder.encodeSerializableElement(descriptor, 9, Hoisted.valuePeriodSer, choice)
       }
-      is BiologicallyDerivedProduct.Property.Value.Quantity -> {
-        encoder.encodeSerializableElement(descriptor, 10, Hoisted.valueQuantitySer, choice.value)
+      is Quantity -> {
+        encoder.encodeSerializableElement(descriptor, 10, Hoisted.valueQuantitySer, choice)
       }
-      is BiologicallyDerivedProduct.Property.Value.Range -> {
-        encoder.encodeSerializableElement(descriptor, 11, Hoisted.valueRangeSer, choice.value)
+      is Range -> {
+        encoder.encodeSerializableElement(descriptor, 11, Hoisted.valueRangeSer, choice)
       }
-      is BiologicallyDerivedProduct.Property.Value.Ratio -> {
-        encoder.encodeSerializableElement(descriptor, 12, Hoisted.valueRatioSer, choice.value)
+      is Ratio -> {
+        encoder.encodeSerializableElement(descriptor, 12, Hoisted.valueRatioSer, choice)
       }
-      is BiologicallyDerivedProduct.Property.Value.String -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 13, it) }
-        (choice.value.toElement())?.let {
+      is R5String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 13, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 14, Hoisted.valueBooleanSer, it)
         }
       }
-      is BiologicallyDerivedProduct.Property.Value.Attachment -> {
-        encoder.encodeSerializableElement(descriptor, 15, Hoisted.valueAttachmentSer, choice.value)
+      is Attachment -> {
+        encoder.encodeSerializableElement(descriptor, 15, Hoisted.valueAttachmentSer, choice)
       }
     }
   }

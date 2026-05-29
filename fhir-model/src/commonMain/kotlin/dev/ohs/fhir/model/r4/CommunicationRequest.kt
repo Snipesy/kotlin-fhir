@@ -18,10 +18,8 @@ package dev.ohs.fhir.model.r4
 
 import dev.ohs.fhir.model.r4.serializers.CommunicationRequestPayloadSerializer
 import dev.ohs.fhir.model.r4.serializers.CommunicationRequestSerializer
-import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -40,7 +38,7 @@ public data class CommunicationRequest(
    * The only time that a resource does not have an id is when it is being submitted to the server
    * using a create operation.
    */
-  override val id: String? = null,
+  override val id: kotlin.String? = null,
   /**
    * The metadata about the resource. This is content that is maintained by the infrastructure.
    * Changes to the content might not always be associated with version changes to the resource.
@@ -213,8 +211,12 @@ public data class CommunicationRequest(
   public val encounter: Reference? = null,
   /** Text, attachment(s), or resource(s) to be communicated to the recipient. */
   public val payload: List<Payload> = listOf(),
-  /** The time when this communication is to occur. */
-  public val occurrence: Occurrence? = null,
+  /**
+   * The time when this communication is to occur.
+   *
+   * A FHIR choice type — one of: [DateTime] | [Period]
+   */
+  public val occurrence: CommunicationRequest.Occurrence? = null,
   /**
    * For draft requests, indicates the date of initial creation. For requests with other statuses,
    * indicates the date of activation.
@@ -291,7 +293,7 @@ public data class CommunicationRequest(
      * Unique id for the element within a resource (for internal references). This may be any string
      * value that does not contain spaces.
      */
-    override val id: String? = null,
+    override val id: kotlin.String? = null,
     /**
      * May be used to represent additional information that is not part of the basic definition of
      * the element. To make the use of extensions safe and manageable, there is a strict set of
@@ -327,8 +329,10 @@ public data class CommunicationRequest(
     /**
      * The communicated content (or for multi-part communications, one portion of the
      * communication).
+     *
+     * A FHIR choice type — one of: [Attachment] | [Reference] | [String]
      */
-    public val content: Content,
+    public val content: Payload.Content,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -339,48 +343,20 @@ public data class CommunicationRequest(
         }
       }
 
-    public sealed interface Content {
-      public fun asString(): String? = this as? String
-
-      public fun asAttachment(): Attachment? = this as? Attachment
-
-      public fun asReference(): Reference? = this as? Reference
-
-      @JvmInline
-      public value class String(public val `value`: dev.ohs.fhir.model.r4.String) : Content
-
-      @JvmInline
-      public value class Attachment(public val `value`: dev.ohs.fhir.model.r4.Attachment) : Content
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r4.Reference) : Content
-
-      public companion object {
-        internal fun from(
-          stringValue: dev.ohs.fhir.model.r4.String?,
-          attachmentValue: dev.ohs.fhir.model.r4.Attachment?,
-          referenceValue: dev.ohs.fhir.model.r4.Reference?,
-        ): Content? {
-          if (stringValue != null) return String(stringValue)
-          if (attachmentValue != null) return Attachment(attachmentValue)
-          if (referenceValue != null) return Reference(referenceValue)
-          return null
-        }
-      }
-    }
-
     public class Builder(
       /**
        * The communicated content (or for multi-part communications, one portion of the
        * communication).
+       *
+       * A FHIR choice type — one of: [Attachment] | [Reference] | [String]
        */
-      public var content: Content
+      public var content: Payload.Content
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
        * string value that does not contain spaces.
        */
-      public var id: String? = null
+      public var id: kotlin.String? = null
 
       /**
        * May be used to represent additional information that is not part of the basic definition of
@@ -424,29 +400,9 @@ public data class CommunicationRequest(
           content = content,
         )
     }
-  }
 
-  public sealed interface Occurrence {
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    public fun asPeriod(): Period? = this as? Period
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r4.DateTime) : Occurrence
-
-    @JvmInline
-    public value class Period(public val `value`: dev.ohs.fhir.model.r4.Period) : Occurrence
-
-    public companion object {
-      internal fun from(
-        dateTimeValue: dev.ohs.fhir.model.r4.DateTime?,
-        periodValue: dev.ohs.fhir.model.r4.Period?,
-      ): Occurrence? {
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        if (periodValue != null) return Period(periodValue)
-        return null
-      }
-    }
+    /** A FHIR choice type — one of: [Attachment] | [Reference] | [String] */
+    public typealias Content = FhirChoiceTypes.AttachmentOrReferenceOrString
   }
 
   public class Builder(
@@ -460,7 +416,7 @@ public data class CommunicationRequest(
      * The only time that a resource does not have an id is when it is being submitted to the server
      * using a create operation.
      */
-    public var id: String? = null
+    public var id: kotlin.String? = null
 
     /**
      * The metadata about the resource. This is content that is maintained by the infrastructure.
@@ -654,8 +610,12 @@ public data class CommunicationRequest(
     /** Text, attachment(s), or resource(s) to be communicated to the recipient. */
     public var payload: MutableList<Payload.Builder> = mutableListOf()
 
-    /** The time when this communication is to occur. */
-    public var occurrence: Occurrence? = null
+    /**
+     * The time when this communication is to occur.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Period]
+     */
+    public var occurrence: CommunicationRequest.Occurrence? = null
 
     /**
      * For draft requests, indicates the date of initial creation. For requests with other statuses,
@@ -734,9 +694,9 @@ public data class CommunicationRequest(
 
   /** Codes identifying the lifecycle stage of a request. */
   public enum class RequestStatus(
-    private val code: String,
-    private val system: String,
-    private val display: String?,
+    private val code: kotlin.String,
+    private val system: kotlin.String,
+    private val display: kotlin.String?,
   ) {
     Draft("draft", "http://hl7.org/fhir/request-status", "Draft"),
     Active("active", "http://hl7.org/fhir/request-status", "Active"),
@@ -746,16 +706,16 @@ public data class CommunicationRequest(
     Entered_In_Error("entered-in-error", "http://hl7.org/fhir/request-status", "Entered in Error"),
     Unknown("unknown", "http://hl7.org/fhir/request-status", "Unknown");
 
-    override fun toString(): String = code
+    override fun toString(): kotlin.String = code
 
-    public fun getCode(): String = code
+    public fun getCode(): kotlin.String = code
 
-    public fun getSystem(): String = system
+    public fun getSystem(): kotlin.String = system
 
-    public fun getDisplay(): String? = display
+    public fun getDisplay(): kotlin.String? = display
 
     public companion object {
-      public fun fromCode(code: String): RequestStatus =
+      public fun fromCode(code: kotlin.String): RequestStatus =
         when (code) {
           "draft" -> Draft
           "active" -> Active
@@ -771,25 +731,25 @@ public data class CommunicationRequest(
 
   /** The clinical priority of a diagnostic order. */
   public enum class RequestPriority(
-    private val code: String,
-    private val system: String,
-    private val display: String?,
+    private val code: kotlin.String,
+    private val system: kotlin.String,
+    private val display: kotlin.String?,
   ) {
     Routine("routine", "http://hl7.org/fhir/request-priority", "Routine"),
     Urgent("urgent", "http://hl7.org/fhir/request-priority", "Urgent"),
     Asap("asap", "http://hl7.org/fhir/request-priority", "ASAP"),
     Stat("stat", "http://hl7.org/fhir/request-priority", "STAT");
 
-    override fun toString(): String = code
+    override fun toString(): kotlin.String = code
 
-    public fun getCode(): String = code
+    public fun getCode(): kotlin.String = code
 
-    public fun getSystem(): String = system
+    public fun getSystem(): kotlin.String = system
 
-    public fun getDisplay(): String? = display
+    public fun getDisplay(): kotlin.String? = display
 
     public companion object {
-      public fun fromCode(code: String): RequestPriority =
+      public fun fromCode(code: kotlin.String): RequestPriority =
         when (code) {
           "routine" -> Routine
           "urgent" -> Urgent
@@ -799,4 +759,7 @@ public data class CommunicationRequest(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [DateTime] | [Period] */
+  public typealias Occurrence = FhirChoiceTypes.DateTimeOrPeriod
 }

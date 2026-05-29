@@ -23,7 +23,6 @@ import dev.ohs.fhir.model.r4.serializers.BiologicallyDerivedProductSerializer
 import dev.ohs.fhir.model.r4.serializers.BiologicallyDerivedProductStorageSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -244,8 +243,12 @@ public data class BiologicallyDerivedProduct(
      * processed/manipulated/manufactured product, providing the product.
      */
     public val source: Reference? = null,
-    /** Time of product collection. */
-    public val collected: Collected? = null,
+    /**
+     * Time of product collection.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Period]
+     */
+    public val collected: Collection.Collected? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -258,29 +261,6 @@ public data class BiologicallyDerivedProduct(
           collected = this@with.collected
         }
       }
-
-    public sealed interface Collected {
-      public fun asDateTime(): DateTime? = this as? DateTime
-
-      public fun asPeriod(): Period? = this as? Period
-
-      @JvmInline
-      public value class DateTime(public val `value`: dev.ohs.fhir.model.r4.DateTime) : Collected
-
-      @JvmInline
-      public value class Period(public val `value`: dev.ohs.fhir.model.r4.Period) : Collected
-
-      public companion object {
-        internal fun from(
-          dateTimeValue: dev.ohs.fhir.model.r4.DateTime?,
-          periodValue: dev.ohs.fhir.model.r4.Period?,
-        ): Collected? {
-          if (dateTimeValue != null) return DateTime(dateTimeValue)
-          if (periodValue != null) return Period(periodValue)
-          return null
-        }
-      }
-    }
 
     public class Builder() {
       /**
@@ -332,8 +312,12 @@ public data class BiologicallyDerivedProduct(
        */
       public var source: Reference.Builder? = null
 
-      /** Time of product collection. */
-      public var collected: Collected? = null
+      /**
+       * Time of product collection.
+       *
+       * A FHIR choice type — one of: [DateTime] | [Period]
+       */
+      public var collected: Collection.Collected? = null
 
       public fun build(): Collection =
         Collection(
@@ -345,6 +329,9 @@ public data class BiologicallyDerivedProduct(
           collected = collected,
         )
     }
+
+    /** A FHIR choice type — one of: [DateTime] | [Period] */
+    public typealias Collected = FhirChoiceTypes.DateTimeOrPeriod
   }
 
   /**
@@ -397,8 +384,12 @@ public data class BiologicallyDerivedProduct(
     public val procedure: CodeableConcept? = null,
     /** Substance added during processing. */
     public val additive: Reference? = null,
-    /** Time of processing. */
-    public val time: Time? = null,
+    /**
+     * Time of processing.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Period]
+     */
+    public val time: FhirChoiceTypes.DateTimeOrPeriod? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -412,28 +403,6 @@ public data class BiologicallyDerivedProduct(
           time = this@with.time
         }
       }
-
-    public sealed interface Time {
-      public fun asDateTime(): DateTime? = this as? DateTime
-
-      public fun asPeriod(): Period? = this as? Period
-
-      @JvmInline
-      public value class DateTime(public val `value`: dev.ohs.fhir.model.r4.DateTime) : Time
-
-      @JvmInline public value class Period(public val `value`: dev.ohs.fhir.model.r4.Period) : Time
-
-      public companion object {
-        internal fun from(
-          dateTimeValue: dev.ohs.fhir.model.r4.DateTime?,
-          periodValue: dev.ohs.fhir.model.r4.Period?,
-        ): Time? {
-          if (dateTimeValue != null) return DateTime(dateTimeValue)
-          if (periodValue != null) return Period(periodValue)
-          return null
-        }
-      }
-    }
 
     public class Builder() {
       /**
@@ -485,8 +454,12 @@ public data class BiologicallyDerivedProduct(
       /** Substance added during processing. */
       public var additive: Reference.Builder? = null
 
-      /** Time of processing. */
-      public var time: Time? = null
+      /**
+       * Time of processing.
+       *
+       * A FHIR choice type — one of: [DateTime] | [Period]
+       */
+      public var time: FhirChoiceTypes.DateTimeOrPeriod? = null
 
       public fun build(): Processing =
         Processing(
@@ -547,8 +520,12 @@ public data class BiologicallyDerivedProduct(
     override val modifierExtension: List<Extension> = listOf(),
     /** Description of manipulation. */
     public val description: String? = null,
-    /** Time of manipulation. */
-    public val time: Time? = null,
+    /**
+     * Time of manipulation.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Period]
+     */
+    public val time: FhirChoiceTypes.DateTimeOrPeriod? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -560,28 +537,6 @@ public data class BiologicallyDerivedProduct(
           time = this@with.time
         }
       }
-
-    public sealed interface Time {
-      public fun asDateTime(): DateTime? = this as? DateTime
-
-      public fun asPeriod(): Period? = this as? Period
-
-      @JvmInline
-      public value class DateTime(public val `value`: dev.ohs.fhir.model.r4.DateTime) : Time
-
-      @JvmInline public value class Period(public val `value`: dev.ohs.fhir.model.r4.Period) : Time
-
-      public companion object {
-        internal fun from(
-          dateTimeValue: dev.ohs.fhir.model.r4.DateTime?,
-          periodValue: dev.ohs.fhir.model.r4.Period?,
-        ): Time? {
-          if (dateTimeValue != null) return DateTime(dateTimeValue)
-          if (periodValue != null) return Period(periodValue)
-          return null
-        }
-      }
-    }
 
     public class Builder() {
       /**
@@ -627,8 +582,12 @@ public data class BiologicallyDerivedProduct(
       /** Description of manipulation. */
       public var description: String.Builder? = null
 
-      /** Time of manipulation. */
-      public var time: Time? = null
+      /**
+       * Time of manipulation.
+       *
+       * A FHIR choice type — one of: [DateTime] | [Period]
+       */
+      public var time: FhirChoiceTypes.DateTimeOrPeriod? = null
 
       public fun build(): Manipulation =
         Manipulation(

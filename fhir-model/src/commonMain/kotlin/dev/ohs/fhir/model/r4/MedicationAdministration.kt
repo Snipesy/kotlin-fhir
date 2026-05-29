@@ -21,7 +21,6 @@ import dev.ohs.fhir.model.r4.serializers.MedicationAdministrationPerformerSerial
 import dev.ohs.fhir.model.r4.serializers.MedicationAdministrationSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -167,8 +166,10 @@ public data class MedicationAdministration(
    * If only a code is specified, then it needs to be a code for a specific product. If more
    * information is required, then the use of the medication resource is recommended. For example,
    * if you require form or lot number, then you must reference the Medication resource.
+   *
+   * A FHIR choice type — one of: [CodeableConcept] | [Reference]
    */
-  public val medication: Medication,
+  public val medication: FhirChoiceTypes.CodeableConceptOrReference,
   /** The person or animal or group receiving the medication. */
   public val subject: Reference,
   /**
@@ -185,8 +186,10 @@ public data class MedicationAdministration(
    * A specific date/time or interval of time during which the administration took place (or did not
    * take place, when the 'notGiven' attribute is true). For many administrations, such as
    * swallowing a tablet the use of dateTime is more appropriate.
+   *
+   * A FHIR choice type — one of: [DateTime] | [Period]
    */
-  public val effective: Effective,
+  public val effective: MedicationAdministration.Effective,
   /** Indicates who or what performed the medication administration and how they were involved. */
   public val performer: List<Performer> = listOf(),
   /** A code indicating why the medication was given. */
@@ -471,8 +474,10 @@ public data class MedicationAdministration(
      * MedicationAdministration.dosage.rate, and the date time when the rate change occurred.
      * Typically, the MedicationAdministration.dosage.rate element is not used to convey an average
      * rate.
+     *
+     * A FHIR choice type — one of: [Quantity] | [Ratio]
      */
-    public val rate: Rate? = null,
+    public val rate: Dosage.Rate? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -488,28 +493,6 @@ public data class MedicationAdministration(
           rate = this@with.rate
         }
       }
-
-    public sealed interface Rate {
-      public fun asRatio(): Ratio? = this as? Ratio
-
-      public fun asQuantity(): Quantity? = this as? Quantity
-
-      @JvmInline public value class Ratio(public val `value`: dev.ohs.fhir.model.r4.Ratio) : Rate
-
-      @JvmInline
-      public value class Quantity(public val `value`: dev.ohs.fhir.model.r4.Quantity) : Rate
-
-      public companion object {
-        internal fun from(
-          ratioValue: dev.ohs.fhir.model.r4.Ratio?,
-          quantityValue: dev.ohs.fhir.model.r4.Quantity?,
-        ): Rate? {
-          if (ratioValue != null) return Ratio(ratioValue)
-          if (quantityValue != null) return Quantity(quantityValue)
-          return null
-        }
-      }
-    }
 
     public class Builder() {
       /**
@@ -613,8 +596,10 @@ public data class MedicationAdministration(
        * MedicationAdministration.dosage.rate, and the date time when the rate change occurred.
        * Typically, the MedicationAdministration.dosage.rate element is not used to convey an
        * average rate.
+       *
+       * A FHIR choice type — one of: [Quantity] | [Ratio]
        */
-      public var rate: Rate? = null
+      public var rate: Dosage.Rate? = null
 
       public fun build(): Dosage =
         Dosage(
@@ -629,53 +614,9 @@ public data class MedicationAdministration(
           rate = rate,
         )
     }
-  }
 
-  public sealed interface Medication {
-    public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-    public fun asReference(): Reference? = this as? Reference
-
-    @JvmInline
-    public value class CodeableConcept(public val `value`: dev.ohs.fhir.model.r4.CodeableConcept) :
-      Medication
-
-    @JvmInline
-    public value class Reference(public val `value`: dev.ohs.fhir.model.r4.Reference) : Medication
-
-    public companion object {
-      internal fun from(
-        codeableConceptValue: dev.ohs.fhir.model.r4.CodeableConcept?,
-        referenceValue: dev.ohs.fhir.model.r4.Reference?,
-      ): Medication? {
-        if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-        if (referenceValue != null) return Reference(referenceValue)
-        return null
-      }
-    }
-  }
-
-  public sealed interface Effective {
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    public fun asPeriod(): Period? = this as? Period
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r4.DateTime) : Effective
-
-    @JvmInline
-    public value class Period(public val `value`: dev.ohs.fhir.model.r4.Period) : Effective
-
-    public companion object {
-      internal fun from(
-        dateTimeValue: dev.ohs.fhir.model.r4.DateTime?,
-        periodValue: dev.ohs.fhir.model.r4.Period?,
-      ): Effective? {
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        if (periodValue != null) return Period(periodValue)
-        return null
-      }
-    }
+    /** A FHIR choice type — one of: [Quantity] | [Ratio] */
+    public typealias Rate = FhirChoiceTypes.QuantityOrRatio
   }
 
   public class Builder(
@@ -696,16 +637,20 @@ public data class MedicationAdministration(
      * If only a code is specified, then it needs to be a code for a specific product. If more
      * information is required, then the use of the medication resource is recommended. For example,
      * if you require form or lot number, then you must reference the Medication resource.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public var medication: Medication,
+    public var medication: FhirChoiceTypes.CodeableConceptOrReference,
     /** The person or animal or group receiving the medication. */
     public var subject: Reference.Builder,
     /**
      * A specific date/time or interval of time during which the administration took place (or did
      * not take place, when the 'notGiven' attribute is true). For many administrations, such as
      * swallowing a tablet the use of dateTime is more appropriate.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Period]
      */
-    public var effective: Effective,
+    public var effective: MedicationAdministration.Effective,
   ) : DomainResource.Builder() {
     /**
      * The logical id of the resource, as used in the URL for the resource. Once assigned, this
@@ -988,4 +933,7 @@ public data class MedicationAdministration(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [DateTime] | [Period] */
+  public typealias Effective = FhirChoiceTypes.DateTimeOrPeriod
 }

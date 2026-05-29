@@ -20,26 +20,32 @@ package dev.ohs.fhir.model.r5.serializers
 
 import dev.ohs.fhir.model.r5.Address
 import dev.ohs.fhir.model.r5.Age
+import dev.ohs.fhir.model.r5.AgeBox
 import dev.ohs.fhir.model.r5.Annotation
 import dev.ohs.fhir.model.r5.Attachment
 import dev.ohs.fhir.model.r5.Availability
 import dev.ohs.fhir.model.r5.Base64Binary
 import dev.ohs.fhir.model.r5.Boolean as R5Boolean
 import dev.ohs.fhir.model.r5.Canonical
+import dev.ohs.fhir.model.r5.CanonicalBox
 import dev.ohs.fhir.model.r5.Code
+import dev.ohs.fhir.model.r5.CodeBox
 import dev.ohs.fhir.model.r5.CodeableConcept
 import dev.ohs.fhir.model.r5.CodeableReference
 import dev.ohs.fhir.model.r5.Coding
 import dev.ohs.fhir.model.r5.ContactDetail
 import dev.ohs.fhir.model.r5.ContactPoint
 import dev.ohs.fhir.model.r5.Count
+import dev.ohs.fhir.model.r5.CountBox
 import dev.ohs.fhir.model.r5.DataRequirement
 import dev.ohs.fhir.model.r5.Date
 import dev.ohs.fhir.model.r5.DateTime
 import dev.ohs.fhir.model.r5.Decimal
 import dev.ohs.fhir.model.r5.Distance
+import dev.ohs.fhir.model.r5.DistanceBox
 import dev.ohs.fhir.model.r5.Dosage
 import dev.ohs.fhir.model.r5.Duration
+import dev.ohs.fhir.model.r5.DurationBox
 import dev.ohs.fhir.model.r5.Element
 import dev.ohs.fhir.model.r5.Expression
 import dev.ohs.fhir.model.r5.ExtendedContactDetail
@@ -49,19 +55,25 @@ import dev.ohs.fhir.model.r5.FhirDateTime
 import dev.ohs.fhir.model.r5.FhirDecimal
 import dev.ohs.fhir.model.r5.HumanName
 import dev.ohs.fhir.model.r5.Id
+import dev.ohs.fhir.model.r5.IdBox
 import dev.ohs.fhir.model.r5.Identifier
 import dev.ohs.fhir.model.r5.Instant
 import dev.ohs.fhir.model.r5.Integer
 import dev.ohs.fhir.model.r5.Integer64
+import dev.ohs.fhir.model.r5.IntegerBox
 import dev.ohs.fhir.model.r5.Markdown
+import dev.ohs.fhir.model.r5.MarkdownBox
 import dev.ohs.fhir.model.r5.Meta
 import dev.ohs.fhir.model.r5.Money
 import dev.ohs.fhir.model.r5.Oid
+import dev.ohs.fhir.model.r5.OidBox
 import dev.ohs.fhir.model.r5.ParameterDefinition
 import dev.ohs.fhir.model.r5.Parameters
 import dev.ohs.fhir.model.r5.Period
 import dev.ohs.fhir.model.r5.PositiveInt
+import dev.ohs.fhir.model.r5.PositiveIntBox
 import dev.ohs.fhir.model.r5.Quantity
+import dev.ohs.fhir.model.r5.QuantityBox
 import dev.ohs.fhir.model.r5.Range
 import dev.ohs.fhir.model.r5.Ratio
 import dev.ohs.fhir.model.r5.RatioRange
@@ -71,14 +83,19 @@ import dev.ohs.fhir.model.r5.Resource
 import dev.ohs.fhir.model.r5.SampledData
 import dev.ohs.fhir.model.r5.Signature
 import dev.ohs.fhir.model.r5.String as R5String
+import dev.ohs.fhir.model.r5.StringBox
 import dev.ohs.fhir.model.r5.Time
 import dev.ohs.fhir.model.r5.Timing
 import dev.ohs.fhir.model.r5.TriggerDefinition
 import dev.ohs.fhir.model.r5.UnsignedInt
+import dev.ohs.fhir.model.r5.UnsignedIntBox
 import dev.ohs.fhir.model.r5.Uri
+import dev.ohs.fhir.model.r5.UriBox
 import dev.ohs.fhir.model.r5.Url
+import dev.ohs.fhir.model.r5.UrlBox
 import dev.ohs.fhir.model.r5.UsageContext
 import dev.ohs.fhir.model.r5.Uuid
+import dev.ohs.fhir.model.r5.UuidBox
 import kotlin.Boolean as KotlinBoolean
 import kotlin.Int
 import kotlin.OptIn
@@ -614,62 +631,60 @@ internal object ParametersParameterSerializer : KSerializer<Parameters.Parameter
       modifierExtension = modifierExtension ?: listOf(),
       name = R5String.of(name, _name)!!,
       `value` =
-        Parameters.Parameter.Value.from(
-          Base64Binary.of(valueBase64Binary, _valueBase64Binary),
-          R5Boolean.of(valueBoolean, _valueBoolean),
-          Canonical.of(valueCanonical, _valueCanonical),
-          Code.of(valueCode, _valueCode),
-          Date.of(FhirDate.fromString(valueDate), _valueDate),
-          DateTime.of(FhirDateTime.fromString(valueDateTime), _valueDateTime),
-          Decimal.of(valueDecimal, _valueDecimal),
-          Id.of(valueId, _valueId),
-          Instant.of(FhirDateTime.fromString(valueInstant), _valueInstant),
-          Integer.of(valueInteger, _valueInteger),
-          Integer64.of(valueInteger64?.toLong(), _valueInteger64),
-          Markdown.of(valueMarkdown, _valueMarkdown),
-          Oid.of(valueOid, _valueOid),
-          PositiveInt.of(valuePositiveInt, _valuePositiveInt),
-          R5String.of(valueString, _valueString),
-          Time.of(valueTime, _valueTime),
-          UnsignedInt.of(valueUnsignedInt, _valueUnsignedInt),
-          Uri.of(valueUri, _valueUri),
-          Url.of(valueUrl, _valueUrl),
-          Uuid.of(valueUuid, _valueUuid),
-          valueAddress,
-          valueAge,
-          valueAnnotation,
-          valueAttachment,
-          valueCodeableConcept,
-          valueCodeableReference,
-          valueCoding,
-          valueContactPoint,
-          valueCount,
-          valueDistance,
-          valueDuration,
-          valueHumanName,
-          valueIdentifier,
-          valueMoney,
-          valuePeriod,
-          valueQuantity,
-          valueRange,
-          valueRatio,
-          valueRatioRange,
-          valueReference,
-          valueSampledData,
-          valueSignature,
-          valueTiming,
-          valueContactDetail,
-          valueDataRequirement,
-          valueExpression,
-          valueParameterDefinition,
-          valueRelatedArtifact,
-          valueTriggerDefinition,
-          valueUsageContext,
-          valueAvailability,
-          valueExtendedContactDetail,
-          valueDosage,
-          valueMeta,
-        ),
+        (Base64Binary.of(valueBase64Binary, _valueBase64Binary)
+          ?: R5Boolean.of(valueBoolean, _valueBoolean)
+          ?: (Canonical.of(valueCanonical, _valueCanonical))?.let { CanonicalBox(it) }
+          ?: (Code.of(valueCode, _valueCode))?.let { CodeBox(it) }
+          ?: Date.of(FhirDate.fromString(valueDate), _valueDate)
+          ?: DateTime.of(FhirDateTime.fromString(valueDateTime), _valueDateTime)
+          ?: Decimal.of(valueDecimal, _valueDecimal)
+          ?: (Id.of(valueId, _valueId))?.let { IdBox(it) }
+          ?: Instant.of(FhirDateTime.fromString(valueInstant), _valueInstant)
+          ?: (Integer.of(valueInteger, _valueInteger))?.let { IntegerBox(it) }
+          ?: Integer64.of(valueInteger64?.toLong(), _valueInteger64)
+          ?: (Markdown.of(valueMarkdown, _valueMarkdown))?.let { MarkdownBox(it) }
+          ?: (Oid.of(valueOid, _valueOid))?.let { OidBox(it) }
+          ?: (PositiveInt.of(valuePositiveInt, _valuePositiveInt))?.let { PositiveIntBox(it) }
+          ?: (R5String.of(valueString, _valueString))?.let { StringBox(it) }
+          ?: Time.of(valueTime, _valueTime)
+          ?: (UnsignedInt.of(valueUnsignedInt, _valueUnsignedInt))?.let { UnsignedIntBox(it) }
+          ?: (Uri.of(valueUri, _valueUri))?.let { UriBox(it) }
+          ?: (Url.of(valueUrl, _valueUrl))?.let { UrlBox(it) }
+          ?: (Uuid.of(valueUuid, _valueUuid))?.let { UuidBox(it) }
+          ?: valueAddress
+          ?: (valueAge)?.let { AgeBox(it) }
+          ?: valueAnnotation
+          ?: valueAttachment
+          ?: valueCodeableConcept
+          ?: valueCodeableReference
+          ?: valueCoding
+          ?: valueContactPoint
+          ?: (valueCount)?.let { CountBox(it) }
+          ?: (valueDistance)?.let { DistanceBox(it) }
+          ?: (valueDuration)?.let { DurationBox(it) }
+          ?: valueHumanName
+          ?: valueIdentifier
+          ?: valueMoney
+          ?: valuePeriod
+          ?: (valueQuantity)?.let { QuantityBox(it) }
+          ?: valueRange
+          ?: valueRatio
+          ?: valueRatioRange
+          ?: valueReference
+          ?: valueSampledData
+          ?: valueSignature
+          ?: valueTiming
+          ?: valueContactDetail
+          ?: valueDataRequirement
+          ?: valueExpression
+          ?: valueParameterDefinition
+          ?: valueRelatedArtifact
+          ?: valueTriggerDefinition
+          ?: valueUsageContext
+          ?: valueAvailability
+          ?: valueExtendedContactDetail
+          ?: valueDosage
+          ?: valueMeta),
       resource = resource,
       part = part ?: listOf(),
     )
@@ -692,286 +707,241 @@ internal object ParametersParameterSerializer : KSerializer<Parameters.Parameter
     }
     when (val choice = value.`value`) {
       null -> {}
-      is Parameters.Parameter.Value.Base64Binary -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
-        (choice.value.toElement())?.let {
+      is Base64Binary -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 6, Hoisted.nameSer, it)
         }
       }
-      is Parameters.Parameter.Value.Boolean -> {
-        ((choice.value.value))?.let { encoder.encodeBooleanElement(descriptor, 7, it) }
-        (choice.value.toElement())?.let {
+      is R5Boolean -> {
+        ((choice.value))?.let { encoder.encodeBooleanElement(descriptor, 7, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 8, Hoisted.nameSer, it)
         }
       }
-      is Parameters.Parameter.Value.Canonical -> {
+      is CanonicalBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 9, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 10, Hoisted.nameSer, it)
         }
       }
-      is Parameters.Parameter.Value.Code -> {
+      is CodeBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 11, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 12, Hoisted.nameSer, it)
         }
       }
-      is Parameters.Parameter.Value.Date -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 13, it) }
-        (choice.value.toElement())?.let {
+      is Date -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 13, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 14, Hoisted.nameSer, it)
         }
       }
-      is Parameters.Parameter.Value.DateTime -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 15, it) }
-        (choice.value.toElement())?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 15, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 16, Hoisted.nameSer, it)
         }
       }
-      is Parameters.Parameter.Value.Decimal -> {
-        ((choice.value.value))?.let {
+      is Decimal -> {
+        ((choice.value))?.let {
           encoder.encodeSerializableElement(descriptor, 17, FhirDecimalSerializer, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 18, Hoisted.nameSer, it)
         }
       }
-      is Parameters.Parameter.Value.Id -> {
+      is IdBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 19, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 20, Hoisted.nameSer, it)
         }
       }
-      is Parameters.Parameter.Value.Instant -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 21, it) }
-        (choice.value.toElement())?.let {
+      is Instant -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 21, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 22, Hoisted.nameSer, it)
         }
       }
-      is Parameters.Parameter.Value.Integer -> {
+      is IntegerBox -> {
         ((choice.value.value))?.let { encoder.encodeIntElement(descriptor, 23, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 24, Hoisted.nameSer, it)
         }
       }
-      is Parameters.Parameter.Value.Integer64 -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 25, it) }
-        (choice.value.toElement())?.let {
+      is Integer64 -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 25, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 26, Hoisted.nameSer, it)
         }
       }
-      is Parameters.Parameter.Value.Markdown -> {
+      is MarkdownBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 27, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 28, Hoisted.nameSer, it)
         }
       }
-      is Parameters.Parameter.Value.Oid -> {
+      is OidBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 29, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 30, Hoisted.nameSer, it)
         }
       }
-      is Parameters.Parameter.Value.PositiveInt -> {
+      is PositiveIntBox -> {
         ((choice.value.value))?.let { encoder.encodeIntElement(descriptor, 31, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 32, Hoisted.nameSer, it)
         }
       }
-      is Parameters.Parameter.Value.String -> {
+      is StringBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 33, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 34, Hoisted.nameSer, it)
         }
       }
-      is Parameters.Parameter.Value.Time -> {
-        ((choice.value.value))?.let {
+      is Time -> {
+        ((choice.value))?.let {
           encoder.encodeSerializableElement(descriptor, 35, LocalTimeSerializer, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 36, Hoisted.nameSer, it)
         }
       }
-      is Parameters.Parameter.Value.UnsignedInt -> {
+      is UnsignedIntBox -> {
         ((choice.value.value))?.let { encoder.encodeIntElement(descriptor, 37, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 38, Hoisted.nameSer, it)
         }
       }
-      is Parameters.Parameter.Value.Uri -> {
+      is UriBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 39, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 40, Hoisted.nameSer, it)
         }
       }
-      is Parameters.Parameter.Value.Url -> {
+      is UrlBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 41, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 42, Hoisted.nameSer, it)
         }
       }
-      is Parameters.Parameter.Value.Uuid -> {
+      is UuidBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 43, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 44, Hoisted.nameSer, it)
         }
       }
-      is Parameters.Parameter.Value.Address -> {
-        encoder.encodeSerializableElement(descriptor, 45, Hoisted.valueAddressSer, choice.value)
+      is Address -> {
+        encoder.encodeSerializableElement(descriptor, 45, Hoisted.valueAddressSer, choice)
       }
-      is Parameters.Parameter.Value.Age -> {
+      is AgeBox -> {
         encoder.encodeSerializableElement(descriptor, 46, Hoisted.valueAgeSer, choice.value)
       }
-      is Parameters.Parameter.Value.Annotation -> {
-        encoder.encodeSerializableElement(descriptor, 47, Hoisted.valueAnnotationSer, choice.value)
+      is Annotation -> {
+        encoder.encodeSerializableElement(descriptor, 47, Hoisted.valueAnnotationSer, choice)
       }
-      is Parameters.Parameter.Value.Attachment -> {
-        encoder.encodeSerializableElement(descriptor, 48, Hoisted.valueAttachmentSer, choice.value)
+      is Attachment -> {
+        encoder.encodeSerializableElement(descriptor, 48, Hoisted.valueAttachmentSer, choice)
       }
-      is Parameters.Parameter.Value.CodeableConcept -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          49,
-          Hoisted.valueCodeableConceptSer,
-          choice.value,
-        )
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 49, Hoisted.valueCodeableConceptSer, choice)
       }
-      is Parameters.Parameter.Value.CodeableReference -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          50,
-          Hoisted.valueCodeableReferenceSer,
-          choice.value,
-        )
+      is CodeableReference -> {
+        encoder.encodeSerializableElement(descriptor, 50, Hoisted.valueCodeableReferenceSer, choice)
       }
-      is Parameters.Parameter.Value.Coding -> {
-        encoder.encodeSerializableElement(descriptor, 51, Hoisted.valueCodingSer, choice.value)
+      is Coding -> {
+        encoder.encodeSerializableElement(descriptor, 51, Hoisted.valueCodingSer, choice)
       }
-      is Parameters.Parameter.Value.ContactPoint -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          52,
-          Hoisted.valueContactPointSer,
-          choice.value,
-        )
+      is ContactPoint -> {
+        encoder.encodeSerializableElement(descriptor, 52, Hoisted.valueContactPointSer, choice)
       }
-      is Parameters.Parameter.Value.Count -> {
+      is CountBox -> {
         encoder.encodeSerializableElement(descriptor, 53, Hoisted.valueCountSer, choice.value)
       }
-      is Parameters.Parameter.Value.Distance -> {
+      is DistanceBox -> {
         encoder.encodeSerializableElement(descriptor, 54, Hoisted.valueDistanceSer, choice.value)
       }
-      is Parameters.Parameter.Value.Duration -> {
+      is DurationBox -> {
         encoder.encodeSerializableElement(descriptor, 55, Hoisted.valueDurationSer, choice.value)
       }
-      is Parameters.Parameter.Value.HumanName -> {
-        encoder.encodeSerializableElement(descriptor, 56, Hoisted.valueHumanNameSer, choice.value)
+      is HumanName -> {
+        encoder.encodeSerializableElement(descriptor, 56, Hoisted.valueHumanNameSer, choice)
       }
-      is Parameters.Parameter.Value.Identifier -> {
-        encoder.encodeSerializableElement(descriptor, 57, Hoisted.valueIdentifierSer, choice.value)
+      is Identifier -> {
+        encoder.encodeSerializableElement(descriptor, 57, Hoisted.valueIdentifierSer, choice)
       }
-      is Parameters.Parameter.Value.Money -> {
-        encoder.encodeSerializableElement(descriptor, 58, Hoisted.valueMoneySer, choice.value)
+      is Money -> {
+        encoder.encodeSerializableElement(descriptor, 58, Hoisted.valueMoneySer, choice)
       }
-      is Parameters.Parameter.Value.Period -> {
-        encoder.encodeSerializableElement(descriptor, 59, Hoisted.valuePeriodSer, choice.value)
+      is Period -> {
+        encoder.encodeSerializableElement(descriptor, 59, Hoisted.valuePeriodSer, choice)
       }
-      is Parameters.Parameter.Value.Quantity -> {
+      is QuantityBox -> {
         encoder.encodeSerializableElement(descriptor, 60, Hoisted.valueQuantitySer, choice.value)
       }
-      is Parameters.Parameter.Value.Range -> {
-        encoder.encodeSerializableElement(descriptor, 61, Hoisted.valueRangeSer, choice.value)
+      is Range -> {
+        encoder.encodeSerializableElement(descriptor, 61, Hoisted.valueRangeSer, choice)
       }
-      is Parameters.Parameter.Value.Ratio -> {
-        encoder.encodeSerializableElement(descriptor, 62, Hoisted.valueRatioSer, choice.value)
+      is Ratio -> {
+        encoder.encodeSerializableElement(descriptor, 62, Hoisted.valueRatioSer, choice)
       }
-      is Parameters.Parameter.Value.RatioRange -> {
-        encoder.encodeSerializableElement(descriptor, 63, Hoisted.valueRatioRangeSer, choice.value)
+      is RatioRange -> {
+        encoder.encodeSerializableElement(descriptor, 63, Hoisted.valueRatioRangeSer, choice)
       }
-      is Parameters.Parameter.Value.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 64, Hoisted.valueReferenceSer, choice.value)
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 64, Hoisted.valueReferenceSer, choice)
       }
-      is Parameters.Parameter.Value.SampledData -> {
-        encoder.encodeSerializableElement(descriptor, 65, Hoisted.valueSampledDataSer, choice.value)
+      is SampledData -> {
+        encoder.encodeSerializableElement(descriptor, 65, Hoisted.valueSampledDataSer, choice)
       }
-      is Parameters.Parameter.Value.Signature -> {
-        encoder.encodeSerializableElement(descriptor, 66, Hoisted.valueSignatureSer, choice.value)
+      is Signature -> {
+        encoder.encodeSerializableElement(descriptor, 66, Hoisted.valueSignatureSer, choice)
       }
-      is Parameters.Parameter.Value.Timing -> {
-        encoder.encodeSerializableElement(descriptor, 67, Hoisted.valueTimingSer, choice.value)
+      is Timing -> {
+        encoder.encodeSerializableElement(descriptor, 67, Hoisted.valueTimingSer, choice)
       }
-      is Parameters.Parameter.Value.ContactDetail -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          68,
-          Hoisted.valueContactDetailSer,
-          choice.value,
-        )
+      is ContactDetail -> {
+        encoder.encodeSerializableElement(descriptor, 68, Hoisted.valueContactDetailSer, choice)
       }
-      is Parameters.Parameter.Value.DataRequirement -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          69,
-          Hoisted.valueDataRequirementSer,
-          choice.value,
-        )
+      is DataRequirement -> {
+        encoder.encodeSerializableElement(descriptor, 69, Hoisted.valueDataRequirementSer, choice)
       }
-      is Parameters.Parameter.Value.Expression -> {
-        encoder.encodeSerializableElement(descriptor, 70, Hoisted.valueExpressionSer, choice.value)
+      is Expression -> {
+        encoder.encodeSerializableElement(descriptor, 70, Hoisted.valueExpressionSer, choice)
       }
-      is Parameters.Parameter.Value.ParameterDefinition -> {
+      is ParameterDefinition -> {
         encoder.encodeSerializableElement(
           descriptor,
           71,
           Hoisted.valueParameterDefinitionSer,
-          choice.value,
+          choice,
         )
       }
-      is Parameters.Parameter.Value.RelatedArtifact -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          72,
-          Hoisted.valueRelatedArtifactSer,
-          choice.value,
-        )
+      is RelatedArtifact -> {
+        encoder.encodeSerializableElement(descriptor, 72, Hoisted.valueRelatedArtifactSer, choice)
       }
-      is Parameters.Parameter.Value.TriggerDefinition -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          73,
-          Hoisted.valueTriggerDefinitionSer,
-          choice.value,
-        )
+      is TriggerDefinition -> {
+        encoder.encodeSerializableElement(descriptor, 73, Hoisted.valueTriggerDefinitionSer, choice)
       }
-      is Parameters.Parameter.Value.UsageContext -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          74,
-          Hoisted.valueUsageContextSer,
-          choice.value,
-        )
+      is UsageContext -> {
+        encoder.encodeSerializableElement(descriptor, 74, Hoisted.valueUsageContextSer, choice)
       }
-      is Parameters.Parameter.Value.Availability -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          75,
-          Hoisted.valueAvailabilitySer,
-          choice.value,
-        )
+      is Availability -> {
+        encoder.encodeSerializableElement(descriptor, 75, Hoisted.valueAvailabilitySer, choice)
       }
-      is Parameters.Parameter.Value.ExtendedContactDetail -> {
+      is ExtendedContactDetail -> {
         encoder.encodeSerializableElement(
           descriptor,
           76,
           Hoisted.valueExtendedContactDetailSer,
-          choice.value,
+          choice,
         )
       }
-      is Parameters.Parameter.Value.Dosage -> {
-        encoder.encodeSerializableElement(descriptor, 77, Hoisted.valueDosageSer, choice.value)
+      is Dosage -> {
+        encoder.encodeSerializableElement(descriptor, 77, Hoisted.valueDosageSer, choice)
       }
-      is Parameters.Parameter.Value.Meta -> {
-        encoder.encodeSerializableElement(descriptor, 78, Hoisted.valueMetaSer, choice.value)
+      is Meta -> {
+        encoder.encodeSerializableElement(descriptor, 78, Hoisted.valueMetaSer, choice)
       }
     }
     (value.resource)?.let {

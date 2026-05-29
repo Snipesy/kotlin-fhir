@@ -20,7 +20,6 @@ import dev.ohs.fhir.model.r5.serializers.CareTeamParticipantSerializer
 import dev.ohs.fhir.model.r5.serializers.CareTeamSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -281,8 +280,10 @@ public data class CareTeam(
      *
      * This is populated while creating / managing the CareTeam to ensure there is coverage when
      * servicing CarePlan activities from the Schedule.
+     *
+     * A FHIR choice type — one of: [Period] | [Timing]
      */
-    public val coverage: Coverage? = null,
+    public val coverage: FhirChoiceTypes.PeriodOrTiming? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -296,29 +297,6 @@ public data class CareTeam(
           coverage = this@with.coverage
         }
       }
-
-    public sealed interface Coverage {
-      public fun asPeriod(): Period? = this as? Period
-
-      public fun asTiming(): Timing? = this as? Timing
-
-      @JvmInline
-      public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) : Coverage
-
-      @JvmInline
-      public value class Timing(public val `value`: dev.ohs.fhir.model.r5.Timing) : Coverage
-
-      public companion object {
-        internal fun from(
-          periodValue: dev.ohs.fhir.model.r5.Period?,
-          timingValue: dev.ohs.fhir.model.r5.Timing?,
-        ): Coverage? {
-          if (periodValue != null) return Period(periodValue)
-          if (timingValue != null) return Timing(timingValue)
-          return null
-        }
-      }
-    }
 
     public class Builder() {
       /**
@@ -391,8 +369,10 @@ public data class CareTeam(
        *
        * This is populated while creating / managing the CareTeam to ensure there is coverage when
        * servicing CarePlan activities from the Schedule.
+       *
+       * A FHIR choice type — one of: [Period] | [Timing]
        */
-      public var coverage: Coverage? = null
+      public var coverage: FhirChoiceTypes.PeriodOrTiming? = null
 
       public fun build(): Participant =
         Participant(

@@ -26,7 +26,6 @@ import dev.ohs.fhir.model.r4.terminologies.CommonLanguages
 import dev.ohs.fhir.model.r4.terminologies.PublicationStatus
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -949,8 +948,13 @@ public data class CodeSystem(
       override val modifierExtension: List<Extension> = listOf(),
       /** A code that is a reference to CodeSystem.property.code. */
       public val code: Code,
-      /** The value of this property. */
-      public val `value`: Value,
+      /**
+       * The value of this property.
+       *
+       * A FHIR choice type — one of: [Boolean] | [CodeBox] | [Coding] | [DateTime] | [Decimal] |
+       * [Integer] | [StringBox]
+       */
+      public val `value`: Property.Value,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -961,68 +965,16 @@ public data class CodeSystem(
           }
         }
 
-      public sealed interface Value {
-        public fun asCode(): Code? = this as? Code
-
-        public fun asCoding(): Coding? = this as? Coding
-
-        public fun asString(): String? = this as? String
-
-        public fun asInteger(): Integer? = this as? Integer
-
-        public fun asBoolean(): Boolean? = this as? Boolean
-
-        public fun asDateTime(): DateTime? = this as? DateTime
-
-        public fun asDecimal(): Decimal? = this as? Decimal
-
-        @JvmInline public value class Code(public val `value`: dev.ohs.fhir.model.r4.Code) : Value
-
-        @JvmInline
-        public value class Coding(public val `value`: dev.ohs.fhir.model.r4.Coding) : Value
-
-        @JvmInline
-        public value class String(public val `value`: dev.ohs.fhir.model.r4.String) : Value
-
-        @JvmInline
-        public value class Integer(public val `value`: dev.ohs.fhir.model.r4.Integer) : Value
-
-        @JvmInline
-        public value class Boolean(public val `value`: dev.ohs.fhir.model.r4.Boolean) : Value
-
-        @JvmInline
-        public value class DateTime(public val `value`: dev.ohs.fhir.model.r4.DateTime) : Value
-
-        @JvmInline
-        public value class Decimal(public val `value`: dev.ohs.fhir.model.r4.Decimal) : Value
-
-        public companion object {
-          internal fun from(
-            codeValue: dev.ohs.fhir.model.r4.Code?,
-            codingValue: dev.ohs.fhir.model.r4.Coding?,
-            stringValue: dev.ohs.fhir.model.r4.String?,
-            integerValue: dev.ohs.fhir.model.r4.Integer?,
-            booleanValue: dev.ohs.fhir.model.r4.Boolean?,
-            dateTimeValue: dev.ohs.fhir.model.r4.DateTime?,
-            decimalValue: dev.ohs.fhir.model.r4.Decimal?,
-          ): Value? {
-            if (codeValue != null) return Code(codeValue)
-            if (codingValue != null) return Coding(codingValue)
-            if (stringValue != null) return String(stringValue)
-            if (integerValue != null) return Integer(integerValue)
-            if (booleanValue != null) return Boolean(booleanValue)
-            if (dateTimeValue != null) return DateTime(dateTimeValue)
-            if (decimalValue != null) return Decimal(decimalValue)
-            return null
-          }
-        }
-      }
-
       public class Builder(
         /** A code that is a reference to CodeSystem.property.code. */
         public var code: Code.Builder,
-        /** The value of this property. */
-        public var `value`: Value,
+        /**
+         * The value of this property.
+         *
+         * A FHIR choice type — one of: [Boolean] | [CodeBox] | [Coding] | [DateTime] | [Decimal] |
+         * [Integer] | [StringBox]
+         */
+        public var `value`: Property.Value,
       ) {
         /**
          * Unique id for the element within a resource (for internal references). This may be any
@@ -1073,6 +1025,13 @@ public data class CodeSystem(
             `value` = `value`,
           )
       }
+
+      /**
+       * A FHIR choice type — one of: [Boolean] | [CodeBox] | [Coding] | [DateTime] | [Decimal] |
+       * [Integer] | [StringBox]
+       */
+      public typealias Value =
+        FhirChoiceTypes.BooleanOrCodeOrCodingOrDateTimeOrDecimalOrIntegerOrString
     }
 
     public class Builder(

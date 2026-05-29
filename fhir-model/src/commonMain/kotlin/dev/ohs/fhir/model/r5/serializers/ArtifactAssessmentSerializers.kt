@@ -21,6 +21,7 @@ package dev.ohs.fhir.model.r5.serializers
 import dev.ohs.fhir.model.r5.ArtifactAssessment
 import dev.ohs.fhir.model.r5.Boolean as R5Boolean
 import dev.ohs.fhir.model.r5.Canonical
+import dev.ohs.fhir.model.r5.CanonicalBox
 import dev.ohs.fhir.model.r5.Code
 import dev.ohs.fhir.model.r5.CodeableConcept
 import dev.ohs.fhir.model.r5.Date
@@ -40,6 +41,7 @@ import dev.ohs.fhir.model.r5.RelatedArtifact
 import dev.ohs.fhir.model.r5.Resource
 import dev.ohs.fhir.model.r5.String as R5String
 import dev.ohs.fhir.model.r5.Uri
+import dev.ohs.fhir.model.r5.UriBox
 import kotlin.Boolean as KotlinBoolean
 import kotlin.Int
 import kotlin.OptIn
@@ -518,21 +520,15 @@ internal object ArtifactAssessmentSerializer : KSerializer<ArtifactAssessment> {
       modifierExtension = modifierExtension ?: listOf(),
       identifier = identifier ?: listOf(),
       title = R5String.of(title, _title),
-      citeAs =
-        ArtifactAssessment.CiteAs.from(
-          citeAsReference,
-          Markdown.of(citeAsMarkdown, _citeAsMarkdown),
-        ),
+      citeAs = (citeAsReference ?: Markdown.of(citeAsMarkdown, _citeAsMarkdown)),
       date = DateTime.of(FhirDateTime.fromString(date), _date),
       copyright = Markdown.of(copyright, _copyright),
       approvalDate = Date.of(FhirDate.fromString(approvalDate), _approvalDate),
       lastReviewDate = Date.of(FhirDate.fromString(lastReviewDate), _lastReviewDate),
       artifact =
-        ArtifactAssessment.Artifact.from(
-          artifactReference,
-          Canonical.of(artifactCanonical, _artifactCanonical),
-          Uri.of(artifactUri, _artifactUri),
-        )!!,
+        (artifactReference
+          ?: (Canonical.of(artifactCanonical, _artifactCanonical))?.let { CanonicalBox(it) }
+          ?: (Uri.of(artifactUri, _artifactUri))?.let { UriBox(it) })!!,
       content = content ?: listOf(),
       workflowStatus =
         workflowStatus?.let {
@@ -627,19 +623,17 @@ internal object ArtifactAssessmentSerializer : KSerializer<ArtifactAssessment> {
     }
     when (val choice = value.citeAs) {
       null -> {}
-      is ArtifactAssessment.CiteAs.Reference -> {
+      is Reference -> {
         encoder.encodeSerializableElement(
           descriptor,
           13 + descriptorOffset,
           Hoisted.citeAsReferenceSer,
-          choice.value,
+          choice,
         )
       }
-      is ArtifactAssessment.CiteAs.Markdown -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 14 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is Markdown -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 14 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             15 + descriptorOffset,
@@ -694,15 +688,15 @@ internal object ArtifactAssessmentSerializer : KSerializer<ArtifactAssessment> {
       )
     }
     when (val choice = value.artifact) {
-      is ArtifactAssessment.Artifact.Reference -> {
+      is Reference -> {
         encoder.encodeSerializableElement(
           descriptor,
           24 + descriptorOffset,
           Hoisted.citeAsReferenceSer,
-          choice.value,
+          choice,
         )
       }
-      is ArtifactAssessment.Artifact.Canonical -> {
+      is CanonicalBox -> {
         ((choice.value.value))?.let {
           encoder.encodeStringElement(descriptor, 25 + descriptorOffset, it)
         }
@@ -715,7 +709,7 @@ internal object ArtifactAssessmentSerializer : KSerializer<ArtifactAssessment> {
           )
         }
       }
-      is ArtifactAssessment.Artifact.Uri -> {
+      is UriBox -> {
         ((choice.value.value))?.let {
           encoder.encodeStringElement(descriptor, 27 + descriptorOffset, it)
         }

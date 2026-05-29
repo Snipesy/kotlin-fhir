@@ -49,7 +49,7 @@ public data class Ratio(
   public val numerator: Quantity? = null,
   /** The value of the denominator. */
   public val denominator: Quantity? = null,
-) : DataType() {
+) : DataType(), FhirChoiceParticipants.RatioChoices {
   public fun toBuilder(): Builder =
     with(this) {
       Builder().apply {

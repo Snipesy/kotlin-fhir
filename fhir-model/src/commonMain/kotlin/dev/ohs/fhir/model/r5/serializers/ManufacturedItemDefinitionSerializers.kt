@@ -165,15 +165,13 @@ internal object ManufacturedItemDefinitionPropertySerializer :
       modifierExtension = modifierExtension ?: listOf(),
       type = type!!,
       `value` =
-        ManufacturedItemDefinition.Property.Value.from(
-          valueCodeableConcept,
-          valueQuantity,
-          Date.of(FhirDate.fromString(valueDate), _valueDate),
-          R5Boolean.of(valueBoolean, _valueBoolean),
-          Markdown.of(valueMarkdown, _valueMarkdown),
-          valueAttachment,
-          valueReference,
-        ),
+        (valueCodeableConcept
+          ?: valueQuantity
+          ?: Date.of(FhirDate.fromString(valueDate), _valueDate)
+          ?: R5Boolean.of(valueBoolean, _valueBoolean)
+          ?: Markdown.of(valueMarkdown, _valueMarkdown)
+          ?: valueAttachment
+          ?: valueReference),
     )
   }
 
@@ -194,35 +192,35 @@ internal object ManufacturedItemDefinitionPropertySerializer :
     encoder.encodeSerializableElement(descriptor, 3, Hoisted.typeSer, value.type)
     when (val choice = value.`value`) {
       null -> {}
-      is ManufacturedItemDefinition.Property.Value.CodeableConcept -> {
-        encoder.encodeSerializableElement(descriptor, 4, Hoisted.typeSer, choice.value)
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 4, Hoisted.typeSer, choice)
       }
-      is ManufacturedItemDefinition.Property.Value.Quantity -> {
-        encoder.encodeSerializableElement(descriptor, 5, Hoisted.valueQuantitySer, choice.value)
+      is Quantity -> {
+        encoder.encodeSerializableElement(descriptor, 5, Hoisted.valueQuantitySer, choice)
       }
-      is ManufacturedItemDefinition.Property.Value.Date -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 6, it) }
-        (choice.value.toElement())?.let {
+      is Date -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 6, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 7, Hoisted.valueDateSer, it)
         }
       }
-      is ManufacturedItemDefinition.Property.Value.Boolean -> {
-        ((choice.value.value))?.let { encoder.encodeBooleanElement(descriptor, 8, it) }
-        (choice.value.toElement())?.let {
+      is R5Boolean -> {
+        ((choice.value))?.let { encoder.encodeBooleanElement(descriptor, 8, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 9, Hoisted.valueDateSer, it)
         }
       }
-      is ManufacturedItemDefinition.Property.Value.Markdown -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 10, it) }
-        (choice.value.toElement())?.let {
+      is Markdown -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 10, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 11, Hoisted.valueDateSer, it)
         }
       }
-      is ManufacturedItemDefinition.Property.Value.Attachment -> {
-        encoder.encodeSerializableElement(descriptor, 12, Hoisted.valueAttachmentSer, choice.value)
+      is Attachment -> {
+        encoder.encodeSerializableElement(descriptor, 12, Hoisted.valueAttachmentSer, choice)
       }
-      is ManufacturedItemDefinition.Property.Value.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 13, Hoisted.valueReferenceSer, choice.value)
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 13, Hoisted.valueReferenceSer, choice)
       }
     }
   }

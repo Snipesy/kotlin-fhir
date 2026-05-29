@@ -129,7 +129,7 @@ internal object PopulationSerializer : KSerializer<Population> {
       id = id,
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
-      age = Population.Age.from(ageRange, ageCodeableConcept),
+      age = (ageRange ?: ageCodeableConcept),
       gender = gender,
       race = race,
       physiologicalCondition = physiologicalCondition,
@@ -149,16 +149,11 @@ internal object PopulationSerializer : KSerializer<Population> {
       )
     when (val choice = value.age) {
       null -> {}
-      is Population.Age.Range -> {
-        encoder.encodeSerializableElement(descriptor, 3, Hoisted.ageRangeSer, choice.value)
+      is Range -> {
+        encoder.encodeSerializableElement(descriptor, 3, Hoisted.ageRangeSer, choice)
       }
-      is Population.Age.CodeableConcept -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          4,
-          Hoisted.ageCodeableConceptSer,
-          choice.value,
-        )
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 4, Hoisted.ageCodeableConceptSer, choice)
       }
     }
     (value.gender)?.let {

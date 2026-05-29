@@ -23,7 +23,6 @@ import dev.ohs.fhir.model.r4b.serializers.EvidenceVariableSerializer
 import dev.ohs.fhir.model.r4b.terminologies.PublicationStatus
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -404,8 +403,10 @@ public data class EvidenceVariable(
      * Define members of the evidence element using Codes (such as condition, medication, or
      * observation), Expressions ( using an expression language such as FHIRPath or CQL) or
      * DataRequirements (such as Diabetes diagnosis onset in the last year).
+     *
+     * A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [Expression] | [Reference]
      */
-    public val definition: Definition,
+    public val definition: Characteristic.Definition,
     /** Method used for describing characteristic. */
     public val method: CodeableConcept? = null,
     /** Device used for determining characteristic. */
@@ -560,55 +561,15 @@ public data class EvidenceVariable(
       }
     }
 
-    public sealed interface Definition {
-      public fun asReference(): Reference? = this as? Reference
-
-      public fun asCanonical(): Canonical? = this as? Canonical
-
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asExpression(): Expression? = this as? Expression
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r4b.Reference) :
-        Definition
-
-      @JvmInline
-      public value class Canonical(public val `value`: dev.ohs.fhir.model.r4b.Canonical) :
-        Definition
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r4b.CodeableConcept
-      ) : Definition
-
-      @JvmInline
-      public value class Expression(public val `value`: dev.ohs.fhir.model.r4b.Expression) :
-        Definition
-
-      public companion object {
-        internal fun from(
-          referenceValue: dev.ohs.fhir.model.r4b.Reference?,
-          canonicalValue: dev.ohs.fhir.model.r4b.Canonical?,
-          codeableConceptValue: dev.ohs.fhir.model.r4b.CodeableConcept?,
-          expressionValue: dev.ohs.fhir.model.r4b.Expression?,
-        ): Definition? {
-          if (referenceValue != null) return Reference(referenceValue)
-          if (canonicalValue != null) return Canonical(canonicalValue)
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (expressionValue != null) return Expression(expressionValue)
-          return null
-        }
-      }
-    }
-
     public class Builder(
       /**
        * Define members of the evidence element using Codes (such as condition, medication, or
        * observation), Expressions ( using an expression language such as FHIRPath or CQL) or
        * DataRequirements (such as Diabetes diagnosis onset in the last year).
+       *
+       * A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [Expression] | [Reference]
        */
-      public var definition: Definition
+      public var definition: Characteristic.Definition
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -685,6 +646,9 @@ public data class EvidenceVariable(
           groupMeasure = groupMeasure,
         )
     }
+
+    /** A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [Expression] | [Reference] */
+    public typealias Definition = FhirChoiceTypes.CanonicalOrCodeableConceptOrExpressionOrReference
   }
 
   /**
@@ -732,8 +696,12 @@ public data class EvidenceVariable(
     override val modifierExtension: List<Extension> = listOf(),
     /** A human-readable title or representation of the grouping. */
     public val name: String? = null,
-    /** Value or set of values that define the grouping. */
-    public val `value`: Value? = null,
+    /**
+     * Value or set of values that define the grouping.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Range]
+     */
+    public val `value`: Category.Value? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -745,37 +713,6 @@ public data class EvidenceVariable(
           `value` = this@with.`value`
         }
       }
-
-    public sealed interface Value {
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asQuantity(): Quantity? = this as? Quantity
-
-      public fun asRange(): Range? = this as? Range
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r4b.CodeableConcept
-      ) : Value
-
-      @JvmInline
-      public value class Quantity(public val `value`: dev.ohs.fhir.model.r4b.Quantity) : Value
-
-      @JvmInline public value class Range(public val `value`: dev.ohs.fhir.model.r4b.Range) : Value
-
-      public companion object {
-        internal fun from(
-          codeableConceptValue: dev.ohs.fhir.model.r4b.CodeableConcept?,
-          quantityValue: dev.ohs.fhir.model.r4b.Quantity?,
-          rangeValue: dev.ohs.fhir.model.r4b.Range?,
-        ): Value? {
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (quantityValue != null) return Quantity(quantityValue)
-          if (rangeValue != null) return Range(rangeValue)
-          return null
-        }
-      }
-    }
 
     public class Builder() {
       /**
@@ -821,8 +758,12 @@ public data class EvidenceVariable(
       /** A human-readable title or representation of the grouping. */
       public var name: String.Builder? = null
 
-      /** Value or set of values that define the grouping. */
-      public var `value`: Value? = null
+      /**
+       * Value or set of values that define the grouping.
+       *
+       * A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Range]
+       */
+      public var `value`: Category.Value? = null
 
       public fun build(): Category =
         Category(
@@ -833,6 +774,9 @@ public data class EvidenceVariable(
           `value` = `value`,
         )
     }
+
+    /** A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Range] */
+    public typealias Value = FhirChoiceTypes.CodeableConceptOrQuantityOrRange
   }
 
   public class Builder(

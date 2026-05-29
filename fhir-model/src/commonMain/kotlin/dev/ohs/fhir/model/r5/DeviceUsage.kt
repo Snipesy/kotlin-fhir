@@ -21,7 +21,6 @@ import dev.ohs.fhir.model.r5.serializers.DeviceUsageSerializer
 import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -167,8 +166,12 @@ public data class DeviceUsage(
    * The encounter or episode of care that establishes the context for this device use statement.
    */
   public val context: Reference? = null,
-  /** How often the device was used. */
-  public val timing: Timing? = null,
+  /**
+   * How often the device was used.
+   *
+   * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
+   */
+  public val timing: FhirChoiceTypes.DateTimeOrPeriodOrTiming? = null,
   /** The time at which the statement was recorded by informationSource. */
   public val dateAsserted: DateTime? = null,
   /**
@@ -342,39 +345,6 @@ public data class DeviceUsage(
     }
   }
 
-  public sealed interface Timing {
-    public fun asTiming(): Timing? = this as? Timing
-
-    public fun asPeriod(): Period? = this as? Period
-
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    @JvmInline
-    public value class Timing(public val `value`: dev.ohs.fhir.model.r5.Timing) :
-      DeviceUsage.Timing
-
-    @JvmInline
-    public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) :
-      DeviceUsage.Timing
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) :
-      DeviceUsage.Timing
-
-    public companion object {
-      internal fun from(
-        timingValue: dev.ohs.fhir.model.r5.Timing?,
-        periodValue: dev.ohs.fhir.model.r5.Period?,
-        dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-      ): DeviceUsage.Timing? {
-        if (timingValue != null) return Timing(timingValue)
-        if (periodValue != null) return Period(periodValue)
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
     /**
      * A code representing the patient or other source's judgment about the state of the device used
@@ -528,8 +498,12 @@ public data class DeviceUsage(
      */
     public var context: Reference.Builder? = null
 
-    /** How often the device was used. */
-    public var timing: Timing? = null
+    /**
+     * How often the device was used.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
+     */
+    public var timing: FhirChoiceTypes.DateTimeOrPeriodOrTiming? = null
 
     /** The time at which the statement was recorded by informationSource. */
     public var dateAsserted: DateTime.Builder? = null

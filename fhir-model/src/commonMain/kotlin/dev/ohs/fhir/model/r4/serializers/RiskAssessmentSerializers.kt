@@ -181,14 +181,10 @@ internal object RiskAssessmentPredictionSerializer : KSerializer<RiskAssessment.
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
       outcome = outcome,
-      probability =
-        RiskAssessment.Prediction.Probability.from(
-          Decimal.of(probabilityDecimal, _probabilityDecimal),
-          probabilityRange,
-        ),
+      probability = (Decimal.of(probabilityDecimal, _probabilityDecimal) ?: probabilityRange),
       qualitativeRisk = qualitativeRisk,
       relativeRisk = Decimal.of(relativeRisk, _relativeRisk),
-      `when` = RiskAssessment.Prediction.When.from(whenPeriod, whenRange),
+      `when` = (whenPeriod ?: whenRange),
       rationale = R4String.of(rationale, _rationale),
     )
   }
@@ -209,16 +205,16 @@ internal object RiskAssessmentPredictionSerializer : KSerializer<RiskAssessment.
     }
     when (val choice = value.probability) {
       null -> {}
-      is RiskAssessment.Prediction.Probability.Decimal -> {
-        ((choice.value.value))?.let {
+      is Decimal -> {
+        ((choice.value))?.let {
           encoder.encodeSerializableElement(descriptor, 4, FhirDecimalSerializer, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 5, Hoisted.probabilityDecimalSer, it)
         }
       }
-      is RiskAssessment.Prediction.Probability.Range -> {
-        encoder.encodeSerializableElement(descriptor, 6, Hoisted.probabilityRangeSer, choice.value)
+      is Range -> {
+        encoder.encodeSerializableElement(descriptor, 6, Hoisted.probabilityRangeSer, choice)
       }
     }
     (value.qualitativeRisk)?.let {
@@ -232,11 +228,11 @@ internal object RiskAssessmentPredictionSerializer : KSerializer<RiskAssessment.
     }
     when (val choice = value.`when`) {
       null -> {}
-      is RiskAssessment.Prediction.When.Period -> {
-        encoder.encodeSerializableElement(descriptor, 10, Hoisted.whenPeriodSer, choice.value)
+      is Period -> {
+        encoder.encodeSerializableElement(descriptor, 10, Hoisted.whenPeriodSer, choice)
       }
-      is RiskAssessment.Prediction.When.Range -> {
-        encoder.encodeSerializableElement(descriptor, 11, Hoisted.probabilityRangeSer, choice.value)
+      is Range -> {
+        encoder.encodeSerializableElement(descriptor, 11, Hoisted.probabilityRangeSer, choice)
       }
     }
     ((value.rationale?.value))?.let { encoder.encodeStringElement(descriptor, 12, it) }
@@ -490,10 +486,8 @@ internal object RiskAssessmentSerializer : KSerializer<RiskAssessment> {
       subject = subject!!,
       encounter = encounter,
       occurrence =
-        RiskAssessment.Occurrence.from(
-          DateTime.of(FhirDateTime.fromString(occurrenceDateTime), _occurrenceDateTime),
-          occurrencePeriod,
-        ),
+        (DateTime.of(FhirDateTime.fromString(occurrenceDateTime), _occurrenceDateTime)
+          ?: occurrencePeriod),
       condition = condition,
       performer = performer,
       reasonCode = reasonCode ?: listOf(),
@@ -602,11 +596,11 @@ internal object RiskAssessmentSerializer : KSerializer<RiskAssessment> {
     }
     when (val choice = value.occurrence) {
       null -> {}
-      is RiskAssessment.Occurrence.DateTime -> {
-        ((choice.value.value?.toString()))?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let {
           encoder.encodeStringElement(descriptor, 19 + descriptorOffset, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             20 + descriptorOffset,
@@ -615,12 +609,12 @@ internal object RiskAssessmentSerializer : KSerializer<RiskAssessment> {
           )
         }
       }
-      is RiskAssessment.Occurrence.Period -> {
+      is Period -> {
         encoder.encodeSerializableElement(
           descriptor,
           21 + descriptorOffset,
           Hoisted.occurrencePeriodSer,
-          choice.value,
+          choice,
         )
       }
     }

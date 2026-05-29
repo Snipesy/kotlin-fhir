@@ -20,25 +20,31 @@ package dev.ohs.fhir.model.r4b.serializers
 
 import dev.ohs.fhir.model.r4b.Address
 import dev.ohs.fhir.model.r4b.Age
+import dev.ohs.fhir.model.r4b.AgeBox
 import dev.ohs.fhir.model.r4b.Annotation
 import dev.ohs.fhir.model.r4b.Attachment
 import dev.ohs.fhir.model.r4b.Base64Binary
 import dev.ohs.fhir.model.r4b.Boolean as R4bBoolean
 import dev.ohs.fhir.model.r4b.Canonical
+import dev.ohs.fhir.model.r4b.CanonicalBox
 import dev.ohs.fhir.model.r4b.Code
+import dev.ohs.fhir.model.r4b.CodeBox
 import dev.ohs.fhir.model.r4b.CodeableConcept
 import dev.ohs.fhir.model.r4b.Coding
 import dev.ohs.fhir.model.r4b.ContactDetail
 import dev.ohs.fhir.model.r4b.ContactPoint
 import dev.ohs.fhir.model.r4b.Contributor
 import dev.ohs.fhir.model.r4b.Count
+import dev.ohs.fhir.model.r4b.CountBox
 import dev.ohs.fhir.model.r4b.DataRequirement
 import dev.ohs.fhir.model.r4b.Date
 import dev.ohs.fhir.model.r4b.DateTime
 import dev.ohs.fhir.model.r4b.Decimal
 import dev.ohs.fhir.model.r4b.Distance
+import dev.ohs.fhir.model.r4b.DistanceBox
 import dev.ohs.fhir.model.r4b.Dosage
 import dev.ohs.fhir.model.r4b.Duration
+import dev.ohs.fhir.model.r4b.DurationBox
 import dev.ohs.fhir.model.r4b.Element
 import dev.ohs.fhir.model.r4b.Enumeration
 import dev.ohs.fhir.model.r4b.Expression
@@ -48,18 +54,24 @@ import dev.ohs.fhir.model.r4b.FhirDateTime
 import dev.ohs.fhir.model.r4b.FhirDecimal
 import dev.ohs.fhir.model.r4b.HumanName
 import dev.ohs.fhir.model.r4b.Id
+import dev.ohs.fhir.model.r4b.IdBox
 import dev.ohs.fhir.model.r4b.Identifier
 import dev.ohs.fhir.model.r4b.Instant
 import dev.ohs.fhir.model.r4b.Integer
+import dev.ohs.fhir.model.r4b.IntegerBox
 import dev.ohs.fhir.model.r4b.Markdown
+import dev.ohs.fhir.model.r4b.MarkdownBox
 import dev.ohs.fhir.model.r4b.Meta
 import dev.ohs.fhir.model.r4b.Money
 import dev.ohs.fhir.model.r4b.Narrative
 import dev.ohs.fhir.model.r4b.Oid
+import dev.ohs.fhir.model.r4b.OidBox
 import dev.ohs.fhir.model.r4b.ParameterDefinition
 import dev.ohs.fhir.model.r4b.Period
 import dev.ohs.fhir.model.r4b.PositiveInt
+import dev.ohs.fhir.model.r4b.PositiveIntBox
 import dev.ohs.fhir.model.r4b.Quantity
+import dev.ohs.fhir.model.r4b.QuantityBox
 import dev.ohs.fhir.model.r4b.Range
 import dev.ohs.fhir.model.r4b.Ratio
 import dev.ohs.fhir.model.r4b.Reference
@@ -68,15 +80,20 @@ import dev.ohs.fhir.model.r4b.Resource
 import dev.ohs.fhir.model.r4b.SampledData
 import dev.ohs.fhir.model.r4b.Signature
 import dev.ohs.fhir.model.r4b.String as R4bString
+import dev.ohs.fhir.model.r4b.StringBox
 import dev.ohs.fhir.model.r4b.Task
 import dev.ohs.fhir.model.r4b.Time
 import dev.ohs.fhir.model.r4b.Timing
 import dev.ohs.fhir.model.r4b.TriggerDefinition
 import dev.ohs.fhir.model.r4b.UnsignedInt
+import dev.ohs.fhir.model.r4b.UnsignedIntBox
 import dev.ohs.fhir.model.r4b.Uri
+import dev.ohs.fhir.model.r4b.UriBox
 import dev.ohs.fhir.model.r4b.Url
+import dev.ohs.fhir.model.r4b.UrlBox
 import dev.ohs.fhir.model.r4b.UsageContext
 import dev.ohs.fhir.model.r4b.Uuid
+import dev.ohs.fhir.model.r4b.UuidBox
 import kotlin.Boolean as KotlinBoolean
 import kotlin.Int
 import kotlin.OptIn
@@ -750,58 +767,56 @@ internal object TaskInputSerializer : KSerializer<Task.Input> {
       modifierExtension = modifierExtension ?: listOf(),
       type = type!!,
       `value` =
-        Task.Input.Value.from(
-          Base64Binary.of(valueBase64Binary, _valueBase64Binary),
-          R4bBoolean.of(valueBoolean, _valueBoolean),
-          Canonical.of(valueCanonical, _valueCanonical),
-          Code.of(valueCode, _valueCode),
-          Date.of(FhirDate.fromString(valueDate), _valueDate),
-          DateTime.of(FhirDateTime.fromString(valueDateTime), _valueDateTime),
-          Decimal.of(valueDecimal, _valueDecimal),
-          Id.of(valueId, _valueId),
-          Instant.of(FhirDateTime.fromString(valueInstant), _valueInstant),
-          Integer.of(valueInteger, _valueInteger),
-          Markdown.of(valueMarkdown, _valueMarkdown),
-          Oid.of(valueOid, _valueOid),
-          PositiveInt.of(valuePositiveInt, _valuePositiveInt),
-          R4bString.of(valueString, _valueString),
-          Time.of(valueTime, _valueTime),
-          UnsignedInt.of(valueUnsignedInt, _valueUnsignedInt),
-          Uri.of(valueUri, _valueUri),
-          Url.of(valueUrl, _valueUrl),
-          Uuid.of(valueUuid, _valueUuid),
-          valueAddress,
-          valueAge,
-          valueAnnotation,
-          valueAttachment,
-          valueCodeableConcept,
-          valueCoding,
-          valueContactPoint,
-          valueCount,
-          valueDistance,
-          valueDuration,
-          valueHumanName,
-          valueIdentifier,
-          valueMoney,
-          valuePeriod,
-          valueQuantity,
-          valueRange,
-          valueRatio,
-          valueReference,
-          valueSampledData,
-          valueSignature,
-          valueTiming,
-          valueContactDetail,
-          valueContributor,
-          valueDataRequirement,
-          valueExpression,
-          valueParameterDefinition,
-          valueRelatedArtifact,
-          valueTriggerDefinition,
-          valueUsageContext,
-          valueDosage,
-          valueMeta,
-        )!!,
+        (Base64Binary.of(valueBase64Binary, _valueBase64Binary)
+          ?: R4bBoolean.of(valueBoolean, _valueBoolean)
+          ?: (Canonical.of(valueCanonical, _valueCanonical))?.let { CanonicalBox(it) }
+          ?: (Code.of(valueCode, _valueCode))?.let { CodeBox(it) }
+          ?: Date.of(FhirDate.fromString(valueDate), _valueDate)
+          ?: DateTime.of(FhirDateTime.fromString(valueDateTime), _valueDateTime)
+          ?: Decimal.of(valueDecimal, _valueDecimal)
+          ?: (Id.of(valueId, _valueId))?.let { IdBox(it) }
+          ?: Instant.of(FhirDateTime.fromString(valueInstant), _valueInstant)
+          ?: (Integer.of(valueInteger, _valueInteger))?.let { IntegerBox(it) }
+          ?: (Markdown.of(valueMarkdown, _valueMarkdown))?.let { MarkdownBox(it) }
+          ?: (Oid.of(valueOid, _valueOid))?.let { OidBox(it) }
+          ?: (PositiveInt.of(valuePositiveInt, _valuePositiveInt))?.let { PositiveIntBox(it) }
+          ?: (R4bString.of(valueString, _valueString))?.let { StringBox(it) }
+          ?: Time.of(valueTime, _valueTime)
+          ?: (UnsignedInt.of(valueUnsignedInt, _valueUnsignedInt))?.let { UnsignedIntBox(it) }
+          ?: (Uri.of(valueUri, _valueUri))?.let { UriBox(it) }
+          ?: (Url.of(valueUrl, _valueUrl))?.let { UrlBox(it) }
+          ?: (Uuid.of(valueUuid, _valueUuid))?.let { UuidBox(it) }
+          ?: valueAddress
+          ?: (valueAge)?.let { AgeBox(it) }
+          ?: valueAnnotation
+          ?: valueAttachment
+          ?: valueCodeableConcept
+          ?: valueCoding
+          ?: valueContactPoint
+          ?: (valueCount)?.let { CountBox(it) }
+          ?: (valueDistance)?.let { DistanceBox(it) }
+          ?: (valueDuration)?.let { DurationBox(it) }
+          ?: valueHumanName
+          ?: valueIdentifier
+          ?: valueMoney
+          ?: valuePeriod
+          ?: (valueQuantity)?.let { QuantityBox(it) }
+          ?: valueRange
+          ?: valueRatio
+          ?: valueReference
+          ?: valueSampledData
+          ?: valueSignature
+          ?: valueTiming
+          ?: valueContactDetail
+          ?: valueContributor
+          ?: valueDataRequirement
+          ?: valueExpression
+          ?: valueParameterDefinition
+          ?: valueRelatedArtifact
+          ?: valueTriggerDefinition
+          ?: valueUsageContext
+          ?: valueDosage
+          ?: valueMeta)!!,
     )
   }
 
@@ -818,251 +833,221 @@ internal object TaskInputSerializer : KSerializer<Task.Input> {
       )
     encoder.encodeSerializableElement(descriptor, 3, Hoisted.typeSer, value.type)
     when (val choice = value.`value`) {
-      is Task.Input.Value.Base64Binary -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 4, it) }
-        (choice.value.toElement())?.let {
+      is Base64Binary -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 4, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 5, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Input.Value.Boolean -> {
-        ((choice.value.value))?.let { encoder.encodeBooleanElement(descriptor, 6, it) }
-        (choice.value.toElement())?.let {
+      is R4bBoolean -> {
+        ((choice.value))?.let { encoder.encodeBooleanElement(descriptor, 6, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 7, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Input.Value.Canonical -> {
+      is CanonicalBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 8, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 9, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Input.Value.Code -> {
+      is CodeBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 10, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 11, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Input.Value.Date -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 12, it) }
-        (choice.value.toElement())?.let {
+      is Date -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 12, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 13, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Input.Value.DateTime -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 14, it) }
-        (choice.value.toElement())?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 14, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 15, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Input.Value.Decimal -> {
-        ((choice.value.value))?.let {
+      is Decimal -> {
+        ((choice.value))?.let {
           encoder.encodeSerializableElement(descriptor, 16, FhirDecimalSerializer, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 17, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Input.Value.Id -> {
+      is IdBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 18, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 19, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Input.Value.Instant -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 20, it) }
-        (choice.value.toElement())?.let {
+      is Instant -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 20, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 21, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Input.Value.Integer -> {
+      is IntegerBox -> {
         ((choice.value.value))?.let { encoder.encodeIntElement(descriptor, 22, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 23, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Input.Value.Markdown -> {
+      is MarkdownBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 24, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 25, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Input.Value.Oid -> {
+      is OidBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 26, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 27, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Input.Value.PositiveInt -> {
+      is PositiveIntBox -> {
         ((choice.value.value))?.let { encoder.encodeIntElement(descriptor, 28, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 29, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Input.Value.String -> {
+      is StringBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 30, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 31, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Input.Value.Time -> {
-        ((choice.value.value))?.let {
+      is Time -> {
+        ((choice.value))?.let {
           encoder.encodeSerializableElement(descriptor, 32, LocalTimeSerializer, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 33, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Input.Value.UnsignedInt -> {
+      is UnsignedIntBox -> {
         ((choice.value.value))?.let { encoder.encodeIntElement(descriptor, 34, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 35, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Input.Value.Uri -> {
+      is UriBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 36, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 37, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Input.Value.Url -> {
+      is UrlBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 38, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 39, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Input.Value.Uuid -> {
+      is UuidBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 40, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 41, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Input.Value.Address -> {
-        encoder.encodeSerializableElement(descriptor, 42, Hoisted.valueAddressSer, choice.value)
+      is Address -> {
+        encoder.encodeSerializableElement(descriptor, 42, Hoisted.valueAddressSer, choice)
       }
-      is Task.Input.Value.Age -> {
+      is AgeBox -> {
         encoder.encodeSerializableElement(descriptor, 43, Hoisted.valueAgeSer, choice.value)
       }
-      is Task.Input.Value.Annotation -> {
-        encoder.encodeSerializableElement(descriptor, 44, Hoisted.valueAnnotationSer, choice.value)
+      is Annotation -> {
+        encoder.encodeSerializableElement(descriptor, 44, Hoisted.valueAnnotationSer, choice)
       }
-      is Task.Input.Value.Attachment -> {
-        encoder.encodeSerializableElement(descriptor, 45, Hoisted.valueAttachmentSer, choice.value)
+      is Attachment -> {
+        encoder.encodeSerializableElement(descriptor, 45, Hoisted.valueAttachmentSer, choice)
       }
-      is Task.Input.Value.CodeableConcept -> {
-        encoder.encodeSerializableElement(descriptor, 46, Hoisted.typeSer, choice.value)
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 46, Hoisted.typeSer, choice)
       }
-      is Task.Input.Value.Coding -> {
-        encoder.encodeSerializableElement(descriptor, 47, Hoisted.valueCodingSer, choice.value)
+      is Coding -> {
+        encoder.encodeSerializableElement(descriptor, 47, Hoisted.valueCodingSer, choice)
       }
-      is Task.Input.Value.ContactPoint -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          48,
-          Hoisted.valueContactPointSer,
-          choice.value,
-        )
+      is ContactPoint -> {
+        encoder.encodeSerializableElement(descriptor, 48, Hoisted.valueContactPointSer, choice)
       }
-      is Task.Input.Value.Count -> {
+      is CountBox -> {
         encoder.encodeSerializableElement(descriptor, 49, Hoisted.valueCountSer, choice.value)
       }
-      is Task.Input.Value.Distance -> {
+      is DistanceBox -> {
         encoder.encodeSerializableElement(descriptor, 50, Hoisted.valueDistanceSer, choice.value)
       }
-      is Task.Input.Value.Duration -> {
+      is DurationBox -> {
         encoder.encodeSerializableElement(descriptor, 51, Hoisted.valueDurationSer, choice.value)
       }
-      is Task.Input.Value.HumanName -> {
-        encoder.encodeSerializableElement(descriptor, 52, Hoisted.valueHumanNameSer, choice.value)
+      is HumanName -> {
+        encoder.encodeSerializableElement(descriptor, 52, Hoisted.valueHumanNameSer, choice)
       }
-      is Task.Input.Value.Identifier -> {
-        encoder.encodeSerializableElement(descriptor, 53, Hoisted.valueIdentifierSer, choice.value)
+      is Identifier -> {
+        encoder.encodeSerializableElement(descriptor, 53, Hoisted.valueIdentifierSer, choice)
       }
-      is Task.Input.Value.Money -> {
-        encoder.encodeSerializableElement(descriptor, 54, Hoisted.valueMoneySer, choice.value)
+      is Money -> {
+        encoder.encodeSerializableElement(descriptor, 54, Hoisted.valueMoneySer, choice)
       }
-      is Task.Input.Value.Period -> {
-        encoder.encodeSerializableElement(descriptor, 55, Hoisted.valuePeriodSer, choice.value)
+      is Period -> {
+        encoder.encodeSerializableElement(descriptor, 55, Hoisted.valuePeriodSer, choice)
       }
-      is Task.Input.Value.Quantity -> {
+      is QuantityBox -> {
         encoder.encodeSerializableElement(descriptor, 56, Hoisted.valueQuantitySer, choice.value)
       }
-      is Task.Input.Value.Range -> {
-        encoder.encodeSerializableElement(descriptor, 57, Hoisted.valueRangeSer, choice.value)
+      is Range -> {
+        encoder.encodeSerializableElement(descriptor, 57, Hoisted.valueRangeSer, choice)
       }
-      is Task.Input.Value.Ratio -> {
-        encoder.encodeSerializableElement(descriptor, 58, Hoisted.valueRatioSer, choice.value)
+      is Ratio -> {
+        encoder.encodeSerializableElement(descriptor, 58, Hoisted.valueRatioSer, choice)
       }
-      is Task.Input.Value.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 59, Hoisted.valueReferenceSer, choice.value)
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 59, Hoisted.valueReferenceSer, choice)
       }
-      is Task.Input.Value.SampledData -> {
-        encoder.encodeSerializableElement(descriptor, 60, Hoisted.valueSampledDataSer, choice.value)
+      is SampledData -> {
+        encoder.encodeSerializableElement(descriptor, 60, Hoisted.valueSampledDataSer, choice)
       }
-      is Task.Input.Value.Signature -> {
-        encoder.encodeSerializableElement(descriptor, 61, Hoisted.valueSignatureSer, choice.value)
+      is Signature -> {
+        encoder.encodeSerializableElement(descriptor, 61, Hoisted.valueSignatureSer, choice)
       }
-      is Task.Input.Value.Timing -> {
-        encoder.encodeSerializableElement(descriptor, 62, Hoisted.valueTimingSer, choice.value)
+      is Timing -> {
+        encoder.encodeSerializableElement(descriptor, 62, Hoisted.valueTimingSer, choice)
       }
-      is Task.Input.Value.ContactDetail -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          63,
-          Hoisted.valueContactDetailSer,
-          choice.value,
-        )
+      is ContactDetail -> {
+        encoder.encodeSerializableElement(descriptor, 63, Hoisted.valueContactDetailSer, choice)
       }
-      is Task.Input.Value.Contributor -> {
-        encoder.encodeSerializableElement(descriptor, 64, Hoisted.valueContributorSer, choice.value)
+      is Contributor -> {
+        encoder.encodeSerializableElement(descriptor, 64, Hoisted.valueContributorSer, choice)
       }
-      is Task.Input.Value.DataRequirement -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          65,
-          Hoisted.valueDataRequirementSer,
-          choice.value,
-        )
+      is DataRequirement -> {
+        encoder.encodeSerializableElement(descriptor, 65, Hoisted.valueDataRequirementSer, choice)
       }
-      is Task.Input.Value.Expression -> {
-        encoder.encodeSerializableElement(descriptor, 66, Hoisted.valueExpressionSer, choice.value)
+      is Expression -> {
+        encoder.encodeSerializableElement(descriptor, 66, Hoisted.valueExpressionSer, choice)
       }
-      is Task.Input.Value.ParameterDefinition -> {
+      is ParameterDefinition -> {
         encoder.encodeSerializableElement(
           descriptor,
           67,
           Hoisted.valueParameterDefinitionSer,
-          choice.value,
+          choice,
         )
       }
-      is Task.Input.Value.RelatedArtifact -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          68,
-          Hoisted.valueRelatedArtifactSer,
-          choice.value,
-        )
+      is RelatedArtifact -> {
+        encoder.encodeSerializableElement(descriptor, 68, Hoisted.valueRelatedArtifactSer, choice)
       }
-      is Task.Input.Value.TriggerDefinition -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          69,
-          Hoisted.valueTriggerDefinitionSer,
-          choice.value,
-        )
+      is TriggerDefinition -> {
+        encoder.encodeSerializableElement(descriptor, 69, Hoisted.valueTriggerDefinitionSer, choice)
       }
-      is Task.Input.Value.UsageContext -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          70,
-          Hoisted.valueUsageContextSer,
-          choice.value,
-        )
+      is UsageContext -> {
+        encoder.encodeSerializableElement(descriptor, 70, Hoisted.valueUsageContextSer, choice)
       }
-      is Task.Input.Value.Dosage -> {
-        encoder.encodeSerializableElement(descriptor, 71, Hoisted.valueDosageSer, choice.value)
+      is Dosage -> {
+        encoder.encodeSerializableElement(descriptor, 71, Hoisted.valueDosageSer, choice)
       }
-      is Task.Input.Value.Meta -> {
-        encoder.encodeSerializableElement(descriptor, 72, Hoisted.valueMetaSer, choice.value)
+      is Meta -> {
+        encoder.encodeSerializableElement(descriptor, 72, Hoisted.valueMetaSer, choice)
       }
     }
   }
@@ -1684,58 +1669,56 @@ internal object TaskOutputSerializer : KSerializer<Task.Output> {
       modifierExtension = modifierExtension ?: listOf(),
       type = type!!,
       `value` =
-        Task.Output.Value.from(
-          Base64Binary.of(valueBase64Binary, _valueBase64Binary),
-          R4bBoolean.of(valueBoolean, _valueBoolean),
-          Canonical.of(valueCanonical, _valueCanonical),
-          Code.of(valueCode, _valueCode),
-          Date.of(FhirDate.fromString(valueDate), _valueDate),
-          DateTime.of(FhirDateTime.fromString(valueDateTime), _valueDateTime),
-          Decimal.of(valueDecimal, _valueDecimal),
-          Id.of(valueId, _valueId),
-          Instant.of(FhirDateTime.fromString(valueInstant), _valueInstant),
-          Integer.of(valueInteger, _valueInteger),
-          Markdown.of(valueMarkdown, _valueMarkdown),
-          Oid.of(valueOid, _valueOid),
-          PositiveInt.of(valuePositiveInt, _valuePositiveInt),
-          R4bString.of(valueString, _valueString),
-          Time.of(valueTime, _valueTime),
-          UnsignedInt.of(valueUnsignedInt, _valueUnsignedInt),
-          Uri.of(valueUri, _valueUri),
-          Url.of(valueUrl, _valueUrl),
-          Uuid.of(valueUuid, _valueUuid),
-          valueAddress,
-          valueAge,
-          valueAnnotation,
-          valueAttachment,
-          valueCodeableConcept,
-          valueCoding,
-          valueContactPoint,
-          valueCount,
-          valueDistance,
-          valueDuration,
-          valueHumanName,
-          valueIdentifier,
-          valueMoney,
-          valuePeriod,
-          valueQuantity,
-          valueRange,
-          valueRatio,
-          valueReference,
-          valueSampledData,
-          valueSignature,
-          valueTiming,
-          valueContactDetail,
-          valueContributor,
-          valueDataRequirement,
-          valueExpression,
-          valueParameterDefinition,
-          valueRelatedArtifact,
-          valueTriggerDefinition,
-          valueUsageContext,
-          valueDosage,
-          valueMeta,
-        )!!,
+        (Base64Binary.of(valueBase64Binary, _valueBase64Binary)
+          ?: R4bBoolean.of(valueBoolean, _valueBoolean)
+          ?: (Canonical.of(valueCanonical, _valueCanonical))?.let { CanonicalBox(it) }
+          ?: (Code.of(valueCode, _valueCode))?.let { CodeBox(it) }
+          ?: Date.of(FhirDate.fromString(valueDate), _valueDate)
+          ?: DateTime.of(FhirDateTime.fromString(valueDateTime), _valueDateTime)
+          ?: Decimal.of(valueDecimal, _valueDecimal)
+          ?: (Id.of(valueId, _valueId))?.let { IdBox(it) }
+          ?: Instant.of(FhirDateTime.fromString(valueInstant), _valueInstant)
+          ?: (Integer.of(valueInteger, _valueInteger))?.let { IntegerBox(it) }
+          ?: (Markdown.of(valueMarkdown, _valueMarkdown))?.let { MarkdownBox(it) }
+          ?: (Oid.of(valueOid, _valueOid))?.let { OidBox(it) }
+          ?: (PositiveInt.of(valuePositiveInt, _valuePositiveInt))?.let { PositiveIntBox(it) }
+          ?: (R4bString.of(valueString, _valueString))?.let { StringBox(it) }
+          ?: Time.of(valueTime, _valueTime)
+          ?: (UnsignedInt.of(valueUnsignedInt, _valueUnsignedInt))?.let { UnsignedIntBox(it) }
+          ?: (Uri.of(valueUri, _valueUri))?.let { UriBox(it) }
+          ?: (Url.of(valueUrl, _valueUrl))?.let { UrlBox(it) }
+          ?: (Uuid.of(valueUuid, _valueUuid))?.let { UuidBox(it) }
+          ?: valueAddress
+          ?: (valueAge)?.let { AgeBox(it) }
+          ?: valueAnnotation
+          ?: valueAttachment
+          ?: valueCodeableConcept
+          ?: valueCoding
+          ?: valueContactPoint
+          ?: (valueCount)?.let { CountBox(it) }
+          ?: (valueDistance)?.let { DistanceBox(it) }
+          ?: (valueDuration)?.let { DurationBox(it) }
+          ?: valueHumanName
+          ?: valueIdentifier
+          ?: valueMoney
+          ?: valuePeriod
+          ?: (valueQuantity)?.let { QuantityBox(it) }
+          ?: valueRange
+          ?: valueRatio
+          ?: valueReference
+          ?: valueSampledData
+          ?: valueSignature
+          ?: valueTiming
+          ?: valueContactDetail
+          ?: valueContributor
+          ?: valueDataRequirement
+          ?: valueExpression
+          ?: valueParameterDefinition
+          ?: valueRelatedArtifact
+          ?: valueTriggerDefinition
+          ?: valueUsageContext
+          ?: valueDosage
+          ?: valueMeta)!!,
     )
   }
 
@@ -1752,251 +1735,221 @@ internal object TaskOutputSerializer : KSerializer<Task.Output> {
       )
     encoder.encodeSerializableElement(descriptor, 3, Hoisted.typeSer, value.type)
     when (val choice = value.`value`) {
-      is Task.Output.Value.Base64Binary -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 4, it) }
-        (choice.value.toElement())?.let {
+      is Base64Binary -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 4, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 5, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Output.Value.Boolean -> {
-        ((choice.value.value))?.let { encoder.encodeBooleanElement(descriptor, 6, it) }
-        (choice.value.toElement())?.let {
+      is R4bBoolean -> {
+        ((choice.value))?.let { encoder.encodeBooleanElement(descriptor, 6, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 7, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Output.Value.Canonical -> {
+      is CanonicalBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 8, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 9, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Output.Value.Code -> {
+      is CodeBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 10, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 11, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Output.Value.Date -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 12, it) }
-        (choice.value.toElement())?.let {
+      is Date -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 12, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 13, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Output.Value.DateTime -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 14, it) }
-        (choice.value.toElement())?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 14, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 15, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Output.Value.Decimal -> {
-        ((choice.value.value))?.let {
+      is Decimal -> {
+        ((choice.value))?.let {
           encoder.encodeSerializableElement(descriptor, 16, FhirDecimalSerializer, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 17, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Output.Value.Id -> {
+      is IdBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 18, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 19, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Output.Value.Instant -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 20, it) }
-        (choice.value.toElement())?.let {
+      is Instant -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 20, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 21, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Output.Value.Integer -> {
+      is IntegerBox -> {
         ((choice.value.value))?.let { encoder.encodeIntElement(descriptor, 22, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 23, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Output.Value.Markdown -> {
+      is MarkdownBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 24, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 25, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Output.Value.Oid -> {
+      is OidBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 26, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 27, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Output.Value.PositiveInt -> {
+      is PositiveIntBox -> {
         ((choice.value.value))?.let { encoder.encodeIntElement(descriptor, 28, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 29, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Output.Value.String -> {
+      is StringBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 30, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 31, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Output.Value.Time -> {
-        ((choice.value.value))?.let {
+      is Time -> {
+        ((choice.value))?.let {
           encoder.encodeSerializableElement(descriptor, 32, LocalTimeSerializer, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 33, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Output.Value.UnsignedInt -> {
+      is UnsignedIntBox -> {
         ((choice.value.value))?.let { encoder.encodeIntElement(descriptor, 34, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 35, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Output.Value.Uri -> {
+      is UriBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 36, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 37, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Output.Value.Url -> {
+      is UrlBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 38, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 39, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Output.Value.Uuid -> {
+      is UuidBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 40, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 41, Hoisted.valueBase64BinarySer, it)
         }
       }
-      is Task.Output.Value.Address -> {
-        encoder.encodeSerializableElement(descriptor, 42, Hoisted.valueAddressSer, choice.value)
+      is Address -> {
+        encoder.encodeSerializableElement(descriptor, 42, Hoisted.valueAddressSer, choice)
       }
-      is Task.Output.Value.Age -> {
+      is AgeBox -> {
         encoder.encodeSerializableElement(descriptor, 43, Hoisted.valueAgeSer, choice.value)
       }
-      is Task.Output.Value.Annotation -> {
-        encoder.encodeSerializableElement(descriptor, 44, Hoisted.valueAnnotationSer, choice.value)
+      is Annotation -> {
+        encoder.encodeSerializableElement(descriptor, 44, Hoisted.valueAnnotationSer, choice)
       }
-      is Task.Output.Value.Attachment -> {
-        encoder.encodeSerializableElement(descriptor, 45, Hoisted.valueAttachmentSer, choice.value)
+      is Attachment -> {
+        encoder.encodeSerializableElement(descriptor, 45, Hoisted.valueAttachmentSer, choice)
       }
-      is Task.Output.Value.CodeableConcept -> {
-        encoder.encodeSerializableElement(descriptor, 46, Hoisted.typeSer, choice.value)
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 46, Hoisted.typeSer, choice)
       }
-      is Task.Output.Value.Coding -> {
-        encoder.encodeSerializableElement(descriptor, 47, Hoisted.valueCodingSer, choice.value)
+      is Coding -> {
+        encoder.encodeSerializableElement(descriptor, 47, Hoisted.valueCodingSer, choice)
       }
-      is Task.Output.Value.ContactPoint -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          48,
-          Hoisted.valueContactPointSer,
-          choice.value,
-        )
+      is ContactPoint -> {
+        encoder.encodeSerializableElement(descriptor, 48, Hoisted.valueContactPointSer, choice)
       }
-      is Task.Output.Value.Count -> {
+      is CountBox -> {
         encoder.encodeSerializableElement(descriptor, 49, Hoisted.valueCountSer, choice.value)
       }
-      is Task.Output.Value.Distance -> {
+      is DistanceBox -> {
         encoder.encodeSerializableElement(descriptor, 50, Hoisted.valueDistanceSer, choice.value)
       }
-      is Task.Output.Value.Duration -> {
+      is DurationBox -> {
         encoder.encodeSerializableElement(descriptor, 51, Hoisted.valueDurationSer, choice.value)
       }
-      is Task.Output.Value.HumanName -> {
-        encoder.encodeSerializableElement(descriptor, 52, Hoisted.valueHumanNameSer, choice.value)
+      is HumanName -> {
+        encoder.encodeSerializableElement(descriptor, 52, Hoisted.valueHumanNameSer, choice)
       }
-      is Task.Output.Value.Identifier -> {
-        encoder.encodeSerializableElement(descriptor, 53, Hoisted.valueIdentifierSer, choice.value)
+      is Identifier -> {
+        encoder.encodeSerializableElement(descriptor, 53, Hoisted.valueIdentifierSer, choice)
       }
-      is Task.Output.Value.Money -> {
-        encoder.encodeSerializableElement(descriptor, 54, Hoisted.valueMoneySer, choice.value)
+      is Money -> {
+        encoder.encodeSerializableElement(descriptor, 54, Hoisted.valueMoneySer, choice)
       }
-      is Task.Output.Value.Period -> {
-        encoder.encodeSerializableElement(descriptor, 55, Hoisted.valuePeriodSer, choice.value)
+      is Period -> {
+        encoder.encodeSerializableElement(descriptor, 55, Hoisted.valuePeriodSer, choice)
       }
-      is Task.Output.Value.Quantity -> {
+      is QuantityBox -> {
         encoder.encodeSerializableElement(descriptor, 56, Hoisted.valueQuantitySer, choice.value)
       }
-      is Task.Output.Value.Range -> {
-        encoder.encodeSerializableElement(descriptor, 57, Hoisted.valueRangeSer, choice.value)
+      is Range -> {
+        encoder.encodeSerializableElement(descriptor, 57, Hoisted.valueRangeSer, choice)
       }
-      is Task.Output.Value.Ratio -> {
-        encoder.encodeSerializableElement(descriptor, 58, Hoisted.valueRatioSer, choice.value)
+      is Ratio -> {
+        encoder.encodeSerializableElement(descriptor, 58, Hoisted.valueRatioSer, choice)
       }
-      is Task.Output.Value.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 59, Hoisted.valueReferenceSer, choice.value)
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 59, Hoisted.valueReferenceSer, choice)
       }
-      is Task.Output.Value.SampledData -> {
-        encoder.encodeSerializableElement(descriptor, 60, Hoisted.valueSampledDataSer, choice.value)
+      is SampledData -> {
+        encoder.encodeSerializableElement(descriptor, 60, Hoisted.valueSampledDataSer, choice)
       }
-      is Task.Output.Value.Signature -> {
-        encoder.encodeSerializableElement(descriptor, 61, Hoisted.valueSignatureSer, choice.value)
+      is Signature -> {
+        encoder.encodeSerializableElement(descriptor, 61, Hoisted.valueSignatureSer, choice)
       }
-      is Task.Output.Value.Timing -> {
-        encoder.encodeSerializableElement(descriptor, 62, Hoisted.valueTimingSer, choice.value)
+      is Timing -> {
+        encoder.encodeSerializableElement(descriptor, 62, Hoisted.valueTimingSer, choice)
       }
-      is Task.Output.Value.ContactDetail -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          63,
-          Hoisted.valueContactDetailSer,
-          choice.value,
-        )
+      is ContactDetail -> {
+        encoder.encodeSerializableElement(descriptor, 63, Hoisted.valueContactDetailSer, choice)
       }
-      is Task.Output.Value.Contributor -> {
-        encoder.encodeSerializableElement(descriptor, 64, Hoisted.valueContributorSer, choice.value)
+      is Contributor -> {
+        encoder.encodeSerializableElement(descriptor, 64, Hoisted.valueContributorSer, choice)
       }
-      is Task.Output.Value.DataRequirement -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          65,
-          Hoisted.valueDataRequirementSer,
-          choice.value,
-        )
+      is DataRequirement -> {
+        encoder.encodeSerializableElement(descriptor, 65, Hoisted.valueDataRequirementSer, choice)
       }
-      is Task.Output.Value.Expression -> {
-        encoder.encodeSerializableElement(descriptor, 66, Hoisted.valueExpressionSer, choice.value)
+      is Expression -> {
+        encoder.encodeSerializableElement(descriptor, 66, Hoisted.valueExpressionSer, choice)
       }
-      is Task.Output.Value.ParameterDefinition -> {
+      is ParameterDefinition -> {
         encoder.encodeSerializableElement(
           descriptor,
           67,
           Hoisted.valueParameterDefinitionSer,
-          choice.value,
+          choice,
         )
       }
-      is Task.Output.Value.RelatedArtifact -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          68,
-          Hoisted.valueRelatedArtifactSer,
-          choice.value,
-        )
+      is RelatedArtifact -> {
+        encoder.encodeSerializableElement(descriptor, 68, Hoisted.valueRelatedArtifactSer, choice)
       }
-      is Task.Output.Value.TriggerDefinition -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          69,
-          Hoisted.valueTriggerDefinitionSer,
-          choice.value,
-        )
+      is TriggerDefinition -> {
+        encoder.encodeSerializableElement(descriptor, 69, Hoisted.valueTriggerDefinitionSer, choice)
       }
-      is Task.Output.Value.UsageContext -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          70,
-          Hoisted.valueUsageContextSer,
-          choice.value,
-        )
+      is UsageContext -> {
+        encoder.encodeSerializableElement(descriptor, 70, Hoisted.valueUsageContextSer, choice)
       }
-      is Task.Output.Value.Dosage -> {
-        encoder.encodeSerializableElement(descriptor, 71, Hoisted.valueDosageSer, choice.value)
+      is Dosage -> {
+        encoder.encodeSerializableElement(descriptor, 71, Hoisted.valueDosageSer, choice)
       }
-      is Task.Output.Value.Meta -> {
-        encoder.encodeSerializableElement(descriptor, 72, Hoisted.valueMetaSer, choice.value)
+      is Meta -> {
+        encoder.encodeSerializableElement(descriptor, 72, Hoisted.valueMetaSer, choice)
       }
     }
   }

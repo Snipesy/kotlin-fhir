@@ -26,7 +26,6 @@ import dev.ohs.fhir.model.r4b.serializers.MedicinalProductDefinitionOperationSer
 import dev.ohs.fhir.model.r4b.serializers.MedicinalProductDefinitionSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -1096,8 +1095,13 @@ public data class MedicinalProductDefinition(
     override val modifierExtension: List<Extension> = listOf(),
     /** A code expressing the type of characteristic. */
     public val type: CodeableConcept,
-    /** A value for the characteristic. */
-    public val `value`: Value? = null,
+    /**
+     * A value for the characteristic.
+     *
+     * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
+     * [Quantity]
+     */
+    public val `value`: Characteristic.Value? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -1108,51 +1112,6 @@ public data class MedicinalProductDefinition(
           `value` = this@with.`value`
         }
       }
-
-    public sealed interface Value {
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asQuantity(): Quantity? = this as? Quantity
-
-      public fun asDate(): Date? = this as? Date
-
-      public fun asBoolean(): Boolean? = this as? Boolean
-
-      public fun asAttachment(): Attachment? = this as? Attachment
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r4b.CodeableConcept
-      ) : Value
-
-      @JvmInline
-      public value class Quantity(public val `value`: dev.ohs.fhir.model.r4b.Quantity) : Value
-
-      @JvmInline public value class Date(public val `value`: dev.ohs.fhir.model.r4b.Date) : Value
-
-      @JvmInline
-      public value class Boolean(public val `value`: dev.ohs.fhir.model.r4b.Boolean) : Value
-
-      @JvmInline
-      public value class Attachment(public val `value`: dev.ohs.fhir.model.r4b.Attachment) : Value
-
-      public companion object {
-        internal fun from(
-          codeableConceptValue: dev.ohs.fhir.model.r4b.CodeableConcept?,
-          quantityValue: dev.ohs.fhir.model.r4b.Quantity?,
-          dateValue: dev.ohs.fhir.model.r4b.Date?,
-          booleanValue: dev.ohs.fhir.model.r4b.Boolean?,
-          attachmentValue: dev.ohs.fhir.model.r4b.Attachment?,
-        ): Value? {
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (quantityValue != null) return Quantity(quantityValue)
-          if (dateValue != null) return Date(dateValue)
-          if (booleanValue != null) return Boolean(booleanValue)
-          if (attachmentValue != null) return Attachment(attachmentValue)
-          return null
-        }
-      }
-    }
 
     public class Builder(
       /** A code expressing the type of characteristic. */
@@ -1198,8 +1157,13 @@ public data class MedicinalProductDefinition(
        */
       public var modifierExtension: MutableList<Extension.Builder> = mutableListOf()
 
-      /** A value for the characteristic. */
-      public var `value`: Value? = null
+      /**
+       * A value for the characteristic.
+       *
+       * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
+       * [Quantity]
+       */
+      public var `value`: Characteristic.Value? = null
 
       public fun build(): Characteristic =
         Characteristic(
@@ -1210,6 +1174,12 @@ public data class MedicinalProductDefinition(
           `value` = `value`,
         )
     }
+
+    /**
+     * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
+     * [Quantity]
+     */
+    public typealias Value = FhirChoiceTypes.AttachmentOrBooleanOrCodeableConceptOrDateOrQuantity
   }
 
   public class Builder(

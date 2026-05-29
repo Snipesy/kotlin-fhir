@@ -25,7 +25,6 @@ import dev.ohs.fhir.model.r5.serializers.MeasureReportGroupStratifierStratumSeri
 import dev.ohs.fhir.model.r5.serializers.MeasureReportSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -326,8 +325,11 @@ public data class MeasureReport(
     /**
      * The measure score for this population group, calculated as appropriate for the measure type
      * and scoring method, and based on the contents of the populations defined in the group.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [DateTime] | [DurationBox] | [Period] |
+     * [QuantityBox] | [Range]
      */
-    public val measureScore: MeasureScore? = null,
+    public val measureScore: Group.MeasureScore? = null,
     /**
      * When a measure includes multiple stratifiers, there will be a stratifier group for each
      * stratifier defined by the measure.
@@ -653,8 +655,11 @@ public data class MeasureReport(
          * The value for this stratum, expressed as a CodeableConcept. When defining stratifiers on
          * complex values, the value must be rendered such that the value for each stratum within
          * the stratifier is unique.
+         *
+         * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range] |
+         * [Reference]
          */
-        public val `value`: Value? = null,
+        public val `value`: Stratum.Value? = null,
         /** A stratifier component value. */
         public val component: List<Component> = listOf(),
         /**
@@ -665,8 +670,11 @@ public data class MeasureReport(
         /**
          * The measure score for this stratum, calculated as appropriate for the measure type and
          * scoring method, and based on only the members of this stratum.
+         *
+         * A FHIR choice type — one of: [CodeableConcept] | [DateTime] | [DurationBox] | [Period] |
+         * [QuantityBox] | [Range]
          */
-        public val measureScore: MeasureScore? = null,
+        public val measureScore: Stratum.MeasureScore? = null,
       ) : BackboneElement() {
         public fun toBuilder(): Builder =
           with(this) {
@@ -728,8 +736,13 @@ public data class MeasureReport(
           public val linkId: String? = null,
           /** The code for the stratum component value. */
           public val code: CodeableConcept,
-          /** The stratum component value. */
-          public val `value`: Value,
+          /**
+           * The stratum component value.
+           *
+           * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range] |
+           * [Reference]
+           */
+          public val `value`: Component.Value,
         ) : BackboneElement() {
           public fun toBuilder(): Builder =
             with(this) {
@@ -742,58 +755,16 @@ public data class MeasureReport(
               }
             }
 
-          public sealed interface Value {
-            public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-            public fun asBoolean(): Boolean? = this as? Boolean
-
-            public fun asQuantity(): Quantity? = this as? Quantity
-
-            public fun asRange(): Range? = this as? Range
-
-            public fun asReference(): Reference? = this as? Reference
-
-            @JvmInline
-            public value class CodeableConcept(
-              public val `value`: dev.ohs.fhir.model.r5.CodeableConcept
-            ) : Value
-
-            @JvmInline
-            public value class Boolean(public val `value`: dev.ohs.fhir.model.r5.Boolean) : Value
-
-            @JvmInline
-            public value class Quantity(public val `value`: dev.ohs.fhir.model.r5.Quantity) : Value
-
-            @JvmInline
-            public value class Range(public val `value`: dev.ohs.fhir.model.r5.Range) : Value
-
-            @JvmInline
-            public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) :
-              Value
-
-            public companion object {
-              internal fun from(
-                codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-                booleanValue: dev.ohs.fhir.model.r5.Boolean?,
-                quantityValue: dev.ohs.fhir.model.r5.Quantity?,
-                rangeValue: dev.ohs.fhir.model.r5.Range?,
-                referenceValue: dev.ohs.fhir.model.r5.Reference?,
-              ): Value? {
-                if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-                if (booleanValue != null) return Boolean(booleanValue)
-                if (quantityValue != null) return Quantity(quantityValue)
-                if (rangeValue != null) return Range(rangeValue)
-                if (referenceValue != null) return Reference(referenceValue)
-                return null
-              }
-            }
-          }
-
           public class Builder(
             /** The code for the stratum component value. */
             public var code: CodeableConcept.Builder,
-            /** The stratum component value. */
-            public var `value`: Value,
+            /**
+             * The stratum component value.
+             *
+             * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range] |
+             * [Reference]
+             */
+            public var `value`: Component.Value,
           ) {
             /**
              * Unique id for the element within a resource (for internal references). This may be
@@ -852,6 +823,13 @@ public data class MeasureReport(
                 `value` = `value`,
               )
           }
+
+          /**
+           * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range] |
+           * [Reference]
+           */
+          public typealias Value =
+            FhirChoiceTypes.BooleanOrCodeableConceptOrQuantityOrRangeOrReference
         }
 
         /**
@@ -1045,109 +1023,6 @@ public data class MeasureReport(
           }
         }
 
-        public sealed interface Value {
-          public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-          public fun asBoolean(): Boolean? = this as? Boolean
-
-          public fun asQuantity(): Quantity? = this as? Quantity
-
-          public fun asRange(): Range? = this as? Range
-
-          public fun asReference(): Reference? = this as? Reference
-
-          @JvmInline
-          public value class CodeableConcept(
-            public val `value`: dev.ohs.fhir.model.r5.CodeableConcept
-          ) : Value
-
-          @JvmInline
-          public value class Boolean(public val `value`: dev.ohs.fhir.model.r5.Boolean) : Value
-
-          @JvmInline
-          public value class Quantity(public val `value`: dev.ohs.fhir.model.r5.Quantity) : Value
-
-          @JvmInline
-          public value class Range(public val `value`: dev.ohs.fhir.model.r5.Range) : Value
-
-          @JvmInline
-          public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : Value
-
-          public companion object {
-            internal fun from(
-              codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-              booleanValue: dev.ohs.fhir.model.r5.Boolean?,
-              quantityValue: dev.ohs.fhir.model.r5.Quantity?,
-              rangeValue: dev.ohs.fhir.model.r5.Range?,
-              referenceValue: dev.ohs.fhir.model.r5.Reference?,
-            ): Value? {
-              if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-              if (booleanValue != null) return Boolean(booleanValue)
-              if (quantityValue != null) return Quantity(quantityValue)
-              if (rangeValue != null) return Range(rangeValue)
-              if (referenceValue != null) return Reference(referenceValue)
-              return null
-            }
-          }
-        }
-
-        public sealed interface MeasureScore {
-          public fun asQuantity(): Quantity? = this as? Quantity
-
-          public fun asDateTime(): DateTime? = this as? DateTime
-
-          public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-          public fun asPeriod(): Period? = this as? Period
-
-          public fun asRange(): Range? = this as? Range
-
-          public fun asDuration(): Duration? = this as? Duration
-
-          @JvmInline
-          public value class Quantity(public val `value`: dev.ohs.fhir.model.r5.Quantity) :
-            MeasureScore
-
-          @JvmInline
-          public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) :
-            MeasureScore
-
-          @JvmInline
-          public value class CodeableConcept(
-            public val `value`: dev.ohs.fhir.model.r5.CodeableConcept
-          ) : MeasureScore
-
-          @JvmInline
-          public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) :
-            MeasureScore
-
-          @JvmInline
-          public value class Range(public val `value`: dev.ohs.fhir.model.r5.Range) : MeasureScore
-
-          @JvmInline
-          public value class Duration(public val `value`: dev.ohs.fhir.model.r5.Duration) :
-            MeasureScore
-
-          public companion object {
-            internal fun from(
-              quantityValue: dev.ohs.fhir.model.r5.Quantity?,
-              dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-              codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-              periodValue: dev.ohs.fhir.model.r5.Period?,
-              rangeValue: dev.ohs.fhir.model.r5.Range?,
-              durationValue: dev.ohs.fhir.model.r5.Duration?,
-            ): MeasureScore? {
-              if (quantityValue != null) return Quantity(quantityValue)
-              if (dateTimeValue != null) return DateTime(dateTimeValue)
-              if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-              if (periodValue != null) return Period(periodValue)
-              if (rangeValue != null) return Range(rangeValue)
-              if (durationValue != null) return Duration(durationValue)
-              return null
-            }
-          }
-        }
-
         public class Builder() {
           /**
            * Unique id for the element within a resource (for internal references). This may be any
@@ -1193,8 +1068,11 @@ public data class MeasureReport(
            * The value for this stratum, expressed as a CodeableConcept. When defining stratifiers
            * on complex values, the value must be rendered such that the value for each stratum
            * within the stratifier is unique.
+           *
+           * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range] |
+           * [Reference]
            */
-          public var `value`: Value? = null
+          public var `value`: Stratum.Value? = null
 
           /** A stratifier component value. */
           public var component: MutableList<Component.Builder> = mutableListOf()
@@ -1208,8 +1086,11 @@ public data class MeasureReport(
           /**
            * The measure score for this stratum, calculated as appropriate for the measure type and
            * scoring method, and based on only the members of this stratum.
+           *
+           * A FHIR choice type — one of: [CodeableConcept] | [DateTime] | [DurationBox] | [Period]
+           * | [QuantityBox] | [Range]
            */
-          public var measureScore: MeasureScore? = null
+          public var measureScore: Stratum.MeasureScore? = null
 
           public fun build(): Stratum =
             Stratum(
@@ -1222,6 +1103,20 @@ public data class MeasureReport(
               measureScore = measureScore,
             )
         }
+
+        /**
+         * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range] |
+         * [Reference]
+         */
+        public typealias Value =
+          FhirChoiceTypes.BooleanOrCodeableConceptOrQuantityOrRangeOrReference
+
+        /**
+         * A FHIR choice type — one of: [CodeableConcept] | [DateTime] | [DurationBox] | [Period] |
+         * [QuantityBox] | [Range]
+         */
+        public typealias MeasureScore =
+          FhirChoiceTypes.CodeableConceptOrDateTimeOrDurationOrPeriodOrQuantityOrRange
       }
 
       public class Builder() {
@@ -1293,62 +1188,6 @@ public data class MeasureReport(
       }
     }
 
-    public sealed interface MeasureScore {
-      public fun asQuantity(): Quantity? = this as? Quantity
-
-      public fun asDateTime(): DateTime? = this as? DateTime
-
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asPeriod(): Period? = this as? Period
-
-      public fun asRange(): Range? = this as? Range
-
-      public fun asDuration(): Duration? = this as? Duration
-
-      @JvmInline
-      public value class Quantity(public val `value`: dev.ohs.fhir.model.r5.Quantity) :
-        MeasureScore
-
-      @JvmInline
-      public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) :
-        MeasureScore
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r5.CodeableConcept
-      ) : MeasureScore
-
-      @JvmInline
-      public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) : MeasureScore
-
-      @JvmInline
-      public value class Range(public val `value`: dev.ohs.fhir.model.r5.Range) : MeasureScore
-
-      @JvmInline
-      public value class Duration(public val `value`: dev.ohs.fhir.model.r5.Duration) :
-        MeasureScore
-
-      public companion object {
-        internal fun from(
-          quantityValue: dev.ohs.fhir.model.r5.Quantity?,
-          dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-          codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-          periodValue: dev.ohs.fhir.model.r5.Period?,
-          rangeValue: dev.ohs.fhir.model.r5.Range?,
-          durationValue: dev.ohs.fhir.model.r5.Duration?,
-        ): MeasureScore? {
-          if (quantityValue != null) return Quantity(quantityValue)
-          if (dateTimeValue != null) return DateTime(dateTimeValue)
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (periodValue != null) return Period(periodValue)
-          if (rangeValue != null) return Range(rangeValue)
-          if (durationValue != null) return Duration(durationValue)
-          return null
-        }
-      }
-    }
-
     public class Builder() {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -1410,8 +1249,11 @@ public data class MeasureReport(
       /**
        * The measure score for this population group, calculated as appropriate for the measure type
        * and scoring method, and based on the contents of the populations defined in the group.
+       *
+       * A FHIR choice type — one of: [CodeableConcept] | [DateTime] | [DurationBox] | [Period] |
+       * [QuantityBox] | [Range]
        */
-      public var measureScore: MeasureScore? = null
+      public var measureScore: Group.MeasureScore? = null
 
       /**
        * When a measure includes multiple stratifiers, there will be a stratifier group for each
@@ -1432,6 +1274,13 @@ public data class MeasureReport(
           stratifier = stratifier.map { it.build() },
         )
     }
+
+    /**
+     * A FHIR choice type — one of: [CodeableConcept] | [DateTime] | [DurationBox] | [Period] |
+     * [QuantityBox] | [Range]
+     */
+    public typealias MeasureScore =
+      FhirChoiceTypes.CodeableConceptOrDateTimeOrDurationOrPeriodOrQuantityOrRange
   }
 
   public class Builder(

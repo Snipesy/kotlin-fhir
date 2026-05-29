@@ -20,7 +20,6 @@ import dev.ohs.fhir.model.r5.serializers.ExtensionSerializer
 import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.Serializable
 
 /** Extension Type: Optional Extension Element - found in all resources. */
@@ -55,8 +54,19 @@ public data class Extension(
   /**
    * Value of extension - must be one of a constrained set of the data types (see
    * [Extensibility](extensibility.html) for a list).
+   *
+   * A FHIR choice type — one of: [Address] | [AgeBox] | [Annotation] | [Attachment] |
+   * [Availability] | [Base64Binary] | [Boolean] | [CanonicalBox] | [CodeBox] | [CodeableConcept] |
+   * [CodeableReference] | [Coding] | [ContactDetail] | [ContactPoint] | [CountBox] |
+   * [DataRequirement] | [Date] | [DateTime] | [Decimal] | [DistanceBox] | [Dosage] | [DurationBox]
+   * | [Expression] | [ExtendedContactDetail] | [HumanName] | [IdBox] | [Identifier] | [Instant] |
+   * [IntegerBox] | [Integer64] | [MarkdownBox] | [Meta] | [Money] | [OidBox] |
+   * [ParameterDefinition] | [Period] | [PositiveIntBox] | [QuantityBox] | [Range] | [Ratio] |
+   * [RatioRange] | [Reference] | [RelatedArtifact] | [SampledData] | [Signature] | [StringBox] |
+   * [Time] | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] | [UrlBox] |
+   * [UsageContext] | [UuidBox]
    */
-  public val `value`: Value? = null,
+  public val `value`: Extension.Value? = null,
 ) : DataType() {
   public fun toBuilder(): Builder =
     with(this) {
@@ -66,387 +76,6 @@ public data class Extension(
         `value` = this@with.`value`
       }
     }
-
-  public sealed interface Value {
-    public fun asBase64Binary(): Base64Binary? = this as? Base64Binary
-
-    public fun asBoolean(): Boolean? = this as? Boolean
-
-    public fun asCanonical(): Canonical? = this as? Canonical
-
-    public fun asCode(): Code? = this as? Code
-
-    public fun asDate(): Date? = this as? Date
-
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    public fun asDecimal(): Decimal? = this as? Decimal
-
-    public fun asId(): Id? = this as? Id
-
-    public fun asInstant(): Instant? = this as? Instant
-
-    public fun asInteger(): Integer? = this as? Integer
-
-    public fun asInteger64(): Integer64? = this as? Integer64
-
-    public fun asMarkdown(): Markdown? = this as? Markdown
-
-    public fun asOid(): Oid? = this as? Oid
-
-    public fun asPositiveInt(): PositiveInt? = this as? PositiveInt
-
-    public fun asString(): String? = this as? String
-
-    public fun asTime(): Time? = this as? Time
-
-    public fun asUnsignedInt(): UnsignedInt? = this as? UnsignedInt
-
-    public fun asUri(): Uri? = this as? Uri
-
-    public fun asUrl(): Url? = this as? Url
-
-    public fun asUuid(): Uuid? = this as? Uuid
-
-    public fun asAddress(): Address? = this as? Address
-
-    public fun asAge(): Age? = this as? Age
-
-    public fun asAnnotation(): Annotation? = this as? Annotation
-
-    public fun asAttachment(): Attachment? = this as? Attachment
-
-    public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-    public fun asCodeableReference(): CodeableReference? = this as? CodeableReference
-
-    public fun asCoding(): Coding? = this as? Coding
-
-    public fun asContactPoint(): ContactPoint? = this as? ContactPoint
-
-    public fun asCount(): Count? = this as? Count
-
-    public fun asDistance(): Distance? = this as? Distance
-
-    public fun asDuration(): Duration? = this as? Duration
-
-    public fun asHumanName(): HumanName? = this as? HumanName
-
-    public fun asIdentifier(): Identifier? = this as? Identifier
-
-    public fun asMoney(): Money? = this as? Money
-
-    public fun asPeriod(): Period? = this as? Period
-
-    public fun asQuantity(): Quantity? = this as? Quantity
-
-    public fun asRange(): Range? = this as? Range
-
-    public fun asRatio(): Ratio? = this as? Ratio
-
-    public fun asRatioRange(): RatioRange? = this as? RatioRange
-
-    public fun asReference(): Reference? = this as? Reference
-
-    public fun asSampledData(): SampledData? = this as? SampledData
-
-    public fun asSignature(): Signature? = this as? Signature
-
-    public fun asTiming(): Timing? = this as? Timing
-
-    public fun asContactDetail(): ContactDetail? = this as? ContactDetail
-
-    public fun asDataRequirement(): DataRequirement? = this as? DataRequirement
-
-    public fun asExpression(): Expression? = this as? Expression
-
-    public fun asParameterDefinition(): ParameterDefinition? = this as? ParameterDefinition
-
-    public fun asRelatedArtifact(): RelatedArtifact? = this as? RelatedArtifact
-
-    public fun asTriggerDefinition(): TriggerDefinition? = this as? TriggerDefinition
-
-    public fun asUsageContext(): UsageContext? = this as? UsageContext
-
-    public fun asAvailability(): Availability? = this as? Availability
-
-    public fun asExtendedContactDetail(): ExtendedContactDetail? = this as? ExtendedContactDetail
-
-    public fun asDosage(): Dosage? = this as? Dosage
-
-    public fun asMeta(): Meta? = this as? Meta
-
-    @JvmInline
-    public value class Base64Binary(public val `value`: dev.ohs.fhir.model.r5.Base64Binary) : Value
-
-    @JvmInline
-    public value class Boolean(public val `value`: dev.ohs.fhir.model.r5.Boolean) : Value
-
-    @JvmInline
-    public value class Canonical(public val `value`: dev.ohs.fhir.model.r5.Canonical) : Value
-
-    @JvmInline public value class Code(public val `value`: dev.ohs.fhir.model.r5.Code) : Value
-
-    @JvmInline public value class Date(public val `value`: dev.ohs.fhir.model.r5.Date) : Value
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) : Value
-
-    @JvmInline
-    public value class Decimal(public val `value`: dev.ohs.fhir.model.r5.Decimal) : Value
-
-    @JvmInline public value class Id(public val `value`: dev.ohs.fhir.model.r5.Id) : Value
-
-    @JvmInline
-    public value class Instant(public val `value`: dev.ohs.fhir.model.r5.Instant) : Value
-
-    @JvmInline
-    public value class Integer(public val `value`: dev.ohs.fhir.model.r5.Integer) : Value
-
-    @JvmInline
-    public value class Integer64(public val `value`: dev.ohs.fhir.model.r5.Integer64) : Value
-
-    @JvmInline
-    public value class Markdown(public val `value`: dev.ohs.fhir.model.r5.Markdown) : Value
-
-    @JvmInline public value class Oid(public val `value`: dev.ohs.fhir.model.r5.Oid) : Value
-
-    @JvmInline
-    public value class PositiveInt(public val `value`: dev.ohs.fhir.model.r5.PositiveInt) : Value
-
-    @JvmInline public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : Value
-
-    @JvmInline public value class Time(public val `value`: dev.ohs.fhir.model.r5.Time) : Value
-
-    @JvmInline
-    public value class UnsignedInt(public val `value`: dev.ohs.fhir.model.r5.UnsignedInt) : Value
-
-    @JvmInline public value class Uri(public val `value`: dev.ohs.fhir.model.r5.Uri) : Value
-
-    @JvmInline public value class Url(public val `value`: dev.ohs.fhir.model.r5.Url) : Value
-
-    @JvmInline public value class Uuid(public val `value`: dev.ohs.fhir.model.r5.Uuid) : Value
-
-    @JvmInline
-    public value class Address(public val `value`: dev.ohs.fhir.model.r5.Address) : Value
-
-    @JvmInline public value class Age(public val `value`: dev.ohs.fhir.model.r5.Age) : Value
-
-    @JvmInline
-    public value class Annotation(public val `value`: dev.ohs.fhir.model.r5.Annotation) : Value
-
-    @JvmInline
-    public value class Attachment(public val `value`: dev.ohs.fhir.model.r5.Attachment) : Value
-
-    @JvmInline
-    public value class CodeableConcept(public val `value`: dev.ohs.fhir.model.r5.CodeableConcept) :
-      Value
-
-    @JvmInline
-    public value class CodeableReference(
-      public val `value`: dev.ohs.fhir.model.r5.CodeableReference
-    ) : Value
-
-    @JvmInline public value class Coding(public val `value`: dev.ohs.fhir.model.r5.Coding) : Value
-
-    @JvmInline
-    public value class ContactPoint(public val `value`: dev.ohs.fhir.model.r5.ContactPoint) : Value
-
-    @JvmInline public value class Count(public val `value`: dev.ohs.fhir.model.r5.Count) : Value
-
-    @JvmInline
-    public value class Distance(public val `value`: dev.ohs.fhir.model.r5.Distance) : Value
-
-    @JvmInline
-    public value class Duration(public val `value`: dev.ohs.fhir.model.r5.Duration) : Value
-
-    @JvmInline
-    public value class HumanName(public val `value`: dev.ohs.fhir.model.r5.HumanName) : Value
-
-    @JvmInline
-    public value class Identifier(public val `value`: dev.ohs.fhir.model.r5.Identifier) : Value
-
-    @JvmInline public value class Money(public val `value`: dev.ohs.fhir.model.r5.Money) : Value
-
-    @JvmInline public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) : Value
-
-    @JvmInline
-    public value class Quantity(public val `value`: dev.ohs.fhir.model.r5.Quantity) : Value
-
-    @JvmInline public value class Range(public val `value`: dev.ohs.fhir.model.r5.Range) : Value
-
-    @JvmInline public value class Ratio(public val `value`: dev.ohs.fhir.model.r5.Ratio) : Value
-
-    @JvmInline
-    public value class RatioRange(public val `value`: dev.ohs.fhir.model.r5.RatioRange) : Value
-
-    @JvmInline
-    public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : Value
-
-    @JvmInline
-    public value class SampledData(public val `value`: dev.ohs.fhir.model.r5.SampledData) : Value
-
-    @JvmInline
-    public value class Signature(public val `value`: dev.ohs.fhir.model.r5.Signature) : Value
-
-    @JvmInline public value class Timing(public val `value`: dev.ohs.fhir.model.r5.Timing) : Value
-
-    @JvmInline
-    public value class ContactDetail(public val `value`: dev.ohs.fhir.model.r5.ContactDetail) :
-      Value
-
-    @JvmInline
-    public value class DataRequirement(public val `value`: dev.ohs.fhir.model.r5.DataRequirement) :
-      Value
-
-    @JvmInline
-    public value class Expression(public val `value`: dev.ohs.fhir.model.r5.Expression) : Value
-
-    @JvmInline
-    public value class ParameterDefinition(
-      public val `value`: dev.ohs.fhir.model.r5.ParameterDefinition
-    ) : Value
-
-    @JvmInline
-    public value class RelatedArtifact(public val `value`: dev.ohs.fhir.model.r5.RelatedArtifact) :
-      Value
-
-    @JvmInline
-    public value class TriggerDefinition(
-      public val `value`: dev.ohs.fhir.model.r5.TriggerDefinition
-    ) : Value
-
-    @JvmInline
-    public value class UsageContext(public val `value`: dev.ohs.fhir.model.r5.UsageContext) : Value
-
-    @JvmInline
-    public value class Availability(public val `value`: dev.ohs.fhir.model.r5.Availability) : Value
-
-    @JvmInline
-    public value class ExtendedContactDetail(
-      public val `value`: dev.ohs.fhir.model.r5.ExtendedContactDetail
-    ) : Value
-
-    @JvmInline public value class Dosage(public val `value`: dev.ohs.fhir.model.r5.Dosage) : Value
-
-    @JvmInline public value class Meta(public val `value`: dev.ohs.fhir.model.r5.Meta) : Value
-
-    public companion object {
-      internal fun from(
-        base64BinaryValue: dev.ohs.fhir.model.r5.Base64Binary?,
-        booleanValue: dev.ohs.fhir.model.r5.Boolean?,
-        canonicalValue: dev.ohs.fhir.model.r5.Canonical?,
-        codeValue: dev.ohs.fhir.model.r5.Code?,
-        dateValue: dev.ohs.fhir.model.r5.Date?,
-        dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-        decimalValue: dev.ohs.fhir.model.r5.Decimal?,
-        idValue: dev.ohs.fhir.model.r5.Id?,
-        instantValue: dev.ohs.fhir.model.r5.Instant?,
-        integerValue: dev.ohs.fhir.model.r5.Integer?,
-        integer64Value: dev.ohs.fhir.model.r5.Integer64?,
-        markdownValue: dev.ohs.fhir.model.r5.Markdown?,
-        oidValue: dev.ohs.fhir.model.r5.Oid?,
-        positiveIntValue: dev.ohs.fhir.model.r5.PositiveInt?,
-        stringValue: dev.ohs.fhir.model.r5.String?,
-        timeValue: dev.ohs.fhir.model.r5.Time?,
-        unsignedIntValue: dev.ohs.fhir.model.r5.UnsignedInt?,
-        uriValue: dev.ohs.fhir.model.r5.Uri?,
-        urlValue: dev.ohs.fhir.model.r5.Url?,
-        uuidValue: dev.ohs.fhir.model.r5.Uuid?,
-        addressValue: dev.ohs.fhir.model.r5.Address?,
-        ageValue: dev.ohs.fhir.model.r5.Age?,
-        annotationValue: dev.ohs.fhir.model.r5.Annotation?,
-        attachmentValue: dev.ohs.fhir.model.r5.Attachment?,
-        codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-        codeableReferenceValue: dev.ohs.fhir.model.r5.CodeableReference?,
-        codingValue: dev.ohs.fhir.model.r5.Coding?,
-        contactPointValue: dev.ohs.fhir.model.r5.ContactPoint?,
-        countValue: dev.ohs.fhir.model.r5.Count?,
-        distanceValue: dev.ohs.fhir.model.r5.Distance?,
-        durationValue: dev.ohs.fhir.model.r5.Duration?,
-        humanNameValue: dev.ohs.fhir.model.r5.HumanName?,
-        identifierValue: dev.ohs.fhir.model.r5.Identifier?,
-        moneyValue: dev.ohs.fhir.model.r5.Money?,
-        periodValue: dev.ohs.fhir.model.r5.Period?,
-        quantityValue: dev.ohs.fhir.model.r5.Quantity?,
-        rangeValue: dev.ohs.fhir.model.r5.Range?,
-        ratioValue: dev.ohs.fhir.model.r5.Ratio?,
-        ratioRangeValue: dev.ohs.fhir.model.r5.RatioRange?,
-        referenceValue: dev.ohs.fhir.model.r5.Reference?,
-        sampledDataValue: dev.ohs.fhir.model.r5.SampledData?,
-        signatureValue: dev.ohs.fhir.model.r5.Signature?,
-        timingValue: dev.ohs.fhir.model.r5.Timing?,
-        contactDetailValue: dev.ohs.fhir.model.r5.ContactDetail?,
-        dataRequirementValue: dev.ohs.fhir.model.r5.DataRequirement?,
-        expressionValue: dev.ohs.fhir.model.r5.Expression?,
-        parameterDefinitionValue: dev.ohs.fhir.model.r5.ParameterDefinition?,
-        relatedArtifactValue: dev.ohs.fhir.model.r5.RelatedArtifact?,
-        triggerDefinitionValue: dev.ohs.fhir.model.r5.TriggerDefinition?,
-        usageContextValue: dev.ohs.fhir.model.r5.UsageContext?,
-        availabilityValue: dev.ohs.fhir.model.r5.Availability?,
-        extendedContactDetailValue: dev.ohs.fhir.model.r5.ExtendedContactDetail?,
-        dosageValue: dev.ohs.fhir.model.r5.Dosage?,
-        metaValue: dev.ohs.fhir.model.r5.Meta?,
-      ): Value? {
-        if (base64BinaryValue != null) return Base64Binary(base64BinaryValue)
-        if (booleanValue != null) return Boolean(booleanValue)
-        if (canonicalValue != null) return Canonical(canonicalValue)
-        if (codeValue != null) return Code(codeValue)
-        if (dateValue != null) return Date(dateValue)
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        if (decimalValue != null) return Decimal(decimalValue)
-        if (idValue != null) return Id(idValue)
-        if (instantValue != null) return Instant(instantValue)
-        if (integerValue != null) return Integer(integerValue)
-        if (integer64Value != null) return Integer64(integer64Value)
-        if (markdownValue != null) return Markdown(markdownValue)
-        if (oidValue != null) return Oid(oidValue)
-        if (positiveIntValue != null) return PositiveInt(positiveIntValue)
-        if (stringValue != null) return String(stringValue)
-        if (timeValue != null) return Time(timeValue)
-        if (unsignedIntValue != null) return UnsignedInt(unsignedIntValue)
-        if (uriValue != null) return Uri(uriValue)
-        if (urlValue != null) return Url(urlValue)
-        if (uuidValue != null) return Uuid(uuidValue)
-        if (addressValue != null) return Address(addressValue)
-        if (ageValue != null) return Age(ageValue)
-        if (annotationValue != null) return Annotation(annotationValue)
-        if (attachmentValue != null) return Attachment(attachmentValue)
-        if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-        if (codeableReferenceValue != null) return CodeableReference(codeableReferenceValue)
-        if (codingValue != null) return Coding(codingValue)
-        if (contactPointValue != null) return ContactPoint(contactPointValue)
-        if (countValue != null) return Count(countValue)
-        if (distanceValue != null) return Distance(distanceValue)
-        if (durationValue != null) return Duration(durationValue)
-        if (humanNameValue != null) return HumanName(humanNameValue)
-        if (identifierValue != null) return Identifier(identifierValue)
-        if (moneyValue != null) return Money(moneyValue)
-        if (periodValue != null) return Period(periodValue)
-        if (quantityValue != null) return Quantity(quantityValue)
-        if (rangeValue != null) return Range(rangeValue)
-        if (ratioValue != null) return Ratio(ratioValue)
-        if (ratioRangeValue != null) return RatioRange(ratioRangeValue)
-        if (referenceValue != null) return Reference(referenceValue)
-        if (sampledDataValue != null) return SampledData(sampledDataValue)
-        if (signatureValue != null) return Signature(signatureValue)
-        if (timingValue != null) return Timing(timingValue)
-        if (contactDetailValue != null) return ContactDetail(contactDetailValue)
-        if (dataRequirementValue != null) return DataRequirement(dataRequirementValue)
-        if (expressionValue != null) return Expression(expressionValue)
-        if (parameterDefinitionValue != null) return ParameterDefinition(parameterDefinitionValue)
-        if (relatedArtifactValue != null) return RelatedArtifact(relatedArtifactValue)
-        if (triggerDefinitionValue != null) return TriggerDefinition(triggerDefinitionValue)
-        if (usageContextValue != null) return UsageContext(usageContextValue)
-        if (availabilityValue != null) return Availability(availabilityValue)
-        if (extendedContactDetailValue != null)
-          return ExtendedContactDetail(extendedContactDetailValue)
-        if (dosageValue != null) return Dosage(dosageValue)
-        if (metaValue != null) return Meta(metaValue)
-        return null
-      }
-    }
-  }
 
   public open class Builder(
     /**
@@ -481,10 +110,35 @@ public data class Extension(
     /**
      * Value of extension - must be one of a constrained set of the data types (see
      * [Extensibility](extensibility.html) for a list).
+     *
+     * A FHIR choice type — one of: [Address] | [AgeBox] | [Annotation] | [Attachment] |
+     * [Availability] | [Base64Binary] | [Boolean] | [CanonicalBox] | [CodeBox] | [CodeableConcept]
+     * | [CodeableReference] | [Coding] | [ContactDetail] | [ContactPoint] | [CountBox] |
+     * [DataRequirement] | [Date] | [DateTime] | [Decimal] | [DistanceBox] | [Dosage] |
+     * [DurationBox] | [Expression] | [ExtendedContactDetail] | [HumanName] | [IdBox] | [Identifier]
+     * | [Instant] | [IntegerBox] | [Integer64] | [MarkdownBox] | [Meta] | [Money] | [OidBox] |
+     * [ParameterDefinition] | [Period] | [PositiveIntBox] | [QuantityBox] | [Range] | [Ratio] |
+     * [RatioRange] | [Reference] | [RelatedArtifact] | [SampledData] | [Signature] | [StringBox] |
+     * [Time] | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] | [UrlBox] |
+     * [UsageContext] | [UuidBox]
      */
-    public open var `value`: Value? = null
+    public open var `value`: Extension.Value? = null
 
     public open fun build(): Extension =
       Extension(id = id, extension = extension.map { it.build() }, url = url, `value` = `value`)
   }
+
+  /**
+   * A FHIR choice type — one of: [Address] | [AgeBox] | [Annotation] | [Attachment] |
+   * [Availability] | [Base64Binary] | [Boolean] | [CanonicalBox] | [CodeBox] | [CodeableConcept] |
+   * [CodeableReference] | [Coding] | [ContactDetail] | [ContactPoint] | [CountBox] |
+   * [DataRequirement] | [Date] | [DateTime] | [Decimal] | [DistanceBox] | [Dosage] | [DurationBox]
+   * | [Expression] | [ExtendedContactDetail] | [HumanName] | [IdBox] | [Identifier] | [Instant] |
+   * [IntegerBox] | [Integer64] | [MarkdownBox] | [Meta] | [Money] | [OidBox] |
+   * [ParameterDefinition] | [Period] | [PositiveIntBox] | [QuantityBox] | [Range] | [Ratio] |
+   * [RatioRange] | [Reference] | [RelatedArtifact] | [SampledData] | [Signature] | [StringBox] |
+   * [Time] | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] | [UrlBox] |
+   * [UsageContext] | [UuidBox]
+   */
+  public typealias Value = FhirChoiceTypes.ElementDefinitionDefaultValueChoice
 }

@@ -589,11 +589,9 @@ internal object MedicationDispenseSerializer : KSerializer<MedicationDispense> {
           MedicationDispense.MedicationDispenseStatusCodes.fromCode(status!!),
           _status,
         ),
-      statusReason =
-        MedicationDispense.StatusReason.from(statusReasonCodeableConcept, statusReasonReference),
+      statusReason = (statusReasonCodeableConcept ?: statusReasonReference),
       category = category,
-      medication =
-        MedicationDispense.Medication.from(medicationCodeableConcept, medicationReference)!!,
+      medication = (medicationCodeableConcept ?: medicationReference)!!,
       subject = subject,
       context = context,
       supportingInformation = supportingInformation ?: listOf(),
@@ -698,20 +696,20 @@ internal object MedicationDispenseSerializer : KSerializer<MedicationDispense> {
     }
     when (val choice = value.statusReason) {
       null -> {}
-      is MedicationDispense.StatusReason.CodeableConcept -> {
+      is CodeableConcept -> {
         encoder.encodeSerializableElement(
           descriptor,
           14 + descriptorOffset,
           Hoisted.statusReasonCodeableConceptSer,
-          choice.value,
+          choice,
         )
       }
-      is MedicationDispense.StatusReason.Reference -> {
+      is Reference -> {
         encoder.encodeSerializableElement(
           descriptor,
           15 + descriptorOffset,
           Hoisted.partOfSerInner,
-          choice.value,
+          choice,
         )
       }
     }
@@ -724,20 +722,20 @@ internal object MedicationDispenseSerializer : KSerializer<MedicationDispense> {
       )
     }
     when (val choice = value.medication) {
-      is MedicationDispense.Medication.CodeableConcept -> {
+      is CodeableConcept -> {
         encoder.encodeSerializableElement(
           descriptor,
           17 + descriptorOffset,
           Hoisted.statusReasonCodeableConceptSer,
-          choice.value,
+          choice,
         )
       }
-      is MedicationDispense.Medication.Reference -> {
+      is Reference -> {
         encoder.encodeSerializableElement(
           descriptor,
           18 + descriptorOffset,
           Hoisted.partOfSerInner,
-          choice.value,
+          choice,
         )
       }
     }

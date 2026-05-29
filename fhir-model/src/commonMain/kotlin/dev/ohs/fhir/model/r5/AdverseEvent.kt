@@ -27,7 +27,6 @@ import dev.ohs.fhir.model.r5.serializers.AdverseEventSuspectEntitySerializer
 import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -199,8 +198,12 @@ public data class AdverseEvent(
    * encounter, that second encounter is not the associated encounter.
    */
   public val encounter: Reference? = null,
-  /** The date (and perhaps time) when the adverse event occurred. */
-  public val occurrence: Occurrence? = null,
+  /**
+   * The date (and perhaps time) when the adverse event occurred.
+   *
+   * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
+   */
+  public val occurrence: AdverseEvent.Occurrence? = null,
   /** Estimated or actual date the AdverseEvent began, in the opinion of the reporter. */
   public val detected: DateTime? = null,
   /**
@@ -474,8 +477,10 @@ public data class AdverseEvent(
     /**
      * Identifies the actual instance of what caused the adverse event. May be a substance,
      * medication, medication administration, medication statement or a device.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public val instance: Instance,
+    public val instance: SuspectEntity.Instance,
     /** Information on the possible cause of the event. */
     public val causality: Causality? = null,
   ) : BackboneElement() {
@@ -616,37 +621,14 @@ public data class AdverseEvent(
       }
     }
 
-    public sealed interface Instance {
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asReference(): Reference? = this as? Reference
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r5.CodeableConcept
-      ) : Instance
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : Instance
-
-      public companion object {
-        internal fun from(
-          codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-          referenceValue: dev.ohs.fhir.model.r5.Reference?,
-        ): Instance? {
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (referenceValue != null) return Reference(referenceValue)
-          return null
-        }
-      }
-    }
-
     public class Builder(
       /**
        * Identifies the actual instance of what caused the adverse event. May be a substance,
        * medication, medication administration, medication statement or a device.
+       *
+       * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public var instance: Instance
+      public var instance: SuspectEntity.Instance
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -700,6 +682,9 @@ public data class AdverseEvent(
           causality = causality?.build(),
         )
     }
+
+    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+    public typealias Instance = FhirChoiceTypes.CodeableConceptOrReference
   }
 
   /**
@@ -748,8 +733,10 @@ public data class AdverseEvent(
     /**
      * The item that is suspected to have increased the probability or severity of the adverse
      * event.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public val item: Item,
+    public val item: ContributingFactor.Item,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -760,37 +747,14 @@ public data class AdverseEvent(
         }
       }
 
-    public sealed interface Item {
-      public fun asReference(): Reference? = this as? Reference
-
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : Item
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r5.CodeableConcept
-      ) : Item
-
-      public companion object {
-        internal fun from(
-          referenceValue: dev.ohs.fhir.model.r5.Reference?,
-          codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-        ): Item? {
-          if (referenceValue != null) return Reference(referenceValue)
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          return null
-        }
-      }
-    }
-
     public class Builder(
       /**
        * The item that is suspected to have increased the probability or severity of the adverse
        * event.
+       *
+       * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public var item: Item
+      public var item: ContributingFactor.Item
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -840,6 +804,9 @@ public data class AdverseEvent(
           item = item,
         )
     }
+
+    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+    public typealias Item = FhirChoiceTypes.CodeableConceptOrReference
   }
 
   /** Preventive actions that contributed to avoiding the adverse event. */
@@ -882,8 +849,12 @@ public data class AdverseEvent(
      * simplicity for everyone.
      */
     override val modifierExtension: List<Extension> = listOf(),
-    /** The action that contributed to avoiding the adverse event. */
-    public val item: Item,
+    /**
+     * The action that contributed to avoiding the adverse event.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Reference]
+     */
+    public val item: PreventiveAction.Item,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -894,34 +865,13 @@ public data class AdverseEvent(
         }
       }
 
-    public sealed interface Item {
-      public fun asReference(): Reference? = this as? Reference
-
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : Item
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r5.CodeableConcept
-      ) : Item
-
-      public companion object {
-        internal fun from(
-          referenceValue: dev.ohs.fhir.model.r5.Reference?,
-          codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-        ): Item? {
-          if (referenceValue != null) return Reference(referenceValue)
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          return null
-        }
-      }
-    }
-
     public class Builder(
-      /** The action that contributed to avoiding the adverse event. */
-      public var item: Item
+      /**
+       * The action that contributed to avoiding the adverse event.
+       *
+       * A FHIR choice type — one of: [CodeableConcept] | [Reference]
+       */
+      public var item: PreventiveAction.Item
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -971,6 +921,9 @@ public data class AdverseEvent(
           item = item,
         )
     }
+
+    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+    public typealias Item = FhirChoiceTypes.CodeableConceptOrReference
   }
 
   /**
@@ -1019,8 +972,10 @@ public data class AdverseEvent(
     /**
      * The ameliorating action taken after the adverse event occured in order to reduce the extent
      * of harm.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public val item: Item,
+    public val item: MitigatingAction.Item,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -1031,37 +986,14 @@ public data class AdverseEvent(
         }
       }
 
-    public sealed interface Item {
-      public fun asReference(): Reference? = this as? Reference
-
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : Item
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r5.CodeableConcept
-      ) : Item
-
-      public companion object {
-        internal fun from(
-          referenceValue: dev.ohs.fhir.model.r5.Reference?,
-          codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-        ): Item? {
-          if (referenceValue != null) return Reference(referenceValue)
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          return null
-        }
-      }
-    }
-
     public class Builder(
       /**
        * The ameliorating action taken after the adverse event occured in order to reduce the extent
        * of harm.
+       *
+       * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public var item: Item
+      public var item: MitigatingAction.Item
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -1111,6 +1043,9 @@ public data class AdverseEvent(
           item = item,
         )
     }
+
+    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+    public typealias Item = FhirChoiceTypes.CodeableConceptOrReference
   }
 
   /** Supporting information relevant to the event. */
@@ -1161,8 +1096,10 @@ public data class AdverseEvent(
      * is relevant to this instance of the adverse event that is not part of the subject's medical
      * history. For example, a clinical note, staff list, or material safety data sheet (MSDS).
      * Supporting information is not a contributing factor, preventive action, or mitigating action.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public val item: Item,
+    public val item: SupportingInfo.Item,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -1172,31 +1109,6 @@ public data class AdverseEvent(
           modifierExtension = this@with.modifierExtension.map { it.toBuilder() }.toMutableList()
         }
       }
-
-    public sealed interface Item {
-      public fun asReference(): Reference? = this as? Reference
-
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : Item
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r5.CodeableConcept
-      ) : Item
-
-      public companion object {
-        internal fun from(
-          referenceValue: dev.ohs.fhir.model.r5.Reference?,
-          codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-        ): Item? {
-          if (referenceValue != null) return Reference(referenceValue)
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          return null
-        }
-      }
-    }
 
     public class Builder(
       /**
@@ -1208,8 +1120,10 @@ public data class AdverseEvent(
        * the subject's medical history. For example, a clinical note, staff list, or material safety
        * data sheet (MSDS). Supporting information is not a contributing factor, preventive action,
        * or mitigating action.
+       *
+       * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public var item: Item
+      public var item: SupportingInfo.Item
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -1259,36 +1173,9 @@ public data class AdverseEvent(
           item = item,
         )
     }
-  }
 
-  public sealed interface Occurrence {
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    public fun asPeriod(): Period? = this as? Period
-
-    public fun asTiming(): Timing? = this as? Timing
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) : Occurrence
-
-    @JvmInline
-    public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) : Occurrence
-
-    @JvmInline
-    public value class Timing(public val `value`: dev.ohs.fhir.model.r5.Timing) : Occurrence
-
-    public companion object {
-      internal fun from(
-        dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-        periodValue: dev.ohs.fhir.model.r5.Period?,
-        timingValue: dev.ohs.fhir.model.r5.Timing?,
-      ): Occurrence? {
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        if (periodValue != null) return Period(periodValue)
-        if (timingValue != null) return Timing(timingValue)
-        return null
-      }
-    }
+    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+    public typealias Item = FhirChoiceTypes.CodeableConceptOrReference
   }
 
   public class Builder(
@@ -1459,8 +1346,12 @@ public data class AdverseEvent(
      */
     public var encounter: Reference.Builder? = null
 
-    /** The date (and perhaps time) when the adverse event occurred. */
-    public var occurrence: Occurrence? = null
+    /**
+     * The date (and perhaps time) when the adverse event occurred.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
+     */
+    public var occurrence: AdverseEvent.Occurrence? = null
 
     /** Estimated or actual date the AdverseEvent began, in the opinion of the reporter. */
     public var detected: DateTime.Builder? = null
@@ -1642,4 +1533,7 @@ public data class AdverseEvent(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [DateTime] | [Period] | [Timing] */
+  public typealias Occurrence = FhirChoiceTypes.DateTimeOrPeriodOrTiming
 }

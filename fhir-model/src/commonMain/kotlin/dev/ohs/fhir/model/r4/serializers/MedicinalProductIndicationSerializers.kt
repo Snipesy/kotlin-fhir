@@ -132,11 +132,7 @@ internal object MedicinalProductIndicationOtherTherapySerializer :
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
       therapyRelationshipType = therapyRelationshipType!!,
-      medication =
-        MedicinalProductIndication.OtherTherapy.Medication.from(
-          medicationCodeableConcept,
-          medicationReference,
-        )!!,
+      medication = (medicationCodeableConcept ?: medicationReference)!!,
     )
   }
 
@@ -161,21 +157,11 @@ internal object MedicinalProductIndicationOtherTherapySerializer :
       value.therapyRelationshipType,
     )
     when (val choice = value.medication) {
-      is MedicinalProductIndication.OtherTherapy.Medication.CodeableConcept -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          4,
-          Hoisted.therapyRelationshipTypeSer,
-          choice.value,
-        )
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 4, Hoisted.therapyRelationshipTypeSer, choice)
       }
-      is MedicinalProductIndication.OtherTherapy.Medication.Reference -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          5,
-          Hoisted.medicationReferenceSer,
-          choice.value,
-        )
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 5, Hoisted.medicationReferenceSer, choice)
       }
     }
   }

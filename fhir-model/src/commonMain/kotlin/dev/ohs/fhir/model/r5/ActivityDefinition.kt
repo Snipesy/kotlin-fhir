@@ -23,7 +23,6 @@ import dev.ohs.fhir.model.r5.terminologies.PublicationStatus
 import dev.ohs.fhir.model.r5.terminologies.RequestResourceTypes
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -185,8 +184,10 @@ public data class ActivityDefinition(
    * passed in - %version1 and %version2 and will return a negative number if version1 is newer, a
    * positive number if version2 and a 0 if the version ordering can't be successfully be
    * determined.
+   *
+   * A FHIR choice type — one of: [Coding] | [String]
    */
-  public val versionAlgorithm: VersionAlgorithm? = null,
+  public val versionAlgorithm: ActivityDefinition.VersionAlgorithm? = null,
   /**
    * A natural language name identifying the activity definition. This name should be usable as an
    * identifier for the module by machine processing applications such as code generation.
@@ -233,8 +234,10 @@ public data class ActivityDefinition(
    * Note that the choice of canonical for the subject element was introduced in R4B to support
    * pharmaceutical quality use cases. To ensure as much backwards-compatibility as possible, it is
    * recommended to only use the new canonical type with these use cases.
+   *
+   * A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [Reference]
    */
-  public val subject: Subject? = null,
+  public val subject: ActivityDefinition.Subject? = null,
   /**
    * The date (and optionally time) when the activity definition was last significantly changed. The
    * date must change when the business version changes and it must change if the status code
@@ -463,13 +466,17 @@ public data class ActivityDefinition(
    * apply. When the timing is a Range, it may be a range of Ages or Durations, providing a range
    * for the expected timing of the resulting activity. When the timing is a Timing, it is
    * establishing a schedule for the timing of the resulting activity.
+   *
+   * A FHIR choice type — one of: [Age] | [Duration] | [Range] | [Timing]
    */
-  public val timing: Timing? = null,
+  public val timing: FhirChoiceTypes.AgeOrDurationOrRangeOrTiming? = null,
   /**
    * If a CodeableConcept is present, it indicates the pre-condition for performing the service. For
    * example "pain", "on flare-up", etc.
+   *
+   * A FHIR choice type — one of: [Boolean] | [CodeableConcept]
    */
-  public val asNeeded: AsNeeded? = null,
+  public val asNeeded: ActivityDefinition.AsNeeded? = null,
   /**
    * Identifies the facility where the activity will occur; e.g. home, hospital, specific clinic,
    * etc.
@@ -479,8 +486,12 @@ public data class ActivityDefinition(
   public val location: CodeableReference? = null,
   /** Indicates who should participate in performing the action described. */
   public val participant: List<Participant> = listOf(),
-  /** Identifies the food, drug or other product being consumed or supplied in the activity. */
-  public val product: Product? = null,
+  /**
+   * Identifies the food, drug or other product being consumed or supplied in the activity.
+   *
+   * A FHIR choice type — one of: [CodeableConcept] | [Reference]
+   */
+  public val product: ActivityDefinition.Product? = null,
   /** Identifies the quantity expected to be consumed at once (per dose, per meal, etc.). */
   public val quantity: Quantity? = null,
   /**
@@ -888,149 +899,6 @@ public data class ActivityDefinition(
     }
   }
 
-  public sealed interface VersionAlgorithm {
-    public fun asString(): String? = this as? String
-
-    public fun asCoding(): Coding? = this as? Coding
-
-    @JvmInline
-    public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : VersionAlgorithm
-
-    @JvmInline
-    public value class Coding(public val `value`: dev.ohs.fhir.model.r5.Coding) : VersionAlgorithm
-
-    public companion object {
-      internal fun from(
-        stringValue: dev.ohs.fhir.model.r5.String?,
-        codingValue: dev.ohs.fhir.model.r5.Coding?,
-      ): VersionAlgorithm? {
-        if (stringValue != null) return String(stringValue)
-        if (codingValue != null) return Coding(codingValue)
-        return null
-      }
-    }
-  }
-
-  public sealed interface Subject {
-    public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-    public fun asReference(): Reference? = this as? Reference
-
-    public fun asCanonical(): Canonical? = this as? Canonical
-
-    @JvmInline
-    public value class CodeableConcept(public val `value`: dev.ohs.fhir.model.r5.CodeableConcept) :
-      Subject
-
-    @JvmInline
-    public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : Subject
-
-    @JvmInline
-    public value class Canonical(public val `value`: dev.ohs.fhir.model.r5.Canonical) : Subject
-
-    public companion object {
-      internal fun from(
-        codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-        referenceValue: dev.ohs.fhir.model.r5.Reference?,
-        canonicalValue: dev.ohs.fhir.model.r5.Canonical?,
-      ): Subject? {
-        if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-        if (referenceValue != null) return Reference(referenceValue)
-        if (canonicalValue != null) return Canonical(canonicalValue)
-        return null
-      }
-    }
-  }
-
-  public sealed interface Timing {
-    public fun asTiming(): Timing? = this as? Timing
-
-    public fun asAge(): Age? = this as? Age
-
-    public fun asRange(): Range? = this as? Range
-
-    public fun asDuration(): Duration? = this as? Duration
-
-    @JvmInline
-    public value class Timing(public val `value`: dev.ohs.fhir.model.r5.Timing) :
-      ActivityDefinition.Timing
-
-    @JvmInline
-    public value class Age(public val `value`: dev.ohs.fhir.model.r5.Age) :
-      ActivityDefinition.Timing
-
-    @JvmInline
-    public value class Range(public val `value`: dev.ohs.fhir.model.r5.Range) :
-      ActivityDefinition.Timing
-
-    @JvmInline
-    public value class Duration(public val `value`: dev.ohs.fhir.model.r5.Duration) :
-      ActivityDefinition.Timing
-
-    public companion object {
-      internal fun from(
-        timingValue: dev.ohs.fhir.model.r5.Timing?,
-        ageValue: dev.ohs.fhir.model.r5.Age?,
-        rangeValue: dev.ohs.fhir.model.r5.Range?,
-        durationValue: dev.ohs.fhir.model.r5.Duration?,
-      ): ActivityDefinition.Timing? {
-        if (timingValue != null) return Timing(timingValue)
-        if (ageValue != null) return Age(ageValue)
-        if (rangeValue != null) return Range(rangeValue)
-        if (durationValue != null) return Duration(durationValue)
-        return null
-      }
-    }
-  }
-
-  public sealed interface AsNeeded {
-    public fun asBoolean(): Boolean? = this as? Boolean
-
-    public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-    @JvmInline
-    public value class Boolean(public val `value`: dev.ohs.fhir.model.r5.Boolean) : AsNeeded
-
-    @JvmInline
-    public value class CodeableConcept(public val `value`: dev.ohs.fhir.model.r5.CodeableConcept) :
-      AsNeeded
-
-    public companion object {
-      internal fun from(
-        booleanValue: dev.ohs.fhir.model.r5.Boolean?,
-        codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-      ): AsNeeded? {
-        if (booleanValue != null) return Boolean(booleanValue)
-        if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-        return null
-      }
-    }
-  }
-
-  public sealed interface Product {
-    public fun asReference(): Reference? = this as? Reference
-
-    public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-    @JvmInline
-    public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : Product
-
-    @JvmInline
-    public value class CodeableConcept(public val `value`: dev.ohs.fhir.model.r5.CodeableConcept) :
-      Product
-
-    public companion object {
-      internal fun from(
-        referenceValue: dev.ohs.fhir.model.r5.Reference?,
-        codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-      ): Product? {
-        if (referenceValue != null) return Reference(referenceValue)
-        if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
     /**
      * The status of this activity definition. Enables tracking the life-cycle of the content.
@@ -1206,8 +1074,10 @@ public data class ActivityDefinition(
      * passed in - %version1 and %version2 and will return a negative number if version1 is newer, a
      * positive number if version2 and a 0 if the version ordering can't be successfully be
      * determined.
+     *
+     * A FHIR choice type — one of: [Coding] | [String]
      */
-    public var versionAlgorithm: VersionAlgorithm? = null
+    public var versionAlgorithm: ActivityDefinition.VersionAlgorithm? = null
 
     /**
      * A natural language name identifying the activity definition. This name should be usable as an
@@ -1250,8 +1120,10 @@ public data class ActivityDefinition(
      * Note that the choice of canonical for the subject element was introduced in R4B to support
      * pharmaceutical quality use cases. To ensure as much backwards-compatibility as possible, it
      * is recommended to only use the new canonical type with these use cases.
+     *
+     * A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [Reference]
      */
-    public var subject: Subject? = null
+    public var subject: ActivityDefinition.Subject? = null
 
     /**
      * The date (and optionally time) when the activity definition was last significantly changed.
@@ -1514,14 +1386,18 @@ public data class ActivityDefinition(
      * the apply. When the timing is a Range, it may be a range of Ages or Durations, providing a
      * range for the expected timing of the resulting activity. When the timing is a Timing, it is
      * establishing a schedule for the timing of the resulting activity.
+     *
+     * A FHIR choice type — one of: [Age] | [Duration] | [Range] | [Timing]
      */
-    public var timing: Timing? = null
+    public var timing: FhirChoiceTypes.AgeOrDurationOrRangeOrTiming? = null
 
     /**
      * If a CodeableConcept is present, it indicates the pre-condition for performing the service.
      * For example "pain", "on flare-up", etc.
+     *
+     * A FHIR choice type — one of: [Boolean] | [CodeableConcept]
      */
-    public var asNeeded: AsNeeded? = null
+    public var asNeeded: ActivityDefinition.AsNeeded? = null
 
     /**
      * Identifies the facility where the activity will occur; e.g. home, hospital, specific clinic,
@@ -1534,8 +1410,12 @@ public data class ActivityDefinition(
     /** Indicates who should participate in performing the action described. */
     public var participant: MutableList<Participant.Builder> = mutableListOf()
 
-    /** Identifies the food, drug or other product being consumed or supplied in the activity. */
-    public var product: Product? = null
+    /**
+     * Identifies the food, drug or other product being consumed or supplied in the activity.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Reference]
+     */
+    public var product: ActivityDefinition.Product? = null
 
     /** Identifies the quantity expected to be consumed at once (per dose, per meal, etc.). */
     public var quantity: Quantity.Builder? = null
@@ -1777,4 +1657,16 @@ public data class ActivityDefinition(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [Coding] | [String] */
+  public typealias VersionAlgorithm = FhirChoiceTypes.CodingOrString
+
+  /** A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [Reference] */
+  public typealias Subject = FhirChoiceTypes.CanonicalOrCodeableConceptOrReference
+
+  /** A FHIR choice type — one of: [Boolean] | [CodeableConcept] */
+  public typealias AsNeeded = FhirChoiceTypes.BooleanOrCodeableConcept
+
+  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+  public typealias Product = FhirChoiceTypes.CodeableConceptOrReference
 }

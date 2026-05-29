@@ -135,7 +135,7 @@ internal object CareTeamParticipantSerializer : KSerializer<CareTeam.Participant
       role = role,
       member = member,
       onBehalfOf = onBehalfOf,
-      coverage = CareTeam.Participant.Coverage.from(coveragePeriod, coverageTiming),
+      coverage = (coveragePeriod ?: coverageTiming),
     )
   }
 
@@ -157,11 +157,11 @@ internal object CareTeamParticipantSerializer : KSerializer<CareTeam.Participant
     }
     when (val choice = value.coverage) {
       null -> {}
-      is CareTeam.Participant.Coverage.Period -> {
-        encoder.encodeSerializableElement(descriptor, 6, Hoisted.coveragePeriodSer, choice.value)
+      is Period -> {
+        encoder.encodeSerializableElement(descriptor, 6, Hoisted.coveragePeriodSer, choice)
       }
-      is CareTeam.Participant.Coverage.Timing -> {
-        encoder.encodeSerializableElement(descriptor, 7, Hoisted.coverageTimingSer, choice.value)
+      is Timing -> {
+        encoder.encodeSerializableElement(descriptor, 7, Hoisted.coverageTimingSer, choice)
       }
     }
   }

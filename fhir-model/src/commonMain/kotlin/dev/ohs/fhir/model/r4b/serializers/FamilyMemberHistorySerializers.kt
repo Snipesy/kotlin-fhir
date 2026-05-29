@@ -162,13 +162,7 @@ internal object FamilyMemberHistoryConditionSerializer :
       code = code!!,
       outcome = outcome,
       contributedToDeath = R4bBoolean.of(contributedToDeath, _contributedToDeath),
-      onset =
-        FamilyMemberHistory.Condition.Onset.from(
-          onsetAge,
-          onsetRange,
-          onsetPeriod,
-          R4bString.of(onsetString, _onsetString),
-        ),
+      onset = (onsetAge ?: onsetRange ?: onsetPeriod ?: R4bString.of(onsetString, _onsetString)),
       note = note ?: listOf(),
     )
   }
@@ -192,18 +186,18 @@ internal object FamilyMemberHistoryConditionSerializer :
     }
     when (val choice = value.onset) {
       null -> {}
-      is FamilyMemberHistory.Condition.Onset.Age -> {
-        encoder.encodeSerializableElement(descriptor, 7, Hoisted.onsetAgeSer, choice.value)
+      is Age -> {
+        encoder.encodeSerializableElement(descriptor, 7, Hoisted.onsetAgeSer, choice)
       }
-      is FamilyMemberHistory.Condition.Onset.Range -> {
-        encoder.encodeSerializableElement(descriptor, 8, Hoisted.onsetRangeSer, choice.value)
+      is Range -> {
+        encoder.encodeSerializableElement(descriptor, 8, Hoisted.onsetRangeSer, choice)
       }
-      is FamilyMemberHistory.Condition.Onset.Period -> {
-        encoder.encodeSerializableElement(descriptor, 9, Hoisted.onsetPeriodSer, choice.value)
+      is Period -> {
+        encoder.encodeSerializableElement(descriptor, 9, Hoisted.onsetPeriodSer, choice)
       }
-      is FamilyMemberHistory.Condition.Onset.String -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 10, it) }
-        (choice.value.toElement())?.let {
+      is R4bString -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 10, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 11, Hoisted.contributedToDeathSer, it)
         }
       }
@@ -595,21 +589,17 @@ internal object FamilyMemberHistorySerializer : KSerializer<FamilyMemberHistory>
       relationship = relationship!!,
       sex = sex,
       born =
-        FamilyMemberHistory.Born.from(
-          bornPeriod,
-          Date.of(FhirDate.fromString(bornDate), _bornDate),
-          R4bString.of(bornString, _bornString),
-        ),
-      age = FamilyMemberHistory.Age.from(ageAge, ageRange, R4bString.of(ageString, _ageString)),
+        (bornPeriod
+          ?: Date.of(FhirDate.fromString(bornDate), _bornDate)
+          ?: R4bString.of(bornString, _bornString)),
+      age = (ageAge ?: ageRange ?: R4bString.of(ageString, _ageString)),
       estimatedAge = R4bBoolean.of(estimatedAge, _estimatedAge),
       deceased =
-        FamilyMemberHistory.Deceased.from(
-          R4bBoolean.of(deceasedBoolean, _deceasedBoolean),
-          deceasedAge,
-          deceasedRange,
-          Date.of(FhirDate.fromString(deceasedDate), _deceasedDate),
-          R4bString.of(deceasedString, _deceasedString),
-        ),
+        (R4bBoolean.of(deceasedBoolean, _deceasedBoolean)
+          ?: deceasedAge
+          ?: deceasedRange
+          ?: Date.of(FhirDate.fromString(deceasedDate), _deceasedDate)
+          ?: R4bString.of(deceasedString, _deceasedString)),
       reasonCode = reasonCode ?: listOf(),
       reasonReference = reasonReference ?: listOf(),
       note = note ?: listOf(),
@@ -775,19 +765,19 @@ internal object FamilyMemberHistorySerializer : KSerializer<FamilyMemberHistory>
     }
     when (val choice = value.born) {
       null -> {}
-      is FamilyMemberHistory.Born.Period -> {
+      is Period -> {
         encoder.encodeSerializableElement(
           descriptor,
           25 + descriptorOffset,
           Hoisted.bornPeriodSer,
-          choice.value,
+          choice,
         )
       }
-      is FamilyMemberHistory.Born.Date -> {
-        ((choice.value.value?.toString()))?.let {
+      is Date -> {
+        ((choice.value?.toString()))?.let {
           encoder.encodeStringElement(descriptor, 26 + descriptorOffset, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             27 + descriptorOffset,
@@ -796,11 +786,9 @@ internal object FamilyMemberHistorySerializer : KSerializer<FamilyMemberHistory>
           )
         }
       }
-      is FamilyMemberHistory.Born.String -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 28 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is R4bString -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 28 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             29 + descriptorOffset,
@@ -812,27 +800,25 @@ internal object FamilyMemberHistorySerializer : KSerializer<FamilyMemberHistory>
     }
     when (val choice = value.age) {
       null -> {}
-      is FamilyMemberHistory.Age.Age -> {
+      is Age -> {
         encoder.encodeSerializableElement(
           descriptor,
           30 + descriptorOffset,
           Hoisted.ageAgeSer,
-          choice.value,
+          choice,
         )
       }
-      is FamilyMemberHistory.Age.Range -> {
+      is Range -> {
         encoder.encodeSerializableElement(
           descriptor,
           31 + descriptorOffset,
           Hoisted.ageRangeSer,
-          choice.value,
+          choice,
         )
       }
-      is FamilyMemberHistory.Age.String -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 32 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is R4bString -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 32 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             33 + descriptorOffset,
@@ -855,11 +841,11 @@ internal object FamilyMemberHistorySerializer : KSerializer<FamilyMemberHistory>
     }
     when (val choice = value.deceased) {
       null -> {}
-      is FamilyMemberHistory.Deceased.Boolean -> {
-        ((choice.value.value))?.let {
+      is R4bBoolean -> {
+        ((choice.value))?.let {
           encoder.encodeBooleanElement(descriptor, 36 + descriptorOffset, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             37 + descriptorOffset,
@@ -868,27 +854,27 @@ internal object FamilyMemberHistorySerializer : KSerializer<FamilyMemberHistory>
           )
         }
       }
-      is FamilyMemberHistory.Deceased.Age -> {
+      is Age -> {
         encoder.encodeSerializableElement(
           descriptor,
           38 + descriptorOffset,
           Hoisted.ageAgeSer,
-          choice.value,
+          choice,
         )
       }
-      is FamilyMemberHistory.Deceased.Range -> {
+      is Range -> {
         encoder.encodeSerializableElement(
           descriptor,
           39 + descriptorOffset,
           Hoisted.ageRangeSer,
-          choice.value,
+          choice,
         )
       }
-      is FamilyMemberHistory.Deceased.Date -> {
-        ((choice.value.value?.toString()))?.let {
+      is Date -> {
+        ((choice.value?.toString()))?.let {
           encoder.encodeStringElement(descriptor, 40 + descriptorOffset, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             41 + descriptorOffset,
@@ -897,11 +883,9 @@ internal object FamilyMemberHistorySerializer : KSerializer<FamilyMemberHistory>
           )
         }
       }
-      is FamilyMemberHistory.Deceased.String -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 42 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is R4bString -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 42 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             43 + descriptorOffset,

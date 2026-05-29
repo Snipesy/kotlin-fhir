@@ -20,7 +20,6 @@ import dev.ohs.fhir.model.r5.serializers.ClinicalImpressionFindingSerializer
 import dev.ohs.fhir.model.r5.serializers.ClinicalImpressionSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -179,8 +178,10 @@ public data class ClinicalImpression(
    * The point in time or period over which the subject was assessed.
    *
    * This SHOULD be accurate to at least the minute, though some assessments only have a known date.
+   *
+   * A FHIR choice type — one of: [DateTime] | [Period]
    */
-  public val effective: Effective? = null,
+  public val effective: ClinicalImpression.Effective? = null,
   /** Indicates when the documentation of the assessment was complete. */
   public val date: DateTime? = null,
   /** The clinician performing the assessment. */
@@ -387,29 +388,6 @@ public data class ClinicalImpression(
     }
   }
 
-  public sealed interface Effective {
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    public fun asPeriod(): Period? = this as? Period
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) : Effective
-
-    @JvmInline
-    public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) : Effective
-
-    public companion object {
-      internal fun from(
-        dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-        periodValue: dev.ohs.fhir.model.r5.Period?,
-      ): Effective? {
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        if (periodValue != null) return Period(periodValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
     /**
      * Identifies the workflow status of the assessment.
@@ -570,8 +548,10 @@ public data class ClinicalImpression(
      *
      * This SHOULD be accurate to at least the minute, though some assessments only have a known
      * date.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Period]
      */
-    public var effective: Effective? = null
+    public var effective: ClinicalImpression.Effective? = null
 
     /** Indicates when the documentation of the assessment was complete. */
     public var date: DateTime.Builder? = null
@@ -706,4 +686,7 @@ public data class ClinicalImpression(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [DateTime] | [Period] */
+  public typealias Effective = FhirChoiceTypes.DateTimeOrPeriod
 }

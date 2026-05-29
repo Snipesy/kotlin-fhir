@@ -163,12 +163,24 @@ abstract class FhirCodegenTask : DefaultTask() {
         // require a literal `}` after the exponent and so reject all scientific notation. Strip it.
         ?.replace("}}", "}")
         ?: error("Could not find the regex for the FHIR `decimal` StructureDefinition")
+    // Consolidated choice-type ("value[x]") option-sets, shared across every resource.
+    val choiceRegistry = ChoiceTypeRegistry.build(packageName, structureDefinitions)
+
     val fhirCodegen =
-      FhirCodegen(packageName, valueSetMap, baseClasses, typeGraph, primitiveValueIsNonNull)
+      FhirCodegen(
+        packageName,
+        valueSetMap,
+        baseClasses,
+        typeGraph,
+        primitiveValueIsNonNull,
+        choiceRegistry,
+      )
 
     structureDefinitions
       .flatMap { fhirCodegen.generateFileSpecs(it) }
       .forEach { it.writeTo(outputDir) }
+
+    ChoiceTypesFileSpecGenerator.generate(choiceRegistry).forEach { it.writeTo(outputDir) }
 
     val subclasses =
       structureDefinitions

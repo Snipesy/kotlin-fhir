@@ -21,7 +21,6 @@ import dev.ohs.fhir.model.r5.serializers.GroupMemberSerializer
 import dev.ohs.fhir.model.r5.serializers.GroupSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -272,8 +271,11 @@ public data class Group(
      *
      * For Range, it means members of the group have a value that falls somewhere within the
      * specified range.
+     *
+     * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range] |
+     * [Reference]
      */
-    public val `value`: Value,
+    public val `value`: Characteristic.Value,
     /**
      * If true, indicates the characteristic is one that is NOT held by members of the group.
      *
@@ -297,51 +299,6 @@ public data class Group(
         }
       }
 
-    public sealed interface Value {
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asBoolean(): Boolean? = this as? Boolean
-
-      public fun asQuantity(): Quantity? = this as? Quantity
-
-      public fun asRange(): Range? = this as? Range
-
-      public fun asReference(): Reference? = this as? Reference
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r5.CodeableConcept
-      ) : Value
-
-      @JvmInline
-      public value class Boolean(public val `value`: dev.ohs.fhir.model.r5.Boolean) : Value
-
-      @JvmInline
-      public value class Quantity(public val `value`: dev.ohs.fhir.model.r5.Quantity) : Value
-
-      @JvmInline public value class Range(public val `value`: dev.ohs.fhir.model.r5.Range) : Value
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : Value
-
-      public companion object {
-        internal fun from(
-          codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-          booleanValue: dev.ohs.fhir.model.r5.Boolean?,
-          quantityValue: dev.ohs.fhir.model.r5.Quantity?,
-          rangeValue: dev.ohs.fhir.model.r5.Range?,
-          referenceValue: dev.ohs.fhir.model.r5.Reference?,
-        ): Value? {
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (booleanValue != null) return Boolean(booleanValue)
-          if (quantityValue != null) return Quantity(quantityValue)
-          if (rangeValue != null) return Range(rangeValue)
-          if (referenceValue != null) return Reference(referenceValue)
-          return null
-        }
-      }
-    }
-
     public class Builder(
       /** A code that identifies the kind of trait being asserted. */
       public var code: CodeableConcept.Builder,
@@ -351,8 +308,11 @@ public data class Group(
        *
        * For Range, it means members of the group have a value that falls somewhere within the
        * specified range.
+       *
+       * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range] |
+       * [Reference]
        */
-      public var `value`: Value,
+      public var `value`: Characteristic.Value,
       /**
        * If true, indicates the characteristic is one that is NOT held by members of the group.
        *
@@ -418,6 +378,12 @@ public data class Group(
           period = period?.build(),
         )
     }
+
+    /**
+     * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range] |
+     * [Reference]
+     */
+    public typealias Value = FhirChoiceTypes.BooleanOrCodeableConceptOrQuantityOrRangeOrReference
   }
 
   /** Identifies the resource instances that are members of the group. */

@@ -18,12 +18,12 @@ package dev.ohs.fhir.codegen
 
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.PropertySpec
+import com.squareup.kotlinpoet.TypeAliasSpec
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.asTypeName
@@ -163,12 +163,22 @@ class ModelFileSpecGenerator(val codegenContext: CodegenContext) {
             superclass(ClassName(modelClassName.packageName, it))
           }
 
+          // This data type is a bare member of one or more shared choice-type interfaces —
+          // implement them directly so `obs.value = someQuantity` works and the sealed `when` stays
+          // exhaustive. Many memberships collapse into a single `<Type>Choices` aggregate (emitted
+          // into FhirChoiceParticipants.kt by ChoiceTypesFileSpecGenerator) to keep this header
+          // readable; the aggregate is sealed so exhaustiveness is preserved.
+          codegenContext.choiceRegistry.bareSuperinterfacesFor(modelClassName.simpleName).forEach {
+            addSuperinterface(it)
+          }
+
           buildProperties(
             modelClassName,
             structureDefinition.rootElements,
             structureDefinition,
             isBaseClass,
             codegenContext.valueSetMap,
+            codegenContext.choiceRegistry,
           )
 
           addBackboneElement(
@@ -182,13 +192,18 @@ class ModelFileSpecGenerator(val codegenContext: CodegenContext) {
             },
           )
 
-          addSealedInterfaces(modelClassName, structureDefinition.rootElements)
+          addChoiceTypeAliases(
+            modelClassName,
+            structureDefinition.rootElements,
+            codegenContext.choiceRegistry,
+          )
 
           addModelBuilderSupport(
             structureDefinition,
             modelClassName,
             codegenContext.valueSetMap,
             isBaseClass = isBaseClass,
+            choiceRegistry = codegenContext.choiceRegistry,
           )
 
           addEnumClassTypeSpec(
@@ -244,6 +259,7 @@ class ModelFileSpecGenerator(val codegenContext: CodegenContext) {
         PropertyMapper.MappingContext.MODEL,
         modelClassName,
         codegenContext.valueSetMap,
+        codegenContext.choiceRegistry,
       )
     val properties = elements.map { propertyMapper.mapToProperty(it) }
     val equalsFunSpec =
@@ -321,7 +337,14 @@ class ModelFileSpecGenerator(val codegenContext: CodegenContext) {
                 ClassName(enclosingModelClassName.packageName, backboneElement.type!!.single().code)
               )
             }
-            .buildProperties(backboneElementClassName, elements, null, false, valueSetMap)
+            .buildProperties(
+              backboneElementClassName,
+              elements,
+              null,
+              false,
+              valueSetMap,
+              codegenContext.choiceRegistry,
+            )
             // Recursively add backbone elements inside a backbone element
             .addBackboneElement(
               backboneElement.path,
@@ -331,13 +354,14 @@ class ModelFileSpecGenerator(val codegenContext: CodegenContext) {
               valueSetMap,
               createEnumNameToTypeSpecEntry,
             )
-            // Add sealed interfaces inside a backbone element
-            .addSealedInterfaces(backboneElementClassName, elements)
+            // Add choice-type aliases inside a backbone element
+            .addChoiceTypeAliases(backboneElementClassName, elements, codegenContext.choiceRegistry)
             .addBackboneElementBuilderSupport(
               structureDefinition,
               backboneElementClassName,
               valueSetMap,
               elements,
+              codegenContext.choiceRegistry,
             )
             .build()
         )
@@ -400,11 +424,17 @@ private fun TypeSpec.Builder.buildProperties(
   structureDefinition: StructureDefinition?, // null means backbone element
   isBaseClass: Boolean = false,
   valueSetMap: Map<String, ValueSet>,
+  choiceRegistry: ChoiceTypeRegistry,
 ): TypeSpec.Builder {
   val propertyParameterPairs =
     elements.map { element ->
       val propertyMapper =
-        PropertyMapper(PropertyMapper.MappingContext.MODEL, modelClassName, valueSetMap)
+        PropertyMapper(
+          PropertyMapper.MappingContext.MODEL,
+          modelClassName,
+          valueSetMap,
+          choiceRegistry,
+        )
       val propertyInfo = propertyMapper.mapToProperty(element)
       val property =
         PropertySpec.builder(propertyInfo.name, propertyInfo.typeName)
@@ -444,6 +474,11 @@ private fun TypeSpec.Builder.buildProperties(
 
             addKdoc("%L", element.definition.sanitizeKDoc())
             element.comment?.let { addKdoc("\n\n%L", it.sanitizeKDoc()) }
+            // For a choice property, also document the union of permitted types (the same note the
+            // nested `typealias` carries) so it shows on the field itself.
+            if (element.type != null && element.type.size > 1) {
+              addKdoc("\n\n%L", choiceRegistry.unionDoc(element))
+            }
           }
           .build()
 
@@ -489,60 +524,27 @@ private fun TypeSpec.Builder.buildProperties(
   return this
 }
 
-/** Adds a nested sealed interface for each choice type in the [StructureDefinition]. */
-private fun TypeSpec.Builder.addSealedInterfaces(
+/**
+ * Adds a nested type alias for each choice type ("value[x]") element, pointing at the shared
+ * consolidated option-set interface (e.g. `Observation.typealias Value = …`). Preserves the public
+ * API spelling (`Observation.Value`, `Observation.Value.Quantity` via the interface's own nested
+ * aliases, exhaustive `when`) while the member types implement the interface directly. The shared
+ * interfaces and their `<Type>Box` box types are emitted by [ChoiceTypesFileSpecGenerator].
+ */
+private fun TypeSpec.Builder.addChoiceTypeAliases(
   enclosingModelClassName: ClassName,
   elements: List<Element>,
+  registry: ChoiceTypeRegistry,
 ): TypeSpec.Builder {
-  val propertyMapper =
-    PropertyMapper(PropertyMapper.MappingContext.MODEL, enclosingModelClassName, emptyMap())
-
   for (element in elements.filter { it.path.endsWith("[x]") }) {
-    val fieldName = element.getElementName()
-    val sealedInterfaceClassName = enclosingModelClassName.nestedClass(fieldName.capitalized())
-    addType(
-      TypeSpec.interfaceBuilder(sealedInterfaceClassName)
-        .addModifiers(KModifier.SEALED)
-        .apply {
-          for (type in element.type!!) {
-            val expansionName = choiceTypeExpansionName(type)
-            addType(
-              TypeSpec.classBuilder(expansionName)
-                // Choice type expansions wrap a single value, so they are emitted as `@JvmInline`
-                // value classes to avoid an allocation per choice. They cannot be `data` classes;
-                // the value class generates its own equals/hashCode/toString from the wrapped
-                // value.
-                .addModifiers(KModifier.VALUE)
-                .addAnnotation(ClassName("kotlin.jvm", "JvmInline"))
-                .primaryConstructor(
-                  FunSpec.constructorBuilder()
-                    .addParameter("value", propertyMapper.mapTypeToClassName(type))
-                    .build()
-                )
-                .addProperty(
-                  PropertySpec.builder("value", propertyMapper.mapTypeToClassName(type))
-                    .initializer("value")
-                    .build()
-                )
-                .addSuperinterface(sealedInterfaceClassName)
-                .build()
-            )
-          }
-          addType(
-              TypeSpec.companionObjectBuilder()
-                .addFromFunction(element.type, enclosingModelClassName, sealedInterfaceClassName)
-                .build()
-            )
-            .apply {
-              // Add an `asDataType` function per choice type expansion. Used by the parent
-              // serializer's encode path to extract the matched expansion's value into a flat
-              // wire-shape slot.
-              for (type in element.type) {
-                addDataTypeFunction(type, sealedInterfaceClassName)
-              }
-            }
-        }
-        .build()
+    // Skip the alias when its name would shadow a type in scope (e.g. `DeviceRequest.code[x]` → a
+    // `Code` alias clashing with the `Code` primitive); the property is typed with the shared set
+    // directly in that case (see PropertyMapper.getSealedInterfaceType).
+    if (registry.aliasNameCollides(element, enclosingModelClassName)) continue
+    val fieldName = element.getElementName().capitalized()
+    val set = registry.choiceSetFor(element)
+    addTypeAlias(
+      TypeAliasSpec.builder(fieldName, set.className).addKdoc(registry.unionDoc(set)).build()
     )
   }
   return this
@@ -652,80 +654,6 @@ private fun TypeSpec.Builder.addOfFunctionForXhtml(
   )
   return this
 }
-
-/**
- * Adds a `from` function to a choice-type sealed interface companion. It takes one nullable
- * parameter per choice type expansion (the model value already merged via each expansion's
- * `of(...)`) and returns the matched expansion — used during deserialization in the parent resource
- * serializer to materialize the sealed value from its flat wire representation.
- *
- * N.B. The return type is nullable for ease of code generation; the caller should null-check it
- * when the element is required.
- *
- * For example, the following function is generated `Patient.deceased` element.
- *
- * ```
- * internal fun from(
- *   booleanValue: dev.ohs.fhir.model.r4.Boolean?,
- *   dateTimeValue: dev.ohs.fhir.model.r4.DateTime?,
- * ): Deceased? {
- *   if (booleanValue != null) return Boolean(booleanValue)
- *   if (dateTimeValue != null) return DateTime(dateTimeValue)
- *   return null
- * }
- * ```
- */
-private fun TypeSpec.Builder.addFromFunction(
-  typeList: List<Type>,
-  enclosingModelClassName: ClassName,
-  sealedInterfaceClassName: ClassName,
-): TypeSpec.Builder =
-  addFunction(
-    FunSpec.builder("from")
-      .addModifiers(KModifier.INTERNAL)
-      .apply {
-        val propertyMapper =
-          PropertyMapper(PropertyMapper.MappingContext.MODEL, enclosingModelClassName, emptyMap())
-        for (type in typeList) {
-          addParameter(
-            ParameterSpec(
-              "${type.code.replaceFirstChar { it.lowercase() }}Value",
-              propertyMapper.mapTypeToClassName(type).copy(nullable = true),
-            )
-          )
-          addCode(
-            CodeBlock.builder()
-              .add(
-                "if(%N != null) return %T(%N) \n",
-                "${type.code.replaceFirstChar { it.lowercase() }}Value",
-                sealedInterfaceClassName.nestedClass(choiceTypeExpansionName(type)),
-                "${type.code.replaceFirstChar { it.lowercase() }}Value",
-              )
-              .build()
-          )
-        }
-        addCode(CodeBlock.builder().add("return null").build())
-      }
-      .returns(sealedInterfaceClassName.copy(nullable = true))
-      .build()
-  )
-
-private fun TypeSpec.Builder.addDataTypeFunction(type: Type, sealedInterfaceClassName: ClassName) =
-  addFunction(
-    FunSpec.builder("as${type.code.capitalized()}")
-      .returns(
-        sealedInterfaceClassName.nestedClass(choiceTypeExpansionName(type)).copy(nullable = true)
-      )
-      .addCode(
-        CodeBlock.builder()
-          .add(
-            "return this as? %T",
-            sealedInterfaceClassName.nestedClass(choiceTypeExpansionName(type)),
-          )
-          .build()
-      )
-      .build()
-  )
 
 /**
  * Returns the nested-class name used for a sealed choice type expansion — e.g.

@@ -24,14 +24,12 @@ import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asClassName
 import dev.ohs.fhir.codegen.CodegenContext
-import dev.ohs.fhir.codegen.choiceTypeExpansionName
 import dev.ohs.fhir.codegen.primitives.FhirPathType
 import dev.ohs.fhir.codegen.schema.Element
 import dev.ohs.fhir.codegen.schema.Type
 import dev.ohs.fhir.codegen.schema.capitalized
 import dev.ohs.fhir.codegen.schema.getContentReferenceType
 import dev.ohs.fhir.codegen.schema.getElementName
-import dev.ohs.fhir.codegen.schema.getPathSimpleNames
 import dev.ohs.fhir.codegen.schema.isBackboneElement
 import dev.ohs.fhir.codegen.schema.typeIsEnumeratedCode
 
@@ -278,16 +276,19 @@ internal class SerializerEncodeEmitter(private val codegenContext: CodegenContex
     hoister: SerializerHoister,
   ) {
     val propertyName = element.getElementName()
-    val sealedTypeClass = ClassName(modelClassName.packageName, element.getPathSimpleNames())
+    val registry = codegenContext.choiceRegistry
     codeBlock.add("when (val choice = value.%N) {\n", propertyName)
     codeBlock.indent()
     if (element.min == 0) {
       codeBlock.add("null -> {}\n")
     }
     for (type in element.type!!) {
-      val expansionClassName = sealedTypeClass.nestedClass(choiceTypeExpansionName(type))
+      // The matched arm is either a bare model type (`is Quantity`) or a shared wrapper
+      // (`is QuantityBox`); the box indirection (`.value`) is only present in the latter.
+      val memberClass = registry.memberClassName(element, type)
+      val wrapped = registry.isWrapped(element, type)
       val expansionBaseName = "$propertyName${type.code.capitalized()}"
-      codeBlock.add("is %T -> {\n", expansionClassName)
+      codeBlock.add("is %T -> {\n", memberClass)
       codeBlock.indent()
       emitJsonEncodeChoiceTypeExpansion(
         codeBlock,
@@ -296,6 +297,7 @@ internal class SerializerEncodeEmitter(private val codegenContext: CodegenContex
         modelClassName,
         nameToIdx,
         hoister,
+        wrapped,
       )
       codeBlock.unindent()
       codeBlock.add("}\n")
@@ -306,7 +308,9 @@ internal class SerializerEncodeEmitter(private val codegenContext: CodegenContex
 
   /**
    * Writes both expansion keys (`deceasedBoolean` + `_deceasedBoolean`) for a matched choice type
-   * expansion.
+   * expansion. [wrapped] selects the model-value accessor: `choice.value` when the matched arm is a
+   * `<Type>Box` box, or `choice` itself when the model type implements the set interface directly
+   * (bare).
    */
   private fun emitJsonEncodeChoiceTypeExpansion(
     codeBlock: CodeBlock.Builder,
@@ -315,8 +319,10 @@ internal class SerializerEncodeEmitter(private val codegenContext: CodegenContex
     modelClassName: ClassName,
     nameToIdx: Map<String, CodeBlock>,
     hoister: SerializerHoister,
+    wrapped: Boolean,
   ) {
     val typeCode = type.code
+    val accessor = if (wrapped) "choice.value" else "choice"
     val valueIdx = nameToIdx.getValue(choiceFieldBaseName)
     val elementIdx = nameToIdx["_$choiceFieldBaseName"]
     if (FhirPathType.containsFhirTypeCode(typeCode)) {
@@ -326,7 +332,7 @@ internal class SerializerEncodeEmitter(private val codegenContext: CodegenContex
       val valueExpr =
         CodeBlock.builder()
           .apply {
-            add("(choice.value")
+            add("(%L", accessor)
             fhirPathType.addCodeToEncodeModelToWire(this)
             add(")")
           }
@@ -347,7 +353,8 @@ internal class SerializerEncodeEmitter(private val codegenContext: CodegenContex
         val elementSer =
           hoistedSerializerForClass(elementClassName, modelClassName, hoister, "elementSer")
         codeBlock.add(
-          "(choice.value.toElement())?.let·{ encoder.encodeSerializableElement(descriptor, %L, %L, it) }\n",
+          "(%L.toElement())?.let·{ encoder.encodeSerializableElement(descriptor, %L, %L, it) }\n",
+          accessor,
           elementIdx,
           elementSer,
         )
@@ -363,9 +370,10 @@ internal class SerializerEncodeEmitter(private val codegenContext: CodegenContex
           "${complexClassName.simpleName.lowercase()}Ser",
         )
       codeBlock.add(
-        "encoder.encodeSerializableElement(descriptor, %L, %L, choice.value)\n",
+        "encoder.encodeSerializableElement(descriptor, %L, %L, %L)\n",
         valueIdx,
         complexSer,
+        accessor,
       )
     }
   }

@@ -17,10 +17,8 @@
 package dev.ohs.fhir.model.r5
 
 import dev.ohs.fhir.model.r5.serializers.ProductShelfLifeSerializer
-import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.Serializable
 
 /**
@@ -33,7 +31,7 @@ public data class ProductShelfLife(
    * Unique id for the element within a resource (for internal references). This may be any string
    * value that does not contain spaces.
    */
-  override val id: String? = null,
+  override val id: kotlin.String? = null,
   /**
    * May be used to represent additional information that is not part of the basic definition of the
    * element. To make the use of extensions safe and managable, there is a strict set of governance
@@ -78,8 +76,10 @@ public data class ProductShelfLife(
    * The shelf life time period can be specified using a numerical value for the period of time and
    * its unit of time measurement The unit of measurement shall be specified in accordance with ISO
    * 11240 and the resulting terminology The symbol and the symbol identifier shall be used.
+   *
+   * A FHIR choice type — one of: [Duration] | [String]
    */
-  public val period: Period? = null,
+  public val period: FhirChoiceTypes.DurationOrString? = null,
   /**
    * Special precautions for storage, if any, can be specified using an appropriate controlled
    * vocabulary The controlled term and the controlled term identifier shall be specified.
@@ -99,34 +99,12 @@ public data class ProductShelfLife(
       }
     }
 
-  public sealed interface Period {
-    public fun asDuration(): Duration? = this as? Duration
-
-    public fun asString(): String? = this as? String
-
-    @JvmInline
-    public value class Duration(public val `value`: dev.ohs.fhir.model.r5.Duration) : Period
-
-    @JvmInline public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : Period
-
-    public companion object {
-      internal fun from(
-        durationValue: dev.ohs.fhir.model.r5.Duration?,
-        stringValue: dev.ohs.fhir.model.r5.String?,
-      ): Period? {
-        if (durationValue != null) return Duration(durationValue)
-        if (stringValue != null) return String(stringValue)
-        return null
-      }
-    }
-  }
-
   public open class Builder() {
     /**
      * Unique id for the element within a resource (for internal references). This may be any string
      * value that does not contain spaces.
      */
-    public open var id: String? = null
+    public open var id: kotlin.String? = null
 
     /**
      * May be used to represent additional information that is not part of the basic definition of
@@ -176,8 +154,10 @@ public data class ProductShelfLife(
      * and its unit of time measurement The unit of measurement shall be specified in accordance
      * with ISO 11240 and the resulting terminology The symbol and the symbol identifier shall be
      * used.
+     *
+     * A FHIR choice type — one of: [Duration] | [String]
      */
-    public open var period: Period? = null
+    public open var period: FhirChoiceTypes.DurationOrString? = null
 
     /**
      * Special precautions for storage, if any, can be specified using an appropriate controlled

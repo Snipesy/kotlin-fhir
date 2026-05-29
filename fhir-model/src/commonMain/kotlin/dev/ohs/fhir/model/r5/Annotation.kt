@@ -17,10 +17,8 @@
 package dev.ohs.fhir.model.r5
 
 import dev.ohs.fhir.model.r5.serializers.AnnotationSerializer
-import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.Serializable
 
 /**
@@ -33,7 +31,7 @@ public data class Annotation(
    * Unique id for the element within a resource (for internal references). This may be any string
    * value that does not contain spaces.
    */
-  override val id: String? = null,
+  override val id: kotlin.String? = null,
   /**
    * May be used to represent additional information that is not part of the basic definition of the
    * element. To make the use of extensions safe and managable, there is a strict set of governance
@@ -51,13 +49,15 @@ public data class Annotation(
    * The individual responsible for making the annotation.
    *
    * Organization is used when there's no need for specific attribution as to who made the comment.
+   *
+   * A FHIR choice type — one of: [Reference] | [String]
    */
-  public val author: Author? = null,
+  public val author: Annotation.Author? = null,
   /** Indicates when this particular annotation was made. */
   public val time: DateTime? = null,
   /** The text of the annotation in markdown format. */
   public val text: Markdown,
-) : DataType() {
+) : DataType(), FhirChoiceParticipants.AnnotationChoices {
   public fun toBuilder(): Builder =
     with(this) {
       Builder(text.toBuilder()).apply {
@@ -68,28 +68,6 @@ public data class Annotation(
       }
     }
 
-  public sealed interface Author {
-    public fun asReference(): Reference? = this as? Reference
-
-    public fun asString(): String? = this as? String
-
-    @JvmInline
-    public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : Author
-
-    @JvmInline public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : Author
-
-    public companion object {
-      internal fun from(
-        referenceValue: dev.ohs.fhir.model.r5.Reference?,
-        stringValue: dev.ohs.fhir.model.r5.String?,
-      ): Author? {
-        if (referenceValue != null) return Reference(referenceValue)
-        if (stringValue != null) return String(stringValue)
-        return null
-      }
-    }
-  }
-
   public open class Builder(
     /** The text of the annotation in markdown format. */
     public open var text: Markdown.Builder
@@ -98,7 +76,7 @@ public data class Annotation(
      * Unique id for the element within a resource (for internal references). This may be any string
      * value that does not contain spaces.
      */
-    public open var id: String? = null
+    public open var id: kotlin.String? = null
 
     /**
      * May be used to represent additional information that is not part of the basic definition of
@@ -119,8 +97,10 @@ public data class Annotation(
      *
      * Organization is used when there's no need for specific attribution as to who made the
      * comment.
+     *
+     * A FHIR choice type — one of: [Reference] | [String]
      */
-    public open var author: Author? = null
+    public open var author: Annotation.Author? = null
 
     /** Indicates when this particular annotation was made. */
     public open var time: DateTime.Builder? = null
@@ -134,4 +114,7 @@ public data class Annotation(
         text = text.build(),
       )
   }
+
+  /** A FHIR choice type — one of: [Reference] | [String] */
+  public typealias Author = FhirChoiceTypes.ReferenceOrString
 }

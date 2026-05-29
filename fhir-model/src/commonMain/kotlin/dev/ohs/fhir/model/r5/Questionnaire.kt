@@ -25,7 +25,6 @@ import dev.ohs.fhir.model.r5.terminologies.PublicationStatus
 import dev.ohs.fhir.model.r5.terminologies.ResourceType
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -186,8 +185,10 @@ public data class Questionnaire(
    * passed in - %version1 and %version2 and will return a negative number if version1 is newer, a
    * positive number if version2 and a 0 if the version ordering can't be successfully be
    * determined.
+   *
+   * A FHIR choice type — one of: [Coding] | [String]
    */
-  public val versionAlgorithm: VersionAlgorithm? = null,
+  public val versionAlgorithm: Questionnaire.VersionAlgorithm? = null,
   /**
    * A natural language name identifying the questionnaire. This name should be usable as an
    * identifier for the module by machine processing applications such as code generation.
@@ -737,8 +738,11 @@ public data class Questionnaire(
        * the item to be enabled. If there are multiple answers, a match on any of the answers
        * suffices. If different behavior is desired (all must match, at least 2 must match, etc.),
        * consider using the enableWhenExpression extension.
+       *
+       * A FHIR choice type — one of: [Boolean] | [Coding] | [Date] | [DateTime] | [Decimal] |
+       * [Integer] | [Quantity] | [Reference] | [String] | [Time]
        */
-      public val answer: Answer,
+      public val answer: EnableWhen.Answer,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -748,83 +752,6 @@ public data class Questionnaire(
             modifierExtension = this@with.modifierExtension.map { it.toBuilder() }.toMutableList()
           }
         }
-
-      public sealed interface Answer {
-        public fun asBoolean(): Boolean? = this as? Boolean
-
-        public fun asDecimal(): Decimal? = this as? Decimal
-
-        public fun asInteger(): Integer? = this as? Integer
-
-        public fun asDate(): Date? = this as? Date
-
-        public fun asDateTime(): DateTime? = this as? DateTime
-
-        public fun asTime(): Time? = this as? Time
-
-        public fun asString(): String? = this as? String
-
-        public fun asCoding(): Coding? = this as? Coding
-
-        public fun asQuantity(): Quantity? = this as? Quantity
-
-        public fun asReference(): Reference? = this as? Reference
-
-        @JvmInline
-        public value class Boolean(public val `value`: dev.ohs.fhir.model.r5.Boolean) : Answer
-
-        @JvmInline
-        public value class Decimal(public val `value`: dev.ohs.fhir.model.r5.Decimal) : Answer
-
-        @JvmInline
-        public value class Integer(public val `value`: dev.ohs.fhir.model.r5.Integer) : Answer
-
-        @JvmInline public value class Date(public val `value`: dev.ohs.fhir.model.r5.Date) : Answer
-
-        @JvmInline
-        public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) : Answer
-
-        @JvmInline public value class Time(public val `value`: dev.ohs.fhir.model.r5.Time) : Answer
-
-        @JvmInline
-        public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : Answer
-
-        @JvmInline
-        public value class Coding(public val `value`: dev.ohs.fhir.model.r5.Coding) : Answer
-
-        @JvmInline
-        public value class Quantity(public val `value`: dev.ohs.fhir.model.r5.Quantity) : Answer
-
-        @JvmInline
-        public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : Answer
-
-        public companion object {
-          internal fun from(
-            booleanValue: dev.ohs.fhir.model.r5.Boolean?,
-            decimalValue: dev.ohs.fhir.model.r5.Decimal?,
-            integerValue: dev.ohs.fhir.model.r5.Integer?,
-            dateValue: dev.ohs.fhir.model.r5.Date?,
-            dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-            timeValue: dev.ohs.fhir.model.r5.Time?,
-            stringValue: dev.ohs.fhir.model.r5.String?,
-            codingValue: dev.ohs.fhir.model.r5.Coding?,
-            quantityValue: dev.ohs.fhir.model.r5.Quantity?,
-            referenceValue: dev.ohs.fhir.model.r5.Reference?,
-          ): Answer? {
-            if (booleanValue != null) return Boolean(booleanValue)
-            if (decimalValue != null) return Decimal(decimalValue)
-            if (integerValue != null) return Integer(integerValue)
-            if (dateValue != null) return Date(dateValue)
-            if (dateTimeValue != null) return DateTime(dateTimeValue)
-            if (timeValue != null) return Time(timeValue)
-            if (stringValue != null) return String(stringValue)
-            if (codingValue != null) return Coding(codingValue)
-            if (quantityValue != null) return Quantity(quantityValue)
-            if (referenceValue != null) return Reference(referenceValue)
-            return null
-          }
-        }
-      }
 
       public class Builder(
         /**
@@ -846,8 +773,11 @@ public data class Questionnaire(
          * the item to be enabled. If there are multiple answers, a match on any of the answers
          * suffices. If different behavior is desired (all must match, at least 2 must match, etc.),
          * consider using the enableWhenExpression extension.
+         *
+         * A FHIR choice type — one of: [Boolean] | [Coding] | [Date] | [DateTime] | [Decimal] |
+         * [Integer] | [Quantity] | [Reference] | [String] | [Time]
          */
-        public var answer: Answer,
+        public var answer: EnableWhen.Answer,
       ) {
         /**
          * Unique id for the element within a resource (for internal references). This may be any
@@ -899,6 +829,12 @@ public data class Questionnaire(
             answer = answer,
           )
       }
+
+      /**
+       * A FHIR choice type — one of: [Boolean] | [Coding] | [Date] | [DateTime] | [Decimal] |
+       * [Integer] | [Quantity] | [Reference] | [String] | [Time]
+       */
+      public typealias Answer = FhirChoiceTypes.QuestionnaireItemEnableWhenAnswerChoice
     }
 
     /** One of the permitted answers for the question. */
@@ -945,8 +881,11 @@ public data class Questionnaire(
        * A potential answer that's allowed as the answer to this question.
        *
        * The data type of the value must agree with the item.type.
+       *
+       * A FHIR choice type — one of: [Coding] | [Date] | [Integer] | [Reference] | [String] |
+       * [Time]
        */
-      public val `value`: Value,
+      public val `value`: AnswerOption.Value,
       /**
        * Indicates whether the answer value is selected when the list of possible answers is
        * initially shown.
@@ -963,62 +902,16 @@ public data class Questionnaire(
           }
         }
 
-      public sealed interface Value {
-        public fun asInteger(): Integer? = this as? Integer
-
-        public fun asDate(): Date? = this as? Date
-
-        public fun asTime(): Time? = this as? Time
-
-        public fun asString(): String? = this as? String
-
-        public fun asCoding(): Coding? = this as? Coding
-
-        public fun asReference(): Reference? = this as? Reference
-
-        @JvmInline
-        public value class Integer(public val `value`: dev.ohs.fhir.model.r5.Integer) : Value
-
-        @JvmInline public value class Date(public val `value`: dev.ohs.fhir.model.r5.Date) : Value
-
-        @JvmInline public value class Time(public val `value`: dev.ohs.fhir.model.r5.Time) : Value
-
-        @JvmInline
-        public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : Value
-
-        @JvmInline
-        public value class Coding(public val `value`: dev.ohs.fhir.model.r5.Coding) : Value
-
-        @JvmInline
-        public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : Value
-
-        public companion object {
-          internal fun from(
-            integerValue: dev.ohs.fhir.model.r5.Integer?,
-            dateValue: dev.ohs.fhir.model.r5.Date?,
-            timeValue: dev.ohs.fhir.model.r5.Time?,
-            stringValue: dev.ohs.fhir.model.r5.String?,
-            codingValue: dev.ohs.fhir.model.r5.Coding?,
-            referenceValue: dev.ohs.fhir.model.r5.Reference?,
-          ): Value? {
-            if (integerValue != null) return Integer(integerValue)
-            if (dateValue != null) return Date(dateValue)
-            if (timeValue != null) return Time(timeValue)
-            if (stringValue != null) return String(stringValue)
-            if (codingValue != null) return Coding(codingValue)
-            if (referenceValue != null) return Reference(referenceValue)
-            return null
-          }
-        }
-      }
-
       public class Builder(
         /**
          * A potential answer that's allowed as the answer to this question.
          *
          * The data type of the value must agree with the item.type.
+         *
+         * A FHIR choice type — one of: [Coding] | [Date] | [Integer] | [Reference] | [String] |
+         * [Time]
          */
-        public var `value`: Value
+        public var `value`: AnswerOption.Value
       ) {
         /**
          * Unique id for the element within a resource (for internal references). This may be any
@@ -1075,6 +968,12 @@ public data class Questionnaire(
             initialSelected = initialSelected?.build(),
           )
       }
+
+      /**
+       * A FHIR choice type — one of: [Coding] | [Date] | [Integer] | [Reference] | [String] |
+       * [Time]
+       */
+      public typealias Value = FhirChoiceTypes.CodingOrDateOrIntegerOrReferenceOrStringOrTime
     }
 
     /**
@@ -1124,8 +1023,11 @@ public data class Questionnaire(
        * The actual value to for an initial answer.
        *
        * The type of the initial value must be consistent with the type of the item.
+       *
+       * A FHIR choice type — one of: [Attachment] | [Boolean] | [Coding] | [Date] | [DateTime] |
+       * [Decimal] | [Integer] | [Quantity] | [Reference] | [String] | [Time] | [Uri]
        */
-      public val `value`: Value,
+      public val `value`: Initial.Value,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -1136,103 +1038,16 @@ public data class Questionnaire(
           }
         }
 
-      public sealed interface Value {
-        public fun asBoolean(): Boolean? = this as? Boolean
-
-        public fun asDecimal(): Decimal? = this as? Decimal
-
-        public fun asInteger(): Integer? = this as? Integer
-
-        public fun asDate(): Date? = this as? Date
-
-        public fun asDateTime(): DateTime? = this as? DateTime
-
-        public fun asTime(): Time? = this as? Time
-
-        public fun asString(): String? = this as? String
-
-        public fun asUri(): Uri? = this as? Uri
-
-        public fun asAttachment(): Attachment? = this as? Attachment
-
-        public fun asCoding(): Coding? = this as? Coding
-
-        public fun asQuantity(): Quantity? = this as? Quantity
-
-        public fun asReference(): Reference? = this as? Reference
-
-        @JvmInline
-        public value class Boolean(public val `value`: dev.ohs.fhir.model.r5.Boolean) : Value
-
-        @JvmInline
-        public value class Decimal(public val `value`: dev.ohs.fhir.model.r5.Decimal) : Value
-
-        @JvmInline
-        public value class Integer(public val `value`: dev.ohs.fhir.model.r5.Integer) : Value
-
-        @JvmInline public value class Date(public val `value`: dev.ohs.fhir.model.r5.Date) : Value
-
-        @JvmInline
-        public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) : Value
-
-        @JvmInline public value class Time(public val `value`: dev.ohs.fhir.model.r5.Time) : Value
-
-        @JvmInline
-        public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : Value
-
-        @JvmInline public value class Uri(public val `value`: dev.ohs.fhir.model.r5.Uri) : Value
-
-        @JvmInline
-        public value class Attachment(public val `value`: dev.ohs.fhir.model.r5.Attachment) : Value
-
-        @JvmInline
-        public value class Coding(public val `value`: dev.ohs.fhir.model.r5.Coding) : Value
-
-        @JvmInline
-        public value class Quantity(public val `value`: dev.ohs.fhir.model.r5.Quantity) : Value
-
-        @JvmInline
-        public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : Value
-
-        public companion object {
-          internal fun from(
-            booleanValue: dev.ohs.fhir.model.r5.Boolean?,
-            decimalValue: dev.ohs.fhir.model.r5.Decimal?,
-            integerValue: dev.ohs.fhir.model.r5.Integer?,
-            dateValue: dev.ohs.fhir.model.r5.Date?,
-            dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-            timeValue: dev.ohs.fhir.model.r5.Time?,
-            stringValue: dev.ohs.fhir.model.r5.String?,
-            uriValue: dev.ohs.fhir.model.r5.Uri?,
-            attachmentValue: dev.ohs.fhir.model.r5.Attachment?,
-            codingValue: dev.ohs.fhir.model.r5.Coding?,
-            quantityValue: dev.ohs.fhir.model.r5.Quantity?,
-            referenceValue: dev.ohs.fhir.model.r5.Reference?,
-          ): Value? {
-            if (booleanValue != null) return Boolean(booleanValue)
-            if (decimalValue != null) return Decimal(decimalValue)
-            if (integerValue != null) return Integer(integerValue)
-            if (dateValue != null) return Date(dateValue)
-            if (dateTimeValue != null) return DateTime(dateTimeValue)
-            if (timeValue != null) return Time(timeValue)
-            if (stringValue != null) return String(stringValue)
-            if (uriValue != null) return Uri(uriValue)
-            if (attachmentValue != null) return Attachment(attachmentValue)
-            if (codingValue != null) return Coding(codingValue)
-            if (quantityValue != null) return Quantity(quantityValue)
-            if (referenceValue != null) return Reference(referenceValue)
-            return null
-          }
-        }
-      }
-
       public class Builder(
         /**
          * The actual value to for an initial answer.
          *
          * The type of the initial value must be consistent with the type of the item.
+         *
+         * A FHIR choice type — one of: [Attachment] | [Boolean] | [Coding] | [Date] | [DateTime] |
+         * [Decimal] | [Integer] | [Quantity] | [Reference] | [String] | [Time] | [Uri]
          */
-        public var `value`: Value
+        public var `value`: Initial.Value
       ) {
         /**
          * Unique id for the element within a resource (for internal references). This may be any
@@ -1282,6 +1097,12 @@ public data class Questionnaire(
             `value` = `value`,
           )
       }
+
+      /**
+       * A FHIR choice type — one of: [Attachment] | [Boolean] | [Coding] | [Date] | [DateTime] |
+       * [Decimal] | [Integer] | [Quantity] | [Reference] | [String] | [Time] | [Uri]
+       */
+      public typealias Value = FhirChoiceTypes.ContractTermOfferAnswerValueChoice
     }
 
     public class Builder(
@@ -1571,29 +1392,6 @@ public data class Questionnaire(
     }
   }
 
-  public sealed interface VersionAlgorithm {
-    public fun asString(): String? = this as? String
-
-    public fun asCoding(): Coding? = this as? Coding
-
-    @JvmInline
-    public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : VersionAlgorithm
-
-    @JvmInline
-    public value class Coding(public val `value`: dev.ohs.fhir.model.r5.Coding) : VersionAlgorithm
-
-    public companion object {
-      internal fun from(
-        stringValue: dev.ohs.fhir.model.r5.String?,
-        codingValue: dev.ohs.fhir.model.r5.Coding?,
-      ): VersionAlgorithm? {
-        if (stringValue != null) return String(stringValue)
-        if (codingValue != null) return Coding(codingValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
     /**
      * The current state of this questionnaire.
@@ -1769,8 +1567,10 @@ public data class Questionnaire(
      * passed in - %version1 and %version2 and will return a negative number if version1 is newer, a
      * positive number if version2 and a 0 if the version ordering can't be successfully be
      * determined.
+     *
+     * A FHIR choice type — one of: [Coding] | [String]
      */
-    public var versionAlgorithm: VersionAlgorithm? = null
+    public var versionAlgorithm: Questionnaire.VersionAlgorithm? = null
 
     /**
      * A natural language name identifying the questionnaire. This name should be usable as an
@@ -2202,4 +2002,7 @@ public data class Questionnaire(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [Coding] | [String] */
+  public typealias VersionAlgorithm = FhirChoiceTypes.CodingOrString
 }

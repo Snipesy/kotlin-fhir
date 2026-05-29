@@ -444,7 +444,7 @@ internal object LibrarySerializer : KSerializer<Library> {
       status = Enumeration.of(PublicationStatus.fromCode(status!!), _status),
       experimental = R4bBoolean.of(experimental, _experimental),
       type = type!!,
-      subject = Library.Subject.from(subjectCodeableConcept, subjectReference),
+      subject = (subjectCodeableConcept ?: subjectReference),
       date = DateTime.of(FhirDateTime.fromString(date), _date),
       publisher = R4bString.of(publisher, _publisher),
       contact = contact ?: listOf(),
@@ -615,20 +615,20 @@ internal object LibrarySerializer : KSerializer<Library> {
     )
     when (val choice = value.subject) {
       null -> {}
-      is Library.Subject.CodeableConcept -> {
+      is CodeableConcept -> {
         encoder.encodeSerializableElement(
           descriptor,
           26 + descriptorOffset,
           Hoisted.typeSer,
-          choice.value,
+          choice,
         )
       }
-      is Library.Subject.Reference -> {
+      is Reference -> {
         encoder.encodeSerializableElement(
           descriptor,
           27 + descriptorOffset,
           Hoisted.subjectReferenceSer,
-          choice.value,
+          choice,
         )
       }
     }

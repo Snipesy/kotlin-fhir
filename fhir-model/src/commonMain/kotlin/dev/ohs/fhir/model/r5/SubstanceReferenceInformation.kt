@@ -22,7 +22,6 @@ import dev.ohs.fhir.model.r5.serializers.SubstanceReferenceInformationSerializer
 import dev.ohs.fhir.model.r5.serializers.SubstanceReferenceInformationTargetSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -447,8 +446,12 @@ public data class SubstanceReferenceInformation(
     public val organism: CodeableConcept? = null,
     /** Todo. */
     public val organismType: CodeableConcept? = null,
-    /** Todo. */
-    public val amount: Amount? = null,
+    /**
+     * Todo.
+     *
+     * A FHIR choice type — one of: [Quantity] | [Range] | [String]
+     */
+    public val amount: Target.Amount? = null,
     /** Todo. */
     public val amountType: CodeableConcept? = null,
     /** Todo. */
@@ -470,35 +473,6 @@ public data class SubstanceReferenceInformation(
           source = this@with.source.map { it.toBuilder() }.toMutableList()
         }
       }
-
-    public sealed interface Amount {
-      public fun asQuantity(): Quantity? = this as? Quantity
-
-      public fun asRange(): Range? = this as? Range
-
-      public fun asString(): String? = this as? String
-
-      @JvmInline
-      public value class Quantity(public val `value`: dev.ohs.fhir.model.r5.Quantity) : Amount
-
-      @JvmInline public value class Range(public val `value`: dev.ohs.fhir.model.r5.Range) : Amount
-
-      @JvmInline
-      public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : Amount
-
-      public companion object {
-        internal fun from(
-          quantityValue: dev.ohs.fhir.model.r5.Quantity?,
-          rangeValue: dev.ohs.fhir.model.r5.Range?,
-          stringValue: dev.ohs.fhir.model.r5.String?,
-        ): Amount? {
-          if (quantityValue != null) return Quantity(quantityValue)
-          if (rangeValue != null) return Range(rangeValue)
-          if (stringValue != null) return String(stringValue)
-          return null
-        }
-      }
-    }
 
     public class Builder() {
       /**
@@ -556,8 +530,12 @@ public data class SubstanceReferenceInformation(
       /** Todo. */
       public var organismType: CodeableConcept.Builder? = null
 
-      /** Todo. */
-      public var amount: Amount? = null
+      /**
+       * Todo.
+       *
+       * A FHIR choice type — one of: [Quantity] | [Range] | [String]
+       */
+      public var amount: Target.Amount? = null
 
       /** Todo. */
       public var amountType: CodeableConcept.Builder? = null
@@ -580,6 +558,9 @@ public data class SubstanceReferenceInformation(
           source = source.map { it.build() },
         )
     }
+
+    /** A FHIR choice type — one of: [Quantity] | [Range] | [String] */
+    public typealias Amount = FhirChoiceTypes.QuantityOrRangeOrString
   }
 
   public class Builder() : DomainResource.Builder() {

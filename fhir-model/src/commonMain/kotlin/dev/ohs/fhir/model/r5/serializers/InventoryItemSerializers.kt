@@ -27,6 +27,7 @@ import dev.ohs.fhir.model.r5.Coding
 import dev.ohs.fhir.model.r5.DateTime
 import dev.ohs.fhir.model.r5.Decimal
 import dev.ohs.fhir.model.r5.Duration
+import dev.ohs.fhir.model.r5.DurationBox
 import dev.ohs.fhir.model.r5.Element
 import dev.ohs.fhir.model.r5.Enumeration
 import dev.ohs.fhir.model.r5.Extension
@@ -38,6 +39,7 @@ import dev.ohs.fhir.model.r5.InventoryItem
 import dev.ohs.fhir.model.r5.Meta
 import dev.ohs.fhir.model.r5.Narrative
 import dev.ohs.fhir.model.r5.Quantity
+import dev.ohs.fhir.model.r5.QuantityBox
 import dev.ohs.fhir.model.r5.Range
 import dev.ohs.fhir.model.r5.Ratio
 import dev.ohs.fhir.model.r5.Reference
@@ -615,21 +617,19 @@ internal object InventoryItemCharacteristicSerializer : KSerializer<InventoryIte
       modifierExtension = modifierExtension ?: listOf(),
       characteristicType = characteristicType!!,
       `value` =
-        InventoryItem.Characteristic.Value.from(
-          R5String.of(valueString, _valueString),
-          Integer.of(valueInteger, _valueInteger),
-          Decimal.of(valueDecimal, _valueDecimal),
-          R5Boolean.of(valueBoolean, _valueBoolean),
-          Url.of(valueUrl, _valueUrl),
-          DateTime.of(FhirDateTime.fromString(valueDateTime), _valueDateTime),
-          valueQuantity,
-          valueRange,
-          valueRatio,
-          valueAnnotation,
-          valueAddress,
-          valueDuration,
-          valueCodeableConcept,
-        )!!,
+        (R5String.of(valueString, _valueString)
+          ?: Integer.of(valueInteger, _valueInteger)
+          ?: Decimal.of(valueDecimal, _valueDecimal)
+          ?: R5Boolean.of(valueBoolean, _valueBoolean)
+          ?: Url.of(valueUrl, _valueUrl)
+          ?: DateTime.of(FhirDateTime.fromString(valueDateTime), _valueDateTime)
+          ?: (valueQuantity)?.let { QuantityBox(it) }
+          ?: valueRange
+          ?: valueRatio
+          ?: valueAnnotation
+          ?: valueAddress
+          ?: (valueDuration)?.let { DurationBox(it) }
+          ?: valueCodeableConcept)!!,
     )
   }
 
@@ -651,69 +651,64 @@ internal object InventoryItemCharacteristicSerializer : KSerializer<InventoryIte
       value.characteristicType,
     )
     when (val choice = value.`value`) {
-      is InventoryItem.Characteristic.Value.String -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 4, it) }
-        (choice.value.toElement())?.let {
+      is R5String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 4, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 5, Hoisted.valueStringSer, it)
         }
       }
-      is InventoryItem.Characteristic.Value.Integer -> {
-        ((choice.value.value))?.let { encoder.encodeIntElement(descriptor, 6, it) }
-        (choice.value.toElement())?.let {
+      is Integer -> {
+        ((choice.value))?.let { encoder.encodeIntElement(descriptor, 6, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 7, Hoisted.valueStringSer, it)
         }
       }
-      is InventoryItem.Characteristic.Value.Decimal -> {
-        ((choice.value.value))?.let {
+      is Decimal -> {
+        ((choice.value))?.let {
           encoder.encodeSerializableElement(descriptor, 8, FhirDecimalSerializer, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 9, Hoisted.valueStringSer, it)
         }
       }
-      is InventoryItem.Characteristic.Value.Boolean -> {
-        ((choice.value.value))?.let { encoder.encodeBooleanElement(descriptor, 10, it) }
-        (choice.value.toElement())?.let {
+      is R5Boolean -> {
+        ((choice.value))?.let { encoder.encodeBooleanElement(descriptor, 10, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 11, Hoisted.valueStringSer, it)
         }
       }
-      is InventoryItem.Characteristic.Value.Url -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 12, it) }
-        (choice.value.toElement())?.let {
+      is Url -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 12, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 13, Hoisted.valueStringSer, it)
         }
       }
-      is InventoryItem.Characteristic.Value.DateTime -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 14, it) }
-        (choice.value.toElement())?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 14, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 15, Hoisted.valueStringSer, it)
         }
       }
-      is InventoryItem.Characteristic.Value.Quantity -> {
+      is QuantityBox -> {
         encoder.encodeSerializableElement(descriptor, 16, Hoisted.valueQuantitySer, choice.value)
       }
-      is InventoryItem.Characteristic.Value.Range -> {
-        encoder.encodeSerializableElement(descriptor, 17, Hoisted.valueRangeSer, choice.value)
+      is Range -> {
+        encoder.encodeSerializableElement(descriptor, 17, Hoisted.valueRangeSer, choice)
       }
-      is InventoryItem.Characteristic.Value.Ratio -> {
-        encoder.encodeSerializableElement(descriptor, 18, Hoisted.valueRatioSer, choice.value)
+      is Ratio -> {
+        encoder.encodeSerializableElement(descriptor, 18, Hoisted.valueRatioSer, choice)
       }
-      is InventoryItem.Characteristic.Value.Annotation -> {
-        encoder.encodeSerializableElement(descriptor, 19, Hoisted.valueAnnotationSer, choice.value)
+      is Annotation -> {
+        encoder.encodeSerializableElement(descriptor, 19, Hoisted.valueAnnotationSer, choice)
       }
-      is InventoryItem.Characteristic.Value.Address -> {
-        encoder.encodeSerializableElement(descriptor, 20, Hoisted.valueAddressSer, choice.value)
+      is Address -> {
+        encoder.encodeSerializableElement(descriptor, 20, Hoisted.valueAddressSer, choice)
       }
-      is InventoryItem.Characteristic.Value.Duration -> {
+      is DurationBox -> {
         encoder.encodeSerializableElement(descriptor, 21, Hoisted.valueDurationSer, choice.value)
       }
-      is InventoryItem.Characteristic.Value.CodeableConcept -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          22,
-          Hoisted.characteristicTypeSer,
-          choice.value,
-        )
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 22, Hoisted.characteristicTypeSer, choice)
       }
     }
   }

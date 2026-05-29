@@ -212,12 +212,7 @@ internal object SubstanceAmountSerializer : KSerializer<SubstanceAmount> {
       id = id,
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
-      amount =
-        SubstanceAmount.Amount.from(
-          amountQuantity,
-          amountRange,
-          R4String.of(amountString, _amountString),
-        ),
+      amount = (amountQuantity ?: amountRange ?: R4String.of(amountString, _amountString)),
       amountType = amountType,
       amountText = R4String.of(amountText, _amountText),
       referenceRange = referenceRange,
@@ -237,15 +232,15 @@ internal object SubstanceAmountSerializer : KSerializer<SubstanceAmount> {
       )
     when (val choice = value.amount) {
       null -> {}
-      is SubstanceAmount.Amount.Quantity -> {
-        encoder.encodeSerializableElement(descriptor, 3, Hoisted.amountQuantitySer, choice.value)
+      is Quantity -> {
+        encoder.encodeSerializableElement(descriptor, 3, Hoisted.amountQuantitySer, choice)
       }
-      is SubstanceAmount.Amount.Range -> {
-        encoder.encodeSerializableElement(descriptor, 4, Hoisted.amountRangeSer, choice.value)
+      is Range -> {
+        encoder.encodeSerializableElement(descriptor, 4, Hoisted.amountRangeSer, choice)
       }
-      is SubstanceAmount.Amount.String -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
-        (choice.value.toElement())?.let {
+      is R4String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 6, Hoisted.amountStringSer, it)
         }
       }

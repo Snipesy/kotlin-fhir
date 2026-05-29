@@ -487,12 +487,7 @@ internal object SubstanceReferenceInformationTargetSerializer :
       interaction = interaction,
       organism = organism,
       organismType = organismType,
-      amount =
-        SubstanceReferenceInformation.Target.Amount.from(
-          amountQuantity,
-          amountRange,
-          R4String.of(amountString, _amountString),
-        ),
+      amount = (amountQuantity ?: amountRange ?: R4String.of(amountString, _amountString)),
       amountType = amountType,
       source = source ?: listOf(),
     )
@@ -523,15 +518,15 @@ internal object SubstanceReferenceInformationTargetSerializer :
     }
     when (val choice = value.amount) {
       null -> {}
-      is SubstanceReferenceInformation.Target.Amount.Quantity -> {
-        encoder.encodeSerializableElement(descriptor, 8, Hoisted.amountQuantitySer, choice.value)
+      is Quantity -> {
+        encoder.encodeSerializableElement(descriptor, 8, Hoisted.amountQuantitySer, choice)
       }
-      is SubstanceReferenceInformation.Target.Amount.Range -> {
-        encoder.encodeSerializableElement(descriptor, 9, Hoisted.amountRangeSer, choice.value)
+      is Range -> {
+        encoder.encodeSerializableElement(descriptor, 9, Hoisted.amountRangeSer, choice)
       }
-      is SubstanceReferenceInformation.Target.Amount.String -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 10, it) }
-        (choice.value.toElement())?.let {
+      is R4String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 10, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 11, Hoisted.amountStringSer, it)
         }
       }

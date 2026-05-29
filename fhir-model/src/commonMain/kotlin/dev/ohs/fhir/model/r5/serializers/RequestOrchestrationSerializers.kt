@@ -21,6 +21,7 @@ package dev.ohs.fhir.model.r5.serializers
 import dev.ohs.fhir.model.r5.Age
 import dev.ohs.fhir.model.r5.Annotation
 import dev.ohs.fhir.model.r5.Canonical
+import dev.ohs.fhir.model.r5.CanonicalBox
 import dev.ohs.fhir.model.r5.Code
 import dev.ohs.fhir.model.r5.CodeableConcept
 import dev.ohs.fhir.model.r5.CodeableReference
@@ -46,6 +47,7 @@ import dev.ohs.fhir.model.r5.Resource
 import dev.ohs.fhir.model.r5.String as R5String
 import dev.ohs.fhir.model.r5.Timing
 import dev.ohs.fhir.model.r5.Uri
+import dev.ohs.fhir.model.r5.UriBox
 import kotlin.Int
 import kotlin.OptIn
 import kotlin.String as KotlinString
@@ -385,14 +387,12 @@ internal object RequestOrchestrationActionSerializer : KSerializer<RequestOrches
       output = output ?: listOf(),
       relatedAction = relatedAction ?: listOf(),
       timing =
-        RequestOrchestration.Action.Timing.from(
-          DateTime.of(FhirDateTime.fromString(timingDateTime), _timingDateTime),
-          timingAge,
-          timingPeriod,
-          timingDuration,
-          timingRange,
-          timingTiming,
-        ),
+        (DateTime.of(FhirDateTime.fromString(timingDateTime), _timingDateTime)
+          ?: timingAge
+          ?: timingPeriod
+          ?: timingDuration
+          ?: timingRange
+          ?: timingTiming),
       location = location,
       participant = participant ?: listOf(),
       type = type,
@@ -433,10 +433,8 @@ internal object RequestOrchestrationActionSerializer : KSerializer<RequestOrches
         },
       resource = resource,
       definition =
-        RequestOrchestration.Action.Definition.from(
-          Canonical.of(definitionCanonical, _definitionCanonical),
-          Uri.of(definitionUri, _definitionUri),
-        ),
+        ((Canonical.of(definitionCanonical, _definitionCanonical))?.let { CanonicalBox(it) }
+          ?: (Uri.of(definitionUri, _definitionUri))?.let { UriBox(it) }),
       transform = Canonical.of(transform, _transform),
       dynamicValue = dynamicValue ?: listOf(),
       action = action ?: listOf(),
@@ -504,26 +502,26 @@ internal object RequestOrchestrationActionSerializer : KSerializer<RequestOrches
       )
     when (val choice = value.timing) {
       null -> {}
-      is RequestOrchestration.Action.Timing.DateTime -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 22, it) }
-        (choice.value.toElement())?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 22, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 23, Hoisted.linkIdSer, it)
         }
       }
-      is RequestOrchestration.Action.Timing.Age -> {
-        encoder.encodeSerializableElement(descriptor, 24, Hoisted.timingAgeSer, choice.value)
+      is Age -> {
+        encoder.encodeSerializableElement(descriptor, 24, Hoisted.timingAgeSer, choice)
       }
-      is RequestOrchestration.Action.Timing.Period -> {
-        encoder.encodeSerializableElement(descriptor, 25, Hoisted.timingPeriodSer, choice.value)
+      is Period -> {
+        encoder.encodeSerializableElement(descriptor, 25, Hoisted.timingPeriodSer, choice)
       }
-      is RequestOrchestration.Action.Timing.Duration -> {
-        encoder.encodeSerializableElement(descriptor, 26, Hoisted.timingDurationSer, choice.value)
+      is Duration -> {
+        encoder.encodeSerializableElement(descriptor, 26, Hoisted.timingDurationSer, choice)
       }
-      is RequestOrchestration.Action.Timing.Range -> {
-        encoder.encodeSerializableElement(descriptor, 27, Hoisted.timingRangeSer, choice.value)
+      is Range -> {
+        encoder.encodeSerializableElement(descriptor, 27, Hoisted.timingRangeSer, choice)
       }
-      is RequestOrchestration.Action.Timing.Timing -> {
-        encoder.encodeSerializableElement(descriptor, 28, Hoisted.timingTimingSer, choice.value)
+      is Timing -> {
+        encoder.encodeSerializableElement(descriptor, 28, Hoisted.timingTimingSer, choice)
       }
     }
     (value.location)?.let {
@@ -569,13 +567,13 @@ internal object RequestOrchestrationActionSerializer : KSerializer<RequestOrches
     }
     when (val choice = value.definition) {
       null -> {}
-      is RequestOrchestration.Action.Definition.Canonical -> {
+      is CanonicalBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 43, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 44, Hoisted.linkIdSer, it)
         }
       }
-      is RequestOrchestration.Action.Definition.Uri -> {
+      is UriBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 45, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 46, Hoisted.linkIdSer, it)
@@ -1083,7 +1081,7 @@ internal object RequestOrchestrationActionRelatedActionSerializer :
         endRelationship?.let {
           Enumeration.of(RequestOrchestration.ActionRelationshipType.fromCode(it), _endRelationship)
         },
-      offset = RequestOrchestration.Action.RelatedAction.Offset.from(offsetDuration, offsetRange),
+      offset = (offsetDuration ?: offsetRange),
     )
   }
 
@@ -1117,11 +1115,11 @@ internal object RequestOrchestrationActionRelatedActionSerializer :
     }
     when (val choice = value.offset) {
       null -> {}
-      is RequestOrchestration.Action.RelatedAction.Offset.Duration -> {
-        encoder.encodeSerializableElement(descriptor, 9, Hoisted.offsetDurationSer, choice.value)
+      is Duration -> {
+        encoder.encodeSerializableElement(descriptor, 9, Hoisted.offsetDurationSer, choice)
       }
-      is RequestOrchestration.Action.RelatedAction.Offset.Range -> {
-        encoder.encodeSerializableElement(descriptor, 10, Hoisted.offsetRangeSer, choice.value)
+      is Range -> {
+        encoder.encodeSerializableElement(descriptor, 10, Hoisted.offsetRangeSer, choice)
       }
     }
   }
@@ -1234,11 +1232,7 @@ internal object RequestOrchestrationActionParticipantSerializer :
       typeReference = typeReference,
       role = role,
       function = function,
-      actor =
-        RequestOrchestration.Action.Participant.Actor.from(
-          Canonical.of(actorCanonical, _actorCanonical),
-          actorReference,
-        ),
+      actor = (Canonical.of(actorCanonical, _actorCanonical) ?: actorReference),
     )
   }
 
@@ -1271,14 +1265,14 @@ internal object RequestOrchestrationActionParticipantSerializer :
     (value.function)?.let { encoder.encodeSerializableElement(descriptor, 9, Hoisted.roleSer, it) }
     when (val choice = value.actor) {
       null -> {}
-      is RequestOrchestration.Action.Participant.Actor.Canonical -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 10, it) }
-        (choice.value.toElement())?.let {
+      is Canonical -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 10, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 11, Hoisted.typeSer, it)
         }
       }
-      is RequestOrchestration.Action.Participant.Actor.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 12, Hoisted.typeReferenceSer, choice.value)
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 12, Hoisted.typeReferenceSer, choice)
       }
     }
   }

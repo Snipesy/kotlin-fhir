@@ -225,7 +225,7 @@ internal object CompositionRelatesToSerializer : KSerializer<Composition.Relates
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
       code = Enumeration.of(Composition.DocumentRelationshipType.fromCode(code!!), _code),
-      target = Composition.RelatesTo.Target.from(targetIdentifier, targetReference)!!,
+      target = (targetIdentifier ?: targetReference)!!,
     )
   }
 
@@ -245,11 +245,11 @@ internal object CompositionRelatesToSerializer : KSerializer<Composition.Relates
       encoder.encodeSerializableElement(descriptor, 4, Hoisted.codeSer, it)
     }
     when (val choice = value.target) {
-      is Composition.RelatesTo.Target.Identifier -> {
-        encoder.encodeSerializableElement(descriptor, 5, Hoisted.targetIdentifierSer, choice.value)
+      is Identifier -> {
+        encoder.encodeSerializableElement(descriptor, 5, Hoisted.targetIdentifierSer, choice)
       }
-      is Composition.RelatesTo.Target.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 6, Hoisted.targetReferenceSer, choice.value)
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 6, Hoisted.targetReferenceSer, choice)
       }
     }
   }

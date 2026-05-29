@@ -107,7 +107,7 @@ public data class SampledData(
    * required for any actual use of a SampledData.
    */
   public val `data`: String? = null,
-) : DataType() {
+) : DataType(), FhirChoiceParticipants.SampledDataChoices {
   public fun toBuilder(): Builder =
     with(this) {
       Builder(origin.toBuilder(), intervalUnit.toBuilder(), dimensions.toBuilder()).apply {

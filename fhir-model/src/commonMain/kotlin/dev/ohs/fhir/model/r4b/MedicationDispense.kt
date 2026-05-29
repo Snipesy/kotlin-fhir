@@ -22,7 +22,6 @@ import dev.ohs.fhir.model.r4b.serializers.MedicationDispenseSubstitutionSerializ
 import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -149,8 +148,12 @@ public data class MedicationDispense(
    * as not currently valid.
    */
   public val status: Enumeration<MedicationDispenseStatusCodes>,
-  /** Indicates the reason why a dispense was not performed. */
-  public val statusReason: StatusReason? = null,
+  /**
+   * Indicates the reason why a dispense was not performed.
+   *
+   * A FHIR choice type — one of: [CodeableConcept] | [Reference]
+   */
+  public val statusReason: MedicationDispense.StatusReason? = null,
   /**
    * Indicates the type of medication dispense (for example, where the medication is expected to be
    * consumed or administered (i.e. inpatient or outpatient)).
@@ -168,8 +171,10 @@ public data class MedicationDispense(
    * If only a code is specified, then it needs to be a code for a specific product. If more
    * information is required, then the use of the medication resource is recommended. For example,
    * if you require form or lot number, then you must reference the Medication resource.
+   *
+   * A FHIR choice type — one of: [CodeableConcept] | [Reference]
    */
-  public val medication: Medication,
+  public val medication: FhirChoiceTypes.CodeableConceptOrReference,
   /**
    * A link to a resource representing the person or the group to whom the medication will be given.
    *
@@ -553,55 +558,6 @@ public data class MedicationDispense(
     }
   }
 
-  public sealed interface StatusReason {
-    public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-    public fun asReference(): Reference? = this as? Reference
-
-    @JvmInline
-    public value class CodeableConcept(public val `value`: dev.ohs.fhir.model.r4b.CodeableConcept) :
-      StatusReason
-
-    @JvmInline
-    public value class Reference(public val `value`: dev.ohs.fhir.model.r4b.Reference) :
-      StatusReason
-
-    public companion object {
-      internal fun from(
-        codeableConceptValue: dev.ohs.fhir.model.r4b.CodeableConcept?,
-        referenceValue: dev.ohs.fhir.model.r4b.Reference?,
-      ): StatusReason? {
-        if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-        if (referenceValue != null) return Reference(referenceValue)
-        return null
-      }
-    }
-  }
-
-  public sealed interface Medication {
-    public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-    public fun asReference(): Reference? = this as? Reference
-
-    @JvmInline
-    public value class CodeableConcept(public val `value`: dev.ohs.fhir.model.r4b.CodeableConcept) :
-      Medication
-
-    @JvmInline
-    public value class Reference(public val `value`: dev.ohs.fhir.model.r4b.Reference) : Medication
-
-    public companion object {
-      internal fun from(
-        codeableConceptValue: dev.ohs.fhir.model.r4b.CodeableConcept?,
-        referenceValue: dev.ohs.fhir.model.r4b.Reference?,
-      ): Medication? {
-        if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-        if (referenceValue != null) return Reference(referenceValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
     /**
      * A code specifying the state of the set of dispense events.
@@ -618,8 +574,10 @@ public data class MedicationDispense(
      * If only a code is specified, then it needs to be a code for a specific product. If more
      * information is required, then the use of the medication resource is recommended. For example,
      * if you require form or lot number, then you must reference the Medication resource.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public var medication: Medication,
+    public var medication: FhirChoiceTypes.CodeableConceptOrReference,
   ) : DomainResource.Builder() {
     /**
      * The logical id of the resource, as used in the URL for the resource. Once assigned, this
@@ -740,8 +698,12 @@ public data class MedicationDispense(
     /** The procedure that trigger the dispense. */
     public var partOf: MutableList<Reference.Builder> = mutableListOf()
 
-    /** Indicates the reason why a dispense was not performed. */
-    public var statusReason: StatusReason? = null
+    /**
+     * Indicates the reason why a dispense was not performed.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Reference]
+     */
+    public var statusReason: MedicationDispense.StatusReason? = null
 
     /**
      * Indicates the type of medication dispense (for example, where the medication is expected to
@@ -972,4 +934,7 @@ public data class MedicationDispense(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+  public typealias StatusReason = FhirChoiceTypes.CodeableConceptOrReference
 }

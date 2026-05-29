@@ -25,7 +25,6 @@ import dev.ohs.fhir.model.r5.serializers.ConditionDefinitionSerializer
 import dev.ohs.fhir.model.r5.terminologies.PublicationStatus
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -180,8 +179,10 @@ public data class ConditionDefinition(
    * passed in - %version1 and %version2 and will return a negative number if version1 is newer, a
    * positive number if version2 and a 0 if the version ordering can't be successfully be
    * determined.
+   *
+   * A FHIR choice type — one of: [Coding] | [String]
    */
-  public val versionAlgorithm: VersionAlgorithm? = null,
+  public val versionAlgorithm: ConditionDefinition.VersionAlgorithm? = null,
   /**
    * A natural language name identifying the condition definition. This name should be usable as an
    * identifier for the module by machine processing applications such as code generation.
@@ -646,8 +647,12 @@ public data class ConditionDefinition(
     public val type: Enumeration<ConditionPreconditionType>,
     /** Code for relevant Observation. */
     public val code: CodeableConcept,
-    /** Value of Observation. */
-    public val `value`: Value? = null,
+    /**
+     * Value of Observation.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Quantity]
+     */
+    public val `value`: Precondition.Value? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -658,31 +663,6 @@ public data class ConditionDefinition(
           `value` = this@with.`value`
         }
       }
-
-    public sealed interface Value {
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asQuantity(): Quantity? = this as? Quantity
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r5.CodeableConcept
-      ) : Value
-
-      @JvmInline
-      public value class Quantity(public val `value`: dev.ohs.fhir.model.r5.Quantity) : Value
-
-      public companion object {
-        internal fun from(
-          codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-          quantityValue: dev.ohs.fhir.model.r5.Quantity?,
-        ): Value? {
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (quantityValue != null) return Quantity(quantityValue)
-          return null
-        }
-      }
-    }
 
     public class Builder(
       /** Kind of pre-condition. */
@@ -730,8 +710,12 @@ public data class ConditionDefinition(
        */
       public var modifierExtension: MutableList<Extension.Builder> = mutableListOf()
 
-      /** Value of Observation. */
-      public var `value`: Value? = null
+      /**
+       * Value of Observation.
+       *
+       * A FHIR choice type — one of: [CodeableConcept] | [Quantity]
+       */
+      public var `value`: Precondition.Value? = null
 
       public fun build(): Precondition =
         Precondition(
@@ -743,6 +727,9 @@ public data class ConditionDefinition(
           `value` = `value`,
         )
     }
+
+    /** A FHIR choice type — one of: [CodeableConcept] | [Quantity] */
+    public typealias Value = FhirChoiceTypes.CodeableConceptOrQuantity
   }
 
   /** Questionnaire for this condition. */
@@ -969,29 +956,6 @@ public data class ConditionDefinition(
     }
   }
 
-  public sealed interface VersionAlgorithm {
-    public fun asString(): String? = this as? String
-
-    public fun asCoding(): Coding? = this as? Coding
-
-    @JvmInline
-    public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : VersionAlgorithm
-
-    @JvmInline
-    public value class Coding(public val `value`: dev.ohs.fhir.model.r5.Coding) : VersionAlgorithm
-
-    public companion object {
-      internal fun from(
-        stringValue: dev.ohs.fhir.model.r5.String?,
-        codingValue: dev.ohs.fhir.model.r5.Coding?,
-      ): VersionAlgorithm? {
-        if (stringValue != null) return String(stringValue)
-        if (codingValue != null) return Coding(codingValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
     /**
      * The status of this condition definition. Enables tracking the life-cycle of the content.
@@ -1165,8 +1129,10 @@ public data class ConditionDefinition(
      * passed in - %version1 and %version2 and will return a negative number if version1 is newer, a
      * positive number if version2 and a 0 if the version ordering can't be successfully be
      * determined.
+     *
+     * A FHIR choice type — one of: [Coding] | [String]
      */
-    public var versionAlgorithm: VersionAlgorithm? = null
+    public var versionAlgorithm: ConditionDefinition.VersionAlgorithm? = null
 
     /**
      * A natural language name identifying the condition definition. This name should be usable as
@@ -1435,4 +1401,7 @@ public data class ConditionDefinition(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [Coding] | [String] */
+  public typealias VersionAlgorithm = FhirChoiceTypes.CodingOrString
 }

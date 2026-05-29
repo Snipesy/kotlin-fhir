@@ -277,15 +277,11 @@ internal object ImmunizationEvaluationSerializer : KSerializer<ImmunizationEvalu
       description = R4bString.of(description, _description),
       series = R4bString.of(series, _series),
       doseNumber =
-        ImmunizationEvaluation.DoseNumber.from(
-          PositiveInt.of(doseNumberPositiveInt, _doseNumberPositiveInt),
-          R4bString.of(doseNumberString, _doseNumberString),
-        ),
+        (PositiveInt.of(doseNumberPositiveInt, _doseNumberPositiveInt)
+          ?: R4bString.of(doseNumberString, _doseNumberString)),
       seriesDoses =
-        ImmunizationEvaluation.SeriesDoses.from(
-          PositiveInt.of(seriesDosesPositiveInt, _seriesDosesPositiveInt),
-          R4bString.of(seriesDosesString, _seriesDosesString),
-        ),
+        (PositiveInt.of(seriesDosesPositiveInt, _seriesDosesPositiveInt)
+          ?: R4bString.of(seriesDosesString, _seriesDosesString)),
     )
   }
 
@@ -432,11 +428,9 @@ internal object ImmunizationEvaluationSerializer : KSerializer<ImmunizationEvalu
     }
     when (val choice = value.doseNumber) {
       null -> {}
-      is ImmunizationEvaluation.DoseNumber.PositiveInt -> {
-        ((choice.value.value))?.let {
-          encoder.encodeIntElement(descriptor, 25 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is PositiveInt -> {
+        ((choice.value))?.let { encoder.encodeIntElement(descriptor, 25 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             26 + descriptorOffset,
@@ -445,11 +439,9 @@ internal object ImmunizationEvaluationSerializer : KSerializer<ImmunizationEvalu
           )
         }
       }
-      is ImmunizationEvaluation.DoseNumber.String -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 27 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is R4bString -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 27 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             28 + descriptorOffset,
@@ -461,11 +453,9 @@ internal object ImmunizationEvaluationSerializer : KSerializer<ImmunizationEvalu
     }
     when (val choice = value.seriesDoses) {
       null -> {}
-      is ImmunizationEvaluation.SeriesDoses.PositiveInt -> {
-        ((choice.value.value))?.let {
-          encoder.encodeIntElement(descriptor, 29 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is PositiveInt -> {
+        ((choice.value))?.let { encoder.encodeIntElement(descriptor, 29 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             30 + descriptorOffset,
@@ -474,11 +464,9 @@ internal object ImmunizationEvaluationSerializer : KSerializer<ImmunizationEvalu
           )
         }
       }
-      is ImmunizationEvaluation.SeriesDoses.String -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 31 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is R4bString -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 31 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             32 + descriptorOffset,

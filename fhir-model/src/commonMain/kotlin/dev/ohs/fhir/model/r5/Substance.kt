@@ -21,7 +21,6 @@ import dev.ohs.fhir.model.r5.serializers.SubstanceSerializer
 import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -229,8 +228,12 @@ public data class Substance(
     override val modifierExtension: List<Extension> = listOf(),
     /** The amount of the ingredient in the substance - a concentration ratio. */
     public val quantity: Ratio? = null,
-    /** Another substance that is a component of this substance. */
-    public val substance: Substance,
+    /**
+     * Another substance that is a component of this substance.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Reference]
+     */
+    public val substance: FhirChoiceTypes.CodeableConceptOrReference,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -242,34 +245,13 @@ public data class Substance(
         }
       }
 
-    public sealed interface Substance {
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asReference(): Reference? = this as? Reference
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r5.CodeableConcept
-      ) : Substance
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : Substance
-
-      public companion object {
-        internal fun from(
-          codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-          referenceValue: dev.ohs.fhir.model.r5.Reference?,
-        ): Substance? {
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (referenceValue != null) return Reference(referenceValue)
-          return null
-        }
-      }
-    }
-
     public class Builder(
-      /** Another substance that is a component of this substance. */
-      public var substance: Substance
+      /**
+       * Another substance that is a component of this substance.
+       *
+       * A FHIR choice type — one of: [CodeableConcept] | [Reference]
+       */
+      public var substance: FhirChoiceTypes.CodeableConceptOrReference
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any

@@ -628,10 +628,7 @@ internal object MessageDefinitionSerializer : KSerializer<MessageDefinition> {
       identifier = identifier ?: listOf(),
       version = R5String.of(version, _version),
       versionAlgorithm =
-        MessageDefinition.VersionAlgorithm.from(
-          R5String.of(versionAlgorithmString, _versionAlgorithmString),
-          versionAlgorithmCoding,
-        ),
+        (R5String.of(versionAlgorithmString, _versionAlgorithmString) ?: versionAlgorithmCoding),
       name = R5String.of(name, _name),
       title = R5String.of(title, _title),
       replaces =
@@ -654,7 +651,7 @@ internal object MessageDefinitionSerializer : KSerializer<MessageDefinition> {
         (kotlin.collections.List(maxOf(parent?.size ?: 0, _parent?.size ?: 0)) { index ->
           Canonical.of(parent?.getOrNull(index)?.let { it }, _parent?.getOrNull(index))!!
         }),
-      event = MessageDefinition.Event.from(eventCoding, Uri.of(eventUri, _eventUri))!!,
+      event = (eventCoding ?: Uri.of(eventUri, _eventUri))!!,
       category =
         category?.let {
           Enumeration.of(MessageDefinition.MessageSignificanceCategory.fromCode(it), _category)
@@ -757,11 +754,9 @@ internal object MessageDefinitionSerializer : KSerializer<MessageDefinition> {
     }
     when (val choice = value.versionAlgorithm) {
       null -> {}
-      is MessageDefinition.VersionAlgorithm.String -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 15 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is R5String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 15 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             16 + descriptorOffset,
@@ -770,12 +765,12 @@ internal object MessageDefinitionSerializer : KSerializer<MessageDefinition> {
           )
         }
       }
-      is MessageDefinition.VersionAlgorithm.Coding -> {
+      is Coding -> {
         encoder.encodeSerializableElement(
           descriptor,
           17 + descriptorOffset,
           Hoisted.versionAlgorithmCodingSer,
-          choice.value,
+          choice,
         )
       }
     }
@@ -934,19 +929,17 @@ internal object MessageDefinitionSerializer : KSerializer<MessageDefinition> {
       encoder.encodeSerializableElement(descriptor, 46 + descriptorOffset, Hoisted.replacesSer2, it)
     }
     when (val choice = value.event) {
-      is MessageDefinition.Event.Coding -> {
+      is Coding -> {
         encoder.encodeSerializableElement(
           descriptor,
           47 + descriptorOffset,
           Hoisted.versionAlgorithmCodingSer,
-          choice.value,
+          choice,
         )
       }
-      is MessageDefinition.Event.Uri -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 48 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is Uri -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 48 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             49 + descriptorOffset,

@@ -23,7 +23,6 @@ import dev.ohs.fhir.model.r4.serializers.CoverageEligibilityRequestSerializer
 import dev.ohs.fhir.model.r4.serializers.CoverageEligibilityRequestSupportingInfoSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -156,8 +155,12 @@ public data class CoverageEligibilityRequest(
    * 1..1.
    */
   public val patient: Reference,
-  /** The date or dates when the enclosed suite of services were performed or completed. */
-  public val serviced: Serviced? = null,
+  /**
+   * The date or dates when the enclosed suite of services were performed or completed.
+   *
+   * A FHIR choice type — one of: [Date] | [Period]
+   */
+  public val serviced: CoverageEligibilityRequest.Serviced? = null,
   /** The date when this resource was created. */
   public val created: DateTime,
   /** Person who created the request. */
@@ -668,8 +671,10 @@ public data class CoverageEligibilityRequest(
       /**
        * The nature of illness or problem in a coded form or as a reference to an external defined
        * Condition.
+       *
+       * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public val diagnosis: Diagnosis? = null,
+      public val diagnosis: FhirChoiceTypes.CodeableConceptOrReference? = null,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -680,32 +685,6 @@ public data class CoverageEligibilityRequest(
             diagnosis = this@with.diagnosis
           }
         }
-
-      public sealed interface Diagnosis {
-        public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-        public fun asReference(): Reference? = this as? Reference
-
-        @JvmInline
-        public value class CodeableConcept(
-          public val `value`: dev.ohs.fhir.model.r4.CodeableConcept
-        ) : Diagnosis
-
-        @JvmInline
-        public value class Reference(public val `value`: dev.ohs.fhir.model.r4.Reference) :
-          Diagnosis
-
-        public companion object {
-          internal fun from(
-            codeableConceptValue: dev.ohs.fhir.model.r4.CodeableConcept?,
-            referenceValue: dev.ohs.fhir.model.r4.Reference?,
-          ): Diagnosis? {
-            if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-            if (referenceValue != null) return Reference(referenceValue)
-            return null
-          }
-        }
-      }
 
       public class Builder() {
         /**
@@ -751,11 +730,13 @@ public data class CoverageEligibilityRequest(
         /**
          * The nature of illness or problem in a coded form or as a reference to an external defined
          * Condition.
+         *
+         * A FHIR choice type — one of: [CodeableConcept] | [Reference]
          */
-        public var diagnosis: Diagnosis? = null
+        public var diagnosis: FhirChoiceTypes.CodeableConceptOrReference? = null
 
-        public fun build(): Item.Diagnosis =
-          Item.Diagnosis(
+        public fun build(): Diagnosis =
+          Diagnosis(
             id = id,
             extension = extension.map { it.build() },
             modifierExtension = modifierExtension.map { it.build() },
@@ -873,28 +854,6 @@ public data class CoverageEligibilityRequest(
           diagnosis = diagnosis.map { it.build() },
           detail = detail.map { it.build() },
         )
-    }
-  }
-
-  public sealed interface Serviced {
-    public fun asDate(): Date? = this as? Date
-
-    public fun asPeriod(): Period? = this as? Period
-
-    @JvmInline public value class Date(public val `value`: dev.ohs.fhir.model.r4.Date) : Serviced
-
-    @JvmInline
-    public value class Period(public val `value`: dev.ohs.fhir.model.r4.Period) : Serviced
-
-    public companion object {
-      internal fun from(
-        dateValue: dev.ohs.fhir.model.r4.Date?,
-        periodValue: dev.ohs.fhir.model.r4.Period?,
-      ): Serviced? {
-        if (dateValue != null) return Date(dateValue)
-        if (periodValue != null) return Period(periodValue)
-        return null
-      }
     }
   }
 
@@ -1035,8 +994,12 @@ public data class CoverageEligibilityRequest(
     /** When the requestor expects the processor to complete processing. */
     public var priority: CodeableConcept.Builder? = null
 
-    /** The date or dates when the enclosed suite of services were performed or completed. */
-    public var serviced: Serviced? = null
+    /**
+     * The date or dates when the enclosed suite of services were performed or completed.
+     *
+     * A FHIR choice type — one of: [Date] | [Period]
+     */
+    public var serviced: CoverageEligibilityRequest.Serviced? = null
 
     /** Person who created the request. */
     public var enterer: Reference.Builder? = null
@@ -1180,4 +1143,7 @@ public data class CoverageEligibilityRequest(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [Date] | [Period] */
+  public typealias Serviced = FhirChoiceTypes.DateOrPeriod
 }

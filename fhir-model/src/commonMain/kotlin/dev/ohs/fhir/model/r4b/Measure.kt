@@ -25,7 +25,6 @@ import dev.ohs.fhir.model.r4b.serializers.MeasureSupplementalDataSerializer
 import dev.ohs.fhir.model.r4b.terminologies.PublicationStatus
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -213,8 +212,10 @@ public data class Measure(
    * in the measures is evaluated with respect to a particular subject. This corresponds roughly to
    * the notion of a Compartment in that it limits what content is available based on its
    * relationship to the subject. In CQL, this corresponds to the context declaration.
+   *
+   * A FHIR choice type — one of: [CodeableConcept] | [Reference]
    */
-  public val subject: Subject? = null,
+  public val subject: Measure.Subject? = null,
   /**
    * The date (and optionally time) when the measure was published. The date must change when the
    * business version changes and it must change if the status code changes. In addition, it should
@@ -1208,30 +1209,6 @@ public data class Measure(
     }
   }
 
-  public sealed interface Subject {
-    public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-    public fun asReference(): Reference? = this as? Reference
-
-    @JvmInline
-    public value class CodeableConcept(public val `value`: dev.ohs.fhir.model.r4b.CodeableConcept) :
-      Subject
-
-    @JvmInline
-    public value class Reference(public val `value`: dev.ohs.fhir.model.r4b.Reference) : Subject
-
-    public companion object {
-      internal fun from(
-        codeableConceptValue: dev.ohs.fhir.model.r4b.CodeableConcept?,
-        referenceValue: dev.ohs.fhir.model.r4b.Reference?,
-      ): Subject? {
-        if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-        if (referenceValue != null) return Reference(referenceValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
     /**
      * The status of this measure. Enables tracking the life-cycle of the content.
@@ -1430,8 +1407,10 @@ public data class Measure(
      * in the measures is evaluated with respect to a particular subject. This corresponds roughly
      * to the notion of a Compartment in that it limits what content is available based on its
      * relationship to the subject. In CQL, this corresponds to the context declaration.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public var subject: Subject? = null
+    public var subject: Measure.Subject? = null
 
     /**
      * The date (and optionally time) when the measure was published. The date must change when the
@@ -1725,4 +1704,7 @@ public data class Measure(
         supplementalData = supplementalData.map { it.build() },
       )
   }
+
+  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+  public typealias Subject = FhirChoiceTypes.CodeableConceptOrReference
 }

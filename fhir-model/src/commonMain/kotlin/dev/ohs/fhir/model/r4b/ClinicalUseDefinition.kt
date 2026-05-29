@@ -24,10 +24,8 @@ import dev.ohs.fhir.model.r4b.serializers.ClinicalUseDefinitionInteractionSerial
 import dev.ohs.fhir.model.r4b.serializers.ClinicalUseDefinitionSerializer
 import dev.ohs.fhir.model.r4b.serializers.ClinicalUseDefinitionUndesirableEffectSerializer
 import dev.ohs.fhir.model.r4b.serializers.ClinicalUseDefinitionWarningSerializer
-import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -45,7 +43,7 @@ public data class ClinicalUseDefinition(
    * The only time that a resource does not have an id is when it is being submitted to the server
    * using a create operation.
    */
-  override val id: String? = null,
+  override val id: kotlin.String? = null,
   /**
    * The metadata about the resource. This is content that is maintained by the infrastructure.
    * Changes to the content might not always be associated with version changes to the resource.
@@ -198,7 +196,7 @@ public data class ClinicalUseDefinition(
      * Unique id for the element within a resource (for internal references). This may be any string
      * value that does not contain spaces.
      */
-    override val id: String? = null,
+    override val id: kotlin.String? = null,
     /**
      * May be used to represent additional information that is not part of the basic definition of
      * the element. To make the use of extensions safe and manageable, there is a strict set of
@@ -272,7 +270,7 @@ public data class ClinicalUseDefinition(
        * Unique id for the element within a resource (for internal references). This may be any
        * string value that does not contain spaces.
        */
-      override val id: String? = null,
+      override val id: kotlin.String? = null,
       /**
        * May be used to represent additional information that is not part of the basic definition of
        * the element. To make the use of extensions safe and manageable, there is a strict set of
@@ -341,7 +339,7 @@ public data class ClinicalUseDefinition(
          * Unique id for the element within a resource (for internal references). This may be any
          * string value that does not contain spaces.
          */
-        public var id: String? = null
+        public var id: kotlin.String? = null
 
         /**
          * May be used to represent additional information that is not part of the basic definition
@@ -393,7 +391,7 @@ public data class ClinicalUseDefinition(
        * Unique id for the element within a resource (for internal references). This may be any
        * string value that does not contain spaces.
        */
-      public var id: String? = null
+      public var id: kotlin.String? = null
 
       /**
        * May be used to represent additional information that is not part of the basic definition of
@@ -471,7 +469,7 @@ public data class ClinicalUseDefinition(
      * Unique id for the element within a resource (for internal references). This may be any string
      * value that does not contain spaces.
      */
-    override val id: String? = null,
+    override val id: kotlin.String? = null,
     /**
      * May be used to represent additional information that is not part of the basic definition of
      * the element. To make the use of extensions safe and manageable, there is a strict set of
@@ -519,8 +517,10 @@ public data class ClinicalUseDefinition(
      * Timing or duration information, that may be associated with use with the indicated condition
      * e.g. Adult patients suffering from myocardial infarction (from a few days until less than 35
      * days), ischaemic stroke (from 7 days until less than 6 months).
+     *
+     * A FHIR choice type — one of: [Range] | [String]
      */
-    public val duration: Duration? = null,
+    public val duration: FhirChoiceTypes.RangeOrString? = null,
     /**
      * An unwanted side effect or negative outcome that may happen if you use the drug (or other
      * subject of this resource) for this indication.
@@ -548,35 +548,12 @@ public data class ClinicalUseDefinition(
         }
       }
 
-    public sealed interface Duration {
-      public fun asRange(): Range? = this as? Range
-
-      public fun asString(): String? = this as? String
-
-      @JvmInline
-      public value class Range(public val `value`: dev.ohs.fhir.model.r4b.Range) : Duration
-
-      @JvmInline
-      public value class String(public val `value`: dev.ohs.fhir.model.r4b.String) : Duration
-
-      public companion object {
-        internal fun from(
-          rangeValue: dev.ohs.fhir.model.r4b.Range?,
-          stringValue: dev.ohs.fhir.model.r4b.String?,
-        ): Duration? {
-          if (rangeValue != null) return Range(rangeValue)
-          if (stringValue != null) return String(stringValue)
-          return null
-        }
-      }
-    }
-
     public class Builder() {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
        * string value that does not contain spaces.
        */
-      public var id: String? = null
+      public var id: kotlin.String? = null
 
       /**
        * May be used to represent additional information that is not part of the basic definition of
@@ -631,8 +608,10 @@ public data class ClinicalUseDefinition(
        * Timing or duration information, that may be associated with use with the indicated
        * condition e.g. Adult patients suffering from myocardial infarction (from a few days until
        * less than 35 days), ischaemic stroke (from 7 days until less than 6 months).
+       *
+       * A FHIR choice type — one of: [Range] | [String]
        */
-      public var duration: Duration? = null
+      public var duration: FhirChoiceTypes.RangeOrString? = null
 
       /**
        * An unwanted side effect or negative outcome that may happen if you use the drug (or other
@@ -669,7 +648,7 @@ public data class ClinicalUseDefinition(
      * Unique id for the element within a resource (for internal references). This may be any string
      * value that does not contain spaces.
      */
-    override val id: String? = null,
+    override val id: kotlin.String? = null,
     /**
      * May be used to represent additional information that is not part of the basic definition of
      * the element. To make the use of extensions safe and manageable, there is a strict set of
@@ -740,7 +719,7 @@ public data class ClinicalUseDefinition(
        * Unique id for the element within a resource (for internal references). This may be any
        * string value that does not contain spaces.
        */
-      override val id: String? = null,
+      override val id: kotlin.String? = null,
       /**
        * May be used to represent additional information that is not part of the basic definition of
        * the element. To make the use of extensions safe and manageable, there is a strict set of
@@ -773,8 +752,12 @@ public data class ClinicalUseDefinition(
        * level of simplicity for everyone.
        */
       override val modifierExtension: List<Extension> = listOf(),
-      /** The specific medication, food or laboratory test that interacts. */
-      public val item: Item,
+      /**
+       * The specific medication, food or laboratory test that interacts.
+       *
+       * A FHIR choice type — one of: [CodeableConcept] | [Reference]
+       */
+      public val item: Interactant.Item,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -785,40 +768,19 @@ public data class ClinicalUseDefinition(
           }
         }
 
-      public sealed interface Item {
-        public fun asReference(): Reference? = this as? Reference
-
-        public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-        @JvmInline
-        public value class Reference(public val `value`: dev.ohs.fhir.model.r4b.Reference) : Item
-
-        @JvmInline
-        public value class CodeableConcept(
-          public val `value`: dev.ohs.fhir.model.r4b.CodeableConcept
-        ) : Item
-
-        public companion object {
-          internal fun from(
-            referenceValue: dev.ohs.fhir.model.r4b.Reference?,
-            codeableConceptValue: dev.ohs.fhir.model.r4b.CodeableConcept?,
-          ): Item? {
-            if (referenceValue != null) return Reference(referenceValue)
-            if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-            return null
-          }
-        }
-      }
-
       public class Builder(
-        /** The specific medication, food or laboratory test that interacts. */
-        public var item: Item
+        /**
+         * The specific medication, food or laboratory test that interacts.
+         *
+         * A FHIR choice type — one of: [CodeableConcept] | [Reference]
+         */
+        public var item: Interactant.Item
       ) {
         /**
          * Unique id for the element within a resource (for internal references). This may be any
          * string value that does not contain spaces.
          */
-        public var id: String? = null
+        public var id: kotlin.String? = null
 
         /**
          * May be used to represent additional information that is not part of the basic definition
@@ -862,6 +824,9 @@ public data class ClinicalUseDefinition(
             item = item,
           )
       }
+
+      /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+      public typealias Item = FhirChoiceTypes.CodeableConceptOrReference
     }
 
     public class Builder() {
@@ -869,7 +834,7 @@ public data class ClinicalUseDefinition(
        * Unique id for the element within a resource (for internal references). This may be any
        * string value that does not contain spaces.
        */
-      public var id: String? = null
+      public var id: kotlin.String? = null
 
       /**
        * May be used to represent additional information that is not part of the basic definition of
@@ -950,7 +915,7 @@ public data class ClinicalUseDefinition(
      * Unique id for the element within a resource (for internal references). This may be any string
      * value that does not contain spaces.
      */
-    override val id: String? = null,
+    override val id: kotlin.String? = null,
     /**
      * May be used to represent additional information that is not part of the basic definition of
      * the element. To make the use of extensions safe and manageable, there is a strict set of
@@ -1007,7 +972,7 @@ public data class ClinicalUseDefinition(
        * Unique id for the element within a resource (for internal references). This may be any
        * string value that does not contain spaces.
        */
-      public var id: String? = null
+      public var id: kotlin.String? = null
 
       /**
        * May be used to represent additional information that is not part of the basic definition of
@@ -1075,7 +1040,7 @@ public data class ClinicalUseDefinition(
      * Unique id for the element within a resource (for internal references). This may be any string
      * value that does not contain spaces.
      */
-    override val id: String? = null,
+    override val id: kotlin.String? = null,
     /**
      * May be used to represent additional information that is not part of the basic definition of
      * the element. To make the use of extensions safe and manageable, there is a strict set of
@@ -1129,7 +1094,7 @@ public data class ClinicalUseDefinition(
        * Unique id for the element within a resource (for internal references). This may be any
        * string value that does not contain spaces.
        */
-      public var id: String? = null
+      public var id: kotlin.String? = null
 
       /**
        * May be used to represent additional information that is not part of the basic definition of
@@ -1193,7 +1158,7 @@ public data class ClinicalUseDefinition(
      * The only time that a resource does not have an id is when it is being submitted to the server
      * using a create operation.
      */
-    public var id: String? = null
+    public var id: kotlin.String? = null
 
     /**
      * The metadata about the resource. This is content that is maintained by the infrastructure.
@@ -1358,9 +1323,9 @@ public data class ClinicalUseDefinition(
 
   /** Overall defining type of this clinical use definition. */
   public enum class ClinicalUseDefinitionType(
-    private val code: String,
-    private val system: String,
-    private val display: String?,
+    private val code: kotlin.String,
+    private val system: kotlin.String,
+    private val display: kotlin.String?,
   ) {
     Indication("indication", "http://hl7.org/fhir/clinical-use-definition-type", "Indication"),
     Contraindication(
@@ -1376,16 +1341,16 @@ public data class ClinicalUseDefinition(
     ),
     Warning("warning", "http://hl7.org/fhir/clinical-use-definition-type", "Warning");
 
-    override fun toString(): String = code
+    override fun toString(): kotlin.String = code
 
-    public fun getCode(): String = code
+    public fun getCode(): kotlin.String = code
 
-    public fun getSystem(): String = system
+    public fun getSystem(): kotlin.String = system
 
-    public fun getDisplay(): String? = display
+    public fun getDisplay(): kotlin.String? = display
 
     public companion object {
-      public fun fromCode(code: String): ClinicalUseDefinitionType =
+      public fun fromCode(code: kotlin.String): ClinicalUseDefinitionType =
         when (code) {
           "indication" -> Indication
           "contraindication" -> Contraindication

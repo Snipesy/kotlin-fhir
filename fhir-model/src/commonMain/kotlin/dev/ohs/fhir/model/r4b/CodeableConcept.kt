@@ -61,7 +61,7 @@ public data class CodeableConcept(
    * Very often the text is the same as a displayName of one of the codings.
    */
   public val text: String? = null,
-) : Element() {
+) : Element(), FhirChoiceParticipants.CodeableConceptChoices {
   public fun toBuilder(): Builder =
     with(this) {
       Builder().apply {

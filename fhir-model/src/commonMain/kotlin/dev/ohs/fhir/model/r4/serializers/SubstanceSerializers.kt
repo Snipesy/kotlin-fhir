@@ -234,8 +234,7 @@ internal object SubstanceIngredientSerializer : KSerializer<Substance.Ingredient
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
       quantity = quantity,
-      substance =
-        Substance.Ingredient.Substance.from(substanceCodeableConcept, substanceReference)!!,
+      substance = (substanceCodeableConcept ?: substanceReference)!!,
     )
   }
 
@@ -254,21 +253,16 @@ internal object SubstanceIngredientSerializer : KSerializer<Substance.Ingredient
       encoder.encodeSerializableElement(descriptor, 3, Hoisted.quantitySer, it)
     }
     when (val choice = value.substance) {
-      is Substance.Ingredient.Substance.CodeableConcept -> {
+      is CodeableConcept -> {
         encoder.encodeSerializableElement(
           descriptor,
           4,
           Hoisted.substanceCodeableConceptSer,
-          choice.value,
+          choice,
         )
       }
-      is Substance.Ingredient.Substance.Reference -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          5,
-          Hoisted.substanceReferenceSer,
-          choice.value,
-        )
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 5, Hoisted.substanceReferenceSer, choice)
       }
     }
   }

@@ -23,7 +23,6 @@ import dev.ohs.fhir.model.r4b.serializers.ImmunizationReactionSerializer
 import dev.ohs.fhir.model.r4b.serializers.ImmunizationSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -167,8 +166,10 @@ public data class Immunization(
    * are given as a series of patient self-administered dose over a span of time. In cases like
    * this, often, only the first dose (typically a provider supervised dose) is recorded with the
    * occurrence indicating the date/time of the first dose.
+   *
+   * A FHIR choice type — one of: [DateTime] | [String]
    */
-  public val occurrence: Occurrence,
+  public val occurrence: Immunization.Occurrence,
   /**
    * The date the occurrence of the immunization was first captured in the record - potentially
    * significantly after the occurrence of the event.
@@ -727,15 +728,19 @@ public data class Immunization(
      *
      * The use of an integer is preferred if known. A string should only be used in cases where an
      * integer is not available (such as when documenting a recurring booster dose).
+     *
+     * A FHIR choice type — one of: [PositiveInt] | [String]
      */
-    public val doseNumber: DoseNumber,
+    public val doseNumber: ProtocolApplied.DoseNumber,
     /**
      * The recommended number of doses to achieve immunity.
      *
      * The use of an integer is preferred if known. A string should only be used in cases where an
      * integer is not available (such as when documenting a recurring booster dose).
+     *
+     * A FHIR choice type — one of: [PositiveInt] | [String]
      */
-    public val seriesDoses: SeriesDoses? = null,
+    public val seriesDoses: ProtocolApplied.SeriesDoses? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -750,62 +755,16 @@ public data class Immunization(
         }
       }
 
-    public sealed interface DoseNumber {
-      public fun asPositiveInt(): PositiveInt? = this as? PositiveInt
-
-      public fun asString(): String? = this as? String
-
-      @JvmInline
-      public value class PositiveInt(public val `value`: dev.ohs.fhir.model.r4b.PositiveInt) :
-        DoseNumber
-
-      @JvmInline
-      public value class String(public val `value`: dev.ohs.fhir.model.r4b.String) : DoseNumber
-
-      public companion object {
-        internal fun from(
-          positiveIntValue: dev.ohs.fhir.model.r4b.PositiveInt?,
-          stringValue: dev.ohs.fhir.model.r4b.String?,
-        ): DoseNumber? {
-          if (positiveIntValue != null) return PositiveInt(positiveIntValue)
-          if (stringValue != null) return String(stringValue)
-          return null
-        }
-      }
-    }
-
-    public sealed interface SeriesDoses {
-      public fun asPositiveInt(): PositiveInt? = this as? PositiveInt
-
-      public fun asString(): String? = this as? String
-
-      @JvmInline
-      public value class PositiveInt(public val `value`: dev.ohs.fhir.model.r4b.PositiveInt) :
-        SeriesDoses
-
-      @JvmInline
-      public value class String(public val `value`: dev.ohs.fhir.model.r4b.String) : SeriesDoses
-
-      public companion object {
-        internal fun from(
-          positiveIntValue: dev.ohs.fhir.model.r4b.PositiveInt?,
-          stringValue: dev.ohs.fhir.model.r4b.String?,
-        ): SeriesDoses? {
-          if (positiveIntValue != null) return PositiveInt(positiveIntValue)
-          if (stringValue != null) return String(stringValue)
-          return null
-        }
-      }
-    }
-
     public class Builder(
       /**
        * Nominal position in a series.
        *
        * The use of an integer is preferred if known. A string should only be used in cases where an
        * integer is not available (such as when documenting a recurring booster dose).
+       *
+       * A FHIR choice type — one of: [PositiveInt] | [String]
        */
-      public var doseNumber: DoseNumber
+      public var doseNumber: ProtocolApplied.DoseNumber
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -864,8 +823,10 @@ public data class Immunization(
        *
        * The use of an integer is preferred if known. A string should only be used in cases where an
        * integer is not available (such as when documenting a recurring booster dose).
+       *
+       * A FHIR choice type — one of: [PositiveInt] | [String]
        */
-      public var seriesDoses: SeriesDoses? = null
+      public var seriesDoses: ProtocolApplied.SeriesDoses? = null
 
       public fun build(): ProtocolApplied =
         ProtocolApplied(
@@ -879,29 +840,12 @@ public data class Immunization(
           seriesDoses = seriesDoses,
         )
     }
-  }
 
-  public sealed interface Occurrence {
-    public fun asDateTime(): DateTime? = this as? DateTime
+    /** A FHIR choice type — one of: [PositiveInt] | [String] */
+    public typealias DoseNumber = FhirChoiceTypes.PositiveIntOrString
 
-    public fun asString(): String? = this as? String
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r4b.DateTime) : Occurrence
-
-    @JvmInline
-    public value class String(public val `value`: dev.ohs.fhir.model.r4b.String) : Occurrence
-
-    public companion object {
-      internal fun from(
-        dateTimeValue: dev.ohs.fhir.model.r4b.DateTime?,
-        stringValue: dev.ohs.fhir.model.r4b.String?,
-      ): Occurrence? {
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        if (stringValue != null) return String(stringValue)
-        return null
-      }
-    }
+    /** A FHIR choice type — one of: [PositiveInt] | [String] */
+    public typealias SeriesDoses = FhirChoiceTypes.PositiveIntOrString
   }
 
   public class Builder(
@@ -928,8 +872,10 @@ public data class Immunization(
      * oral typhoid vaccine) are given as a series of patient self-administered dose over a span of
      * time. In cases like this, often, only the first dose (typically a provider supervised dose)
      * is recorded with the occurrence indicating the date/time of the first dose.
+     *
+     * A FHIR choice type — one of: [DateTime] | [String]
      */
-    public var occurrence: Occurrence,
+    public var occurrence: Immunization.Occurrence,
   ) : DomainResource.Builder() {
     /**
      * The logical id of the resource, as used in the URL for the resource. Once assigned, this
@@ -1232,4 +1178,7 @@ public data class Immunization(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [DateTime] | [String] */
+  public typealias Occurrence = FhirChoiceTypes.DateTimeOrString
 }

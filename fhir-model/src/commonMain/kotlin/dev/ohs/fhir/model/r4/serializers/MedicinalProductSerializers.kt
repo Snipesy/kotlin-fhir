@@ -646,11 +646,7 @@ internal object MedicinalProductSpecialDesignationSerializer :
       identifier = identifier ?: listOf(),
       type = type,
       intendedUse = intendedUse,
-      indication =
-        MedicinalProduct.SpecialDesignation.Indication.from(
-          indicationCodeableConcept,
-          indicationReference,
-        ),
+      indication = (indicationCodeableConcept ?: indicationReference),
       status = status,
       date = DateTime.of(FhirDateTime.fromString(date), _date),
       species = species,
@@ -679,16 +675,11 @@ internal object MedicinalProductSpecialDesignationSerializer :
     }
     when (val choice = value.indication) {
       null -> {}
-      is MedicinalProduct.SpecialDesignation.Indication.CodeableConcept -> {
-        encoder.encodeSerializableElement(descriptor, 6, Hoisted.typeSer, choice.value)
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 6, Hoisted.typeSer, choice)
       }
-      is MedicinalProduct.SpecialDesignation.Indication.Reference -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          7,
-          Hoisted.indicationReferenceSer,
-          choice.value,
-        )
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 7, Hoisted.indicationReferenceSer, choice)
       }
     }
     (value.status)?.let { encoder.encodeSerializableElement(descriptor, 8, Hoisted.typeSer, it) }

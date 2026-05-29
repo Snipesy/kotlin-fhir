@@ -245,15 +245,11 @@ internal object ImmunizationRecommendationRecommendationSerializer :
       description = R4String.of(description, _description),
       series = R4String.of(series, _series),
       doseNumber =
-        ImmunizationRecommendation.Recommendation.DoseNumber.from(
-          PositiveInt.of(doseNumberPositiveInt, _doseNumberPositiveInt),
-          R4String.of(doseNumberString, _doseNumberString),
-        ),
+        (PositiveInt.of(doseNumberPositiveInt, _doseNumberPositiveInt)
+          ?: R4String.of(doseNumberString, _doseNumberString)),
       seriesDoses =
-        ImmunizationRecommendation.Recommendation.SeriesDoses.from(
-          PositiveInt.of(seriesDosesPositiveInt, _seriesDosesPositiveInt),
-          R4String.of(seriesDosesString, _seriesDosesString),
-        ),
+        (PositiveInt.of(seriesDosesPositiveInt, _seriesDosesPositiveInt)
+          ?: R4String.of(seriesDosesString, _seriesDosesString)),
       supportingImmunization = supportingImmunization ?: listOf(),
       supportingPatientInformation = supportingPatientInformation ?: listOf(),
     )
@@ -310,30 +306,30 @@ internal object ImmunizationRecommendationRecommendationSerializer :
     }
     when (val choice = value.doseNumber) {
       null -> {}
-      is ImmunizationRecommendation.Recommendation.DoseNumber.PositiveInt -> {
-        ((choice.value.value))?.let { encoder.encodeIntElement(descriptor, 13, it) }
-        (choice.value.toElement())?.let {
+      is PositiveInt -> {
+        ((choice.value))?.let { encoder.encodeIntElement(descriptor, 13, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 14, Hoisted.descriptionSer, it)
         }
       }
-      is ImmunizationRecommendation.Recommendation.DoseNumber.String -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 15, it) }
-        (choice.value.toElement())?.let {
+      is R4String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 15, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 16, Hoisted.descriptionSer, it)
         }
       }
     }
     when (val choice = value.seriesDoses) {
       null -> {}
-      is ImmunizationRecommendation.Recommendation.SeriesDoses.PositiveInt -> {
-        ((choice.value.value))?.let { encoder.encodeIntElement(descriptor, 17, it) }
-        (choice.value.toElement())?.let {
+      is PositiveInt -> {
+        ((choice.value))?.let { encoder.encodeIntElement(descriptor, 17, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 18, Hoisted.descriptionSer, it)
         }
       }
-      is ImmunizationRecommendation.Recommendation.SeriesDoses.String -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 19, it) }
-        (choice.value.toElement())?.let {
+      is R4String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 19, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 20, Hoisted.descriptionSer, it)
         }
       }

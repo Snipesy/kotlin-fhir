@@ -21,7 +21,6 @@ import dev.ohs.fhir.model.r4b.serializers.DetectedIssueMitigationSerializer
 import dev.ohs.fhir.model.r4b.serializers.DetectedIssueSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -147,8 +146,12 @@ public data class DetectedIssue(
   public val severity: Enumeration<DetectedIssueSeverity>? = null,
   /** Indicates the patient whose record the detected issue is associated with. */
   public val patient: Reference? = null,
-  /** The date or period when the detected issue was initially identified. */
-  public val identified: Identified? = null,
+  /**
+   * The date or period when the detected issue was initially identified.
+   *
+   * A FHIR choice type — one of: [DateTime] | [Period]
+   */
+  public val identified: DetectedIssue.Identified? = null,
   /**
    * Individual or device responsible for the issue being raised. For example, a decision support
    * application or a pharmacist conducting a medication review.
@@ -483,29 +486,6 @@ public data class DetectedIssue(
     }
   }
 
-  public sealed interface Identified {
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    public fun asPeriod(): Period? = this as? Period
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r4b.DateTime) : Identified
-
-    @JvmInline
-    public value class Period(public val `value`: dev.ohs.fhir.model.r4b.Period) : Identified
-
-    public companion object {
-      internal fun from(
-        dateTimeValue: dev.ohs.fhir.model.r4b.DateTime?,
-        periodValue: dev.ohs.fhir.model.r4b.Period?,
-      ): Identified? {
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        if (periodValue != null) return Period(periodValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
     /**
      * Indicates the status of the detected issue.
@@ -635,8 +615,12 @@ public data class DetectedIssue(
     /** Indicates the patient whose record the detected issue is associated with. */
     public var patient: Reference.Builder? = null
 
-    /** The date or period when the detected issue was initially identified. */
-    public var identified: Identified? = null
+    /**
+     * The date or period when the detected issue was initially identified.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Period]
+     */
+    public var identified: DetectedIssue.Identified? = null
 
     /**
      * Individual or device responsible for the issue being raised. For example, a decision support
@@ -778,4 +762,7 @@ public data class DetectedIssue(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [DateTime] | [Period] */
+  public typealias Identified = FhirChoiceTypes.DateTimeOrPeriod
 }

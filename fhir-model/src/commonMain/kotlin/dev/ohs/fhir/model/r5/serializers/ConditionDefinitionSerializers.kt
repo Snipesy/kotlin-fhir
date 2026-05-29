@@ -306,7 +306,7 @@ internal object ConditionDefinitionPreconditionSerializer :
       modifierExtension = modifierExtension ?: listOf(),
       type = Enumeration.of(ConditionDefinition.ConditionPreconditionType.fromCode(type!!), _type),
       code = code!!,
-      `value` = ConditionDefinition.Precondition.Value.from(valueCodeableConcept, valueQuantity),
+      `value` = (valueCodeableConcept ?: valueQuantity),
     )
   }
 
@@ -331,11 +331,11 @@ internal object ConditionDefinitionPreconditionSerializer :
     encoder.encodeSerializableElement(descriptor, 5, Hoisted.codeSer, value.code)
     when (val choice = value.`value`) {
       null -> {}
-      is ConditionDefinition.Precondition.Value.CodeableConcept -> {
-        encoder.encodeSerializableElement(descriptor, 6, Hoisted.codeSer, choice.value)
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 6, Hoisted.codeSer, choice)
       }
-      is ConditionDefinition.Precondition.Value.Quantity -> {
-        encoder.encodeSerializableElement(descriptor, 7, Hoisted.valueQuantitySer, choice.value)
+      is Quantity -> {
+        encoder.encodeSerializableElement(descriptor, 7, Hoisted.valueQuantitySer, choice)
       }
     }
   }
@@ -906,10 +906,7 @@ internal object ConditionDefinitionSerializer : KSerializer<ConditionDefinition>
       identifier = identifier ?: listOf(),
       version = R5String.of(version, _version),
       versionAlgorithm =
-        ConditionDefinition.VersionAlgorithm.from(
-          R5String.of(versionAlgorithmString, _versionAlgorithmString),
-          versionAlgorithmCoding,
-        ),
+        (R5String.of(versionAlgorithmString, _versionAlgorithmString) ?: versionAlgorithmCoding),
       name = R5String.of(name, _name),
       title = R5String.of(title, _title),
       subtitle = R5String.of(subtitle, _subtitle),
@@ -1026,11 +1023,9 @@ internal object ConditionDefinitionSerializer : KSerializer<ConditionDefinition>
     }
     when (val choice = value.versionAlgorithm) {
       null -> {}
-      is ConditionDefinition.VersionAlgorithm.String -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 15 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is R5String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 15 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             16 + descriptorOffset,
@@ -1039,12 +1034,12 @@ internal object ConditionDefinitionSerializer : KSerializer<ConditionDefinition>
           )
         }
       }
-      is ConditionDefinition.VersionAlgorithm.Coding -> {
+      is Coding -> {
         encoder.encodeSerializableElement(
           descriptor,
           17 + descriptorOffset,
           Hoisted.versionAlgorithmCodingSer,
-          choice.value,
+          choice,
         )
       }
     }

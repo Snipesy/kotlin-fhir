@@ -21,6 +21,7 @@ package dev.ohs.fhir.model.r4b.serializers
 import dev.ohs.fhir.model.r4b.Boolean as R4bBoolean
 import dev.ohs.fhir.model.r4b.Canonical
 import dev.ohs.fhir.model.r4b.Code
+import dev.ohs.fhir.model.r4b.CodeBox
 import dev.ohs.fhir.model.r4b.CodeableConcept
 import dev.ohs.fhir.model.r4b.Coding
 import dev.ohs.fhir.model.r4b.ContactDetail
@@ -40,6 +41,7 @@ import dev.ohs.fhir.model.r4b.Meta
 import dev.ohs.fhir.model.r4b.Narrative
 import dev.ohs.fhir.model.r4b.Resource
 import dev.ohs.fhir.model.r4b.String as R4bString
+import dev.ohs.fhir.model.r4b.StringBox
 import dev.ohs.fhir.model.r4b.Uri
 import dev.ohs.fhir.model.r4b.UsageContext
 import dev.ohs.fhir.model.r4b.ValueSet
@@ -970,15 +972,13 @@ internal object ValueSetExpansionParameterSerializer : KSerializer<ValueSet.Expa
       modifierExtension = modifierExtension ?: listOf(),
       name = R4bString.of(name, _name)!!,
       `value` =
-        ValueSet.Expansion.Parameter.Value.from(
-          R4bString.of(valueString, _valueString),
-          R4bBoolean.of(valueBoolean, _valueBoolean),
-          Integer.of(valueInteger, _valueInteger),
-          Decimal.of(valueDecimal, _valueDecimal),
-          Uri.of(valueUri, _valueUri),
-          Code.of(valueCode, _valueCode),
-          DateTime.of(FhirDateTime.fromString(valueDateTime), _valueDateTime),
-        ),
+        ((R4bString.of(valueString, _valueString))?.let { StringBox(it) }
+          ?: R4bBoolean.of(valueBoolean, _valueBoolean)
+          ?: Integer.of(valueInteger, _valueInteger)
+          ?: Decimal.of(valueDecimal, _valueDecimal)
+          ?: Uri.of(valueUri, _valueUri)
+          ?: (Code.of(valueCode, _valueCode))?.let { CodeBox(it) }
+          ?: DateTime.of(FhirDateTime.fromString(valueDateTime), _valueDateTime)),
     )
   }
 
@@ -999,47 +999,47 @@ internal object ValueSetExpansionParameterSerializer : KSerializer<ValueSet.Expa
     }
     when (val choice = value.`value`) {
       null -> {}
-      is ValueSet.Expansion.Parameter.Value.String -> {
+      is StringBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 6, Hoisted.nameSer, it)
         }
       }
-      is ValueSet.Expansion.Parameter.Value.Boolean -> {
-        ((choice.value.value))?.let { encoder.encodeBooleanElement(descriptor, 7, it) }
-        (choice.value.toElement())?.let {
+      is R4bBoolean -> {
+        ((choice.value))?.let { encoder.encodeBooleanElement(descriptor, 7, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 8, Hoisted.nameSer, it)
         }
       }
-      is ValueSet.Expansion.Parameter.Value.Integer -> {
-        ((choice.value.value))?.let { encoder.encodeIntElement(descriptor, 9, it) }
-        (choice.value.toElement())?.let {
+      is Integer -> {
+        ((choice.value))?.let { encoder.encodeIntElement(descriptor, 9, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 10, Hoisted.nameSer, it)
         }
       }
-      is ValueSet.Expansion.Parameter.Value.Decimal -> {
-        ((choice.value.value))?.let {
+      is Decimal -> {
+        ((choice.value))?.let {
           encoder.encodeSerializableElement(descriptor, 11, FhirDecimalSerializer, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 12, Hoisted.nameSer, it)
         }
       }
-      is ValueSet.Expansion.Parameter.Value.Uri -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 13, it) }
-        (choice.value.toElement())?.let {
+      is Uri -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 13, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 14, Hoisted.nameSer, it)
         }
       }
-      is ValueSet.Expansion.Parameter.Value.Code -> {
+      is CodeBox -> {
         ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 15, it) }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 16, Hoisted.nameSer, it)
         }
       }
-      is ValueSet.Expansion.Parameter.Value.DateTime -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 17, it) }
-        (choice.value.toElement())?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 17, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 18, Hoisted.nameSer, it)
         }
       }

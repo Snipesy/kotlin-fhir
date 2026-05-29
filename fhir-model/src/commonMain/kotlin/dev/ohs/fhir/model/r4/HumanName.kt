@@ -89,7 +89,7 @@ public data class HumanName(
   public val suffix: List<String> = listOf(),
   /** Indicates the period of time when this name was valid for the named person. */
   public val period: Period? = null,
-) : Element() {
+) : Element(), FhirChoiceTypes.ElementDefinitionDefaultValueChoice {
   public fun toBuilder(): Builder =
     with(this) {
       Builder().apply {

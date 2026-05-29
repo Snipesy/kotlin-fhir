@@ -27,7 +27,6 @@ import dev.ohs.fhir.model.r5.terminologies.FHIRTypes
 import dev.ohs.fhir.model.r5.terminologies.PublicationStatus
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -184,8 +183,10 @@ public data class Measure(
    * passed in - %version1 and %version2 and will return a negative number if version1 is newer, a
    * positive number if version2 and a 0 if the version ordering can't be successfully be
    * determined.
+   *
+   * A FHIR choice type — one of: [Coding] | [String]
    */
-  public val versionAlgorithm: VersionAlgorithm? = null,
+  public val versionAlgorithm: Measure.VersionAlgorithm? = null,
   /**
    * A natural language name identifying the measure. This name should be usable as an identifier
    * for the module by machine processing applications such as code generation.
@@ -230,8 +231,10 @@ public data class Measure(
    * in the measures is evaluated with respect to a particular subject. This corresponds roughly to
    * the notion of a Compartment in that it limits what content is available based on its
    * relationship to the subject. In CQL, this corresponds to the context declaration.
+   *
+   * A FHIR choice type — one of: [CodeableConcept] | [Reference]
    */
-  public val subject: Subject? = null,
+  public val subject: Measure.Subject? = null,
   /**
    * The population basis specifies the type of elements in the population. For a subject-based
    * measure, this is boolean (because the subject and the population basis are the same, and the
@@ -764,8 +767,10 @@ public data class Measure(
      * in the measures is evaluated with respect to a particular subject. This corresponds roughly
      * to the notion of a Compartment in that it limits what content is available based on its
      * relationship to the subject. In CQL, this corresponds to the context declaration.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public val subject: Subject? = null,
+    public val subject: Group.Subject? = null,
     /**
      * The population basis specifies the type of elements in the population. For a subject-based
      * measure, this is boolean (because the subject and the population basis are the same, and the
@@ -1471,31 +1476,6 @@ public data class Measure(
       }
     }
 
-    public sealed interface Subject {
-      public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-      public fun asReference(): Reference? = this as? Reference
-
-      @JvmInline
-      public value class CodeableConcept(
-        public val `value`: dev.ohs.fhir.model.r5.CodeableConcept
-      ) : Subject
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : Subject
-
-      public companion object {
-        internal fun from(
-          codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-          referenceValue: dev.ohs.fhir.model.r5.Reference?,
-        ): Subject? {
-          if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-          if (referenceValue != null) return Reference(referenceValue)
-          return null
-        }
-      }
-    }
-
     public class Builder() {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -1576,8 +1556,10 @@ public data class Measure(
        * logic in the measures is evaluated with respect to a particular subject. This corresponds
        * roughly to the notion of a Compartment in that it limits what content is available based on
        * its relationship to the subject. In CQL, this corresponds to the context declaration.
+       *
+       * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public var subject: Subject? = null
+      public var subject: Group.Subject? = null
 
       /**
        * The population basis specifies the type of elements in the population. For a subject-based
@@ -1677,6 +1659,9 @@ public data class Measure(
           stratifier = stratifier.map { it.build() },
         )
     }
+
+    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+    public typealias Subject = FhirChoiceTypes.CodeableConceptOrReference
   }
 
   /**
@@ -1860,53 +1845,6 @@ public data class Measure(
     }
   }
 
-  public sealed interface VersionAlgorithm {
-    public fun asString(): String? = this as? String
-
-    public fun asCoding(): Coding? = this as? Coding
-
-    @JvmInline
-    public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : VersionAlgorithm
-
-    @JvmInline
-    public value class Coding(public val `value`: dev.ohs.fhir.model.r5.Coding) : VersionAlgorithm
-
-    public companion object {
-      internal fun from(
-        stringValue: dev.ohs.fhir.model.r5.String?,
-        codingValue: dev.ohs.fhir.model.r5.Coding?,
-      ): VersionAlgorithm? {
-        if (stringValue != null) return String(stringValue)
-        if (codingValue != null) return Coding(codingValue)
-        return null
-      }
-    }
-  }
-
-  public sealed interface Subject {
-    public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-    public fun asReference(): Reference? = this as? Reference
-
-    @JvmInline
-    public value class CodeableConcept(public val `value`: dev.ohs.fhir.model.r5.CodeableConcept) :
-      Subject
-
-    @JvmInline
-    public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) : Subject
-
-    public companion object {
-      internal fun from(
-        codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-        referenceValue: dev.ohs.fhir.model.r5.Reference?,
-      ): Subject? {
-        if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-        if (referenceValue != null) return Reference(referenceValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
     /**
      * The status of this measure. Enables tracking the life-cycle of the content.
@@ -2079,8 +2017,10 @@ public data class Measure(
      * passed in - %version1 and %version2 and will return a negative number if version1 is newer, a
      * positive number if version2 and a 0 if the version ordering can't be successfully be
      * determined.
+     *
+     * A FHIR choice type — one of: [Coding] | [String]
      */
-    public var versionAlgorithm: VersionAlgorithm? = null
+    public var versionAlgorithm: Measure.VersionAlgorithm? = null
 
     /**
      * A natural language name identifying the measure. This name should be usable as an identifier
@@ -2121,8 +2061,10 @@ public data class Measure(
      * in the measures is evaluated with respect to a particular subject. This corresponds roughly
      * to the notion of a Compartment in that it limits what content is available based on its
      * relationship to the subject. In CQL, this corresponds to the context declaration.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public var subject: Subject? = null
+    public var subject: Measure.Subject? = null
 
     /**
      * The population basis specifies the type of elements in the population. For a subject-based
@@ -2505,4 +2447,10 @@ public data class Measure(
         supplementalData = supplementalData.map { it.build() },
       )
   }
+
+  /** A FHIR choice type — one of: [Coding] | [String] */
+  public typealias VersionAlgorithm = FhirChoiceTypes.CodingOrString
+
+  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+  public typealias Subject = FhirChoiceTypes.CodeableConceptOrReference
 }

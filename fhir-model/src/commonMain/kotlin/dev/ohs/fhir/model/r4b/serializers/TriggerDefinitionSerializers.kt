@@ -150,12 +150,10 @@ internal object TriggerDefinitionSerializer : KSerializer<TriggerDefinition> {
       type = Enumeration.of(TriggerDefinition.TriggerType.fromCode(type!!), _type),
       name = R4bString.of(name, _name),
       timing =
-        TriggerDefinition.Timing.from(
-          timingTiming,
-          timingReference,
-          Date.of(FhirDate.fromString(timingDate), _timingDate),
-          DateTime.of(FhirDateTime.fromString(timingDateTime), _timingDateTime),
-        ),
+        (timingTiming
+          ?: timingReference
+          ?: Date.of(FhirDate.fromString(timingDate), _timingDate)
+          ?: DateTime.of(FhirDateTime.fromString(timingDateTime), _timingDateTime)),
       `data` = `data` ?: listOf(),
       condition = condition,
     )
@@ -175,21 +173,21 @@ internal object TriggerDefinitionSerializer : KSerializer<TriggerDefinition> {
     }
     when (val choice = value.timing) {
       null -> {}
-      is TriggerDefinition.Timing.Timing -> {
-        encoder.encodeSerializableElement(descriptor, 6, Hoisted.timingTimingSer, choice.value)
+      is Timing -> {
+        encoder.encodeSerializableElement(descriptor, 6, Hoisted.timingTimingSer, choice)
       }
-      is TriggerDefinition.Timing.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 7, Hoisted.timingReferenceSer, choice.value)
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 7, Hoisted.timingReferenceSer, choice)
       }
-      is TriggerDefinition.Timing.Date -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 8, it) }
-        (choice.value.toElement())?.let {
+      is Date -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 8, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 9, Hoisted.typeSer, it)
         }
       }
-      is TriggerDefinition.Timing.DateTime -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 10, it) }
-        (choice.value.toElement())?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 10, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 11, Hoisted.typeSer, it)
         }
       }

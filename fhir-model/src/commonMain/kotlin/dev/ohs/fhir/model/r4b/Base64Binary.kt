@@ -42,7 +42,7 @@ public data class Base64Binary(
   override val extension: List<Extension> = listOf(),
   /** The actual value */
   public val `value`: String? = null,
-) : Element(id, extension) {
+) : Element(id, extension), FhirChoiceParticipants.Base64BinaryChoices {
   public fun toBuilder(): Builder =
     with(this) {
       Builder().apply {

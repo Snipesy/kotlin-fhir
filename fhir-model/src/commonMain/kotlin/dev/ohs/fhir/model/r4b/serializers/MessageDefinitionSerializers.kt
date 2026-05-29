@@ -623,7 +623,7 @@ internal object MessageDefinitionSerializer : KSerializer<MessageDefinition> {
         (kotlin.collections.List(maxOf(parent?.size ?: 0, _parent?.size ?: 0)) { index ->
           Canonical.of(parent?.getOrNull(index)?.let { it }, _parent?.getOrNull(index))!!
         }),
-      event = MessageDefinition.Event.from(eventCoding, Uri.of(eventUri, _eventUri))!!,
+      event = (eventCoding ?: Uri.of(eventUri, _eventUri))!!,
       category =
         category?.let {
           Enumeration.of(MessageDefinition.MessageSignificanceCategory.fromCode(it), _category)
@@ -871,19 +871,17 @@ internal object MessageDefinitionSerializer : KSerializer<MessageDefinition> {
       encoder.encodeSerializableElement(descriptor, 41 + descriptorOffset, Hoisted.replacesSer2, it)
     }
     when (val choice = value.event) {
-      is MessageDefinition.Event.Coding -> {
+      is Coding -> {
         encoder.encodeSerializableElement(
           descriptor,
           42 + descriptorOffset,
           Hoisted.eventCodingSer,
-          choice.value,
+          choice,
         )
       }
-      is MessageDefinition.Event.Uri -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 43 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is Uri -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 43 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             44 + descriptorOffset,

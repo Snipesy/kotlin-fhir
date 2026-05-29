@@ -20,7 +20,6 @@ import dev.ohs.fhir.model.r4.serializers.DosageDoseAndRateSerializer
 import dev.ohs.fhir.model.r4.serializers.DosageSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.Serializable
 
 /**
@@ -97,8 +96,10 @@ public data class Dosage(
    * CodeableConcept is not populated. Or you can express "as needed" with a reason by including the
    * CodeableConcept. In this case the Boolean is assumed to be True. If you set the Boolean to
    * False, then the dose is given according to the schedule and is not "prn" or "as needed".
+   *
+   * A FHIR choice type — one of: [Boolean] | [CodeableConcept]
    */
-  public val asNeeded: AsNeeded? = null,
+  public val asNeeded: Dosage.AsNeeded? = null,
   /**
    * Body site to administer to.
    *
@@ -134,7 +135,7 @@ public data class Dosage(
   public val maxDosePerAdministration: Quantity? = null,
   /** Upper limit on medication per lifetime of the patient. */
   public val maxDosePerLifetime: Quantity? = null,
-) : BackboneElement() {
+) : BackboneElement(), FhirChoiceTypes.ElementDefinitionDefaultValueChoice {
   public fun toBuilder(): Builder =
     with(this) {
       Builder().apply {
@@ -196,8 +197,10 @@ public data class Dosage(
      * specified to convey the total amount to be administered over the period of time as indicated
      * by the schedule e.g. 500 ml in dose, with timing used to convey that this should be done over
      * 4 hours.
+     *
+     * A FHIR choice type — one of: [Quantity] | [Range]
      */
-    public val dose: Dose? = null,
+    public val dose: DoseAndRate.Dose? = null,
     /**
      * Amount of medication per unit of time.
      *
@@ -213,8 +216,10 @@ public data class Dosage(
      * is specified as the denominator. Where a rate such as 500ml over 2 hours is specified, the
      * use of rateRatio may be more semantically correct than specifying using a rateQuantity of 250
      * mg/hour.
+     *
+     * A FHIR choice type — one of: [Quantity] | [Range] | [Ratio]
      */
-    public val rate: Rate? = null,
+    public val rate: DoseAndRate.Rate? = null,
   ) : Element() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -226,56 +231,6 @@ public data class Dosage(
           rate = this@with.rate
         }
       }
-
-    public sealed interface Dose {
-      public fun asRange(): Range? = this as? Range
-
-      public fun asQuantity(): Quantity? = this as? Quantity
-
-      @JvmInline public value class Range(public val `value`: dev.ohs.fhir.model.r4.Range) : Dose
-
-      @JvmInline
-      public value class Quantity(public val `value`: dev.ohs.fhir.model.r4.Quantity) : Dose
-
-      public companion object {
-        internal fun from(
-          rangeValue: dev.ohs.fhir.model.r4.Range?,
-          quantityValue: dev.ohs.fhir.model.r4.Quantity?,
-        ): Dose? {
-          if (rangeValue != null) return Range(rangeValue)
-          if (quantityValue != null) return Quantity(quantityValue)
-          return null
-        }
-      }
-    }
-
-    public sealed interface Rate {
-      public fun asRatio(): Ratio? = this as? Ratio
-
-      public fun asRange(): Range? = this as? Range
-
-      public fun asQuantity(): Quantity? = this as? Quantity
-
-      @JvmInline public value class Ratio(public val `value`: dev.ohs.fhir.model.r4.Ratio) : Rate
-
-      @JvmInline public value class Range(public val `value`: dev.ohs.fhir.model.r4.Range) : Rate
-
-      @JvmInline
-      public value class Quantity(public val `value`: dev.ohs.fhir.model.r4.Quantity) : Rate
-
-      public companion object {
-        internal fun from(
-          ratioValue: dev.ohs.fhir.model.r4.Ratio?,
-          rangeValue: dev.ohs.fhir.model.r4.Range?,
-          quantityValue: dev.ohs.fhir.model.r4.Quantity?,
-        ): Rate? {
-          if (ratioValue != null) return Ratio(ratioValue)
-          if (rangeValue != null) return Range(rangeValue)
-          if (quantityValue != null) return Quantity(quantityValue)
-          return null
-        }
-      }
-    }
 
     public class Builder() {
       /**
@@ -316,8 +271,10 @@ public data class Dosage(
        * duration), this can be specified to convey the total amount to be administered over the
        * period of time as indicated by the schedule e.g. 500 ml in dose, with timing used to convey
        * that this should be done over 4 hours.
+       *
+       * A FHIR choice type — one of: [Quantity] | [Range]
        */
-      public var dose: Dose? = null
+      public var dose: DoseAndRate.Dose? = null
 
       /**
        * Amount of medication per unit of time.
@@ -334,8 +291,10 @@ public data class Dosage(
        * where the time is specified as the denominator. Where a rate such as 500ml over 2 hours is
        * specified, the use of rateRatio may be more semantically correct than specifying using a
        * rateQuantity of 250 mg/hour.
+       *
+       * A FHIR choice type — one of: [Quantity] | [Range] | [Ratio]
        */
-      public var rate: Rate? = null
+      public var rate: DoseAndRate.Rate? = null
 
       public fun build(): DoseAndRate =
         DoseAndRate(
@@ -346,30 +305,12 @@ public data class Dosage(
           rate = rate,
         )
     }
-  }
 
-  public sealed interface AsNeeded {
-    public fun asBoolean(): Boolean? = this as? Boolean
+    /** A FHIR choice type — one of: [Quantity] | [Range] */
+    public typealias Dose = FhirChoiceTypes.QuantityOrRange
 
-    public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-    @JvmInline
-    public value class Boolean(public val `value`: dev.ohs.fhir.model.r4.Boolean) : AsNeeded
-
-    @JvmInline
-    public value class CodeableConcept(public val `value`: dev.ohs.fhir.model.r4.CodeableConcept) :
-      AsNeeded
-
-    public companion object {
-      internal fun from(
-        booleanValue: dev.ohs.fhir.model.r4.Boolean?,
-        codeableConceptValue: dev.ohs.fhir.model.r4.CodeableConcept?,
-      ): AsNeeded? {
-        if (booleanValue != null) return Boolean(booleanValue)
-        if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-        return null
-      }
-    }
+    /** A FHIR choice type — one of: [Quantity] | [Range] | [Ratio] */
+    public typealias Rate = FhirChoiceTypes.QuantityOrRangeOrRatio
   }
 
   public open class Builder() {
@@ -451,8 +392,10 @@ public data class Dosage(
      * CodeableConcept is not populated. Or you can express "as needed" with a reason by including
      * the CodeableConcept. In this case the Boolean is assumed to be True. If you set the Boolean
      * to False, then the dose is given according to the schedule and is not "prn" or "as needed".
+     *
+     * A FHIR choice type — one of: [Boolean] | [CodeableConcept]
      */
-    public open var asNeeded: AsNeeded? = null
+    public open var asNeeded: Dosage.AsNeeded? = null
 
     /**
      * Body site to administer to.
@@ -518,4 +461,7 @@ public data class Dosage(
         maxDosePerLifetime = maxDosePerLifetime?.build(),
       )
   }
+
+  /** A FHIR choice type — one of: [Boolean] | [CodeableConcept] */
+  public typealias AsNeeded = FhirChoiceTypes.BooleanOrCodeableConcept
 }

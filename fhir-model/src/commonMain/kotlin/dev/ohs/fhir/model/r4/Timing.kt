@@ -21,7 +21,6 @@ import dev.ohs.fhir.model.r4.serializers.TimingSerializer
 import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.Serializable
 
 /**
@@ -88,7 +87,7 @@ public data class Timing(
    * case, specifying the two event times).
    */
   public val code: CodeableConcept? = null,
-) : BackboneElement() {
+) : BackboneElement(), FhirChoiceParticipants.TimingChoices {
   public fun toBuilder(): Builder =
     with(this) {
       Builder().apply {
@@ -125,8 +124,10 @@ public data class Timing(
     /**
      * Either a duration for the length of the timing schedule, a range of possible length, or outer
      * bounds for start and/or end limits of the timing schedule.
+     *
+     * A FHIR choice type — one of: [Duration] | [Period] | [Range]
      */
-    public val bounds: Bounds? = null,
+    public val bounds: Repeat.Bounds? = null,
     /**
      * A total count of the desired number of repetitions across the duration of the entire timing
      * specification. If countMax is present, this element indicates the lower bound of the allowed
@@ -236,35 +237,6 @@ public data class Timing(
         }
       }
 
-    public sealed interface Bounds {
-      public fun asDuration(): Duration? = this as? Duration
-
-      public fun asRange(): Range? = this as? Range
-
-      public fun asPeriod(): Period? = this as? Period
-
-      @JvmInline
-      public value class Duration(public val `value`: dev.ohs.fhir.model.r4.Duration) : Bounds
-
-      @JvmInline public value class Range(public val `value`: dev.ohs.fhir.model.r4.Range) : Bounds
-
-      @JvmInline
-      public value class Period(public val `value`: dev.ohs.fhir.model.r4.Period) : Bounds
-
-      public companion object {
-        internal fun from(
-          durationValue: dev.ohs.fhir.model.r4.Duration?,
-          rangeValue: dev.ohs.fhir.model.r4.Range?,
-          periodValue: dev.ohs.fhir.model.r4.Period?,
-        ): Bounds? {
-          if (durationValue != null) return Duration(durationValue)
-          if (rangeValue != null) return Range(rangeValue)
-          if (periodValue != null) return Period(periodValue)
-          return null
-        }
-      }
-    }
-
     public class Builder() {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -289,8 +261,10 @@ public data class Timing(
       /**
        * Either a duration for the length of the timing schedule, a range of possible length, or
        * outer bounds for start and/or end limits of the timing schedule.
+       *
+       * A FHIR choice type — one of: [Duration] | [Period] | [Range]
        */
-      public var bounds: Bounds? = null
+      public var bounds: Repeat.Bounds? = null
 
       /**
        * A total count of the desired number of repetitions across the duration of the entire timing
@@ -412,6 +386,9 @@ public data class Timing(
           offset = offset?.build(),
         )
     }
+
+    /** A FHIR choice type — one of: [Duration] | [Period] | [Range] */
+    public typealias Bounds = FhirChoiceTypes.DurationOrPeriodOrRange
   }
 
   public open class Builder() {

@@ -44,7 +44,7 @@ public open class String(
   open override val extension: List<Extension> = listOf(),
   /** The actual value */
   public open val `value`: kotlin.String? = null,
-) : Element(id, extension) {
+) : Element(id, extension), FhirChoiceParticipants.StringChoices {
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
     if (other !is String) return false

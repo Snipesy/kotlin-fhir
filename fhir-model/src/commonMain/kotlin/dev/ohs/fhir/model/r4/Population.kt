@@ -20,7 +20,6 @@ import dev.ohs.fhir.model.r4.serializers.PopulationSerializer
 import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.Serializable
 
 /**
@@ -66,8 +65,12 @@ public data class Population(
    * simplicity for everyone.
    */
   override val modifierExtension: List<Extension> = listOf(),
-  /** The age of the specific population. */
-  public val age: Age? = null,
+  /**
+   * The age of the specific population.
+   *
+   * A FHIR choice type — one of: [CodeableConcept] | [Range]
+   */
+  public val age: FhirChoiceTypes.CodeableConceptOrRange? = null,
   /** The gender of the specific population. */
   public val gender: CodeableConcept? = null,
   /** Race of the specific population. */
@@ -87,29 +90,6 @@ public data class Population(
         physiologicalCondition = this@with.physiologicalCondition?.toBuilder()
       }
     }
-
-  public sealed interface Age {
-    public fun asRange(): Range? = this as? Range
-
-    public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-    @JvmInline public value class Range(public val `value`: dev.ohs.fhir.model.r4.Range) : Age
-
-    @JvmInline
-    public value class CodeableConcept(public val `value`: dev.ohs.fhir.model.r4.CodeableConcept) :
-      Age
-
-    public companion object {
-      internal fun from(
-        rangeValue: dev.ohs.fhir.model.r4.Range?,
-        codeableConceptValue: dev.ohs.fhir.model.r4.CodeableConcept?,
-      ): Age? {
-        if (rangeValue != null) return Range(rangeValue)
-        if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-        return null
-      }
-    }
-  }
 
   public open class Builder() {
     /**
@@ -152,8 +132,12 @@ public data class Population(
      */
     public open var modifierExtension: MutableList<Extension.Builder> = mutableListOf()
 
-    /** The age of the specific population. */
-    public open var age: Age? = null
+    /**
+     * The age of the specific population.
+     *
+     * A FHIR choice type — one of: [CodeableConcept] | [Range]
+     */
+    public open var age: FhirChoiceTypes.CodeableConceptOrRange? = null
 
     /** The gender of the specific population. */
     public open var gender: CodeableConcept.Builder? = null

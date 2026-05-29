@@ -151,13 +151,11 @@ internal object GroupCharacteristicSerializer : KSerializer<Group.Characteristic
       modifierExtension = modifierExtension ?: listOf(),
       code = code!!,
       `value` =
-        Group.Characteristic.Value.from(
-          valueCodeableConcept,
-          R4bBoolean.of(valueBoolean, _valueBoolean),
-          valueQuantity,
-          valueRange,
-          valueReference,
-        )!!,
+        (valueCodeableConcept
+          ?: R4bBoolean.of(valueBoolean, _valueBoolean)
+          ?: valueQuantity
+          ?: valueRange
+          ?: valueReference)!!,
       exclude = R4bBoolean.of(exclude, _exclude)!!,
       period = period,
     )
@@ -176,23 +174,23 @@ internal object GroupCharacteristicSerializer : KSerializer<Group.Characteristic
       )
     encoder.encodeSerializableElement(descriptor, 3, Hoisted.codeSer, value.code)
     when (val choice = value.`value`) {
-      is Group.Characteristic.Value.CodeableConcept -> {
-        encoder.encodeSerializableElement(descriptor, 4, Hoisted.codeSer, choice.value)
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 4, Hoisted.codeSer, choice)
       }
-      is Group.Characteristic.Value.Boolean -> {
-        ((choice.value.value))?.let { encoder.encodeBooleanElement(descriptor, 5, it) }
-        (choice.value.toElement())?.let {
+      is R4bBoolean -> {
+        ((choice.value))?.let { encoder.encodeBooleanElement(descriptor, 5, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 6, Hoisted.valueBooleanSer, it)
         }
       }
-      is Group.Characteristic.Value.Quantity -> {
-        encoder.encodeSerializableElement(descriptor, 7, Hoisted.valueQuantitySer, choice.value)
+      is Quantity -> {
+        encoder.encodeSerializableElement(descriptor, 7, Hoisted.valueQuantitySer, choice)
       }
-      is Group.Characteristic.Value.Range -> {
-        encoder.encodeSerializableElement(descriptor, 8, Hoisted.valueRangeSer, choice.value)
+      is Range -> {
+        encoder.encodeSerializableElement(descriptor, 8, Hoisted.valueRangeSer, choice)
       }
-      is Group.Characteristic.Value.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 9, Hoisted.valueReferenceSer, choice.value)
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 9, Hoisted.valueReferenceSer, choice)
       }
     }
     ((value.exclude.value))?.let { encoder.encodeBooleanElement(descriptor, 10, it) }

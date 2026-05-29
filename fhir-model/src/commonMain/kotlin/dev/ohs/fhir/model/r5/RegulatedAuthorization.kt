@@ -21,7 +21,6 @@ import dev.ohs.fhir.model.r5.serializers.RegulatedAuthorizationSerializer
 import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -270,8 +269,12 @@ public data class RegulatedAuthorization(
     public val type: CodeableConcept? = null,
     /** The status associated with the case. */
     public val status: CodeableConcept? = null,
-    /** Relevant date for this case. */
-    public val date: Date? = null,
+    /**
+     * Relevant date for this case.
+     *
+     * A FHIR choice type — one of: [DateTime] | [Period]
+     */
+    public val date: FhirChoiceTypes.DateTimeOrPeriod? = null,
     /**
      * A regulatory submission from an organization to a regulator, as part of an assessing case.
      * Multiple applications may occur over time, with more or different information to support or
@@ -293,28 +296,6 @@ public data class RegulatedAuthorization(
           application = this@with.application.map { it.toBuilder() }.toMutableList()
         }
       }
-
-    public sealed interface Date {
-      public fun asPeriod(): Period? = this as? Period
-
-      public fun asDateTime(): DateTime? = this as? DateTime
-
-      @JvmInline public value class Period(public val `value`: dev.ohs.fhir.model.r5.Period) : Date
-
-      @JvmInline
-      public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) : Date
-
-      public companion object {
-        internal fun from(
-          periodValue: dev.ohs.fhir.model.r5.Period?,
-          dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-        ): Date? {
-          if (periodValue != null) return Period(periodValue)
-          if (dateTimeValue != null) return DateTime(dateTimeValue)
-          return null
-        }
-      }
-    }
 
     public class Builder() {
       /**
@@ -366,8 +347,12 @@ public data class RegulatedAuthorization(
       /** The status associated with the case. */
       public var status: CodeableConcept.Builder? = null
 
-      /** Relevant date for this case. */
-      public var date: Date? = null
+      /**
+       * Relevant date for this case.
+       *
+       * A FHIR choice type — one of: [DateTime] | [Period]
+       */
+      public var date: FhirChoiceTypes.DateTimeOrPeriod? = null
 
       /**
        * A regulatory submission from an organization to a regulator, as part of an assessing case.

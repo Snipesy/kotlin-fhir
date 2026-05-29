@@ -140,10 +140,8 @@ internal object BiologicallyDerivedProductCollectionSerializer :
       collector = collector,
       source = source,
       collected =
-        BiologicallyDerivedProduct.Collection.Collected.from(
-          DateTime.of(FhirDateTime.fromString(collectedDateTime), _collectedDateTime),
-          collectedPeriod,
-        ),
+        (DateTime.of(FhirDateTime.fromString(collectedDateTime), _collectedDateTime)
+          ?: collectedPeriod),
     )
   }
 
@@ -169,14 +167,14 @@ internal object BiologicallyDerivedProductCollectionSerializer :
     }
     when (val choice = value.collected) {
       null -> {}
-      is BiologicallyDerivedProduct.Collection.Collected.DateTime -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 5, it) }
-        (choice.value.toElement())?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 5, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 6, Hoisted.collectedDateTimeSer, it)
         }
       }
-      is BiologicallyDerivedProduct.Collection.Collected.Period -> {
-        encoder.encodeSerializableElement(descriptor, 7, Hoisted.collectedPeriodSer, choice.value)
+      is Period -> {
+        encoder.encodeSerializableElement(descriptor, 7, Hoisted.collectedPeriodSer, choice)
       }
     }
   }
@@ -276,11 +274,7 @@ internal object BiologicallyDerivedProductProcessingSerializer :
       description = R4bString.of(description, _description),
       procedure = procedure,
       additive = additive,
-      time =
-        BiologicallyDerivedProduct.Processing.Time.from(
-          DateTime.of(FhirDateTime.fromString(timeDateTime), _timeDateTime),
-          timePeriod,
-        ),
+      time = (DateTime.of(FhirDateTime.fromString(timeDateTime), _timeDateTime) ?: timePeriod),
     )
   }
 
@@ -310,14 +304,14 @@ internal object BiologicallyDerivedProductProcessingSerializer :
     }
     when (val choice = value.time) {
       null -> {}
-      is BiologicallyDerivedProduct.Processing.Time.DateTime -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 7, it) }
-        (choice.value.toElement())?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 7, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 8, Hoisted.descriptionSer, it)
         }
       }
-      is BiologicallyDerivedProduct.Processing.Time.Period -> {
-        encoder.encodeSerializableElement(descriptor, 9, Hoisted.timePeriodSer, choice.value)
+      is Period -> {
+        encoder.encodeSerializableElement(descriptor, 9, Hoisted.timePeriodSer, choice)
       }
     }
   }
@@ -407,11 +401,7 @@ internal object BiologicallyDerivedProductManipulationSerializer :
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
       description = R4bString.of(description, _description),
-      time =
-        BiologicallyDerivedProduct.Manipulation.Time.from(
-          DateTime.of(FhirDateTime.fromString(timeDateTime), _timeDateTime),
-          timePeriod,
-        ),
+      time = (DateTime.of(FhirDateTime.fromString(timeDateTime), _timeDateTime) ?: timePeriod),
     )
   }
 
@@ -435,14 +425,14 @@ internal object BiologicallyDerivedProductManipulationSerializer :
     }
     when (val choice = value.time) {
       null -> {}
-      is BiologicallyDerivedProduct.Manipulation.Time.DateTime -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 5, it) }
-        (choice.value.toElement())?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 5, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 6, Hoisted.descriptionSer, it)
         }
       }
-      is BiologicallyDerivedProduct.Manipulation.Time.Period -> {
-        encoder.encodeSerializableElement(descriptor, 7, Hoisted.timePeriodSer, choice.value)
+      is Period -> {
+        encoder.encodeSerializableElement(descriptor, 7, Hoisted.timePeriodSer, choice)
       }
     }
   }

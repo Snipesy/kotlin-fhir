@@ -447,10 +447,8 @@ internal object PersonSerializer : KSerializer<Person> {
       gender = gender?.let { Enumeration.of(AdministrativeGender.fromCode(it), _gender) },
       birthDate = Date.of(FhirDate.fromString(birthDate), _birthDate),
       deceased =
-        Person.Deceased.from(
-          R5Boolean.of(deceasedBoolean, _deceasedBoolean),
-          DateTime.of(FhirDateTime.fromString(deceasedDateTime), _deceasedDateTime),
-        ),
+        (R5Boolean.of(deceasedBoolean, _deceasedBoolean)
+          ?: DateTime.of(FhirDateTime.fromString(deceasedDateTime), _deceasedDateTime)),
       address = address ?: listOf(),
       maritalStatus = maritalStatus,
       photo = photo ?: listOf(),
@@ -572,11 +570,11 @@ internal object PersonSerializer : KSerializer<Person> {
     }
     when (val choice = value.deceased) {
       null -> {}
-      is Person.Deceased.Boolean -> {
-        ((choice.value.value))?.let {
+      is R5Boolean -> {
+        ((choice.value))?.let {
           encoder.encodeBooleanElement(descriptor, 19 + descriptorOffset, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             20 + descriptorOffset,
@@ -585,11 +583,11 @@ internal object PersonSerializer : KSerializer<Person> {
           )
         }
       }
-      is Person.Deceased.DateTime -> {
-        ((choice.value.value?.toString()))?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let {
           encoder.encodeStringElement(descriptor, 21 + descriptorOffset, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             22 + descriptorOffset,

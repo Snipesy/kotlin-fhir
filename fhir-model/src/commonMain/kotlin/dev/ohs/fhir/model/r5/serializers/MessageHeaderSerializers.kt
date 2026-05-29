@@ -145,11 +145,7 @@ internal object MessageHeaderDestinationSerializer : KSerializer<MessageHeader.D
       id = id,
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
-      endpoint =
-        MessageHeader.Destination.Endpoint.from(
-          Url.of(endpointUrl, _endpointUrl),
-          endpointReference,
-        ),
+      endpoint = (Url.of(endpointUrl, _endpointUrl) ?: endpointReference),
       name = R5String.of(name, _name),
       target = target,
       `receiver` = `receiver`,
@@ -169,14 +165,14 @@ internal object MessageHeaderDestinationSerializer : KSerializer<MessageHeader.D
       )
     when (val choice = value.endpoint) {
       null -> {}
-      is MessageHeader.Destination.Endpoint.Url -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 3, it) }
-        (choice.value.toElement())?.let {
+      is Url -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 3, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 4, Hoisted.endpointUrlSer, it)
         }
       }
-      is MessageHeader.Destination.Endpoint.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 5, Hoisted.endpointReferenceSer, choice.value)
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 5, Hoisted.endpointReferenceSer, choice)
       }
     }
     ((value.name?.value))?.let { encoder.encodeStringElement(descriptor, 6, it) }
@@ -294,8 +290,7 @@ internal object MessageHeaderSourceSerializer : KSerializer<MessageHeader.Source
       id = id,
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
-      endpoint =
-        MessageHeader.Source.Endpoint.from(Url.of(endpointUrl, _endpointUrl), endpointReference),
+      endpoint = (Url.of(endpointUrl, _endpointUrl) ?: endpointReference),
       name = R5String.of(name, _name),
       software = R5String.of(software, _software),
       version = R5String.of(version, _version),
@@ -316,14 +311,14 @@ internal object MessageHeaderSourceSerializer : KSerializer<MessageHeader.Source
       )
     when (val choice = value.endpoint) {
       null -> {}
-      is MessageHeader.Source.Endpoint.Url -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 3, it) }
-        (choice.value.toElement())?.let {
+      is Url -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 3, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 4, Hoisted.endpointUrlSer, it)
         }
       }
-      is MessageHeader.Source.Endpoint.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 5, Hoisted.endpointReferenceSer, choice.value)
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 5, Hoisted.endpointReferenceSer, choice)
       }
     }
     ((value.name?.value))?.let { encoder.encodeStringElement(descriptor, 6, it) }
@@ -620,8 +615,7 @@ internal object MessageHeaderSerializer : KSerializer<MessageHeader> {
       contained = contained ?: listOf(),
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
-      event =
-        MessageHeader.Event.from(eventCoding, Canonical.of(eventCanonical, _eventCanonical))!!,
+      event = (eventCoding ?: Canonical.of(eventCanonical, _eventCanonical))!!,
       destination = destination ?: listOf(),
       sender = sender,
       author = author,
@@ -691,19 +685,17 @@ internal object MessageHeaderSerializer : KSerializer<MessageHeader> {
         value.modifierExtension,
       )
     when (val choice = value.event) {
-      is MessageHeader.Event.Coding -> {
+      is Coding -> {
         encoder.encodeSerializableElement(
           descriptor,
           10 + descriptorOffset,
           Hoisted.eventCodingSer,
-          choice.value,
+          choice,
         )
       }
-      is MessageHeader.Event.Canonical -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 11 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is Canonical -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 11 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             12 + descriptorOffset,

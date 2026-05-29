@@ -308,7 +308,7 @@ internal object MeasureGroupSerializer : KSerializer<Measure.Group> {
       code = code,
       description = Markdown.of(description, _description),
       type = type ?: listOf(),
-      subject = Measure.Group.Subject.from(subjectCodeableConcept, subjectReference),
+      subject = (subjectCodeableConcept ?: subjectReference),
       basis = basis?.let { Enumeration.of(FHIRTypes.fromCode(it), _basis) },
       scoring = scoring,
       scoringUnit = scoringUnit,
@@ -347,11 +347,11 @@ internal object MeasureGroupSerializer : KSerializer<Measure.Group> {
       encoder.encodeSerializableElement(descriptor, 8, Hoisted.typeSer, value.type)
     when (val choice = value.subject) {
       null -> {}
-      is Measure.Group.Subject.CodeableConcept -> {
-        encoder.encodeSerializableElement(descriptor, 9, Hoisted.codeSer, choice.value)
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 9, Hoisted.codeSer, choice)
       }
-      is Measure.Group.Subject.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 10, Hoisted.subjectReferenceSer, choice.value)
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 10, Hoisted.subjectReferenceSer, choice)
       }
     }
     ((value.basis?.value?.getCode()))?.let { encoder.encodeStringElement(descriptor, 11, it) }
@@ -1503,16 +1503,13 @@ internal object MeasureSerializer : KSerializer<Measure> {
       identifier = identifier ?: listOf(),
       version = R5String.of(version, _version),
       versionAlgorithm =
-        Measure.VersionAlgorithm.from(
-          R5String.of(versionAlgorithmString, _versionAlgorithmString),
-          versionAlgorithmCoding,
-        ),
+        (R5String.of(versionAlgorithmString, _versionAlgorithmString) ?: versionAlgorithmCoding),
       name = R5String.of(name, _name),
       title = R5String.of(title, _title),
       subtitle = R5String.of(subtitle, _subtitle),
       status = Enumeration.of(PublicationStatus.fromCode(status!!), _status),
       experimental = R5Boolean.of(experimental, _experimental),
-      subject = Measure.Subject.from(subjectCodeableConcept, subjectReference),
+      subject = (subjectCodeableConcept ?: subjectReference),
       basis = basis?.let { Enumeration.of(FHIRTypes.fromCode(it), _basis) },
       date = DateTime.of(FhirDateTime.fromString(date), _date),
       publisher = R5String.of(publisher, _publisher),
@@ -1640,11 +1637,9 @@ internal object MeasureSerializer : KSerializer<Measure> {
     }
     when (val choice = value.versionAlgorithm) {
       null -> {}
-      is Measure.VersionAlgorithm.String -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 15 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is R5String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 15 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             16 + descriptorOffset,
@@ -1653,12 +1648,12 @@ internal object MeasureSerializer : KSerializer<Measure> {
           )
         }
       }
-      is Measure.VersionAlgorithm.Coding -> {
+      is Coding -> {
         encoder.encodeSerializableElement(
           descriptor,
           17 + descriptorOffset,
           Hoisted.versionAlgorithmCodingSer,
-          choice.value,
+          choice,
         )
       }
     }
@@ -1719,20 +1714,20 @@ internal object MeasureSerializer : KSerializer<Measure> {
     }
     when (val choice = value.subject) {
       null -> {}
-      is Measure.Subject.CodeableConcept -> {
+      is CodeableConcept -> {
         encoder.encodeSerializableElement(
           descriptor,
           28 + descriptorOffset,
           Hoisted.subjectCodeableConceptSer,
-          choice.value,
+          choice,
         )
       }
-      is Measure.Subject.Reference -> {
+      is Reference -> {
         encoder.encodeSerializableElement(
           descriptor,
           29 + descriptorOffset,
           Hoisted.subjectReferenceSer,
-          choice.value,
+          choice,
         )
       }
     }

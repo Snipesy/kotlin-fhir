@@ -23,7 +23,6 @@ import dev.ohs.fhir.model.r5.terminologies.AdministrativeGender
 import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -177,8 +176,10 @@ public data class Practitioner(
    * If there's no value in the instance, it means there is no statement on whether or not the
    * practitioner is deceased. Most systems will interpret the absence of a value as a sign of the
    * person being alive.
+   *
+   * A FHIR choice type — one of: [Boolean] | [DateTime]
    */
-  public val deceased: Deceased? = null,
+  public val deceased: Practitioner.Deceased? = null,
   /**
    * Address(es) of the practitioner that are not role specific (typically home address). Work
    * addresses are not typically entered in this property as they are usually role dependent.
@@ -523,29 +524,6 @@ public data class Practitioner(
     }
   }
 
-  public sealed interface Deceased {
-    public fun asBoolean(): Boolean? = this as? Boolean
-
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    @JvmInline
-    public value class Boolean(public val `value`: dev.ohs.fhir.model.r5.Boolean) : Deceased
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r5.DateTime) : Deceased
-
-    public companion object {
-      internal fun from(
-        booleanValue: dev.ohs.fhir.model.r5.Boolean?,
-        dateTimeValue: dev.ohs.fhir.model.r5.DateTime?,
-      ): Deceased? {
-        if (booleanValue != null) return Boolean(booleanValue)
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        return null
-      }
-    }
-  }
-
   public class Builder() : DomainResource.Builder() {
     /**
      * The logical id of the resource, as used in the URL for the resource. Once assigned, this
@@ -705,8 +683,10 @@ public data class Practitioner(
      * If there's no value in the instance, it means there is no statement on whether or not the
      * practitioner is deceased. Most systems will interpret the absence of a value as a sign of the
      * person being alive.
+     *
+     * A FHIR choice type — one of: [Boolean] | [DateTime]
      */
-    public var deceased: Deceased? = null
+    public var deceased: Practitioner.Deceased? = null
 
     /**
      * Address(es) of the practitioner that are not role specific (typically home address). Work
@@ -772,4 +752,7 @@ public data class Practitioner(
         communication = communication.map { it.build() },
       )
   }
+
+  /** A FHIR choice type — one of: [Boolean] | [DateTime] */
+  public typealias Deceased = FhirChoiceTypes.BooleanOrDateTime
 }

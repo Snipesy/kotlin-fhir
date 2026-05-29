@@ -120,8 +120,8 @@ internal object DosageDoseAndRateSerializer : KSerializer<Dosage.DoseAndRate> {
       id = id,
       extension = extension ?: listOf(),
       type = type,
-      dose = Dosage.DoseAndRate.Dose.from(doseRange, doseQuantity),
-      rate = Dosage.DoseAndRate.Rate.from(rateRatio, rateRange, rateQuantity),
+      dose = (doseRange ?: doseQuantity),
+      rate = (rateRatio ?: rateRange ?: rateQuantity),
     )
   }
 
@@ -132,23 +132,23 @@ internal object DosageDoseAndRateSerializer : KSerializer<Dosage.DoseAndRate> {
     (value.type)?.let { encoder.encodeSerializableElement(descriptor, 2, Hoisted.typeSer, it) }
     when (val choice = value.dose) {
       null -> {}
-      is Dosage.DoseAndRate.Dose.Range -> {
-        encoder.encodeSerializableElement(descriptor, 3, Hoisted.doseRangeSer, choice.value)
+      is Range -> {
+        encoder.encodeSerializableElement(descriptor, 3, Hoisted.doseRangeSer, choice)
       }
-      is Dosage.DoseAndRate.Dose.Quantity -> {
-        encoder.encodeSerializableElement(descriptor, 4, Hoisted.doseQuantitySer, choice.value)
+      is Quantity -> {
+        encoder.encodeSerializableElement(descriptor, 4, Hoisted.doseQuantitySer, choice)
       }
     }
     when (val choice = value.rate) {
       null -> {}
-      is Dosage.DoseAndRate.Rate.Ratio -> {
-        encoder.encodeSerializableElement(descriptor, 5, Hoisted.rateRatioSer, choice.value)
+      is Ratio -> {
+        encoder.encodeSerializableElement(descriptor, 5, Hoisted.rateRatioSer, choice)
       }
-      is Dosage.DoseAndRate.Rate.Range -> {
-        encoder.encodeSerializableElement(descriptor, 6, Hoisted.doseRangeSer, choice.value)
+      is Range -> {
+        encoder.encodeSerializableElement(descriptor, 6, Hoisted.doseRangeSer, choice)
       }
-      is Dosage.DoseAndRate.Rate.Quantity -> {
-        encoder.encodeSerializableElement(descriptor, 7, Hoisted.doseQuantitySer, choice.value)
+      is Quantity -> {
+        encoder.encodeSerializableElement(descriptor, 7, Hoisted.doseQuantitySer, choice)
       }
     }
   }
@@ -379,11 +379,7 @@ internal object DosageSerializer : KSerializer<Dosage> {
       additionalInstruction = additionalInstruction ?: listOf(),
       patientInstruction = R4String.of(patientInstruction, _patientInstruction),
       timing = timing,
-      asNeeded =
-        Dosage.AsNeeded.from(
-          R4Boolean.of(asNeededBoolean, _asNeededBoolean),
-          asNeededCodeableConcept,
-        ),
+      asNeeded = (R4Boolean.of(asNeededBoolean, _asNeededBoolean) ?: asNeededCodeableConcept),
       site = site,
       route = route,
       method = method,
@@ -427,18 +423,18 @@ internal object DosageSerializer : KSerializer<Dosage> {
     (value.timing)?.let { encoder.encodeSerializableElement(descriptor, 10, Hoisted.timingSer, it) }
     when (val choice = value.asNeeded) {
       null -> {}
-      is Dosage.AsNeeded.Boolean -> {
-        ((choice.value.value))?.let { encoder.encodeBooleanElement(descriptor, 11, it) }
-        (choice.value.toElement())?.let {
+      is R4Boolean -> {
+        ((choice.value))?.let { encoder.encodeBooleanElement(descriptor, 11, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 12, Hoisted.sequenceSer, it)
         }
       }
-      is Dosage.AsNeeded.CodeableConcept -> {
+      is CodeableConcept -> {
         encoder.encodeSerializableElement(
           descriptor,
           13,
           Hoisted.additionalInstructionSerInner,
-          choice.value,
+          choice,
         )
       }
     }

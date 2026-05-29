@@ -24,7 +24,6 @@ import dev.ohs.fhir.codegen.schema.Type
 import dev.ohs.fhir.codegen.schema.capitalized
 import dev.ohs.fhir.codegen.schema.getBindingValueSetUrl
 import dev.ohs.fhir.codegen.schema.getElementName
-import dev.ohs.fhir.codegen.schema.getPathSimpleNames
 import dev.ohs.fhir.codegen.schema.isCommonBinding
 import dev.ohs.fhir.codegen.schema.normalizeEnumName
 import dev.ohs.fhir.codegen.schema.typeIsEnumeratedCode
@@ -46,19 +45,22 @@ class ModelConstructionHelpers(val codegenContext: CodegenContext) {
     val sidecarName = "_$propertyName"
     if (element.type != null && element.type.size > 1) {
       if (expandPolymorphicProperties) {
-        val notNull = if (element.min == 1) "!!" else ""
-        val factoryClassName =
-          if (element.path.endsWith("[x]")) {
-            ClassName(modelClassName.packageName, element.getPathSimpleNames())
-          } else {
-            modelClassName
+        // Reconstruct the choice value inline: exactly one decoded local is non-null. A bare member
+        // already IS the shared set type; a wrapped member is lifted into its `<Type>Box`. The
+        // constructor argument's expected type resolves the `?:` chain to the set interface.
+        val registry = codegenContext.choiceRegistry
+        add("(")
+        element.type.forEachIndexed { index, type ->
+          if (index > 0) add(" ?: ")
+          val wrapped = registry.isWrapped(element, type)
+          if (wrapped) add("(")
+          addChoiceTypeValueExpr(modelClassName, element, type)
+          if (wrapped) {
+            add(")?.let·{ %T(it) }", registry.wrapperClassName(choiceTypeExpansionName(type)))
           }
-        add("%T.from(", factoryClassName)
-        for (type in element.type) {
-          addChoiceTypeParamToModelClassConstructor(modelClassName, element, type)
-          add(", ")
         }
-        add(")${notNull}")
+        add(")")
+        if (element.min == 1) add("!!")
       } else {
         add("%N", propertyName)
         if (element.min == 1) add("!!")
@@ -181,7 +183,12 @@ class ModelConstructionHelpers(val codegenContext: CodegenContext) {
     }
   }
 
-  private fun CodeBlock.Builder.addChoiceTypeParamToModelClassConstructor(
+  /**
+   * Emits the decoded **model value** expression for one choice-type expansion (e.g. the merged
+   * `Quantity` local, or `Date.of(value, _value)` for a primitive). The caller decides whether to
+   * use it bare or lift it into a `<Type>Box` box type.
+   */
+  private fun CodeBlock.Builder.addChoiceTypeValueExpr(
     modelClassName: ClassName,
     element: Element,
     type: Type,

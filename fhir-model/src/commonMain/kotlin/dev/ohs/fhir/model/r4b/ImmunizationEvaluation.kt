@@ -19,7 +19,6 @@ package dev.ohs.fhir.model.r4b
 import dev.ohs.fhir.model.r4b.serializers.ImmunizationEvaluationSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -159,15 +158,19 @@ public data class ImmunizationEvaluation(
    *
    * The use of an integer is preferred if known. A string should only be used in cases where an
    * integer is not available (such as when documenting a recurring booster dose).
+   *
+   * A FHIR choice type — one of: [PositiveInt] | [String]
    */
-  public val doseNumber: DoseNumber? = null,
+  public val doseNumber: ImmunizationEvaluation.DoseNumber? = null,
   /**
    * The recommended number of doses to achieve immunity.
    *
    * The use of an integer is preferred if known. A string should only be used in cases where an
    * integer is not available (such as when documenting a recurring booster dose).
+   *
+   * A FHIR choice type — one of: [PositiveInt] | [String]
    */
-  public val seriesDoses: SeriesDoses? = null,
+  public val seriesDoses: ImmunizationEvaluation.SeriesDoses? = null,
 ) : DomainResource() {
   override fun toBuilder(): Builder =
     with(this) {
@@ -197,54 +200,6 @@ public data class ImmunizationEvaluation(
           seriesDoses = this@with.seriesDoses
         }
     }
-
-  public sealed interface DoseNumber {
-    public fun asPositiveInt(): PositiveInt? = this as? PositiveInt
-
-    public fun asString(): String? = this as? String
-
-    @JvmInline
-    public value class PositiveInt(public val `value`: dev.ohs.fhir.model.r4b.PositiveInt) :
-      DoseNumber
-
-    @JvmInline
-    public value class String(public val `value`: dev.ohs.fhir.model.r4b.String) : DoseNumber
-
-    public companion object {
-      internal fun from(
-        positiveIntValue: dev.ohs.fhir.model.r4b.PositiveInt?,
-        stringValue: dev.ohs.fhir.model.r4b.String?,
-      ): DoseNumber? {
-        if (positiveIntValue != null) return PositiveInt(positiveIntValue)
-        if (stringValue != null) return String(stringValue)
-        return null
-      }
-    }
-  }
-
-  public sealed interface SeriesDoses {
-    public fun asPositiveInt(): PositiveInt? = this as? PositiveInt
-
-    public fun asString(): String? = this as? String
-
-    @JvmInline
-    public value class PositiveInt(public val `value`: dev.ohs.fhir.model.r4b.PositiveInt) :
-      SeriesDoses
-
-    @JvmInline
-    public value class String(public val `value`: dev.ohs.fhir.model.r4b.String) : SeriesDoses
-
-    public companion object {
-      internal fun from(
-        positiveIntValue: dev.ohs.fhir.model.r4b.PositiveInt?,
-        stringValue: dev.ohs.fhir.model.r4b.String?,
-      ): SeriesDoses? {
-        if (positiveIntValue != null) return PositiveInt(positiveIntValue)
-        if (stringValue != null) return String(stringValue)
-        return null
-      }
-    }
-  }
 
   public class Builder(
     /** Indicates the current status of the evaluation of the vaccination administration event. */
@@ -394,16 +349,20 @@ public data class ImmunizationEvaluation(
      *
      * The use of an integer is preferred if known. A string should only be used in cases where an
      * integer is not available (such as when documenting a recurring booster dose).
+     *
+     * A FHIR choice type — one of: [PositiveInt] | [String]
      */
-    public var doseNumber: DoseNumber? = null
+    public var doseNumber: ImmunizationEvaluation.DoseNumber? = null
 
     /**
      * The recommended number of doses to achieve immunity.
      *
      * The use of an integer is preferred if known. A string should only be used in cases where an
      * integer is not available (such as when documenting a recurring booster dose).
+     *
+     * A FHIR choice type — one of: [PositiveInt] | [String]
      */
-    public var seriesDoses: SeriesDoses? = null
+    public var seriesDoses: ImmunizationEvaluation.SeriesDoses? = null
 
     override fun build(): ImmunizationEvaluation =
       ImmunizationEvaluation(
@@ -472,4 +431,10 @@ public data class ImmunizationEvaluation(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [PositiveInt] | [String] */
+  public typealias DoseNumber = FhirChoiceTypes.PositiveIntOrString
+
+  /** A FHIR choice type — one of: [PositiveInt] | [String] */
+  public typealias SeriesDoses = FhirChoiceTypes.PositiveIntOrString
 }

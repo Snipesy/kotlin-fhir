@@ -930,17 +930,8 @@ internal object ClaimResponseAddItemSerializer : KSerializer<ClaimResponse.AddIt
       productOrService = productOrService!!,
       modifier = modifier ?: listOf(),
       programCode = programCode ?: listOf(),
-      serviced =
-        ClaimResponse.AddItem.Serviced.from(
-          Date.of(FhirDate.fromString(servicedDate), _servicedDate),
-          servicedPeriod,
-        ),
-      location =
-        ClaimResponse.AddItem.Location.from(
-          locationCodeableConcept,
-          locationAddress,
-          locationReference,
-        ),
+      serviced = (Date.of(FhirDate.fromString(servicedDate), _servicedDate) ?: servicedPeriod),
+      location = (locationCodeableConcept ?: locationAddress ?: locationReference),
       quantity = quantity,
       unitPrice = unitPrice,
       factor = Decimal.of(factor, _factor),
@@ -999,26 +990,26 @@ internal object ClaimResponseAddItemSerializer : KSerializer<ClaimResponse.AddIt
       encoder.encodeSerializableElement(descriptor, 12, Hoisted.modifierSer, value.programCode)
     when (val choice = value.serviced) {
       null -> {}
-      is ClaimResponse.AddItem.Serviced.Date -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 13, it) }
-        (choice.value.toElement())?.let {
+      is Date -> {
+        ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 13, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 14, Hoisted.itemSequenceSerInner2, it)
         }
       }
-      is ClaimResponse.AddItem.Serviced.Period -> {
-        encoder.encodeSerializableElement(descriptor, 15, Hoisted.servicedPeriodSer, choice.value)
+      is Period -> {
+        encoder.encodeSerializableElement(descriptor, 15, Hoisted.servicedPeriodSer, choice)
       }
     }
     when (val choice = value.location) {
       null -> {}
-      is ClaimResponse.AddItem.Location.CodeableConcept -> {
-        encoder.encodeSerializableElement(descriptor, 16, Hoisted.productOrServiceSer, choice.value)
+      is CodeableConcept -> {
+        encoder.encodeSerializableElement(descriptor, 16, Hoisted.productOrServiceSer, choice)
       }
-      is ClaimResponse.AddItem.Location.Address -> {
-        encoder.encodeSerializableElement(descriptor, 17, Hoisted.locationAddressSer, choice.value)
+      is Address -> {
+        encoder.encodeSerializableElement(descriptor, 17, Hoisted.locationAddressSer, choice)
       }
-      is ClaimResponse.AddItem.Location.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 18, Hoisted.providerSerInner, choice.value)
+      is Reference -> {
+        encoder.encodeSerializableElement(descriptor, 18, Hoisted.providerSerInner, choice)
       }
     }
     (value.quantity)?.let {

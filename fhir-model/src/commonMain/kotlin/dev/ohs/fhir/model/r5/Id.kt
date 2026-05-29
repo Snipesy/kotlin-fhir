@@ -45,7 +45,7 @@ public data class Id(
   override val extension: List<Extension> = listOf(),
   /** Primitive value for id */
   override val `value`: kotlin.String? = null,
-) : String(id, extension, `value`) {
+) : String(id, extension, `value`), FhirChoiceParticipants.IdChoices {
   override fun toBuilder(): Builder =
     with(this) {
       Builder().apply {

@@ -24,7 +24,6 @@ import dev.ohs.fhir.model.r4b.serializers.PackagedProductDefinitionPackageShelfL
 import dev.ohs.fhir.model.r4b.serializers.PackagedProductDefinitionSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -500,8 +499,10 @@ public data class PackagedProductDefinition(
        * and its unit of time measurement The unit of measurement shall be specified in accordance
        * with ISO 11240 and the resulting terminology The symbol and the symbol identifier shall be
        * used.
+       *
+       * A FHIR choice type — one of: [Duration] | [String]
        */
-      public val period: Period? = null,
+      public val period: FhirChoiceTypes.DurationOrString? = null,
       /**
        * Special precautions for storage, if any, can be specified using an appropriate controlled
        * vocabulary. The controlled term and the controlled term identifier shall be specified.
@@ -520,29 +521,6 @@ public data class PackagedProductDefinition(
               this@with.specialPrecautionsForStorage.map { it.toBuilder() }.toMutableList()
           }
         }
-
-      public sealed interface Period {
-        public fun asDuration(): Duration? = this as? Duration
-
-        public fun asString(): String? = this as? String
-
-        @JvmInline
-        public value class Duration(public val `value`: dev.ohs.fhir.model.r4b.Duration) : Period
-
-        @JvmInline
-        public value class String(public val `value`: dev.ohs.fhir.model.r4b.String) : Period
-
-        public companion object {
-          internal fun from(
-            durationValue: dev.ohs.fhir.model.r4b.Duration?,
-            stringValue: dev.ohs.fhir.model.r4b.String?,
-          ): Period? {
-            if (durationValue != null) return Duration(durationValue)
-            if (stringValue != null) return String(stringValue)
-            return null
-          }
-        }
-      }
 
       public class Builder() {
         /**
@@ -599,8 +577,10 @@ public data class PackagedProductDefinition(
          * time and its unit of time measurement The unit of measurement shall be specified in
          * accordance with ISO 11240 and the resulting terminology The symbol and the symbol
          * identifier shall be used.
+         *
+         * A FHIR choice type — one of: [Duration] | [String]
          */
-        public var period: Period? = null
+        public var period: FhirChoiceTypes.DurationOrString? = null
 
         /**
          * Special precautions for storage, if any, can be specified using an appropriate controlled
@@ -663,8 +643,13 @@ public data class PackagedProductDefinition(
       override val modifierExtension: List<Extension> = listOf(),
       /** A code expressing the type of characteristic. */
       public val type: CodeableConcept,
-      /** A value for the characteristic. */
-      public val `value`: Value? = null,
+      /**
+       * A value for the characteristic.
+       *
+       * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
+       * [Quantity]
+       */
+      public val `value`: Property.Value? = null,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -675,52 +660,6 @@ public data class PackagedProductDefinition(
             `value` = this@with.`value`
           }
         }
-
-      public sealed interface Value {
-        public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-        public fun asQuantity(): Quantity? = this as? Quantity
-
-        public fun asDate(): Date? = this as? Date
-
-        public fun asBoolean(): Boolean? = this as? Boolean
-
-        public fun asAttachment(): Attachment? = this as? Attachment
-
-        @JvmInline
-        public value class CodeableConcept(
-          public val `value`: dev.ohs.fhir.model.r4b.CodeableConcept
-        ) : Value
-
-        @JvmInline
-        public value class Quantity(public val `value`: dev.ohs.fhir.model.r4b.Quantity) : Value
-
-        @JvmInline public value class Date(public val `value`: dev.ohs.fhir.model.r4b.Date) : Value
-
-        @JvmInline
-        public value class Boolean(public val `value`: dev.ohs.fhir.model.r4b.Boolean) : Value
-
-        @JvmInline
-        public value class Attachment(public val `value`: dev.ohs.fhir.model.r4b.Attachment) :
-          Value
-
-        public companion object {
-          internal fun from(
-            codeableConceptValue: dev.ohs.fhir.model.r4b.CodeableConcept?,
-            quantityValue: dev.ohs.fhir.model.r4b.Quantity?,
-            dateValue: dev.ohs.fhir.model.r4b.Date?,
-            booleanValue: dev.ohs.fhir.model.r4b.Boolean?,
-            attachmentValue: dev.ohs.fhir.model.r4b.Attachment?,
-          ): Value? {
-            if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-            if (quantityValue != null) return Quantity(quantityValue)
-            if (dateValue != null) return Date(dateValue)
-            if (booleanValue != null) return Boolean(booleanValue)
-            if (attachmentValue != null) return Attachment(attachmentValue)
-            return null
-          }
-        }
-      }
 
       public class Builder(
         /** A code expressing the type of characteristic. */
@@ -766,8 +705,13 @@ public data class PackagedProductDefinition(
          */
         public var modifierExtension: MutableList<Extension.Builder> = mutableListOf()
 
-        /** A value for the characteristic. */
-        public var `value`: Value? = null
+        /**
+         * A value for the characteristic.
+         *
+         * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
+         * [Quantity]
+         */
+        public var `value`: Property.Value? = null
 
         public fun build(): Property =
           Property(
@@ -778,6 +722,12 @@ public data class PackagedProductDefinition(
             `value` = `value`,
           )
       }
+
+      /**
+       * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
+       * [Quantity]
+       */
+      public typealias Value = FhirChoiceTypes.AttachmentOrBooleanOrCodeableConceptOrDateOrQuantity
     }
 
     /** The item(s) within the packaging. */

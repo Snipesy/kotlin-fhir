@@ -25,7 +25,6 @@ import dev.ohs.fhir.model.r4b.serializers.NutritionOrderSerializer
 import dev.ohs.fhir.model.r4b.serializers.NutritionOrderSupplementSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -1048,8 +1047,10 @@ public data class NutritionOrder(
        * Ratio is used when the quantity value in the denominator is not "1", otherwise use
        * Quantity. For example, the Ratio datatype is used for "200 mL/4 hrs" versus the Quantity
        * datatype for "50 mL/hr".
+       *
+       * A FHIR choice type — one of: [Quantity] | [Ratio]
        */
-      public val rate: Rate? = null,
+      public val rate: Administration.Rate? = null,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -1062,29 +1063,6 @@ public data class NutritionOrder(
             rate = this@with.rate
           }
         }
-
-      public sealed interface Rate {
-        public fun asQuantity(): Quantity? = this as? Quantity
-
-        public fun asRatio(): Ratio? = this as? Ratio
-
-        @JvmInline
-        public value class Quantity(public val `value`: dev.ohs.fhir.model.r4b.Quantity) : Rate
-
-        @JvmInline
-        public value class Ratio(public val `value`: dev.ohs.fhir.model.r4b.Ratio) : Rate
-
-        public companion object {
-          internal fun from(
-            quantityValue: dev.ohs.fhir.model.r4b.Quantity?,
-            ratioValue: dev.ohs.fhir.model.r4b.Ratio?,
-          ): Rate? {
-            if (quantityValue != null) return Quantity(quantityValue)
-            if (ratioValue != null) return Ratio(ratioValue)
-            return null
-          }
-        }
-      }
 
       public class Builder() {
         /**
@@ -1146,8 +1124,10 @@ public data class NutritionOrder(
          * Ratio is used when the quantity value in the denominator is not "1", otherwise use
          * Quantity. For example, the Ratio datatype is used for "200 mL/4 hrs" versus the Quantity
          * datatype for "50 mL/hr".
+         *
+         * A FHIR choice type — one of: [Quantity] | [Ratio]
          */
-        public var rate: Rate? = null
+        public var rate: Administration.Rate? = null
 
         public fun build(): Administration =
           Administration(
@@ -1159,6 +1139,9 @@ public data class NutritionOrder(
             rate = rate,
           )
       }
+
+      /** A FHIR choice type — one of: [Quantity] | [Ratio] */
+      public typealias Rate = FhirChoiceTypes.QuantityOrRatio
     }
 
     public class Builder() {

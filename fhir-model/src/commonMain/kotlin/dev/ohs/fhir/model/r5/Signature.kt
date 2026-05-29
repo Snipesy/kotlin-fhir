@@ -100,7 +100,7 @@ public data class Signature(
    * Signature" form.
    */
   public val `data`: Base64Binary? = null,
-) : DataType() {
+) : DataType(), FhirChoiceTypes.ElementDefinitionDefaultValueChoice {
   public fun toBuilder(): Builder =
     with(this) {
       Builder().apply {

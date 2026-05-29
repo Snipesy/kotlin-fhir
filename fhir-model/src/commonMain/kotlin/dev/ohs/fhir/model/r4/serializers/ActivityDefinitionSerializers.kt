@@ -832,7 +832,7 @@ internal object ActivityDefinitionSerializer : KSerializer<ActivityDefinition> {
       subtitle = R4String.of(subtitle, _subtitle),
       status = Enumeration.of(PublicationStatus.fromCode(status!!), _status),
       experimental = R4Boolean.of(experimental, _experimental),
-      subject = ActivityDefinition.Subject.from(subjectCodeableConcept, subjectReference),
+      subject = (subjectCodeableConcept ?: subjectReference),
       date = DateTime.of(FhirDateTime.fromString(date), _date),
       publisher = R4String.of(publisher, _publisher),
       contact = contact ?: listOf(),
@@ -867,17 +867,15 @@ internal object ActivityDefinitionSerializer : KSerializer<ActivityDefinition> {
         },
       doNotPerform = R4Boolean.of(doNotPerform, _doNotPerform),
       timing =
-        ActivityDefinition.Timing.from(
-          timingTiming,
-          DateTime.of(FhirDateTime.fromString(timingDateTime), _timingDateTime),
-          timingAge,
-          timingPeriod,
-          timingRange,
-          timingDuration,
-        ),
+        (timingTiming
+          ?: DateTime.of(FhirDateTime.fromString(timingDateTime), _timingDateTime)
+          ?: timingAge
+          ?: timingPeriod
+          ?: timingRange
+          ?: timingDuration),
       location = location,
       participant = participant ?: listOf(),
-      product = ActivityDefinition.Product.from(productReference, productCodeableConcept),
+      product = (productReference ?: productCodeableConcept),
       quantity = quantity,
       dosage = dosage ?: listOf(),
       bodySite = bodySite ?: listOf(),
@@ -1029,20 +1027,20 @@ internal object ActivityDefinitionSerializer : KSerializer<ActivityDefinition> {
     }
     when (val choice = value.subject) {
       null -> {}
-      is ActivityDefinition.Subject.CodeableConcept -> {
+      is CodeableConcept -> {
         encoder.encodeSerializableElement(
           descriptor,
           25 + descriptorOffset,
           Hoisted.subjectCodeableConceptSer,
-          choice.value,
+          choice,
         )
       }
-      is ActivityDefinition.Subject.Reference -> {
+      is Reference -> {
         encoder.encodeSerializableElement(
           descriptor,
           26 + descriptorOffset,
           Hoisted.subjectReferenceSer,
-          choice.value,
+          choice,
         )
       }
     }
@@ -1276,19 +1274,19 @@ internal object ActivityDefinitionSerializer : KSerializer<ActivityDefinition> {
     }
     when (val choice = value.timing) {
       null -> {}
-      is ActivityDefinition.Timing.Timing -> {
+      is Timing -> {
         encoder.encodeSerializableElement(
           descriptor,
           66 + descriptorOffset,
           Hoisted.timingTimingSer,
-          choice.value,
+          choice,
         )
       }
-      is ActivityDefinition.Timing.DateTime -> {
-        ((choice.value.value?.toString()))?.let {
+      is DateTime -> {
+        ((choice.value?.toString()))?.let {
           encoder.encodeStringElement(descriptor, 67 + descriptorOffset, it)
         }
-        (choice.value.toElement())?.let {
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             68 + descriptorOffset,
@@ -1297,36 +1295,36 @@ internal object ActivityDefinitionSerializer : KSerializer<ActivityDefinition> {
           )
         }
       }
-      is ActivityDefinition.Timing.Age -> {
+      is Age -> {
         encoder.encodeSerializableElement(
           descriptor,
           69 + descriptorOffset,
           Hoisted.timingAgeSer,
-          choice.value,
+          choice,
         )
       }
-      is ActivityDefinition.Timing.Period -> {
+      is Period -> {
         encoder.encodeSerializableElement(
           descriptor,
           70 + descriptorOffset,
           Hoisted.effectivePeriodSer,
-          choice.value,
+          choice,
         )
       }
-      is ActivityDefinition.Timing.Range -> {
+      is Range -> {
         encoder.encodeSerializableElement(
           descriptor,
           71 + descriptorOffset,
           Hoisted.timingRangeSer,
-          choice.value,
+          choice,
         )
       }
-      is ActivityDefinition.Timing.Duration -> {
+      is Duration -> {
         encoder.encodeSerializableElement(
           descriptor,
           72 + descriptorOffset,
           Hoisted.timingDurationSer,
-          choice.value,
+          choice,
         )
       }
     }
@@ -1347,20 +1345,20 @@ internal object ActivityDefinitionSerializer : KSerializer<ActivityDefinition> {
       )
     when (val choice = value.product) {
       null -> {}
-      is ActivityDefinition.Product.Reference -> {
+      is Reference -> {
         encoder.encodeSerializableElement(
           descriptor,
           75 + descriptorOffset,
           Hoisted.subjectReferenceSer,
-          choice.value,
+          choice,
         )
       }
-      is ActivityDefinition.Product.CodeableConcept -> {
+      is CodeableConcept -> {
         encoder.encodeSerializableElement(
           descriptor,
           76 + descriptorOffset,
           Hoisted.subjectCodeableConceptSer,
-          choice.value,
+          choice,
         )
       }
     }

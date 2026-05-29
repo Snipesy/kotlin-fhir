@@ -23,7 +23,6 @@ import dev.ohs.fhir.model.r4.serializers.CompositionSectionSerializer
 import dev.ohs.fhir.model.r4.serializers.CompositionSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -449,8 +448,12 @@ public data class Composition(
      * without also accessing the referenced document.
      */
     public val code: Enumeration<DocumentRelationshipType>,
-    /** The target composition/document of this relationship. */
-    public val target: Target,
+    /**
+     * The target composition/document of this relationship.
+     *
+     * A FHIR choice type — one of: [Identifier] | [Reference]
+     */
+    public val target: RelatesTo.Target,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -461,29 +464,6 @@ public data class Composition(
         }
       }
 
-    public sealed interface Target {
-      public fun asIdentifier(): Identifier? = this as? Identifier
-
-      public fun asReference(): Reference? = this as? Reference
-
-      @JvmInline
-      public value class Identifier(public val `value`: dev.ohs.fhir.model.r4.Identifier) : Target
-
-      @JvmInline
-      public value class Reference(public val `value`: dev.ohs.fhir.model.r4.Reference) : Target
-
-      public companion object {
-        internal fun from(
-          identifierValue: dev.ohs.fhir.model.r4.Identifier?,
-          referenceValue: dev.ohs.fhir.model.r4.Reference?,
-        ): Target? {
-          if (identifierValue != null) return Identifier(identifierValue)
-          if (referenceValue != null) return Reference(referenceValue)
-          return null
-        }
-      }
-    }
-
     public class Builder(
       /**
        * The type of relationship that this composition has with anther composition or document.
@@ -492,8 +472,12 @@ public data class Composition(
        * without also accessing the referenced document.
        */
       public var code: Enumeration<DocumentRelationshipType>,
-      /** The target composition/document of this relationship. */
-      public var target: Target,
+      /**
+       * The target composition/document of this relationship.
+       *
+       * A FHIR choice type — one of: [Identifier] | [Reference]
+       */
+      public var target: RelatesTo.Target,
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -544,6 +528,9 @@ public data class Composition(
           target = target,
         )
     }
+
+    /** A FHIR choice type — one of: [Identifier] | [Reference] */
+    public typealias Target = FhirChoiceTypes.IdentifierOrReference
   }
 
   /** The clinical service, such as a colonoscopy or an appendectomy, being documented. */

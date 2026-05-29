@@ -202,11 +202,9 @@ internal object PaymentReconciliationAllocationSerializer :
       predecessor = predecessor,
       target = target,
       targetItem =
-        PaymentReconciliation.Allocation.TargetItem.from(
-          R5String.of(targetItemString, _targetItemString),
-          targetItemIdentifier,
-          PositiveInt.of(targetItemPositiveInt, _targetItemPositiveInt),
-        ),
+        (R5String.of(targetItemString, _targetItemString)
+          ?: targetItemIdentifier
+          ?: PositiveInt.of(targetItemPositiveInt, _targetItemPositiveInt)),
       encounter = encounter,
       account = account,
       type = type,
@@ -242,18 +240,18 @@ internal object PaymentReconciliationAllocationSerializer :
     (value.target)?.let { encoder.encodeSerializableElement(descriptor, 5, Hoisted.targetSer, it) }
     when (val choice = value.targetItem) {
       null -> {}
-      is PaymentReconciliation.Allocation.TargetItem.String -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 6, it) }
-        (choice.value.toElement())?.let {
+      is R5String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 6, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 7, Hoisted.targetItemStringSer, it)
         }
       }
-      is PaymentReconciliation.Allocation.TargetItem.Identifier -> {
-        encoder.encodeSerializableElement(descriptor, 8, Hoisted.identifierSer, choice.value)
+      is Identifier -> {
+        encoder.encodeSerializableElement(descriptor, 8, Hoisted.identifierSer, choice)
       }
-      is PaymentReconciliation.Allocation.TargetItem.PositiveInt -> {
-        ((choice.value.value))?.let { encoder.encodeIntElement(descriptor, 9, it) }
-        (choice.value.toElement())?.let {
+      is PositiveInt -> {
+        ((choice.value))?.let { encoder.encodeIntElement(descriptor, 9, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 10, Hoisted.targetItemStringSer, it)
         }
       }

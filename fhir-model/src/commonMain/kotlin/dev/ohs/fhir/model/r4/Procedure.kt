@@ -19,10 +19,8 @@ package dev.ohs.fhir.model.r4
 import dev.ohs.fhir.model.r4.serializers.ProcedureFocalDeviceSerializer
 import dev.ohs.fhir.model.r4.serializers.ProcedurePerformerSerializer
 import dev.ohs.fhir.model.r4.serializers.ProcedureSerializer
-import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -40,7 +38,7 @@ public data class Procedure(
    * The only time that a resource does not have an id is when it is being submitted to the server
    * using a create operation.
    */
-  override val id: String? = null,
+  override val id: kotlin.String? = null,
   /**
    * The metadata about the resource. This is content that is maintained by the infrastructure.
    * Changes to the content might not always be associated with version changes to the resource.
@@ -216,8 +214,10 @@ public data class Procedure(
    * procedures being reported as past procedures that might not have millisecond precision while
    * other procedures performed and documented during the encounter might have more precise UTC
    * timestamps with timezone.
+   *
+   * A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String]
    */
-  public val performed: Performed? = null,
+  public val performed: Procedure.Performed? = null,
   /** Individual who recorded the record and takes responsibility for its content. */
   public val recorder: Reference? = null,
   /** Individual who is making the procedure statement. */
@@ -370,7 +370,7 @@ public data class Procedure(
      * Unique id for the element within a resource (for internal references). This may be any string
      * value that does not contain spaces.
      */
-    override val id: String? = null,
+    override val id: kotlin.String? = null,
     /**
      * May be used to represent additional information that is not part of the basic definition of
      * the element. To make the use of extensions safe and manageable, there is a strict set of
@@ -432,7 +432,7 @@ public data class Procedure(
        * Unique id for the element within a resource (for internal references). This may be any
        * string value that does not contain spaces.
        */
-      public var id: String? = null
+      public var id: kotlin.String? = null
 
       /**
        * May be used to represent additional information that is not part of the basic definition of
@@ -499,7 +499,7 @@ public data class Procedure(
      * Unique id for the element within a resource (for internal references). This may be any string
      * value that does not contain spaces.
      */
-    override val id: String? = null,
+    override val id: kotlin.String? = null,
     /**
      * May be used to represent additional information that is not part of the basic definition of
      * the element. To make the use of extensions safe and manageable, there is a strict set of
@@ -555,7 +555,7 @@ public data class Procedure(
        * Unique id for the element within a resource (for internal references). This may be any
        * string value that does not contain spaces.
        */
-      public var id: String? = null
+      public var id: kotlin.String? = null
 
       /**
        * May be used to represent additional information that is not part of the basic definition of
@@ -605,49 +605,6 @@ public data class Procedure(
     }
   }
 
-  public sealed interface Performed {
-    public fun asDateTime(): DateTime? = this as? DateTime
-
-    public fun asPeriod(): Period? = this as? Period
-
-    public fun asString(): String? = this as? String
-
-    public fun asAge(): Age? = this as? Age
-
-    public fun asRange(): Range? = this as? Range
-
-    @JvmInline
-    public value class DateTime(public val `value`: dev.ohs.fhir.model.r4.DateTime) : Performed
-
-    @JvmInline
-    public value class Period(public val `value`: dev.ohs.fhir.model.r4.Period) : Performed
-
-    @JvmInline
-    public value class String(public val `value`: dev.ohs.fhir.model.r4.String) : Performed
-
-    @JvmInline public value class Age(public val `value`: dev.ohs.fhir.model.r4.Age) : Performed
-
-    @JvmInline
-    public value class Range(public val `value`: dev.ohs.fhir.model.r4.Range) : Performed
-
-    public companion object {
-      internal fun from(
-        dateTimeValue: dev.ohs.fhir.model.r4.DateTime?,
-        periodValue: dev.ohs.fhir.model.r4.Period?,
-        stringValue: dev.ohs.fhir.model.r4.String?,
-        ageValue: dev.ohs.fhir.model.r4.Age?,
-        rangeValue: dev.ohs.fhir.model.r4.Range?,
-      ): Performed? {
-        if (dateTimeValue != null) return DateTime(dateTimeValue)
-        if (periodValue != null) return Period(periodValue)
-        if (stringValue != null) return String(stringValue)
-        if (ageValue != null) return Age(ageValue)
-        if (rangeValue != null) return Range(rangeValue)
-        return null
-      }
-    }
-  }
-
   public class Builder(
     /**
      * A code specifying the state of the procedure. Generally, this will be the in-progress or
@@ -671,7 +628,7 @@ public data class Procedure(
      * The only time that a resource does not have an id is when it is being submitted to the server
      * using a create operation.
      */
-    public var id: String? = null
+    public var id: kotlin.String? = null
 
     /**
      * The metadata about the resource. This is content that is maintained by the infrastructure.
@@ -851,8 +808,10 @@ public data class Procedure(
      * due to some procedures being reported as past procedures that might not have millisecond
      * precision while other procedures performed and documented during the encounter might have
      * more precise UTC timestamps with timezone.
+     *
+     * A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String]
      */
-    public var performed: Performed? = null
+    public var performed: Procedure.Performed? = null
 
     /** Individual who recorded the record and takes responsibility for its content. */
     public var recorder: Reference.Builder? = null
@@ -1017,9 +976,9 @@ public data class Procedure(
 
   /** Codes identifying the lifecycle stage of an event. */
   public enum class EventStatus(
-    private val code: String,
-    private val system: String,
-    private val display: String?,
+    private val code: kotlin.String,
+    private val system: kotlin.String,
+    private val display: kotlin.String?,
   ) {
     Preparation("preparation", "http://hl7.org/fhir/event-status", "Preparation"),
     In_Progress("in-progress", "http://hl7.org/fhir/event-status", "In Progress"),
@@ -1030,16 +989,16 @@ public data class Procedure(
     Entered_In_Error("entered-in-error", "http://hl7.org/fhir/event-status", "Entered in Error"),
     Unknown("unknown", "http://hl7.org/fhir/event-status", "Unknown");
 
-    override fun toString(): String = code
+    override fun toString(): kotlin.String = code
 
-    public fun getCode(): String = code
+    public fun getCode(): kotlin.String = code
 
-    public fun getSystem(): String = system
+    public fun getSystem(): kotlin.String = system
 
-    public fun getDisplay(): String? = display
+    public fun getDisplay(): kotlin.String? = display
 
     public companion object {
-      public fun fromCode(code: String): EventStatus =
+      public fun fromCode(code: kotlin.String): EventStatus =
         when (code) {
           "preparation" -> Preparation
           "in-progress" -> In_Progress
@@ -1053,4 +1012,7 @@ public data class Procedure(
         }
     }
   }
+
+  /** A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String] */
+  public typealias Performed = FhirChoiceTypes.AgeOrDateTimeOrPeriodOrRangeOrString
 }

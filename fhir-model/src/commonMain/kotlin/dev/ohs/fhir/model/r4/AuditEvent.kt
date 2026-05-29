@@ -24,7 +24,6 @@ import dev.ohs.fhir.model.r4.serializers.AuditEventSerializer
 import dev.ohs.fhir.model.r4.serializers.AuditEventSourceSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -886,8 +885,10 @@ public data class AuditEvent(
        * consuming and the formats used by the event. For example if auditing an Oracle network
        * database access, the Oracle formats must be understood as they will be simply encoded in
        * the base64binary blob.
+       *
+       * A FHIR choice type — one of: [Base64Binary] | [String]
        */
-      public val `value`: Value,
+      public val `value`: Detail.Value,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -897,30 +898,6 @@ public data class AuditEvent(
             modifierExtension = this@with.modifierExtension.map { it.toBuilder() }.toMutableList()
           }
         }
-
-      public sealed interface Value {
-        public fun asString(): String? = this as? String
-
-        public fun asBase64Binary(): Base64Binary? = this as? Base64Binary
-
-        @JvmInline
-        public value class String(public val `value`: dev.ohs.fhir.model.r4.String) : Value
-
-        @JvmInline
-        public value class Base64Binary(public val `value`: dev.ohs.fhir.model.r4.Base64Binary) :
-          Value
-
-        public companion object {
-          internal fun from(
-            stringValue: dev.ohs.fhir.model.r4.String?,
-            base64BinaryValue: dev.ohs.fhir.model.r4.Base64Binary?,
-          ): Value? {
-            if (stringValue != null) return String(stringValue)
-            if (base64BinaryValue != null) return Base64Binary(base64BinaryValue)
-            return null
-          }
-        }
-      }
 
       public class Builder(
         /** The type of extra detail provided in the value. */
@@ -937,8 +914,10 @@ public data class AuditEvent(
          * it is consuming and the formats used by the event. For example if auditing an Oracle
          * network database access, the Oracle formats must be understood as they will be simply
          * encoded in the base64binary blob.
+         *
+         * A FHIR choice type — one of: [Base64Binary] | [String]
          */
-        public var `value`: Value,
+        public var `value`: Detail.Value,
       ) {
         /**
          * Unique id for the element within a resource (for internal references). This may be any
@@ -989,6 +968,9 @@ public data class AuditEvent(
             `value` = `value`,
           )
       }
+
+      /** A FHIR choice type — one of: [Base64Binary] | [String] */
+      public typealias Value = FhirChoiceTypes.Base64BinaryOrString
     }
 
     public class Builder() {

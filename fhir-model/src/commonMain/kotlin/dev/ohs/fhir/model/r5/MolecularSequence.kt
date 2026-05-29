@@ -22,7 +22,6 @@ import dev.ohs.fhir.model.r5.serializers.MolecularSequenceRelativeStartingSequen
 import dev.ohs.fhir.model.r5.serializers.MolecularSequenceSerializer
 import kotlin.collections.List
 import kotlin.collections.MutableList
-import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -316,8 +315,10 @@ public data class MolecularSequence(
        * 1. CodeableConcept, using NCBI, LRG or other appropriate code systems
        * 1. a simple string of IUPAC codes
        * 1. a reference to another MolecularSequence resource.
+       *
+       * A FHIR choice type — one of: [CodeableConcept] | [Reference] | [String]
        */
-      public val sequence: Sequence? = null,
+      public val sequence: StartingSequence.Sequence? = null,
       /**
        * Start position of the window on the starting sequence. This value should honor the rules of
        * the coordinateSystem.
@@ -356,39 +357,6 @@ public data class MolecularSequence(
             strand = this@with.strand
           }
         }
-
-      public sealed interface Sequence {
-        public fun asCodeableConcept(): CodeableConcept? = this as? CodeableConcept
-
-        public fun asString(): String? = this as? String
-
-        public fun asReference(): Reference? = this as? Reference
-
-        @JvmInline
-        public value class CodeableConcept(
-          public val `value`: dev.ohs.fhir.model.r5.CodeableConcept
-        ) : Sequence
-
-        @JvmInline
-        public value class String(public val `value`: dev.ohs.fhir.model.r5.String) : Sequence
-
-        @JvmInline
-        public value class Reference(public val `value`: dev.ohs.fhir.model.r5.Reference) :
-          Sequence
-
-        public companion object {
-          internal fun from(
-            codeableConceptValue: dev.ohs.fhir.model.r5.CodeableConcept?,
-            stringValue: dev.ohs.fhir.model.r5.String?,
-            referenceValue: dev.ohs.fhir.model.r5.Reference?,
-          ): Sequence? {
-            if (codeableConceptValue != null) return CodeableConcept(codeableConceptValue)
-            if (stringValue != null) return String(stringValue)
-            if (referenceValue != null) return Reference(referenceValue)
-            return null
-          }
-        }
-      }
 
       public class Builder() {
         /**
@@ -448,8 +416,10 @@ public data class MolecularSequence(
          * 1. CodeableConcept, using NCBI, LRG or other appropriate code systems
          * 1. a simple string of IUPAC codes
          * 1. a reference to another MolecularSequence resource.
+         *
+         * A FHIR choice type — one of: [CodeableConcept] | [Reference] | [String]
          */
-        public var sequence: Sequence? = null
+        public var sequence: StartingSequence.Sequence? = null
 
         /**
          * Start position of the window on the starting sequence. This value should honor the rules
@@ -491,6 +461,9 @@ public data class MolecularSequence(
             strand = strand,
           )
       }
+
+      /** A FHIR choice type — one of: [CodeableConcept] | [Reference] | [String] */
+      public typealias Sequence = FhirChoiceTypes.CodeableConceptOrReferenceOrString
     }
 
     /** Changes in sequence from the starting sequence. */

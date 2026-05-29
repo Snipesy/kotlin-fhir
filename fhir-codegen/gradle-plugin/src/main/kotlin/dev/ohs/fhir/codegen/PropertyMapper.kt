@@ -51,6 +51,12 @@ internal class PropertyMapper(
   val mappingContext: MappingContext,
   val modelClassName: ClassName,
   val valueSetMap: Map<String, ValueSet>,
+  /**
+   * The consolidated choice-type registry, used to resolve a choice element's property type to the
+   * shared option-set interface. Nullable only for mappers that never see a choice element (e.g.
+   * the registry's own bootstrap mapper, primitive-value mappers).
+   */
+  val choiceRegistry: ChoiceTypeRegistry? = null,
 ) {
   enum class MappingContext {
     MODEL,
@@ -315,11 +321,16 @@ internal class PropertyMapper(
    * `null`.
    */
   private fun getSealedInterfaceType(element: Element): TypeName? {
-    // Sealed interfaces for choice types. E.g., element `Patient.deceased[x]` can have type
-    // boolean or dateTime. The generated sealed interface `Deceased` nested under `Patient`
-    // class has two subclasses `Boolean` and `DateTime`.
+    // Choice types (e.g. `Patient.deceased[x]` → boolean | dateTime) resolve to a shared sealed
+    // option-set interface (`BooleanOrDateTime`). Resources keep a nested `typealias Deceased = …`
+    // for the public API; the property is typed with that alias, except when the alias name would
+    // shadow a type in scope — then it's typed with the shared set directly (no alias emitted).
     // See https://www.hl7.org/fhir/r4/formats.html#choice (R4).
     if (element.type!!.size > 1) {
+      val registry = choiceRegistry
+      if (registry != null && registry.aliasNameCollides(element, modelClassName)) {
+        return registry.choiceSetFor(element).className
+      }
       // The only case where the choice type inherits from the base definition is the element
       // `MetadataResource.versionAlgorithm[x]`. In the case, for simplicity, the base type
       // `CanonicalResource.versionAlgorithm[x]` is used.
@@ -329,6 +340,15 @@ internal class PropertyMapper(
           element.base.path.removeSuffix("[x]").split('.').map { it.capitalized() },
         )
       }
+      // Returns the nested alias e.g. `EvidenceVariable.Characteristic.Definition`. When the
+      // property is declared inside that same enclosing class, KotlinPoet emits a redundant
+      // self-qualifier (`definition: Characteristic.Definition` instead of just `Definition`),
+      // tripping the IDE's "Remove redundant qualifier name" inspection.
+      // TODO: KotlinPoet (2.3.0) bug — its name shortening only considers nested *classes*
+      //  (`TypeSpec.nestedTypesSimpleNames` is built from `typeSpecs` only), not nested type
+      //  aliases, so a reference to a nested `typealias` is never shortened to its simple name.
+      //  Drop this once KotlinPoet shortens nested type-alias references (or includes
+      //  `typeAliasSpecs` in the resolution scope).
       return modelClassName.nestedClass(element.getElementName().capitalized())
     }
     return null

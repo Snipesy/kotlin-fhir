@@ -38,6 +38,7 @@ class FhirCodegen(
   baseClassesSet: HashSet<String>,
   typeGraph: TypeGraphAnalyzer,
   primitiveValueIsNonNull: Map<String, Boolean>,
+  choiceRegistry: ChoiceTypeRegistry,
 ) {
 
   private val codegenContext =
@@ -47,6 +48,7 @@ class FhirCodegen(
       baseClassNameSet = baseClassesSet,
       typeGraph = typeGraph,
       primitiveValueIsNonNull = primitiveValueIsNonNull,
+      choiceRegistry = choiceRegistry,
     )
 
   private val modelFileSpecGenerator = ModelFileSpecGenerator(codegenContext)
