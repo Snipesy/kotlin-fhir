@@ -18,7 +18,6 @@
 
 package dev.ohs.fhir.model.r5.serializers
 
-import com.ionspin.kotlin.bignum.decimal.BigDecimal
 import dev.ohs.fhir.model.r5.Code
 import dev.ohs.fhir.model.r5.CodeableConcept
 import dev.ohs.fhir.model.r5.CodeableReference
@@ -28,6 +27,7 @@ import dev.ohs.fhir.model.r5.Element
 import dev.ohs.fhir.model.r5.Enumeration
 import dev.ohs.fhir.model.r5.Extension
 import dev.ohs.fhir.model.r5.FhirDateTime
+import dev.ohs.fhir.model.r5.FhirDecimal
 import dev.ohs.fhir.model.r5.Id
 import dev.ohs.fhir.model.r5.Identifier
 import dev.ohs.fhir.model.r5.ImagingSelection
@@ -350,7 +350,7 @@ internal object ImagingSelectionInstanceImageRegion2DSerializer :
       element("_regionType", Element.serializer().descriptor, isOptional = true)
       element(
         "coordinate",
-        listSerialDescriptor(BigDecimalSerializer.descriptor),
+        listSerialDescriptor(FhirDecimalSerializer.descriptor),
         isOptional = true,
       )
       element(
@@ -375,7 +375,7 @@ internal object ImagingSelectionInstanceImageRegion2DSerializer :
     var modifierExtension: List<Extension>? = null
     var regionType: KotlinString? = null
     var _regionType: Element? = null
-    var coordinate: List<BigDecimal?>? = null
+    var coordinate: List<FhirDecimal?>? = null
     var _coordinate: List<Element?>? = null
     while (true) {
       when (val i = decoder.decodeElementIndex(descriptor)) {
@@ -450,8 +450,8 @@ internal object ImagingSelectionInstanceImageRegion2DSerializer :
 
     public val regionTypeSer: KSerializer<Element> = Element.serializer()
 
-    public val coordinateSer: KSerializer<List<BigDecimal?>> =
-      ListSerializer((BigDecimalSerializer).nullable)
+    public val coordinateSer: KSerializer<List<FhirDecimal?>> =
+      ListSerializer((FhirDecimalSerializer).nullable)
 
     public val coordinateSer2: KSerializer<List<Element?>> =
       ListSerializer((Hoisted.regionTypeSer).nullable)
@@ -477,7 +477,7 @@ internal object ImagingSelectionInstanceImageRegion3DSerializer :
       element("_regionType", Element.serializer().descriptor, isOptional = true)
       element(
         "coordinate",
-        listSerialDescriptor(BigDecimalSerializer.descriptor),
+        listSerialDescriptor(FhirDecimalSerializer.descriptor),
         isOptional = true,
       )
       element(
@@ -502,7 +502,7 @@ internal object ImagingSelectionInstanceImageRegion3DSerializer :
     var modifierExtension: List<Extension>? = null
     var regionType: KotlinString? = null
     var _regionType: Element? = null
-    var coordinate: List<BigDecimal?>? = null
+    var coordinate: List<FhirDecimal?>? = null
     var _coordinate: List<Element?>? = null
     while (true) {
       when (val i = decoder.decodeElementIndex(descriptor)) {
@@ -577,8 +577,8 @@ internal object ImagingSelectionInstanceImageRegion3DSerializer :
 
     public val regionTypeSer: KSerializer<Element> = Element.serializer()
 
-    public val coordinateSer: KSerializer<List<BigDecimal?>> =
-      ListSerializer((BigDecimalSerializer).nullable)
+    public val coordinateSer: KSerializer<List<FhirDecimal?>> =
+      ListSerializer((FhirDecimalSerializer).nullable)
 
     public val coordinateSer2: KSerializer<List<Element?>> =
       ListSerializer((Hoisted.regionTypeSer).nullable)

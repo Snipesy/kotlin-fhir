@@ -18,7 +18,6 @@
 
 package dev.ohs.fhir.model.r5.serializers
 
-import com.ionspin.kotlin.bignum.decimal.BigDecimal
 import dev.ohs.fhir.model.r5.Annotation
 import dev.ohs.fhir.model.r5.Code
 import dev.ohs.fhir.model.r5.CodeableConcept
@@ -29,6 +28,7 @@ import dev.ohs.fhir.model.r5.Element
 import dev.ohs.fhir.model.r5.Enumeration
 import dev.ohs.fhir.model.r5.Extension
 import dev.ohs.fhir.model.r5.FhirDateTime
+import dev.ohs.fhir.model.r5.FhirDecimal
 import dev.ohs.fhir.model.r5.Identifier
 import dev.ohs.fhir.model.r5.Meta
 import dev.ohs.fhir.model.r5.Narrative
@@ -74,11 +74,11 @@ internal object RiskAssessmentPredictionSerializer : KSerializer<RiskAssessment.
         isOptional = true,
       )
       element("outcome", CodeableConcept.serializer().descriptor, isOptional = true)
-      element("probabilityDecimal", BigDecimalSerializer.descriptor, isOptional = true)
+      element("probabilityDecimal", FhirDecimalSerializer.descriptor, isOptional = true)
       element("_probabilityDecimal", Element.serializer().descriptor, isOptional = true)
       element("probabilityRange", Range.serializer().descriptor, isOptional = true)
       element("qualitativeRisk", CodeableConcept.serializer().descriptor, isOptional = true)
-      element("relativeRisk", BigDecimalSerializer.descriptor, isOptional = true)
+      element("relativeRisk", FhirDecimalSerializer.descriptor, isOptional = true)
       element("_relativeRisk", Element.serializer().descriptor, isOptional = true)
       element("whenPeriod", Period.serializer().descriptor, isOptional = true)
       element("whenRange", Range.serializer().descriptor, isOptional = true)
@@ -98,11 +98,11 @@ internal object RiskAssessmentPredictionSerializer : KSerializer<RiskAssessment.
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
     var outcome: CodeableConcept? = null
-    var probabilityDecimal: BigDecimal? = null
+    var probabilityDecimal: FhirDecimal? = null
     var _probabilityDecimal: Element? = null
     var probabilityRange: Range? = null
     var qualitativeRisk: CodeableConcept? = null
-    var relativeRisk: BigDecimal? = null
+    var relativeRisk: FhirDecimal? = null
     var _relativeRisk: Element? = null
     var whenPeriod: Period? = null
     var whenRange: Range? = null
@@ -122,7 +122,7 @@ internal object RiskAssessmentPredictionSerializer : KSerializer<RiskAssessment.
             decoder.decodeNullableSerializableElement(descriptor, i, Hoisted.outcomeSer, null)
         4 ->
           probabilityDecimal =
-            decoder.decodeNullableSerializableElement(descriptor, i, BigDecimalSerializer, null)
+            decoder.decodeNullableSerializableElement(descriptor, i, FhirDecimalSerializer, null)
         5 ->
           _probabilityDecimal =
             decoder.decodeNullableSerializableElement(
@@ -144,7 +144,7 @@ internal object RiskAssessmentPredictionSerializer : KSerializer<RiskAssessment.
             decoder.decodeNullableSerializableElement(descriptor, i, Hoisted.outcomeSer, null)
         8 ->
           relativeRisk =
-            decoder.decodeNullableSerializableElement(descriptor, i, BigDecimalSerializer, null)
+            decoder.decodeNullableSerializableElement(descriptor, i, FhirDecimalSerializer, null)
         9 ->
           _relativeRisk =
             decoder.decodeNullableSerializableElement(
@@ -212,7 +212,7 @@ internal object RiskAssessmentPredictionSerializer : KSerializer<RiskAssessment.
       null -> {}
       is RiskAssessment.Prediction.Probability.Decimal -> {
         ((choice.value.value))?.let {
-          encoder.encodeSerializableElement(descriptor, 4, BigDecimalSerializer, it)
+          encoder.encodeSerializableElement(descriptor, 4, FhirDecimalSerializer, it)
         }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 5, Hoisted.probabilityDecimalSer, it)
@@ -226,7 +226,7 @@ internal object RiskAssessmentPredictionSerializer : KSerializer<RiskAssessment.
       encoder.encodeSerializableElement(descriptor, 7, Hoisted.outcomeSer, it)
     }
     ((value.relativeRisk?.value))?.let {
-      encoder.encodeSerializableElement(descriptor, 8, BigDecimalSerializer, it)
+      encoder.encodeSerializableElement(descriptor, 8, FhirDecimalSerializer, it)
     }
     (value.relativeRisk?.toElement())?.let {
       encoder.encodeSerializableElement(descriptor, 9, Hoisted.probabilityDecimalSer, it)

@@ -17,12 +17,13 @@
 package dev.ohs.fhir.codegen
 
 import com.squareup.kotlinpoet.ClassName
-import dev.ohs.fhir.codegen.primitives.BigDecimalSerializerFileSpecGenerator
 import dev.ohs.fhir.codegen.primitives.EnumerationFileSpecGenerator
 import dev.ohs.fhir.codegen.primitives.FhirDateFileSpecGenerator
 import dev.ohs.fhir.codegen.primitives.FhirDateSerializerFileSpecGenerator
 import dev.ohs.fhir.codegen.primitives.FhirDateTimeFileSpecGenerator
 import dev.ohs.fhir.codegen.primitives.FhirDateTimeSerializerFileSpecGenerator
+import dev.ohs.fhir.codegen.primitives.FhirDecimalFileSpecGenerator
+import dev.ohs.fhir.codegen.primitives.FhirDecimalSerializerFileSpecGenerator
 import dev.ohs.fhir.codegen.primitives.FhirTemporalFileSpecGenerator
 import dev.ohs.fhir.codegen.primitives.LocalTimeSerializerFileSpecGenerator
 import dev.ohs.fhir.codegen.schema.StructureDefinition
@@ -143,6 +144,25 @@ abstract class FhirCodegenTask : DefaultTask() {
           valueElement?.let { sd.name to (it.min > 0) }
         }
         .toMap()
+
+    // The lexical pattern a FHIR `decimal` value must match on the wire — sourced from the
+    // `decimal` StructureDefinition so the version-specific bound (R4 is unbounded; R5/R6 cap the
+    // number of digits) is baked into the generated `FhirDecimal.WIRE_REGEX`.
+    val decimalRegex =
+      structureDefinitions
+        .firstOrNull { it.name == "decimal" }
+        ?.snapshot
+        ?.element
+        ?.firstOrNull { it.path == "decimal.value" }
+        ?.type
+        ?.firstOrNull()
+        ?.extension
+        ?.firstOrNull { it.url == "http://hl7.org/fhir/StructureDefinition/regex" }
+        ?.valueString
+        // HL7's published R5/R6 `decimal` regex has a stray `}` (`...[0-9]{1,9}}`) that would
+        // require a literal `}` after the exponent and so reject all scientific notation. Strip it.
+        ?.replace("}}", "}")
+        ?: error("Could not find the regex for the FHIR `decimal` StructureDefinition")
     val fhirCodegen =
       FhirCodegen(packageName, valueSetMap, baseClasses, typeGraph, primitiveValueIsNonNull)
 
@@ -166,6 +186,7 @@ abstract class FhirCodegenTask : DefaultTask() {
     FhirTemporalFileSpecGenerator.generate(packageName).writeTo(outputDir)
     FhirDateTimeFileSpecGenerator.generate(packageName).writeTo(outputDir)
     FhirDateFileSpecGenerator.generate(packageName).writeTo(outputDir)
+    FhirDecimalFileSpecGenerator.generate(packageName, decimalRegex).writeTo(outputDir)
 
     // Generates a wrapper for enum types
     EnumerationFileSpecGenerator.generate(packageName).writeTo(outputDir)
@@ -173,7 +194,7 @@ abstract class FhirCodegenTask : DefaultTask() {
     // Generate custom serializers
     val serializersPackageName = "$packageName.serializers"
     LocalTimeSerializerFileSpecGenerator.generate(serializersPackageName).writeTo(outputDir)
-    BigDecimalSerializerFileSpecGenerator.generate(serializersPackageName).writeTo(outputDir)
+    FhirDecimalSerializerFileSpecGenerator.generate(serializersPackageName).writeTo(outputDir)
     FhirDateSerializerFileSpecGenerator.generate(serializersPackageName).writeTo(outputDir)
     FhirDateTimeSerializerFileSpecGenerator.generate(serializersPackageName).writeTo(outputDir)
 

@@ -16,9 +16,8 @@
 
 package dev.ohs.fhir.model.r4
 
-import com.ionspin.kotlin.bignum.decimal.BigDecimal
-import dev.ohs.fhir.model.r4.serializers.BigDecimalSerializer
 import dev.ohs.fhir.model.r4.serializers.DecimalSerializer
+import dev.ohs.fhir.model.r4.serializers.FhirDecimalSerializer
 import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
@@ -43,7 +42,7 @@ public data class Decimal(
    */
   override val extension: List<Extension> = listOf(),
   /** The actual value */
-  @Serializable(with = BigDecimalSerializer::class) public val `value`: BigDecimal? = null,
+  @Serializable(with = FhirDecimalSerializer::class) public val `value`: FhirDecimal? = null,
 ) : Element(id, extension) {
   public fun toBuilder(): Builder =
     with(this) {
@@ -80,14 +79,14 @@ public data class Decimal(
     public open var extension: MutableList<Extension.Builder> = mutableListOf()
 
     /** The actual value */
-    public open var `value`: BigDecimal? = null
+    public open var `value`: FhirDecimal? = null
 
     public open fun build(): Decimal =
       Decimal(id = id, extension = extension.map { it.build() }, `value` = `value`)
   }
 
   public companion object {
-    public fun of(`value`: BigDecimal?, element: Element?): Decimal? =
+    public fun of(`value`: FhirDecimal?, element: Element?): Decimal? =
       if (value != null || element?.id != null || element?.extension?.isEmpty() == false) {
         Decimal(element?.id, element?.extension ?: mutableListOf(), value)
       } else {

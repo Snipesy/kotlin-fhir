@@ -18,7 +18,6 @@
 
 package dev.ohs.fhir.model.r4.serializers
 
-import com.ionspin.kotlin.bignum.decimal.BigDecimal
 import dev.ohs.fhir.model.r4.Boolean as R4Boolean
 import dev.ohs.fhir.model.r4.Code
 import dev.ohs.fhir.model.r4.CodeableConcept
@@ -26,6 +25,7 @@ import dev.ohs.fhir.model.r4.Decimal
 import dev.ohs.fhir.model.r4.Element
 import dev.ohs.fhir.model.r4.Enumeration
 import dev.ohs.fhir.model.r4.Extension
+import dev.ohs.fhir.model.r4.FhirDecimal
 import dev.ohs.fhir.model.r4.Identifier
 import dev.ohs.fhir.model.r4.Integer
 import dev.ohs.fhir.model.r4.Meta
@@ -76,7 +76,7 @@ internal object ObservationDefinitionQuantitativeDetailsSerializer :
       )
       element("customaryUnit", CodeableConcept.serializer().descriptor, isOptional = true)
       element("unit", CodeableConcept.serializer().descriptor, isOptional = true)
-      element("conversionFactor", BigDecimalSerializer.descriptor, isOptional = true)
+      element("conversionFactor", FhirDecimalSerializer.descriptor, isOptional = true)
       element("_conversionFactor", Element.serializer().descriptor, isOptional = true)
       element("decimalPrecision", Int.serializer().descriptor, isOptional = true)
       element("_decimalPrecision", Element.serializer().descriptor, isOptional = true)
@@ -97,7 +97,7 @@ internal object ObservationDefinitionQuantitativeDetailsSerializer :
     var modifierExtension: List<Extension>? = null
     var customaryUnit: CodeableConcept? = null
     var unit: CodeableConcept? = null
-    var conversionFactor: BigDecimal? = null
+    var conversionFactor: FhirDecimal? = null
     var _conversionFactor: Element? = null
     var decimalPrecision: Int? = null
     var _decimalPrecision: Element? = null
@@ -118,7 +118,7 @@ internal object ObservationDefinitionQuantitativeDetailsSerializer :
             decoder.decodeNullableSerializableElement(descriptor, i, Hoisted.customaryUnitSer, null)
         5 ->
           conversionFactor =
-            decoder.decodeNullableSerializableElement(descriptor, i, BigDecimalSerializer, null)
+            decoder.decodeNullableSerializableElement(descriptor, i, FhirDecimalSerializer, null)
         6 ->
           _conversionFactor =
             decoder.decodeNullableSerializableElement(
@@ -172,7 +172,7 @@ internal object ObservationDefinitionQuantitativeDetailsSerializer :
       encoder.encodeSerializableElement(descriptor, 4, Hoisted.customaryUnitSer, it)
     }
     ((value.conversionFactor?.value))?.let {
-      encoder.encodeSerializableElement(descriptor, 5, BigDecimalSerializer, it)
+      encoder.encodeSerializableElement(descriptor, 5, FhirDecimalSerializer, it)
     }
     (value.conversionFactor?.toElement())?.let {
       encoder.encodeSerializableElement(descriptor, 6, Hoisted.conversionFactorSer, it)

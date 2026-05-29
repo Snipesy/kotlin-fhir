@@ -217,7 +217,6 @@ class ModelFileSpecGenerator(val codegenContext: CodegenContext) {
                 .apply {
                   when (structureDefinitionName) {
                     "xhtml" -> addOfFunctionForXhtml(modelClassName, valueType)
-                    "decimal" -> addOfFunctionForDecimal(modelClassName)
                     else -> addOfFunction(modelClassName, valueType)
                   }
                 }
@@ -383,8 +382,8 @@ private fun customValueSerializerFor(typeName: TypeName, modelPackageName: Strin
   val raw = typeName as? ClassName ?: return null
   val serializersPackage = "$modelPackageName.serializers"
   return when {
-    raw.packageName == "com.ionspin.kotlin.bignum.decimal" && raw.simpleName == "BigDecimal" ->
-      ClassName(serializersPackage, "BigDecimalSerializer")
+    raw.packageName == modelPackageName && raw.simpleName == "FhirDecimal" ->
+      ClassName(serializersPackage, "FhirDecimalSerializer")
     raw.packageName == modelPackageName && raw.simpleName == "FhirDate" ->
       ClassName(serializersPackage, "FhirDateSerializer")
     raw.packageName == modelPackageName && raw.simpleName == "FhirDateTime" ->
@@ -649,30 +648,6 @@ private fun TypeSpec.Builder.addOfFunctionForXhtml(
       .addParameter("element", ClassName(className.packageName, "Element").copy(nullable = true))
       .addCode("return %T(element?.id, element?.extension ?: mutableListOf(), value)", className)
       .returns(className)
-      .build()
-  )
-  return this
-}
-
-/**
- * Adds an `of` function in the companion object in the `Decimal` class to return a FHIR primitive
- * data type object from a Kotlin primitive string value and a FHIR `Element`.
- *
- * Same role as [addOfFunction] — merges the wire value and `_field` Element sidecar into a single
- * model object — but specialized for `Decimal`, which is `BigDecimal` in the model and `Double` on
- * the wire.
- */
-private fun TypeSpec.Builder.addOfFunctionForDecimal(className: ClassName): TypeSpec.Builder {
-  val bigDecimal = ClassName("com.ionspin.kotlin.bignum.decimal", "BigDecimal")
-  addFunction(
-    FunSpec.builder("of")
-      .addParameter("value", bigDecimal.copy(nullable = true))
-      .addParameter("element", ClassName(className.packageName, "Element").copy(nullable = true))
-      .addCode(
-        "return if (value != null || element?.id != null || element?.extension?.isEmpty() == false) { %T(element?.id, element?.extension ?: mutableListOf(), value) } else { null }",
-        className,
-      )
-      .returns(className.copy(nullable = true))
       .build()
   )
   return this

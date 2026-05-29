@@ -18,7 +18,6 @@
 
 package dev.ohs.fhir.model.r4.serializers
 
-import com.ionspin.kotlin.bignum.decimal.BigDecimal
 import dev.ohs.fhir.model.r4.Annotation
 import dev.ohs.fhir.model.r4.Code
 import dev.ohs.fhir.model.r4.CodeableConcept
@@ -32,6 +31,7 @@ import dev.ohs.fhir.model.r4.Enumeration
 import dev.ohs.fhir.model.r4.Extension
 import dev.ohs.fhir.model.r4.FhirDate
 import dev.ohs.fhir.model.r4.FhirDateTime
+import dev.ohs.fhir.model.r4.FhirDecimal
 import dev.ohs.fhir.model.r4.Identifier
 import dev.ohs.fhir.model.r4.Integer
 import dev.ohs.fhir.model.r4.Markdown
@@ -334,7 +334,7 @@ internal object EffectEvidenceSynthesisEffectEstimateSerializer :
       element("_description", Element.serializer().descriptor, isOptional = true)
       element("type", CodeableConcept.serializer().descriptor, isOptional = true)
       element("variantState", CodeableConcept.serializer().descriptor, isOptional = true)
-      element("value", BigDecimalSerializer.descriptor, isOptional = true)
+      element("value", FhirDecimalSerializer.descriptor, isOptional = true)
       element("_value", Element.serializer().descriptor, isOptional = true)
       element("unitOfMeasure", CodeableConcept.serializer().descriptor, isOptional = true)
       element(
@@ -365,7 +365,7 @@ internal object EffectEvidenceSynthesisEffectEstimateSerializer :
     var _description: Element? = null
     var type: CodeableConcept? = null
     var variantState: CodeableConcept? = null
-    var `value`: BigDecimal? = null
+    var `value`: FhirDecimal? = null
     var _value: Element? = null
     var unitOfMeasure: CodeableConcept? = null
     var precisionEstimate: List<EffectEvidenceSynthesis.EffectEstimate.PrecisionEstimate>? = null
@@ -388,7 +388,7 @@ internal object EffectEvidenceSynthesisEffectEstimateSerializer :
             decoder.decodeNullableSerializableElement(descriptor, i, Hoisted.typeSer, null)
         7 ->
           `value` =
-            decoder.decodeNullableSerializableElement(descriptor, i, BigDecimalSerializer, null)
+            decoder.decodeNullableSerializableElement(descriptor, i, FhirDecimalSerializer, null)
         8 ->
           _value =
             decoder.decodeNullableSerializableElement(descriptor, i, Hoisted.descriptionSer, null)
@@ -443,7 +443,7 @@ internal object EffectEvidenceSynthesisEffectEstimateSerializer :
       encoder.encodeSerializableElement(descriptor, 6, Hoisted.typeSer, it)
     }
     ((value.`value`?.value))?.let {
-      encoder.encodeSerializableElement(descriptor, 7, BigDecimalSerializer, it)
+      encoder.encodeSerializableElement(descriptor, 7, FhirDecimalSerializer, it)
     }
     (value.`value`?.toElement())?.let {
       encoder.encodeSerializableElement(descriptor, 8, Hoisted.descriptionSer, it)
@@ -496,11 +496,11 @@ internal object EffectEvidenceSynthesisEffectEstimatePrecisionEstimateSerializer
         isOptional = true,
       )
       element("type", CodeableConcept.serializer().descriptor, isOptional = true)
-      element("level", BigDecimalSerializer.descriptor, isOptional = true)
+      element("level", FhirDecimalSerializer.descriptor, isOptional = true)
       element("_level", Element.serializer().descriptor, isOptional = true)
-      element("from", BigDecimalSerializer.descriptor, isOptional = true)
+      element("from", FhirDecimalSerializer.descriptor, isOptional = true)
       element("_from", Element.serializer().descriptor, isOptional = true)
-      element("to", BigDecimalSerializer.descriptor, isOptional = true)
+      element("to", FhirDecimalSerializer.descriptor, isOptional = true)
       element("_to", Element.serializer().descriptor, isOptional = true)
     }
 
@@ -523,11 +523,11 @@ internal object EffectEvidenceSynthesisEffectEstimatePrecisionEstimateSerializer
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
     var type: CodeableConcept? = null
-    var level: BigDecimal? = null
+    var level: FhirDecimal? = null
     var _level: Element? = null
-    var from: BigDecimal? = null
+    var from: FhirDecimal? = null
     var _from: Element? = null
-    var to: BigDecimal? = null
+    var to: FhirDecimal? = null
     var _to: Element? = null
     while (true) {
       when (val i = decoder.decodeElementIndex(descriptor)) {
@@ -541,16 +541,16 @@ internal object EffectEvidenceSynthesisEffectEstimatePrecisionEstimateSerializer
         3 -> type = decoder.decodeNullableSerializableElement(descriptor, i, Hoisted.typeSer, null)
         4 ->
           level =
-            decoder.decodeNullableSerializableElement(descriptor, i, BigDecimalSerializer, null)
+            decoder.decodeNullableSerializableElement(descriptor, i, FhirDecimalSerializer, null)
         5 ->
           _level = decoder.decodeNullableSerializableElement(descriptor, i, Hoisted.levelSer, null)
         6 ->
           from =
-            decoder.decodeNullableSerializableElement(descriptor, i, BigDecimalSerializer, null)
+            decoder.decodeNullableSerializableElement(descriptor, i, FhirDecimalSerializer, null)
         7 ->
           _from = decoder.decodeNullableSerializableElement(descriptor, i, Hoisted.levelSer, null)
         8 ->
-          to = decoder.decodeNullableSerializableElement(descriptor, i, BigDecimalSerializer, null)
+          to = decoder.decodeNullableSerializableElement(descriptor, i, FhirDecimalSerializer, null)
         9 -> _to = decoder.decodeNullableSerializableElement(descriptor, i, Hoisted.levelSer, null)
         CompositeDecoder.DECODE_DONE -> break
         else -> throw SerializationException("Unexpected index decoding PrecisionEstimate: " + i)
@@ -583,19 +583,19 @@ internal object EffectEvidenceSynthesisEffectEstimatePrecisionEstimateSerializer
       )
     (value.type)?.let { encoder.encodeSerializableElement(descriptor, 3, Hoisted.typeSer, it) }
     ((value.level?.value))?.let {
-      encoder.encodeSerializableElement(descriptor, 4, BigDecimalSerializer, it)
+      encoder.encodeSerializableElement(descriptor, 4, FhirDecimalSerializer, it)
     }
     (value.level?.toElement())?.let {
       encoder.encodeSerializableElement(descriptor, 5, Hoisted.levelSer, it)
     }
     ((value.from?.value))?.let {
-      encoder.encodeSerializableElement(descriptor, 6, BigDecimalSerializer, it)
+      encoder.encodeSerializableElement(descriptor, 6, FhirDecimalSerializer, it)
     }
     (value.from?.toElement())?.let {
       encoder.encodeSerializableElement(descriptor, 7, Hoisted.levelSer, it)
     }
     ((value.to?.value))?.let {
-      encoder.encodeSerializableElement(descriptor, 8, BigDecimalSerializer, it)
+      encoder.encodeSerializableElement(descriptor, 8, FhirDecimalSerializer, it)
     }
     (value.to?.toElement())?.let {
       encoder.encodeSerializableElement(descriptor, 9, Hoisted.levelSer, it)

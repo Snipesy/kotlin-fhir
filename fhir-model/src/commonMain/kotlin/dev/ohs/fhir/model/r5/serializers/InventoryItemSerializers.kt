@@ -18,7 +18,6 @@
 
 package dev.ohs.fhir.model.r5.serializers
 
-import com.ionspin.kotlin.bignum.decimal.BigDecimal
 import dev.ohs.fhir.model.r5.Address
 import dev.ohs.fhir.model.r5.Annotation
 import dev.ohs.fhir.model.r5.Boolean as R5Boolean
@@ -32,6 +31,7 @@ import dev.ohs.fhir.model.r5.Element
 import dev.ohs.fhir.model.r5.Enumeration
 import dev.ohs.fhir.model.r5.Extension
 import dev.ohs.fhir.model.r5.FhirDateTime
+import dev.ohs.fhir.model.r5.FhirDecimal
 import dev.ohs.fhir.model.r5.Identifier
 import dev.ohs.fhir.model.r5.Integer
 import dev.ohs.fhir.model.r5.InventoryItem
@@ -483,7 +483,7 @@ internal object InventoryItemCharacteristicSerializer : KSerializer<InventoryIte
       element("_valueString", Element.serializer().descriptor, isOptional = true)
       element("valueInteger", Int.serializer().descriptor, isOptional = true)
       element("_valueInteger", Element.serializer().descriptor, isOptional = true)
-      element("valueDecimal", BigDecimalSerializer.descriptor, isOptional = true)
+      element("valueDecimal", FhirDecimalSerializer.descriptor, isOptional = true)
       element("_valueDecimal", Element.serializer().descriptor, isOptional = true)
       element("valueBoolean", KotlinBoolean.serializer().descriptor, isOptional = true)
       element("_valueBoolean", Element.serializer().descriptor, isOptional = true)
@@ -516,7 +516,7 @@ internal object InventoryItemCharacteristicSerializer : KSerializer<InventoryIte
     var _valueString: Element? = null
     var valueInteger: Int? = null
     var _valueInteger: Element? = null
-    var valueDecimal: BigDecimal? = null
+    var valueDecimal: FhirDecimal? = null
     var _valueDecimal: Element? = null
     var valueBoolean: KotlinBoolean? = null
     var _valueBoolean: Element? = null
@@ -558,7 +558,7 @@ internal object InventoryItemCharacteristicSerializer : KSerializer<InventoryIte
             decoder.decodeNullableSerializableElement(descriptor, i, Hoisted.valueStringSer, null)
         8 ->
           valueDecimal =
-            decoder.decodeNullableSerializableElement(descriptor, i, BigDecimalSerializer, null)
+            decoder.decodeNullableSerializableElement(descriptor, i, FhirDecimalSerializer, null)
         9 ->
           _valueDecimal =
             decoder.decodeNullableSerializableElement(descriptor, i, Hoisted.valueStringSer, null)
@@ -665,7 +665,7 @@ internal object InventoryItemCharacteristicSerializer : KSerializer<InventoryIte
       }
       is InventoryItem.Characteristic.Value.Decimal -> {
         ((choice.value.value))?.let {
-          encoder.encodeSerializableElement(descriptor, 8, BigDecimalSerializer, it)
+          encoder.encodeSerializableElement(descriptor, 8, FhirDecimalSerializer, it)
         }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 9, Hoisted.valueStringSer, it)

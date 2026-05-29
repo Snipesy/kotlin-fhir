@@ -18,7 +18,6 @@
 
 package dev.ohs.fhir.model.r4b.serializers
 
-import com.ionspin.kotlin.bignum.decimal.BigDecimal
 import dev.ohs.fhir.model.r4b.Annotation
 import dev.ohs.fhir.model.r4b.Code
 import dev.ohs.fhir.model.r4b.CodeableConcept
@@ -28,6 +27,7 @@ import dev.ohs.fhir.model.r4b.Element
 import dev.ohs.fhir.model.r4b.Enumeration
 import dev.ohs.fhir.model.r4b.Extension
 import dev.ohs.fhir.model.r4b.FhirDateTime
+import dev.ohs.fhir.model.r4b.FhirDecimal
 import dev.ohs.fhir.model.r4b.Identifier
 import dev.ohs.fhir.model.r4b.Invoice
 import dev.ohs.fhir.model.r4b.Markdown
@@ -322,7 +322,7 @@ internal object InvoiceLineItemPriceComponentSerializer :
       element("type", KotlinString.serializer().descriptor, isOptional = true)
       element("_type", Element.serializer().descriptor, isOptional = true)
       element("code", CodeableConcept.serializer().descriptor, isOptional = true)
-      element("factor", BigDecimalSerializer.descriptor, isOptional = true)
+      element("factor", FhirDecimalSerializer.descriptor, isOptional = true)
       element("_factor", Element.serializer().descriptor, isOptional = true)
       element("amount", Money.serializer().descriptor, isOptional = true)
     }
@@ -341,7 +341,7 @@ internal object InvoiceLineItemPriceComponentSerializer :
     var type: KotlinString? = null
     var _type: Element? = null
     var code: CodeableConcept? = null
-    var factor: BigDecimal? = null
+    var factor: FhirDecimal? = null
     var _factor: Element? = null
     var amount: Money? = null
     while (true) {
@@ -358,7 +358,7 @@ internal object InvoiceLineItemPriceComponentSerializer :
         5 -> code = decoder.decodeNullableSerializableElement(descriptor, i, Hoisted.codeSer, null)
         6 ->
           factor =
-            decoder.decodeNullableSerializableElement(descriptor, i, BigDecimalSerializer, null)
+            decoder.decodeNullableSerializableElement(descriptor, i, FhirDecimalSerializer, null)
         7 ->
           _factor = decoder.decodeNullableSerializableElement(descriptor, i, Hoisted.typeSer, null)
         8 ->
@@ -398,7 +398,7 @@ internal object InvoiceLineItemPriceComponentSerializer :
     }
     (value.code)?.let { encoder.encodeSerializableElement(descriptor, 5, Hoisted.codeSer, it) }
     ((value.factor?.value))?.let {
-      encoder.encodeSerializableElement(descriptor, 6, BigDecimalSerializer, it)
+      encoder.encodeSerializableElement(descriptor, 6, FhirDecimalSerializer, it)
     }
     (value.factor?.toElement())?.let {
       encoder.encodeSerializableElement(descriptor, 7, Hoisted.typeSer, it)

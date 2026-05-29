@@ -18,7 +18,6 @@
 
 package dev.ohs.fhir.model.r5.serializers
 
-import com.ionspin.kotlin.bignum.decimal.BigDecimal
 import dev.ohs.fhir.model.r5.Boolean as R5Boolean
 import dev.ohs.fhir.model.r5.Canonical
 import dev.ohs.fhir.model.r5.Code
@@ -33,6 +32,7 @@ import dev.ohs.fhir.model.r5.Enumeration
 import dev.ohs.fhir.model.r5.Extension
 import dev.ohs.fhir.model.r5.FhirDate
 import dev.ohs.fhir.model.r5.FhirDateTime
+import dev.ohs.fhir.model.r5.FhirDecimal
 import dev.ohs.fhir.model.r5.Id
 import dev.ohs.fhir.model.r5.Identifier
 import dev.ohs.fhir.model.r5.Integer
@@ -1154,7 +1154,7 @@ internal object StructureMapGroupRuleTargetParameterSerializer :
       element("_valueBoolean", Element.serializer().descriptor, isOptional = true)
       element("valueInteger", Int.serializer().descriptor, isOptional = true)
       element("_valueInteger", Element.serializer().descriptor, isOptional = true)
-      element("valueDecimal", BigDecimalSerializer.descriptor, isOptional = true)
+      element("valueDecimal", FhirDecimalSerializer.descriptor, isOptional = true)
       element("_valueDecimal", Element.serializer().descriptor, isOptional = true)
       element("valueDate", KotlinString.serializer().descriptor, isOptional = true)
       element("_valueDate", Element.serializer().descriptor, isOptional = true)
@@ -1185,7 +1185,7 @@ internal object StructureMapGroupRuleTargetParameterSerializer :
     var _valueBoolean: Element? = null
     var valueInteger: Int? = null
     var _valueInteger: Element? = null
-    var valueDecimal: BigDecimal? = null
+    var valueDecimal: FhirDecimal? = null
     var _valueDecimal: Element? = null
     var valueDate: KotlinString? = null
     var _valueDate: Element? = null
@@ -1220,7 +1220,7 @@ internal object StructureMapGroupRuleTargetParameterSerializer :
             decoder.decodeNullableSerializableElement(descriptor, i, Hoisted.valueIdSer, null)
         11 ->
           valueDecimal =
-            decoder.decodeNullableSerializableElement(descriptor, i, BigDecimalSerializer, null)
+            decoder.decodeNullableSerializableElement(descriptor, i, FhirDecimalSerializer, null)
         12 ->
           _valueDecimal =
             decoder.decodeNullableSerializableElement(descriptor, i, Hoisted.valueIdSer, null)
@@ -1301,7 +1301,7 @@ internal object StructureMapGroupRuleTargetParameterSerializer :
       }
       is StructureMap.Group.Rule.Target.Parameter.Value.Decimal -> {
         ((choice.value.value))?.let {
-          encoder.encodeSerializableElement(descriptor, 11, BigDecimalSerializer, it)
+          encoder.encodeSerializableElement(descriptor, 11, FhirDecimalSerializer, it)
         }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 12, Hoisted.valueIdSer, it)

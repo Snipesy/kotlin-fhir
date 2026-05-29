@@ -18,7 +18,6 @@
 
 package dev.ohs.fhir.model.r4b.serializers
 
-import com.ionspin.kotlin.bignum.decimal.BigDecimal
 import dev.ohs.fhir.model.r4b.Address
 import dev.ohs.fhir.model.r4b.Age
 import dev.ohs.fhir.model.r4b.Annotation
@@ -48,6 +47,7 @@ import dev.ohs.fhir.model.r4b.Expression
 import dev.ohs.fhir.model.r4b.Extension
 import dev.ohs.fhir.model.r4b.FhirDate
 import dev.ohs.fhir.model.r4b.FhirDateTime
+import dev.ohs.fhir.model.r4b.FhirDecimal
 import dev.ohs.fhir.model.r4b.HumanName
 import dev.ohs.fhir.model.r4b.Id
 import dev.ohs.fhir.model.r4b.Identifier
@@ -580,7 +580,7 @@ internal object ElementDefinitionExampleSerializer : KSerializer<ElementDefiniti
       element("_valueDate", Element.serializer().descriptor, isOptional = true)
       element("valueDateTime", KotlinString.serializer().descriptor, isOptional = true)
       element("_valueDateTime", Element.serializer().descriptor, isOptional = true)
-      element("valueDecimal", BigDecimalSerializer.descriptor, isOptional = true)
+      element("valueDecimal", FhirDecimalSerializer.descriptor, isOptional = true)
       element("_valueDecimal", Element.serializer().descriptor, isOptional = true)
       element("valueId", KotlinString.serializer().descriptor, isOptional = true)
       element("_valueId", Element.serializer().descriptor, isOptional = true)
@@ -676,7 +676,7 @@ internal object ElementDefinitionExampleSerializer : KSerializer<ElementDefiniti
     var _valueDate: Element? = null
     var valueDateTime: KotlinString? = null
     var _valueDateTime: Element? = null
-    var valueDecimal: BigDecimal? = null
+    var valueDecimal: FhirDecimal? = null
     var _valueDecimal: Element? = null
     var valueId: KotlinString? = null
     var _valueId: Element? = null
@@ -769,7 +769,7 @@ internal object ElementDefinitionExampleSerializer : KSerializer<ElementDefiniti
             decoder.decodeNullableSerializableElement(descriptor, i, Hoisted.labelSer, null)
         16 ->
           valueDecimal =
-            decoder.decodeNullableSerializableElement(descriptor, i, BigDecimalSerializer, null)
+            decoder.decodeNullableSerializableElement(descriptor, i, FhirDecimalSerializer, null)
         17 ->
           _valueDecimal =
             decoder.decodeNullableSerializableElement(descriptor, i, Hoisted.labelSer, null)
@@ -1126,7 +1126,7 @@ internal object ElementDefinitionExampleSerializer : KSerializer<ElementDefiniti
       }
       is ElementDefinition.Example.Value.Decimal -> {
         ((choice.value.value))?.let {
-          encoder.encodeSerializableElement(descriptor, 16, BigDecimalSerializer, it)
+          encoder.encodeSerializableElement(descriptor, 16, FhirDecimalSerializer, it)
         }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 17, Hoisted.labelSer, it)
@@ -1841,7 +1841,7 @@ internal object ElementDefinitionSerializer : KSerializer<ElementDefinition> {
       element("_defaultValueDate", Element.serializer().descriptor, isOptional = true)
       element("defaultValueDateTime", KotlinString.serializer().descriptor, isOptional = true)
       element("_defaultValueDateTime", Element.serializer().descriptor, isOptional = true)
-      element("defaultValueDecimal", BigDecimalSerializer.descriptor, isOptional = true)
+      element("defaultValueDecimal", FhirDecimalSerializer.descriptor, isOptional = true)
       element("_defaultValueDecimal", Element.serializer().descriptor, isOptional = true)
       element("defaultValueId", KotlinString.serializer().descriptor, isOptional = true)
       element("_defaultValueId", Element.serializer().descriptor, isOptional = true)
@@ -1939,7 +1939,7 @@ internal object ElementDefinitionSerializer : KSerializer<ElementDefinition> {
       element("_fixedDate", Element.serializer().descriptor, isOptional = true)
       element("fixedDateTime", KotlinString.serializer().descriptor, isOptional = true)
       element("_fixedDateTime", Element.serializer().descriptor, isOptional = true)
-      element("fixedDecimal", BigDecimalSerializer.descriptor, isOptional = true)
+      element("fixedDecimal", FhirDecimalSerializer.descriptor, isOptional = true)
       element("_fixedDecimal", Element.serializer().descriptor, isOptional = true)
       element("fixedId", KotlinString.serializer().descriptor, isOptional = true)
       element("_fixedId", Element.serializer().descriptor, isOptional = true)
@@ -2021,7 +2021,7 @@ internal object ElementDefinitionSerializer : KSerializer<ElementDefinition> {
       element("_patternDate", Element.serializer().descriptor, isOptional = true)
       element("patternDateTime", KotlinString.serializer().descriptor, isOptional = true)
       element("_patternDateTime", Element.serializer().descriptor, isOptional = true)
-      element("patternDecimal", BigDecimalSerializer.descriptor, isOptional = true)
+      element("patternDecimal", FhirDecimalSerializer.descriptor, isOptional = true)
       element("_patternDecimal", Element.serializer().descriptor, isOptional = true)
       element("patternId", KotlinString.serializer().descriptor, isOptional = true)
       element("_patternId", Element.serializer().descriptor, isOptional = true)
@@ -2104,7 +2104,7 @@ internal object ElementDefinitionSerializer : KSerializer<ElementDefinition> {
       element("_minValueInstant", Element.serializer().descriptor, isOptional = true)
       element("minValueTime", LocalTimeSerializer.descriptor, isOptional = true)
       element("_minValueTime", Element.serializer().descriptor, isOptional = true)
-      element("minValueDecimal", BigDecimalSerializer.descriptor, isOptional = true)
+      element("minValueDecimal", FhirDecimalSerializer.descriptor, isOptional = true)
       element("_minValueDecimal", Element.serializer().descriptor, isOptional = true)
       element("minValueInteger", Int.serializer().descriptor, isOptional = true)
       element("_minValueInteger", Element.serializer().descriptor, isOptional = true)
@@ -2121,7 +2121,7 @@ internal object ElementDefinitionSerializer : KSerializer<ElementDefinition> {
       element("_maxValueInstant", Element.serializer().descriptor, isOptional = true)
       element("maxValueTime", LocalTimeSerializer.descriptor, isOptional = true)
       element("_maxValueTime", Element.serializer().descriptor, isOptional = true)
-      element("maxValueDecimal", BigDecimalSerializer.descriptor, isOptional = true)
+      element("maxValueDecimal", FhirDecimalSerializer.descriptor, isOptional = true)
       element("_maxValueDecimal", Element.serializer().descriptor, isOptional = true)
       element("maxValueInteger", Int.serializer().descriptor, isOptional = true)
       element("_maxValueInteger", Element.serializer().descriptor, isOptional = true)
@@ -2222,7 +2222,7 @@ internal object ElementDefinitionSerializer : KSerializer<ElementDefinition> {
     var _defaultValueDate: Element? = null
     var defaultValueDateTime: KotlinString? = null
     var _defaultValueDateTime: Element? = null
-    var defaultValueDecimal: BigDecimal? = null
+    var defaultValueDecimal: FhirDecimal? = null
     var _defaultValueDecimal: Element? = null
     var defaultValueId: KotlinString? = null
     var _defaultValueId: Element? = null
@@ -2296,7 +2296,7 @@ internal object ElementDefinitionSerializer : KSerializer<ElementDefinition> {
     var _fixedDate: Element? = null
     var fixedDateTime: KotlinString? = null
     var _fixedDateTime: Element? = null
-    var fixedDecimal: BigDecimal? = null
+    var fixedDecimal: FhirDecimal? = null
     var _fixedDecimal: Element? = null
     var fixedId: KotlinString? = null
     var _fixedId: Element? = null
@@ -2366,7 +2366,7 @@ internal object ElementDefinitionSerializer : KSerializer<ElementDefinition> {
     var _patternDate: Element? = null
     var patternDateTime: KotlinString? = null
     var _patternDateTime: Element? = null
-    var patternDecimal: BigDecimal? = null
+    var patternDecimal: FhirDecimal? = null
     var _patternDecimal: Element? = null
     var patternId: KotlinString? = null
     var _patternId: Element? = null
@@ -2433,7 +2433,7 @@ internal object ElementDefinitionSerializer : KSerializer<ElementDefinition> {
     var _minValueInstant: Element? = null
     var minValueTime: LocalTime? = null
     var _minValueTime: Element? = null
-    var minValueDecimal: BigDecimal? = null
+    var minValueDecimal: FhirDecimal? = null
     var _minValueDecimal: Element? = null
     var minValueInteger: Int? = null
     var _minValueInteger: Element? = null
@@ -2450,7 +2450,7 @@ internal object ElementDefinitionSerializer : KSerializer<ElementDefinition> {
     var _maxValueInstant: Element? = null
     var maxValueTime: LocalTime? = null
     var _maxValueTime: Element? = null
-    var maxValueDecimal: BigDecimal? = null
+    var maxValueDecimal: FhirDecimal? = null
     var _maxValueDecimal: Element? = null
     var maxValueInteger: Int? = null
     var _maxValueInteger: Element? = null
@@ -2582,7 +2582,7 @@ internal object ElementDefinitionSerializer : KSerializer<ElementDefinition> {
             decoder.decodeNullableSerializableElement(descriptor, i, Hoisted.pathSer, null)
         45 ->
           defaultValueDecimal =
-            decoder.decodeNullableSerializableElement(descriptor, i, BigDecimalSerializer, null)
+            decoder.decodeNullableSerializableElement(descriptor, i, FhirDecimalSerializer, null)
         46 ->
           _defaultValueDecimal =
             decoder.decodeNullableSerializableElement(descriptor, i, Hoisted.pathSer, null)
@@ -2921,7 +2921,7 @@ internal object ElementDefinitionSerializer : KSerializer<ElementDefinition> {
             decoder.decodeNullableSerializableElement(descriptor, i, Hoisted.pathSer, null)
         119 ->
           fixedDecimal =
-            decoder.decodeNullableSerializableElement(descriptor, i, BigDecimalSerializer, null)
+            decoder.decodeNullableSerializableElement(descriptor, i, FhirDecimalSerializer, null)
         120 ->
           _fixedDecimal =
             decoder.decodeNullableSerializableElement(descriptor, i, Hoisted.pathSer, null)
@@ -3251,7 +3251,7 @@ internal object ElementDefinitionSerializer : KSerializer<ElementDefinition> {
             decoder.decodeNullableSerializableElement(descriptor, i, Hoisted.pathSer, null)
         189 ->
           patternDecimal =
-            decoder.decodeNullableSerializableElement(descriptor, i, BigDecimalSerializer, null)
+            decoder.decodeNullableSerializableElement(descriptor, i, FhirDecimalSerializer, null)
         190 ->
           _patternDecimal =
             decoder.decodeNullableSerializableElement(descriptor, i, Hoisted.pathSer, null)
@@ -3579,7 +3579,7 @@ internal object ElementDefinitionSerializer : KSerializer<ElementDefinition> {
             decoder.decodeNullableSerializableElement(descriptor, i, Hoisted.pathSer, null)
         256 ->
           minValueDecimal =
-            decoder.decodeNullableSerializableElement(descriptor, i, BigDecimalSerializer, null)
+            decoder.decodeNullableSerializableElement(descriptor, i, FhirDecimalSerializer, null)
         257 ->
           _minValueDecimal =
             decoder.decodeNullableSerializableElement(descriptor, i, Hoisted.pathSer, null)
@@ -3623,7 +3623,7 @@ internal object ElementDefinitionSerializer : KSerializer<ElementDefinition> {
             decoder.decodeNullableSerializableElement(descriptor, i, Hoisted.pathSer, null)
         273 ->
           maxValueDecimal =
-            decoder.decodeNullableSerializableElement(descriptor, i, BigDecimalSerializer, null)
+            decoder.decodeNullableSerializableElement(descriptor, i, FhirDecimalSerializer, null)
         274 ->
           _maxValueDecimal =
             decoder.decodeNullableSerializableElement(descriptor, i, Hoisted.pathSer, null)
@@ -4046,7 +4046,7 @@ internal object ElementDefinitionSerializer : KSerializer<ElementDefinition> {
       }
       is ElementDefinition.DefaultValue.Decimal -> {
         ((choice.value.value))?.let {
-          encoder.encodeSerializableElement(descriptor, 45, BigDecimalSerializer, it)
+          encoder.encodeSerializableElement(descriptor, 45, FhirDecimalSerializer, it)
         }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 46, Hoisted.pathSer, it)
@@ -4421,7 +4421,7 @@ internal object ElementDefinitionSerializer : KSerializer<ElementDefinition> {
       }
       is ElementDefinition.Fixed.Decimal -> {
         ((choice.value.value))?.let {
-          encoder.encodeSerializableElement(descriptor, 119, BigDecimalSerializer, it)
+          encoder.encodeSerializableElement(descriptor, 119, FhirDecimalSerializer, it)
         }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 120, Hoisted.pathSer, it)
@@ -4788,7 +4788,7 @@ internal object ElementDefinitionSerializer : KSerializer<ElementDefinition> {
       }
       is ElementDefinition.Pattern.Decimal -> {
         ((choice.value.value))?.let {
-          encoder.encodeSerializableElement(descriptor, 189, BigDecimalSerializer, it)
+          encoder.encodeSerializableElement(descriptor, 189, FhirDecimalSerializer, it)
         }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 190, Hoisted.pathSer, it)
@@ -5147,7 +5147,7 @@ internal object ElementDefinitionSerializer : KSerializer<ElementDefinition> {
       }
       is ElementDefinition.MinValue.Decimal -> {
         ((choice.value.value))?.let {
-          encoder.encodeSerializableElement(descriptor, 256, BigDecimalSerializer, it)
+          encoder.encodeSerializableElement(descriptor, 256, FhirDecimalSerializer, it)
         }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 257, Hoisted.pathSer, it)
@@ -5210,7 +5210,7 @@ internal object ElementDefinitionSerializer : KSerializer<ElementDefinition> {
       }
       is ElementDefinition.MaxValue.Decimal -> {
         ((choice.value.value))?.let {
-          encoder.encodeSerializableElement(descriptor, 273, BigDecimalSerializer, it)
+          encoder.encodeSerializableElement(descriptor, 273, FhirDecimalSerializer, it)
         }
         (choice.value.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 274, Hoisted.pathSer, it)

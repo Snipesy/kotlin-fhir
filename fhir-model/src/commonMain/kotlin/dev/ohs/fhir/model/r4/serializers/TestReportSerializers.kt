@@ -18,7 +18,6 @@
 
 package dev.ohs.fhir.model.r4.serializers
 
-import com.ionspin.kotlin.bignum.decimal.BigDecimal
 import dev.ohs.fhir.model.r4.Code
 import dev.ohs.fhir.model.r4.DateTime
 import dev.ohs.fhir.model.r4.Decimal
@@ -26,6 +25,7 @@ import dev.ohs.fhir.model.r4.Element
 import dev.ohs.fhir.model.r4.Enumeration
 import dev.ohs.fhir.model.r4.Extension
 import dev.ohs.fhir.model.r4.FhirDateTime
+import dev.ohs.fhir.model.r4.FhirDecimal
 import dev.ohs.fhir.model.r4.Identifier
 import dev.ohs.fhir.model.r4.Markdown
 import dev.ohs.fhir.model.r4.Meta
@@ -980,7 +980,7 @@ internal object TestReportSerializer : KSerializer<TestReport> {
     b.element("testScript", Reference.serializer().descriptor, isOptional = true)
     b.element("result", KotlinString.serializer().descriptor, isOptional = true)
     b.element("_result", Element.serializer().descriptor, isOptional = true)
-    b.element("score", BigDecimalSerializer.descriptor, isOptional = true)
+    b.element("score", FhirDecimalSerializer.descriptor, isOptional = true)
     b.element("_score", Element.serializer().descriptor, isOptional = true)
     b.element("tester", KotlinString.serializer().descriptor, isOptional = true)
     b.element("_tester", Element.serializer().descriptor, isOptional = true)
@@ -1041,7 +1041,7 @@ internal object TestReportSerializer : KSerializer<TestReport> {
     var testScript: Reference? = null
     var result: KotlinString? = null
     var _result: Element? = null
-    var score: BigDecimal? = null
+    var score: FhirDecimal? = null
     var _score: Element? = null
     var tester: KotlinString? = null
     var _tester: Element? = null
@@ -1096,7 +1096,7 @@ internal object TestReportSerializer : KSerializer<TestReport> {
             decoder.decodeNullableSerializableElement(descriptor, i, Hoisted.implicitRulesSer, null)
         18 ->
           score =
-            decoder.decodeNullableSerializableElement(descriptor, i, BigDecimalSerializer, null)
+            decoder.decodeNullableSerializableElement(descriptor, i, FhirDecimalSerializer, null)
         19 ->
           _score =
             decoder.decodeNullableSerializableElement(descriptor, i, Hoisted.implicitRulesSer, null)
@@ -1248,7 +1248,12 @@ internal object TestReportSerializer : KSerializer<TestReport> {
       )
     }
     ((value.score?.value))?.let {
-      encoder.encodeSerializableElement(descriptor, 18 + descriptorOffset, BigDecimalSerializer, it)
+      encoder.encodeSerializableElement(
+        descriptor,
+        18 + descriptorOffset,
+        FhirDecimalSerializer,
+        it,
+      )
     }
     (value.score?.toElement())?.let {
       encoder.encodeSerializableElement(

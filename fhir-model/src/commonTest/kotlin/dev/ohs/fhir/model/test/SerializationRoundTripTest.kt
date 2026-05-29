@@ -34,7 +34,6 @@ private val skippedR4TestCaseNameToReasonMap =
     "Bundle-dataelements.json" to "Java heap space",
     "CodeSystem-v3-ManagedParticipationStatus.json" to "Java heap space",
     "ValueSet-v3-hl7PublishingSubSection.json" to "Instant with trailing 0s",
-    "Observation-decimal.json" to "Scientific notation",
     "ActivityDefinition-administer-zika-virus-exposure-assessment.json" to "Invalid resources",
     "ImplementationGuide-fhir.json" to "Invalid resources",
     "Questionnaire-qs1.json" to "Invalid resources",
@@ -45,7 +44,6 @@ private val skippedR4TestCaseNameToReasonMap =
 private val skippedR4BTestCaseNameToReasonMap =
   mapOf(
     "Bundle-resources.json" to "Java heap space",
-    "Observation-decimal.json" to "Scientific notation",
     "Bundle-valuesets.json" to "Invalid resources",
     "CodeSystem-catalogType.json" to "Invalid resources",
     "ValueSet-catalogType.json" to "Invalid resources",
@@ -59,7 +57,6 @@ private val skippedR5CaseNameToReasonMap =
     "Bundle-resources.json" to "Java heap space",
     "ArtifactAssessment-example-certainty-rating.json" to "Trailing 0 in milliseconds",
     "Citation-citation-example-research-doi.json" to "Trailing 0 in milliseconds",
-    "Observation-decimal.json" to "Scientific notation",
     "ChargeItemDefinition-ebm.json" to
       "Unknown code 'text/CQL' for enum ExpressionLanguage; codes are case-sensitive",
   )
