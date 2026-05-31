@@ -263,7 +263,7 @@ public data class AdministrableProductDefinition(
      * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
      * [Quantity]
      */
-    public val `value`: Property.Value? = null,
+    public val `value`: Value? = null,
     /** The status of characteristic e.g. assigned or pending. */
     public val status: CodeableConcept? = null,
   ) : BackboneElement() {
@@ -277,6 +277,22 @@ public data class AdministrableProductDefinition(
           status = this@with.status?.toBuilder()
         }
       }
+
+    /**
+     * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
+     * [Quantity]
+     */
+    public sealed interface Value {
+      public typealias Attachment = dev.ohs.fhir.model.r4b.Attachment
+
+      public typealias Boolean = dev.ohs.fhir.model.r4b.Boolean
+
+      public typealias CodeableConcept = dev.ohs.fhir.model.r4b.CodeableConcept
+
+      public typealias Date = dev.ohs.fhir.model.r4b.Date
+
+      public typealias Quantity = dev.ohs.fhir.model.r4b.Quantity
+    }
 
     public class Builder(
       /** A code expressing the type of characteristic. */
@@ -328,7 +344,7 @@ public data class AdministrableProductDefinition(
        * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
        * [Quantity]
        */
-      public var `value`: Property.Value? = null
+      public var `value`: Value? = null
 
       /** The status of characteristic e.g. assigned or pending. */
       public var status: CodeableConcept.Builder? = null
@@ -343,12 +359,6 @@ public data class AdministrableProductDefinition(
           status = status?.build(),
         )
     }
-
-    /**
-     * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
-     * [Quantity]
-     */
-    public typealias Value = FhirChoiceTypes.AttachmentOrBooleanOrCodeableConceptOrDateOrQuantity
   }
 
   /**

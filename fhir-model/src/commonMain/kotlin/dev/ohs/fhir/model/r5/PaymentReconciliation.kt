@@ -321,7 +321,7 @@ public data class PaymentReconciliation(
      *
      * A FHIR choice type — one of: [Identifier] | [PositiveInt] | [String]
      */
-    public val targetItem: Allocation.TargetItem? = null,
+    public val targetItem: TargetItem? = null,
     /**
      * The Encounter to which this payment applies, may be completed by the receiver, used for
      * search.
@@ -374,6 +374,15 @@ public data class PaymentReconciliation(
           amount = this@with.amount?.toBuilder()
         }
       }
+
+    /** A FHIR choice type — one of: [Identifier] | [PositiveInt] | [String] */
+    public sealed interface TargetItem {
+      public typealias Identifier = dev.ohs.fhir.model.r5.Identifier
+
+      public typealias PositiveInt = dev.ohs.fhir.model.r5.PositiveInt
+
+      public typealias String = dev.ohs.fhir.model.r5.String
+    }
 
     public class Builder() {
       /**
@@ -431,7 +440,7 @@ public data class PaymentReconciliation(
        *
        * A FHIR choice type — one of: [Identifier] | [PositiveInt] | [String]
        */
-      public var targetItem: Allocation.TargetItem? = null
+      public var targetItem: TargetItem? = null
 
       /**
        * The Encounter to which this payment applies, may be completed by the receiver, used for
@@ -493,9 +502,6 @@ public data class PaymentReconciliation(
           amount = amount?.build(),
         )
     }
-
-    /** A FHIR choice type — one of: [Identifier] | [PositiveInt] | [String] */
-    public typealias TargetItem = FhirChoiceTypes.IdentifierOrPositiveIntOrString
   }
 
   /** A note that describes or explains the processing in a human readable form. */

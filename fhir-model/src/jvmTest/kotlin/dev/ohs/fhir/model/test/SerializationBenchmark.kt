@@ -44,21 +44,18 @@ class SerializationBenchmark :
       val warmup = 5
       val passes = 1
 
-      val r4 =
-        FhirR4Json {
-          ignoreUnknownKeys = true
-          useAlternativeNames = false
-        }
-      val r4b =
-        FhirR4bJson {
-          ignoreUnknownKeys = true
-          useAlternativeNames = false
-        }
-      val r5 =
-        FhirR5Json {
-          ignoreUnknownKeys = true
-          useAlternativeNames = false
-        }
+      val r4 = FhirR4Json {
+        ignoreUnknownKeys = true
+        useAlternativeNames = false
+      }
+      val r4b = FhirR4bJson {
+        ignoreUnknownKeys = true
+        useAlternativeNames = false
+      }
+      val r5 = FhirR5Json {
+        ignoreUnknownKeys = true
+        useAlternativeNames = false
+      }
       val r4Inner = innerJson(r4)
       val r4bInner = innerJson(r4b)
       val r5Inner = innerJson(r5)

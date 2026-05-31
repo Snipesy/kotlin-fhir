@@ -756,7 +756,7 @@ public data class MedicinalProduct(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public val indication: SpecialDesignation.Indication? = null,
+    public val indication: Indication? = null,
     /** For example granted, pending, expired or withdrawn. */
     public val status: CodeableConcept? = null,
     /** Date when the designation was granted. */
@@ -779,6 +779,13 @@ public data class MedicinalProduct(
           species = this@with.species?.toBuilder()
         }
       }
+
+    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+    public sealed interface Indication {
+      public typealias CodeableConcept = dev.ohs.fhir.model.r4.CodeableConcept
+
+      public typealias Reference = dev.ohs.fhir.model.r4.Reference
+    }
 
     public class Builder() {
       /**
@@ -835,7 +842,7 @@ public data class MedicinalProduct(
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public var indication: SpecialDesignation.Indication? = null
+      public var indication: Indication? = null
 
       /** For example granted, pending, expired or withdrawn. */
       public var status: CodeableConcept.Builder? = null
@@ -860,9 +867,6 @@ public data class MedicinalProduct(
           species = species?.build(),
         )
     }
-
-    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
-    public typealias Indication = FhirChoiceTypes.CodeableConceptOrReference
   }
 
   public class Builder(

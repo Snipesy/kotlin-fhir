@@ -141,7 +141,7 @@ public data class MessageHeader(
    *
    * A FHIR choice type — one of: [Coding] | [Uri]
    */
-  public val event: MessageHeader.Event,
+  public val event: Event,
   /**
    * The destination application which the message is intended for.
    *
@@ -675,6 +675,13 @@ public data class MessageHeader(
     }
   }
 
+  /** A FHIR choice type — one of: [Coding] | [Uri] */
+  public sealed interface Event {
+    public typealias Coding = dev.ohs.fhir.model.r4.Coding
+
+    public typealias Uri = dev.ohs.fhir.model.r4.Uri
+  }
+
   public class Builder(
     /**
      * Code that identifies the event this message represents and connects it with its definition.
@@ -687,7 +694,7 @@ public data class MessageHeader(
      *
      * A FHIR choice type — one of: [Coding] | [Uri]
      */
-    public var event: MessageHeader.Event,
+    public var event: Event,
     /** The source application from which this message originated. */
     public var source: Source.Builder,
   ) : DomainResource.Builder() {
@@ -917,7 +924,4 @@ public data class MessageHeader(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [Coding] | [Uri] */
-  public typealias Event = FhirChoiceTypes.CodingOrUri
 }

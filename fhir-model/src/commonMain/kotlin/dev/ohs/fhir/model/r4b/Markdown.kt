@@ -44,7 +44,7 @@ public data class Markdown(
   override val extension: List<Extension> = listOf(),
   /** Primitive value for markdown */
   override val `value`: kotlin.String? = null,
-) : String(id, extension, `value`), FhirChoiceTypes.MarkdownOrReference {
+) : String(id, extension, `value`), FhirChoiceParticipants.MarkdownChoices {
   override fun toBuilder(): Builder =
     with(this) {
       Builder().apply {

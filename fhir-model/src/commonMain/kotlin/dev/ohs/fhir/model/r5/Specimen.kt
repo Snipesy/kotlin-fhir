@@ -400,7 +400,7 @@ public data class Specimen(
      *
      * A FHIR choice type — one of: [DateTime] | [Period]
      */
-    public val collected: Collection.Collected? = null,
+    public val collected: Collected? = null,
     /** The span of time over which the collection of a specimen occurred. */
     public val duration: Duration? = null,
     /**
@@ -438,7 +438,7 @@ public data class Specimen(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Duration]
      */
-    public val fastingStatus: Collection.FastingStatus? = null,
+    public val fastingStatus: FastingStatus? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -457,6 +457,20 @@ public data class Specimen(
           fastingStatus = this@with.fastingStatus
         }
       }
+
+    /** A FHIR choice type — one of: [DateTime] | [Period] */
+    public sealed interface Collected {
+      public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+      public typealias Period = dev.ohs.fhir.model.r5.Period
+    }
+
+    /** A FHIR choice type — one of: [CodeableConcept] | [Duration] */
+    public sealed interface FastingStatus {
+      public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+      public typealias Duration = dev.ohs.fhir.model.r5.Duration
+    }
 
     public class Builder() {
       /**
@@ -507,7 +521,7 @@ public data class Specimen(
        *
        * A FHIR choice type — one of: [DateTime] | [Period]
        */
-      public var collected: Collection.Collected? = null
+      public var collected: Collected? = null
 
       /** The span of time over which the collection of a specimen occurred. */
       public var duration: Duration.Builder? = null
@@ -552,7 +566,7 @@ public data class Specimen(
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Duration]
        */
-      public var fastingStatus: Collection.FastingStatus? = null
+      public var fastingStatus: FastingStatus? = null
 
       public fun build(): Collection =
         Collection(
@@ -570,12 +584,6 @@ public data class Specimen(
           fastingStatus = fastingStatus,
         )
     }
-
-    /** A FHIR choice type — one of: [DateTime] | [Period] */
-    public typealias Collected = FhirChoiceTypes.DateTimeOrPeriod
-
-    /** A FHIR choice type — one of: [CodeableConcept] | [Duration] */
-    public typealias FastingStatus = FhirChoiceTypes.CodeableConceptOrDuration
   }
 
   /** Details concerning processing and processing steps for the specimen. */
@@ -630,7 +638,7 @@ public data class Specimen(
      *
      * A FHIR choice type — one of: [DateTime] | [Period]
      */
-    public val time: FhirChoiceTypes.DateTimeOrPeriod? = null,
+    public val time: Time? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -644,6 +652,13 @@ public data class Specimen(
           time = this@with.time
         }
       }
+
+    /** A FHIR choice type — one of: [DateTime] | [Period] */
+    public sealed interface Time {
+      public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+      public typealias Period = dev.ohs.fhir.model.r5.Period
+    }
 
     public class Builder() {
       /**
@@ -701,7 +716,7 @@ public data class Specimen(
        *
        * A FHIR choice type — one of: [DateTime] | [Period]
        */
-      public var time: FhirChoiceTypes.DateTimeOrPeriod? = null
+      public var time: Time? = null
 
       public fun build(): Processing =
         Processing(

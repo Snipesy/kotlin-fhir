@@ -213,7 +213,7 @@ public data class Observation(
    *
    * A FHIR choice type — one of: [DateTime] | [Instant] | [Period] | [Timing]
    */
-  public val effective: Observation.Effective? = null,
+  public val effective: Effective? = null,
   /**
    * The date and time this version of the observation was made available to providers, typically
    * after the results have been reviewed and verified.
@@ -241,7 +241,7 @@ public data class Observation(
    * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [DateTime] | [Integer] | [Period]
    * | [Quantity] | [Range] | [Ratio] | [SampledData] | [String] | [Time]
    */
-  public val `value`: Observation.Value? = null,
+  public val `value`: Value? = null,
   /**
    * Provides a reason why the expected value in the element Observation.value[x] is missing.
    *
@@ -661,7 +661,7 @@ public data class Observation(
      * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [DateTime] | [Integer] |
      * [Period] | [Quantity] | [Range] | [Ratio] | [SampledData] | [String] | [Time]
      */
-    public val `value`: Component.Value? = null,
+    public val `value`: Value? = null,
     /**
      * Provides a reason why the expected value in the element Observation.component.value[x] is
      * missing.
@@ -709,6 +709,34 @@ public data class Observation(
           referenceRange = this@with.referenceRange.map { it.toBuilder() }.toMutableList()
         }
       }
+
+    /**
+     * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [DateTime] | [Integer] |
+     * [Period] | [Quantity] | [Range] | [Ratio] | [SampledData] | [String] | [Time]
+     */
+    public sealed interface Value {
+      public typealias Boolean = dev.ohs.fhir.model.r4b.Boolean
+
+      public typealias CodeableConcept = dev.ohs.fhir.model.r4b.CodeableConcept
+
+      public typealias DateTime = dev.ohs.fhir.model.r4b.DateTime
+
+      public typealias Integer = dev.ohs.fhir.model.r4b.Integer
+
+      public typealias Period = dev.ohs.fhir.model.r4b.Period
+
+      public typealias Quantity = dev.ohs.fhir.model.r4b.Quantity
+
+      public typealias Range = dev.ohs.fhir.model.r4b.Range
+
+      public typealias Ratio = dev.ohs.fhir.model.r4b.Ratio
+
+      public typealias SampledData = dev.ohs.fhir.model.r4b.SampledData
+
+      public typealias String = dev.ohs.fhir.model.r4b.String
+
+      public typealias Time = dev.ohs.fhir.model.r4b.Time
+    }
 
     public class Builder(
       /**
@@ -774,7 +802,7 @@ public data class Observation(
        * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [DateTime] | [Integer] |
        * [Period] | [Quantity] | [Range] | [Ratio] | [SampledData] | [String] | [Time]
        */
-      public var `value`: Component.Value? = null
+      public var `value`: Value? = null
 
       /**
        * Provides a reason why the expected value in the element Observation.component.value[x] is
@@ -826,12 +854,45 @@ public data class Observation(
           referenceRange = referenceRange.map { it.build() },
         )
     }
+  }
 
-    /**
-     * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [DateTime] | [Integer] |
-     * [Period] | [Quantity] | [Range] | [Ratio] | [SampledData] | [String] | [Time]
-     */
-    public typealias Value = FhirChoiceTypes.ObservationComponentValueChoice
+  /** A FHIR choice type — one of: [DateTime] | [Instant] | [Period] | [Timing] */
+  public sealed interface Effective {
+    public typealias DateTime = dev.ohs.fhir.model.r4b.DateTime
+
+    public typealias Instant = dev.ohs.fhir.model.r4b.Instant
+
+    public typealias Period = dev.ohs.fhir.model.r4b.Period
+
+    public typealias Timing = dev.ohs.fhir.model.r4b.Timing
+  }
+
+  /**
+   * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [DateTime] | [Integer] | [Period]
+   * | [Quantity] | [Range] | [Ratio] | [SampledData] | [String] | [Time]
+   */
+  public sealed interface Value {
+    public typealias Boolean = dev.ohs.fhir.model.r4b.Boolean
+
+    public typealias CodeableConcept = dev.ohs.fhir.model.r4b.CodeableConcept
+
+    public typealias DateTime = dev.ohs.fhir.model.r4b.DateTime
+
+    public typealias Integer = dev.ohs.fhir.model.r4b.Integer
+
+    public typealias Period = dev.ohs.fhir.model.r4b.Period
+
+    public typealias Quantity = dev.ohs.fhir.model.r4b.Quantity
+
+    public typealias Range = dev.ohs.fhir.model.r4b.Range
+
+    public typealias Ratio = dev.ohs.fhir.model.r4b.Ratio
+
+    public typealias SampledData = dev.ohs.fhir.model.r4b.SampledData
+
+    public typealias String = dev.ohs.fhir.model.r4b.String
+
+    public typealias Time = dev.ohs.fhir.model.r4b.Time
   }
 
   public class Builder(
@@ -1039,7 +1100,7 @@ public data class Observation(
      *
      * A FHIR choice type — one of: [DateTime] | [Instant] | [Period] | [Timing]
      */
-    public var effective: Observation.Effective? = null
+    public var effective: Effective? = null
 
     /**
      * The date and time this version of the observation was made available to providers, typically
@@ -1070,7 +1131,7 @@ public data class Observation(
      * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [DateTime] | [Integer] |
      * [Period] | [Quantity] | [Range] | [Ratio] | [SampledData] | [String] | [Time]
      */
-    public var `value`: Observation.Value? = null
+    public var `value`: Value? = null
 
     /**
      * Provides a reason why the expected value in the element Observation.value[x] is missing.
@@ -1274,13 +1335,4 @@ public data class Observation(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [DateTime] | [Instant] | [Period] | [Timing] */
-  public typealias Effective = FhirChoiceTypes.DateTimeOrInstantOrPeriodOrTiming
-
-  /**
-   * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [DateTime] | [Integer] | [Period]
-   * | [Quantity] | [Range] | [Ratio] | [SampledData] | [String] | [Time]
-   */
-  public typealias Value = FhirChoiceTypes.ObservationComponentValueChoice
 }

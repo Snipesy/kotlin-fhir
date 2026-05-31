@@ -127,7 +127,7 @@ public data class Timing(
      *
      * A FHIR choice type — one of: [Duration] | [Period] | [Range]
      */
-    public val bounds: Repeat.Bounds? = null,
+    public val bounds: Bounds? = null,
     /**
      * A total count of the desired number of repetitions across the duration of the entire timing
      * specification. If countMax is present, this element indicates the lower bound of the allowed
@@ -237,6 +237,15 @@ public data class Timing(
         }
       }
 
+    /** A FHIR choice type — one of: [Duration] | [Period] | [Range] */
+    public sealed interface Bounds {
+      public typealias Duration = dev.ohs.fhir.model.r4b.Duration
+
+      public typealias Period = dev.ohs.fhir.model.r4b.Period
+
+      public typealias Range = dev.ohs.fhir.model.r4b.Range
+    }
+
     public class Builder() {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -264,7 +273,7 @@ public data class Timing(
        *
        * A FHIR choice type — one of: [Duration] | [Period] | [Range]
        */
-      public var bounds: Repeat.Bounds? = null
+      public var bounds: Bounds? = null
 
       /**
        * A total count of the desired number of repetitions across the duration of the entire timing
@@ -386,9 +395,6 @@ public data class Timing(
           offset = offset?.build(),
         )
     }
-
-    /** A FHIR choice type — one of: [Duration] | [Period] | [Range] */
-    public typealias Bounds = FhirChoiceTypes.DurationOrPeriodOrRange
   }
 
   public open class Builder() {

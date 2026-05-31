@@ -888,7 +888,7 @@ public data class AuditEvent(
        *
        * A FHIR choice type — one of: [Base64Binary] | [String]
        */
-      public val `value`: Detail.Value,
+      public val `value`: Value,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -898,6 +898,13 @@ public data class AuditEvent(
             modifierExtension = this@with.modifierExtension.map { it.toBuilder() }.toMutableList()
           }
         }
+
+      /** A FHIR choice type — one of: [Base64Binary] | [String] */
+      public sealed interface Value {
+        public typealias Base64Binary = dev.ohs.fhir.model.r4b.Base64Binary
+
+        public typealias String = dev.ohs.fhir.model.r4b.String
+      }
 
       public class Builder(
         /** The type of extra detail provided in the value. */
@@ -917,7 +924,7 @@ public data class AuditEvent(
          *
          * A FHIR choice type — one of: [Base64Binary] | [String]
          */
-        public var `value`: Detail.Value,
+        public var `value`: Value,
       ) {
         /**
          * Unique id for the element within a resource (for internal references). This may be any
@@ -968,9 +975,6 @@ public data class AuditEvent(
             `value` = `value`,
           )
       }
-
-      /** A FHIR choice type — one of: [Base64Binary] | [String] */
-      public typealias Value = FhirChoiceTypes.Base64BinaryOrString
     }
 
     public class Builder() {

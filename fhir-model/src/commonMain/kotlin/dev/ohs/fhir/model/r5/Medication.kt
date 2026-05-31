@@ -278,7 +278,7 @@ public data class Medication(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Ratio]
      */
-    public val strength: Ingredient.Strength? = null,
+    public val strength: Strength? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -290,6 +290,15 @@ public data class Medication(
           strength = this@with.strength
         }
       }
+
+    /** A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Ratio] */
+    public sealed interface Strength {
+      public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+      public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+
+      public typealias Ratio = dev.ohs.fhir.model.r5.Ratio
+    }
 
     public class Builder(
       /**
@@ -350,7 +359,7 @@ public data class Medication(
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Ratio]
        */
-      public var strength: Ingredient.Strength? = null
+      public var strength: Strength? = null
 
       public fun build(): Ingredient =
         Ingredient(
@@ -362,9 +371,6 @@ public data class Medication(
           strength = strength,
         )
     }
-
-    /** A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Ratio] */
-    public typealias Strength = FhirChoiceTypes.CodeableConceptOrQuantityOrRatio
   }
 
   /** Information that only applies to packages (not products). */

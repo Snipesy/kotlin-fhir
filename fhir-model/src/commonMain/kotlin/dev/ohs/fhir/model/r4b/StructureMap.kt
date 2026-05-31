@@ -801,7 +801,7 @@ public data class StructureMap(
          * [Signature] | [StringBox] | [Time] | [Timing] | [TriggerDefinition] | [UnsignedIntBox] |
          * [UriBox] | [UrlBox] | [UsageContext] | [UuidBox]
          */
-        public val defaultValue: Source.DefaultValue? = null,
+        public val defaultValue: DefaultValue? = null,
         /** Optional field for this source. */
         public val element: String? = null,
         /** How to handle the list mode for this element. */
@@ -842,6 +842,119 @@ public data class StructureMap(
               logMessage = this@with.logMessage?.toBuilder()
             }
           }
+
+        /**
+         * A FHIR choice type — one of: [Address] | [AgeBox] | [Annotation] | [Attachment] |
+         * [Base64Binary] | [Boolean] | [CanonicalBox] | [CodeBox] | [CodeableConcept] | [Coding] |
+         * [ContactDetail] | [ContactPoint] | [Contributor] | [CountBox] | [DataRequirement] |
+         * [Date] | [DateTime] | [Decimal] | [DistanceBox] | [Dosage] | [DurationBox] | [Expression]
+         * | [HumanName] | [IdBox] | [Identifier] | [Instant] | [IntegerBox] | [MarkdownBox] |
+         * [Meta] | [Money] | [OidBox] | [ParameterDefinition] | [Period] | [PositiveIntBox] |
+         * [QuantityBox] | [Range] | [Ratio] | [Reference] | [RelatedArtifact] | [SampledData] |
+         * [Signature] | [StringBox] | [Time] | [Timing] | [TriggerDefinition] | [UnsignedIntBox] |
+         * [UriBox] | [UrlBox] | [UsageContext] | [UuidBox]
+         */
+        public sealed interface DefaultValue {
+          public typealias Address = dev.ohs.fhir.model.r4b.Address
+
+          public typealias Age = AgeBox
+
+          public typealias Annotation = dev.ohs.fhir.model.r4b.Annotation
+
+          public typealias Attachment = dev.ohs.fhir.model.r4b.Attachment
+
+          public typealias Base64Binary = dev.ohs.fhir.model.r4b.Base64Binary
+
+          public typealias Boolean = dev.ohs.fhir.model.r4b.Boolean
+
+          public typealias Canonical = CanonicalBox
+
+          public typealias Code = CodeBox
+
+          public typealias CodeableConcept = dev.ohs.fhir.model.r4b.CodeableConcept
+
+          public typealias Coding = dev.ohs.fhir.model.r4b.Coding
+
+          public typealias ContactDetail = dev.ohs.fhir.model.r4b.ContactDetail
+
+          public typealias ContactPoint = dev.ohs.fhir.model.r4b.ContactPoint
+
+          public typealias Contributor = dev.ohs.fhir.model.r4b.Contributor
+
+          public typealias Count = CountBox
+
+          public typealias DataRequirement = dev.ohs.fhir.model.r4b.DataRequirement
+
+          public typealias Date = dev.ohs.fhir.model.r4b.Date
+
+          public typealias DateTime = dev.ohs.fhir.model.r4b.DateTime
+
+          public typealias Decimal = dev.ohs.fhir.model.r4b.Decimal
+
+          public typealias Distance = DistanceBox
+
+          public typealias Dosage = dev.ohs.fhir.model.r4b.Dosage
+
+          public typealias Duration = DurationBox
+
+          public typealias Expression = dev.ohs.fhir.model.r4b.Expression
+
+          public typealias HumanName = dev.ohs.fhir.model.r4b.HumanName
+
+          public typealias Id = IdBox
+
+          public typealias Identifier = dev.ohs.fhir.model.r4b.Identifier
+
+          public typealias Instant = dev.ohs.fhir.model.r4b.Instant
+
+          public typealias Integer = IntegerBox
+
+          public typealias Markdown = MarkdownBox
+
+          public typealias Meta = dev.ohs.fhir.model.r4b.Meta
+
+          public typealias Money = dev.ohs.fhir.model.r4b.Money
+
+          public typealias Oid = OidBox
+
+          public typealias ParameterDefinition = dev.ohs.fhir.model.r4b.ParameterDefinition
+
+          public typealias Period = dev.ohs.fhir.model.r4b.Period
+
+          public typealias PositiveInt = PositiveIntBox
+
+          public typealias Quantity = QuantityBox
+
+          public typealias Range = dev.ohs.fhir.model.r4b.Range
+
+          public typealias Ratio = dev.ohs.fhir.model.r4b.Ratio
+
+          public typealias Reference = dev.ohs.fhir.model.r4b.Reference
+
+          public typealias RelatedArtifact = dev.ohs.fhir.model.r4b.RelatedArtifact
+
+          public typealias SampledData = dev.ohs.fhir.model.r4b.SampledData
+
+          public typealias Signature = dev.ohs.fhir.model.r4b.Signature
+
+          public typealias String = StringBox
+
+          public typealias Time = dev.ohs.fhir.model.r4b.Time
+
+          public typealias Timing = dev.ohs.fhir.model.r4b.Timing
+
+          public typealias TriggerDefinition = dev.ohs.fhir.model.r4b.TriggerDefinition
+
+          public typealias UnsignedInt = UnsignedIntBox
+
+          public typealias Uri = UriBox
+
+          public typealias Url = UrlBox
+
+          public typealias UsageContext = dev.ohs.fhir.model.r4b.UsageContext
+
+          public typealias Uuid = UuidBox
+        }
 
         public class Builder(
           /** Type or variable this rule applies to. */
@@ -921,7 +1034,7 @@ public data class StructureMap(
            * | [SampledData] | [Signature] | [StringBox] | [Time] | [Timing] | [TriggerDefinition] |
            * [UnsignedIntBox] | [UriBox] | [UrlBox] | [UsageContext] | [UuidBox]
            */
-          public var defaultValue: Source.DefaultValue? = null
+          public var defaultValue: DefaultValue? = null
 
           /** Optional field for this source. */
           public var element: String.Builder? = null
@@ -968,19 +1081,6 @@ public data class StructureMap(
               logMessage = logMessage?.build(),
             )
         }
-
-        /**
-         * A FHIR choice type — one of: [Address] | [AgeBox] | [Annotation] | [Attachment] |
-         * [Base64Binary] | [Boolean] | [CanonicalBox] | [CodeBox] | [CodeableConcept] | [Coding] |
-         * [ContactDetail] | [ContactPoint] | [Contributor] | [CountBox] | [DataRequirement] |
-         * [Date] | [DateTime] | [Decimal] | [DistanceBox] | [Dosage] | [DurationBox] | [Expression]
-         * | [HumanName] | [IdBox] | [Identifier] | [Instant] | [IntegerBox] | [MarkdownBox] |
-         * [Meta] | [Money] | [OidBox] | [ParameterDefinition] | [Period] | [PositiveIntBox] |
-         * [QuantityBox] | [Range] | [Ratio] | [Reference] | [RelatedArtifact] | [SampledData] |
-         * [Signature] | [StringBox] | [Time] | [Timing] | [TriggerDefinition] | [UnsignedIntBox] |
-         * [UriBox] | [UrlBox] | [UsageContext] | [UuidBox]
-         */
-        public typealias DefaultValue = FhirChoiceTypes.ParametersParameterValueChoice
       }
 
       /** Content to create because of this mapping rule. */
@@ -1102,7 +1202,7 @@ public data class StructureMap(
            *
            * A FHIR choice type — one of: [Boolean] | [Decimal] | [IdBox] | [Integer] | [StringBox]
            */
-          public val `value`: Parameter.Value,
+          public val `value`: Value,
         ) : BackboneElement() {
           public fun toBuilder(): Builder =
             with(this) {
@@ -1114,6 +1214,21 @@ public data class StructureMap(
               }
             }
 
+          /**
+           * A FHIR choice type — one of: [Boolean] | [Decimal] | [IdBox] | [Integer] | [StringBox]
+           */
+          public sealed interface Value {
+            public typealias Boolean = dev.ohs.fhir.model.r4b.Boolean
+
+            public typealias Decimal = dev.ohs.fhir.model.r4b.Decimal
+
+            public typealias Id = IdBox
+
+            public typealias Integer = dev.ohs.fhir.model.r4b.Integer
+
+            public typealias String = StringBox
+          }
+
           public class Builder(
             /**
              * Parameter value - variable or literal.
@@ -1121,7 +1236,7 @@ public data class StructureMap(
              * A FHIR choice type — one of: [Boolean] | [Decimal] | [IdBox] | [Integer] |
              * [StringBox]
              */
-            public var `value`: Parameter.Value
+            public var `value`: Value
           ) {
             /**
              * Unique id for the element within a resource (for internal references). This may be
@@ -1172,11 +1287,6 @@ public data class StructureMap(
                 `value` = `value`,
               )
           }
-
-          /**
-           * A FHIR choice type — one of: [Boolean] | [Decimal] | [IdBox] | [Integer] | [StringBox]
-           */
-          public typealias Value = FhirChoiceTypes.BooleanOrDecimalOrIdOrIntegerOrString
         }
 
         public class Builder() {

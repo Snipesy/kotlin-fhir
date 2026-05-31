@@ -231,9 +231,9 @@ public data class ServiceRequest(
    * modification), a ratio ( for example, 20 half day visits per month), or a range (2.0 to 1.8 Gy
    * per fraction).
    *
-   * A FHIR choice type — one of: [Quantity] | [Range] | [Ratio]
+   * A FHIR choice type — one of: [dev.ohs.fhir.model.r4.Quantity] | [Range] | [Ratio]
    */
-  public val quantity: FhirChoiceTypes.QuantityOrRangeOrRatio? = null,
+  public val quantity: Quantity? = null,
   /**
    * On whom or what the service is to be performed. This is usually a human patient, but can also
    * be requested on animals, groups of humans or animals, devices such as dialysis machines, or
@@ -250,14 +250,14 @@ public data class ServiceRequest(
    *
    * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
    */
-  public val occurrence: ServiceRequest.Occurrence? = null,
+  public val occurrence: Occurrence? = null,
   /**
    * If a CodeableConcept is present, it indicates the pre-condition for performing the service. For
    * example "pain", "on flare-up", etc.
    *
    * A FHIR choice type — one of: [Boolean] | [CodeableConcept]
    */
-  public val asNeeded: ServiceRequest.AsNeeded? = null,
+  public val asNeeded: AsNeeded? = null,
   /** When the request transitioned to being actionable. */
   public val authoredOn: DateTime? = null,
   /**
@@ -420,6 +420,31 @@ public data class ServiceRequest(
         relevantHistory = this@with.relevantHistory.map { it.toBuilder() }.toMutableList()
       }
     }
+
+  /** A FHIR choice type — one of: [dev.ohs.fhir.model.r4.Quantity] | [Range] | [Ratio] */
+  public sealed interface Quantity {
+    public typealias Quantity = dev.ohs.fhir.model.r4.Quantity
+
+    public typealias Range = dev.ohs.fhir.model.r4.Range
+
+    public typealias Ratio = dev.ohs.fhir.model.r4.Ratio
+  }
+
+  /** A FHIR choice type — one of: [DateTime] | [Period] | [Timing] */
+  public sealed interface Occurrence {
+    public typealias DateTime = dev.ohs.fhir.model.r4.DateTime
+
+    public typealias Period = dev.ohs.fhir.model.r4.Period
+
+    public typealias Timing = dev.ohs.fhir.model.r4.Timing
+  }
+
+  /** A FHIR choice type — one of: [Boolean] | [CodeableConcept] */
+  public sealed interface AsNeeded {
+    public typealias Boolean = dev.ohs.fhir.model.r4.Boolean
+
+    public typealias CodeableConcept = dev.ohs.fhir.model.r4.CodeableConcept
+  }
 
   public class Builder(
     /**
@@ -652,9 +677,9 @@ public data class ServiceRequest(
      * modification), a ratio ( for example, 20 half day visits per month), or a range (2.0 to 1.8
      * Gy per fraction).
      *
-     * A FHIR choice type — one of: [Quantity] | [Range] | [Ratio]
+     * A FHIR choice type — one of: [dev.ohs.fhir.model.r4.Quantity] | [Range] | [Ratio]
      */
-    public var quantity: FhirChoiceTypes.QuantityOrRangeOrRatio? = null
+    public var quantity: Quantity? = null
 
     /**
      * An encounter that provides additional information about the healthcare context in which this
@@ -667,7 +692,7 @@ public data class ServiceRequest(
      *
      * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
      */
-    public var occurrence: ServiceRequest.Occurrence? = null
+    public var occurrence: Occurrence? = null
 
     /**
      * If a CodeableConcept is present, it indicates the pre-condition for performing the service.
@@ -675,7 +700,7 @@ public data class ServiceRequest(
      *
      * A FHIR choice type — one of: [Boolean] | [CodeableConcept]
      */
-    public var asNeeded: ServiceRequest.AsNeeded? = null
+    public var asNeeded: AsNeeded? = null
 
     /** When the request transitioned to being actionable. */
     public var authoredOn: DateTime.Builder? = null
@@ -963,10 +988,4 @@ public data class ServiceRequest(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [DateTime] | [Period] | [Timing] */
-  public typealias Occurrence = FhirChoiceTypes.DateTimeOrPeriodOrTiming
-
-  /** A FHIR choice type — one of: [Boolean] | [CodeableConcept] */
-  public typealias AsNeeded = FhirChoiceTypes.BooleanOrCodeableConcept
 }

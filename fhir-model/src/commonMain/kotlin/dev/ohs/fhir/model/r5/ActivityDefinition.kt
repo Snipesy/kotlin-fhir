@@ -187,7 +187,7 @@ public data class ActivityDefinition(
    *
    * A FHIR choice type — one of: [Coding] | [String]
    */
-  public val versionAlgorithm: ActivityDefinition.VersionAlgorithm? = null,
+  public val versionAlgorithm: VersionAlgorithm? = null,
   /**
    * A natural language name identifying the activity definition. This name should be usable as an
    * identifier for the module by machine processing applications such as code generation.
@@ -237,7 +237,7 @@ public data class ActivityDefinition(
    *
    * A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [Reference]
    */
-  public val subject: ActivityDefinition.Subject? = null,
+  public val subject: Subject? = null,
   /**
    * The date (and optionally time) when the activity definition was last significantly changed. The
    * date must change when the business version changes and it must change if the status code
@@ -467,16 +467,16 @@ public data class ActivityDefinition(
    * for the expected timing of the resulting activity. When the timing is a Timing, it is
    * establishing a schedule for the timing of the resulting activity.
    *
-   * A FHIR choice type — one of: [Age] | [Duration] | [Range] | [Timing]
+   * A FHIR choice type — one of: [Age] | [Duration] | [Range] | [dev.ohs.fhir.model.r5.Timing]
    */
-  public val timing: FhirChoiceTypes.AgeOrDurationOrRangeOrTiming? = null,
+  public val timing: Timing? = null,
   /**
    * If a CodeableConcept is present, it indicates the pre-condition for performing the service. For
    * example "pain", "on flare-up", etc.
    *
    * A FHIR choice type — one of: [Boolean] | [CodeableConcept]
    */
-  public val asNeeded: ActivityDefinition.AsNeeded? = null,
+  public val asNeeded: AsNeeded? = null,
   /**
    * Identifies the facility where the activity will occur; e.g. home, hospital, specific clinic,
    * etc.
@@ -491,7 +491,7 @@ public data class ActivityDefinition(
    *
    * A FHIR choice type — one of: [CodeableConcept] | [Reference]
    */
-  public val product: ActivityDefinition.Product? = null,
+  public val product: Product? = null,
   /** Identifies the quantity expected to be consumed at once (per dose, per meal, etc.). */
   public val quantity: Quantity? = null,
   /**
@@ -899,6 +899,47 @@ public data class ActivityDefinition(
     }
   }
 
+  /** A FHIR choice type — one of: [Coding] | [String] */
+  public sealed interface VersionAlgorithm {
+    public typealias Coding = dev.ohs.fhir.model.r5.Coding
+
+    public typealias String = dev.ohs.fhir.model.r5.String
+  }
+
+  /** A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [Reference] */
+  public sealed interface Subject {
+    public typealias Canonical = dev.ohs.fhir.model.r5.Canonical
+
+    public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+    public typealias Reference = dev.ohs.fhir.model.r5.Reference
+  }
+
+  /** A FHIR choice type — one of: [Age] | [Duration] | [Range] | [dev.ohs.fhir.model.r5.Timing] */
+  public sealed interface Timing {
+    public typealias Age = dev.ohs.fhir.model.r5.Age
+
+    public typealias Duration = dev.ohs.fhir.model.r5.Duration
+
+    public typealias Range = dev.ohs.fhir.model.r5.Range
+
+    public typealias Timing = dev.ohs.fhir.model.r5.Timing
+  }
+
+  /** A FHIR choice type — one of: [Boolean] | [CodeableConcept] */
+  public sealed interface AsNeeded {
+    public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
+
+    public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+  }
+
+  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+  public sealed interface Product {
+    public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+    public typealias Reference = dev.ohs.fhir.model.r5.Reference
+  }
+
   public class Builder(
     /**
      * The status of this activity definition. Enables tracking the life-cycle of the content.
@@ -1077,7 +1118,7 @@ public data class ActivityDefinition(
      *
      * A FHIR choice type — one of: [Coding] | [String]
      */
-    public var versionAlgorithm: ActivityDefinition.VersionAlgorithm? = null
+    public var versionAlgorithm: VersionAlgorithm? = null
 
     /**
      * A natural language name identifying the activity definition. This name should be usable as an
@@ -1123,7 +1164,7 @@ public data class ActivityDefinition(
      *
      * A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [Reference]
      */
-    public var subject: ActivityDefinition.Subject? = null
+    public var subject: Subject? = null
 
     /**
      * The date (and optionally time) when the activity definition was last significantly changed.
@@ -1387,9 +1428,9 @@ public data class ActivityDefinition(
      * range for the expected timing of the resulting activity. When the timing is a Timing, it is
      * establishing a schedule for the timing of the resulting activity.
      *
-     * A FHIR choice type — one of: [Age] | [Duration] | [Range] | [Timing]
+     * A FHIR choice type — one of: [Age] | [Duration] | [Range] | [dev.ohs.fhir.model.r5.Timing]
      */
-    public var timing: FhirChoiceTypes.AgeOrDurationOrRangeOrTiming? = null
+    public var timing: Timing? = null
 
     /**
      * If a CodeableConcept is present, it indicates the pre-condition for performing the service.
@@ -1397,7 +1438,7 @@ public data class ActivityDefinition(
      *
      * A FHIR choice type — one of: [Boolean] | [CodeableConcept]
      */
-    public var asNeeded: ActivityDefinition.AsNeeded? = null
+    public var asNeeded: AsNeeded? = null
 
     /**
      * Identifies the facility where the activity will occur; e.g. home, hospital, specific clinic,
@@ -1415,7 +1456,7 @@ public data class ActivityDefinition(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public var product: ActivityDefinition.Product? = null
+    public var product: Product? = null
 
     /** Identifies the quantity expected to be consumed at once (per dose, per meal, etc.). */
     public var quantity: Quantity.Builder? = null
@@ -1657,16 +1698,4 @@ public data class ActivityDefinition(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [Coding] | [String] */
-  public typealias VersionAlgorithm = FhirChoiceTypes.CodingOrString
-
-  /** A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [Reference] */
-  public typealias Subject = FhirChoiceTypes.CanonicalOrCodeableConceptOrReference
-
-  /** A FHIR choice type — one of: [Boolean] | [CodeableConcept] */
-  public typealias AsNeeded = FhirChoiceTypes.BooleanOrCodeableConcept
-
-  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
-  public typealias Product = FhirChoiceTypes.CodeableConceptOrReference
 }

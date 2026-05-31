@@ -139,7 +139,7 @@ public data class Parameters(
      * [StringBox] | [Time] | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] |
      * [UrlBox] | [UsageContext] | [UuidBox]
      */
-    public val `value`: Parameter.Value? = null,
+    public val `value`: Value? = null,
     /**
      * If the parameter is a whole resource.
      *
@@ -166,6 +166,119 @@ public data class Parameters(
           part = this@with.part.map { it.toBuilder() }.toMutableList()
         }
       }
+
+    /**
+     * A FHIR choice type — one of: [Address] | [AgeBox] | [Annotation] | [Attachment] |
+     * [Base64Binary] | [Boolean] | [CanonicalBox] | [CodeBox] | [CodeableConcept] | [Coding] |
+     * [ContactDetail] | [ContactPoint] | [Contributor] | [CountBox] | [DataRequirement] | [Date] |
+     * [DateTime] | [Decimal] | [DistanceBox] | [Dosage] | [DurationBox] | [Expression] |
+     * [HumanName] | [IdBox] | [Identifier] | [Instant] | [IntegerBox] | [MarkdownBox] | [Meta] |
+     * [Money] | [OidBox] | [ParameterDefinition] | [Period] | [PositiveIntBox] | [QuantityBox] |
+     * [Range] | [Ratio] | [Reference] | [RelatedArtifact] | [SampledData] | [Signature] |
+     * [StringBox] | [Time] | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] |
+     * [UrlBox] | [UsageContext] | [UuidBox]
+     */
+    public sealed interface Value {
+      public typealias Address = dev.ohs.fhir.model.r4b.Address
+
+      public typealias Age = AgeBox
+
+      public typealias Annotation = dev.ohs.fhir.model.r4b.Annotation
+
+      public typealias Attachment = dev.ohs.fhir.model.r4b.Attachment
+
+      public typealias Base64Binary = dev.ohs.fhir.model.r4b.Base64Binary
+
+      public typealias Boolean = dev.ohs.fhir.model.r4b.Boolean
+
+      public typealias Canonical = CanonicalBox
+
+      public typealias Code = CodeBox
+
+      public typealias CodeableConcept = dev.ohs.fhir.model.r4b.CodeableConcept
+
+      public typealias Coding = dev.ohs.fhir.model.r4b.Coding
+
+      public typealias ContactDetail = dev.ohs.fhir.model.r4b.ContactDetail
+
+      public typealias ContactPoint = dev.ohs.fhir.model.r4b.ContactPoint
+
+      public typealias Contributor = dev.ohs.fhir.model.r4b.Contributor
+
+      public typealias Count = CountBox
+
+      public typealias DataRequirement = dev.ohs.fhir.model.r4b.DataRequirement
+
+      public typealias Date = dev.ohs.fhir.model.r4b.Date
+
+      public typealias DateTime = dev.ohs.fhir.model.r4b.DateTime
+
+      public typealias Decimal = dev.ohs.fhir.model.r4b.Decimal
+
+      public typealias Distance = DistanceBox
+
+      public typealias Dosage = dev.ohs.fhir.model.r4b.Dosage
+
+      public typealias Duration = DurationBox
+
+      public typealias Expression = dev.ohs.fhir.model.r4b.Expression
+
+      public typealias HumanName = dev.ohs.fhir.model.r4b.HumanName
+
+      public typealias Id = IdBox
+
+      public typealias Identifier = dev.ohs.fhir.model.r4b.Identifier
+
+      public typealias Instant = dev.ohs.fhir.model.r4b.Instant
+
+      public typealias Integer = IntegerBox
+
+      public typealias Markdown = MarkdownBox
+
+      public typealias Meta = dev.ohs.fhir.model.r4b.Meta
+
+      public typealias Money = dev.ohs.fhir.model.r4b.Money
+
+      public typealias Oid = OidBox
+
+      public typealias ParameterDefinition = dev.ohs.fhir.model.r4b.ParameterDefinition
+
+      public typealias Period = dev.ohs.fhir.model.r4b.Period
+
+      public typealias PositiveInt = PositiveIntBox
+
+      public typealias Quantity = QuantityBox
+
+      public typealias Range = dev.ohs.fhir.model.r4b.Range
+
+      public typealias Ratio = dev.ohs.fhir.model.r4b.Ratio
+
+      public typealias Reference = dev.ohs.fhir.model.r4b.Reference
+
+      public typealias RelatedArtifact = dev.ohs.fhir.model.r4b.RelatedArtifact
+
+      public typealias SampledData = dev.ohs.fhir.model.r4b.SampledData
+
+      public typealias Signature = dev.ohs.fhir.model.r4b.Signature
+
+      public typealias String = StringBox
+
+      public typealias Time = dev.ohs.fhir.model.r4b.Time
+
+      public typealias Timing = dev.ohs.fhir.model.r4b.Timing
+
+      public typealias TriggerDefinition = dev.ohs.fhir.model.r4b.TriggerDefinition
+
+      public typealias UnsignedInt = UnsignedIntBox
+
+      public typealias Uri = UriBox
+
+      public typealias Url = UrlBox
+
+      public typealias UsageContext = dev.ohs.fhir.model.r4b.UsageContext
+
+      public typealias Uuid = UuidBox
+    }
 
     public class Builder(
       /** The name of the parameter (reference to the operation definition). */
@@ -224,7 +337,7 @@ public data class Parameters(
        * [StringBox] | [Time] | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] |
        * [UrlBox] | [UsageContext] | [UuidBox]
        */
-      public var `value`: Parameter.Value? = null
+      public var `value`: Value? = null
 
       /**
        * If the parameter is a whole resource.
@@ -253,19 +366,6 @@ public data class Parameters(
           part = part.map { it.build() },
         )
     }
-
-    /**
-     * A FHIR choice type — one of: [Address] | [AgeBox] | [Annotation] | [Attachment] |
-     * [Base64Binary] | [Boolean] | [CanonicalBox] | [CodeBox] | [CodeableConcept] | [Coding] |
-     * [ContactDetail] | [ContactPoint] | [Contributor] | [CountBox] | [DataRequirement] | [Date] |
-     * [DateTime] | [Decimal] | [DistanceBox] | [Dosage] | [DurationBox] | [Expression] |
-     * [HumanName] | [IdBox] | [Identifier] | [Instant] | [IntegerBox] | [MarkdownBox] | [Meta] |
-     * [Money] | [OidBox] | [ParameterDefinition] | [Period] | [PositiveIntBox] | [QuantityBox] |
-     * [Range] | [Ratio] | [Reference] | [RelatedArtifact] | [SampledData] | [Signature] |
-     * [StringBox] | [Time] | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] |
-     * [UrlBox] | [UsageContext] | [UuidBox]
-     */
-    public typealias Value = FhirChoiceTypes.ParametersParameterValueChoice
   }
 
   public class Builder() : Resource.Builder() {

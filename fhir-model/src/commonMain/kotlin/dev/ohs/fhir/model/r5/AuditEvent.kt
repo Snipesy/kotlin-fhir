@@ -152,7 +152,7 @@ public data class AuditEvent(
    *
    * A FHIR choice type — one of: [DateTime] | [Period]
    */
-  public val occurred: AuditEvent.Occurred? = null,
+  public val occurred: Occurred? = null,
   /**
    * The time when the event was recorded.
    *
@@ -484,7 +484,7 @@ public data class AuditEvent(
      *
      * A FHIR choice type — one of: [Reference] | [String] | [Uri]
      */
-    public val network: Agent.Network? = null,
+    public val network: Network? = null,
     /**
      * The authorization (e.g., PurposeOfUse) that was used during the event being recorded.
      *
@@ -509,6 +509,15 @@ public data class AuditEvent(
           authorization = this@with.authorization.map { it.toBuilder() }.toMutableList()
         }
       }
+
+    /** A FHIR choice type — one of: [Reference] | [String] | [Uri] */
+    public sealed interface Network {
+      public typealias Reference = dev.ohs.fhir.model.r5.Reference
+
+      public typealias String = dev.ohs.fhir.model.r5.String
+
+      public typealias Uri = dev.ohs.fhir.model.r5.Uri
+    }
 
     public class Builder(
       /**
@@ -609,7 +618,7 @@ public data class AuditEvent(
        *
        * A FHIR choice type — one of: [Reference] | [String] | [Uri]
        */
-      public var network: Agent.Network? = null
+      public var network: Network? = null
 
       /**
        * The authorization (e.g., PurposeOfUse) that was used during the event being recorded.
@@ -635,9 +644,6 @@ public data class AuditEvent(
           authorization = authorization.map { it.build() },
         )
     }
-
-    /** A FHIR choice type — one of: [Reference] | [String] | [Uri] */
-    public typealias Network = FhirChoiceTypes.ReferenceOrStringOrUri
   }
 
   /** The actor that is reporting the event. */
@@ -917,7 +923,7 @@ public data class AuditEvent(
        * A FHIR choice type — one of: [Base64Binary] | [Boolean] | [CodeableConcept] | [DateTime] |
        * [Integer] | [Period] | [Quantity] | [Range] | [Ratio] | [String] | [Time]
        */
-      public val `value`: Detail.Value,
+      public val `value`: Value,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -928,6 +934,34 @@ public data class AuditEvent(
           }
         }
 
+      /**
+       * A FHIR choice type — one of: [Base64Binary] | [Boolean] | [CodeableConcept] | [DateTime] |
+       * [Integer] | [Period] | [Quantity] | [Range] | [Ratio] | [String] | [Time]
+       */
+      public sealed interface Value {
+        public typealias Base64Binary = dev.ohs.fhir.model.r5.Base64Binary
+
+        public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
+
+        public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+        public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+        public typealias Integer = dev.ohs.fhir.model.r5.Integer
+
+        public typealias Period = dev.ohs.fhir.model.r5.Period
+
+        public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+
+        public typealias Range = dev.ohs.fhir.model.r5.Range
+
+        public typealias Ratio = dev.ohs.fhir.model.r5.Ratio
+
+        public typealias String = dev.ohs.fhir.model.r5.String
+
+        public typealias Time = dev.ohs.fhir.model.r5.Time
+      }
+
       public class Builder(
         /** The type of extra detail provided in the value. */
         public var type: CodeableConcept.Builder,
@@ -937,7 +971,7 @@ public data class AuditEvent(
          * A FHIR choice type — one of: [Base64Binary] | [Boolean] | [CodeableConcept] | [DateTime]
          * | [Integer] | [Period] | [Quantity] | [Range] | [Ratio] | [String] | [Time]
          */
-        public var `value`: Detail.Value,
+        public var `value`: Value,
       ) {
         /**
          * Unique id for the element within a resource (for internal references). This may be any
@@ -988,12 +1022,6 @@ public data class AuditEvent(
             `value` = `value`,
           )
       }
-
-      /**
-       * A FHIR choice type — one of: [Base64Binary] | [Boolean] | [CodeableConcept] | [DateTime] |
-       * [Integer] | [Period] | [Quantity] | [Range] | [Ratio] | [String] | [Time]
-       */
-      public typealias Value = FhirChoiceTypes.AuditEventEntityDetailValueChoice
     }
 
     public class Builder() {
@@ -1104,6 +1132,13 @@ public data class AuditEvent(
           agent = agent.map { it.build() },
         )
     }
+  }
+
+  /** A FHIR choice type — one of: [DateTime] | [Period] */
+  public sealed interface Occurred {
+    public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+    public typealias Period = dev.ohs.fhir.model.r5.Period
   }
 
   public class Builder(
@@ -1267,7 +1302,7 @@ public data class AuditEvent(
      *
      * A FHIR choice type — one of: [DateTime] | [Period]
      */
-    public var occurred: AuditEvent.Occurred? = null
+    public var occurred: Occurred? = null
 
     /**
      * Indicates whether the event succeeded or failed. A free text descripiton can be given in
@@ -1414,7 +1449,4 @@ public data class AuditEvent(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [DateTime] | [Period] */
-  public typealias Occurred = FhirChoiceTypes.DateTimeOrPeriod
 }

@@ -179,7 +179,7 @@ public data class Evidence(
    *
    * A FHIR choice type — one of: [Markdown] | [Reference]
    */
-  public val citeAs: Evidence.CiteAs? = null,
+  public val citeAs: CiteAs? = null,
   /**
    * The status of this summary. Enables tracking the life-cycle of the content.
    *
@@ -1417,6 +1417,13 @@ public data class Evidence(
     }
   }
 
+  /** A FHIR choice type — one of: [Markdown] | [Reference] */
+  public sealed interface CiteAs {
+    public typealias Markdown = dev.ohs.fhir.model.r4b.Markdown
+
+    public typealias Reference = dev.ohs.fhir.model.r4b.Reference
+  }
+
   public class Builder(
     /**
      * The status of this summary. Enables tracking the life-cycle of the content.
@@ -1581,7 +1588,7 @@ public data class Evidence(
      *
      * A FHIR choice type — one of: [Markdown] | [Reference]
      */
-    public var citeAs: Evidence.CiteAs? = null
+    public var citeAs: CiteAs? = null
 
     /**
      * The date (and optionally time) when the summary was published. The date must change when the
@@ -1788,7 +1795,4 @@ public data class Evidence(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [Markdown] | [Reference] */
-  public typealias CiteAs = FhirChoiceTypes.MarkdownOrReference
 }

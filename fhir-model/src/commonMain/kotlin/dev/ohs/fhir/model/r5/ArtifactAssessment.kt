@@ -144,7 +144,7 @@ public data class ArtifactAssessment(
    *
    * A FHIR choice type — one of: [Markdown] | [Reference]
    */
-  public val citeAs: ArtifactAssessment.CiteAs? = null,
+  public val citeAs: CiteAs? = null,
   /**
    * The date (and optionally time) when the artifact assessment was published. The date must change
    * when the disposition changes and it must change if the workflow status code changes. In
@@ -184,7 +184,7 @@ public data class ArtifactAssessment(
    *
    * A FHIR choice type — one of: [CanonicalBox] | [Reference] | [UriBox]
    */
-  public val artifact: ArtifactAssessment.Artifact,
+  public val artifact: Artifact,
   /** A component comment, classifier, or rating of the artifact. */
   public val content: List<Content> = listOf(),
   /** Indicates the workflow status of the comment or change request. */
@@ -404,6 +404,22 @@ public data class ArtifactAssessment(
     }
   }
 
+  /** A FHIR choice type — one of: [Markdown] | [Reference] */
+  public sealed interface CiteAs {
+    public typealias Markdown = dev.ohs.fhir.model.r5.Markdown
+
+    public typealias Reference = dev.ohs.fhir.model.r5.Reference
+  }
+
+  /** A FHIR choice type — one of: [CanonicalBox] | [Reference] | [UriBox] */
+  public sealed interface Artifact {
+    public typealias Canonical = CanonicalBox
+
+    public typealias Reference = dev.ohs.fhir.model.r5.Reference
+
+    public typealias Uri = UriBox
+  }
+
   public class Builder(
     /**
      * A reference to a resource, canonical resource, or non-FHIR resource which the comment or
@@ -411,7 +427,7 @@ public data class ArtifactAssessment(
      *
      * A FHIR choice type — one of: [CanonicalBox] | [Reference] | [UriBox]
      */
-    public var artifact: ArtifactAssessment.Artifact
+    public var artifact: Artifact
   ) : DomainResource.Builder() {
     /**
      * The logical id of the resource, as used in the URL for the resource. Once assigned, this
@@ -538,7 +554,7 @@ public data class ArtifactAssessment(
      *
      * A FHIR choice type — one of: [Markdown] | [Reference]
      */
-    public var citeAs: ArtifactAssessment.CiteAs? = null
+    public var citeAs: CiteAs? = null
 
     /**
      * The date (and optionally time) when the artifact assessment was published. The date must
@@ -774,10 +790,4 @@ public data class ArtifactAssessment(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [Markdown] | [Reference] */
-  public typealias CiteAs = FhirChoiceTypes.MarkdownOrReference
-
-  /** A FHIR choice type — one of: [CanonicalBox] | [Reference] | [UriBox] */
-  public typealias Artifact = FhirChoiceTypes.CanonicalOrReferenceOrUri
 }

@@ -191,7 +191,7 @@ public data class ImplementationGuide(
    *
    * A FHIR choice type — one of: [Coding] | [String]
    */
-  public val versionAlgorithm: ImplementationGuide.VersionAlgorithm? = null,
+  public val versionAlgorithm: VersionAlgorithm? = null,
   /**
    * A natural language name identifying the implementation guide. This name should be usable as an
    * identifier for the module by machine processing applications such as code generation.
@@ -1182,7 +1182,7 @@ public data class ImplementationGuide(
        *
        * A FHIR choice type — one of: [MarkdownBox] | [StringBox] | [Url]
        */
-      public val source: Page.Source? = null,
+      public val source: Source? = null,
       /**
        * The url by which the page should be known when published.
        *
@@ -1214,6 +1214,15 @@ public data class ImplementationGuide(
             page = this@with.page.map { it.toBuilder() }.toMutableList()
           }
         }
+
+      /** A FHIR choice type — one of: [MarkdownBox] | [StringBox] | [Url] */
+      public sealed interface Source {
+        public typealias Markdown = MarkdownBox
+
+        public typealias String = StringBox
+
+        public typealias Url = dev.ohs.fhir.model.r5.Url
+      }
 
       public class Builder(
         /**
@@ -1280,7 +1289,7 @@ public data class ImplementationGuide(
          *
          * A FHIR choice type — one of: [MarkdownBox] | [StringBox] | [Url]
          */
-        public var source: Page.Source? = null
+        public var source: Source? = null
 
         /**
          * Nested Pages/Sections under this page.
@@ -1301,9 +1310,6 @@ public data class ImplementationGuide(
             page = page.map { it.build() },
           )
       }
-
-      /** A FHIR choice type — one of: [MarkdownBox] | [StringBox] | [Url] */
-      public typealias Source = FhirChoiceTypes.MarkdownOrStringOrUrl
     }
 
     /**
@@ -2083,6 +2089,13 @@ public data class ImplementationGuide(
     }
   }
 
+  /** A FHIR choice type — one of: [Coding] | [String] */
+  public sealed interface VersionAlgorithm {
+    public typealias Coding = dev.ohs.fhir.model.r5.Coding
+
+    public typealias String = dev.ohs.fhir.model.r5.String
+  }
+
   public class Builder(
     /**
      * An absolute URI that is used to identify this implementation guide when it is referenced in a
@@ -2284,7 +2297,7 @@ public data class ImplementationGuide(
      *
      * A FHIR choice type — one of: [Coding] | [String]
      */
-    public var versionAlgorithm: ImplementationGuide.VersionAlgorithm? = null
+    public var versionAlgorithm: VersionAlgorithm? = null
 
     /**
      * A short, descriptive, user-friendly title for the implementation guide.
@@ -3744,7 +3757,4 @@ public data class ImplementationGuide(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [Coding] | [String] */
-  public typealias VersionAlgorithm = FhirChoiceTypes.CodingOrString
 }

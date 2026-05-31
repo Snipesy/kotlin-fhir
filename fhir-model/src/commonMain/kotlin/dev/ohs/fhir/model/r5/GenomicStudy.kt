@@ -358,7 +358,7 @@ public data class GenomicStudy(
        *
        * A FHIR choice type — one of: [Identifier] | [Reference]
        */
-      public val generatedBy: Input.GeneratedBy? = null,
+      public val generatedBy: GeneratedBy? = null,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -371,6 +371,13 @@ public data class GenomicStudy(
             generatedBy = this@with.generatedBy
           }
         }
+
+      /** A FHIR choice type — one of: [Identifier] | [Reference] */
+      public sealed interface GeneratedBy {
+        public typealias Identifier = dev.ohs.fhir.model.r5.Identifier
+
+        public typealias Reference = dev.ohs.fhir.model.r5.Reference
+      }
 
       public class Builder() {
         /**
@@ -424,7 +431,7 @@ public data class GenomicStudy(
          *
          * A FHIR choice type — one of: [Identifier] | [Reference]
          */
-        public var generatedBy: Input.GeneratedBy? = null
+        public var generatedBy: GeneratedBy? = null
 
         public fun build(): Input =
           Input(
@@ -436,9 +443,6 @@ public data class GenomicStudy(
             generatedBy = generatedBy,
           )
       }
-
-      /** A FHIR choice type — one of: [Identifier] | [Reference] */
-      public typealias GeneratedBy = FhirChoiceTypes.IdentifierOrReference
     }
 
     /** Outputs for the analysis event. */

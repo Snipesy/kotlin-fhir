@@ -170,7 +170,7 @@ public data class DetectedIssue(
    *
    * A FHIR choice type — one of: [DateTime] | [Period]
    */
-  public val identified: DetectedIssue.Identified? = null,
+  public val identified: Identified? = null,
   /**
    * Individual or device responsible for the issue being raised. For example, a decision support
    * application or a pharmacist conducting a medication review.
@@ -522,6 +522,13 @@ public data class DetectedIssue(
     }
   }
 
+  /** A FHIR choice type — one of: [DateTime] | [Period] */
+  public sealed interface Identified {
+    public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+    public typealias Period = dev.ohs.fhir.model.r5.Period
+  }
+
   public class Builder(
     /**
      * Indicates the status of the detected issue.
@@ -677,7 +684,7 @@ public data class DetectedIssue(
      *
      * A FHIR choice type — one of: [DateTime] | [Period]
      */
-    public var identified: DetectedIssue.Identified? = null
+    public var identified: Identified? = null
 
     /**
      * Individual or device responsible for the issue being raised. For example, a decision support
@@ -813,7 +820,4 @@ public data class DetectedIssue(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [DateTime] | [Period] */
-  public typealias Identified = FhirChoiceTypes.DateTimeOrPeriod
 }

@@ -161,7 +161,7 @@ public data class SpecimenDefinition(
    *
    * A FHIR choice type — one of: [Coding] | [String]
    */
-  public val versionAlgorithm: SpecimenDefinition.VersionAlgorithm? = null,
+  public val versionAlgorithm: VersionAlgorithm? = null,
   /**
    * A natural language name identifying the {{title}}. This name should be usable as an identifier
    * for the module by machine processing applications such as code generation.
@@ -208,7 +208,7 @@ public data class SpecimenDefinition(
    *
    * A FHIR choice type — one of: [CodeableConcept] | [Reference]
    */
-  public val subject: SpecimenDefinition.Subject? = null,
+  public val subject: Subject? = null,
   /**
    * For draft definitions, indicates the date of initial creation. For active definitions,
    * represents the date of activation. For withdrawn definitions, indicates the date of withdrawal.
@@ -510,7 +510,7 @@ public data class SpecimenDefinition(
        *
        * A FHIR choice type — one of: [Quantity] | [String]
        */
-      public val minimumVolume: Container.MinimumVolume? = null,
+      public val minimumVolume: MinimumVolume? = null,
       /**
        * Substance introduced in the kind of container to preserve, maintain or enhance the
        * specimen. Examples: Formalin, Citrate, EDTA.
@@ -585,7 +585,7 @@ public data class SpecimenDefinition(
          *
          * A FHIR choice type — one of: [CodeableConcept] | [Reference]
          */
-        public val additive: FhirChoiceTypes.CodeableConceptOrReference,
+        public val additive: Additive,
       ) : BackboneElement() {
         public fun toBuilder(): Builder =
           with(this) {
@@ -596,6 +596,13 @@ public data class SpecimenDefinition(
             }
           }
 
+        /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+        public sealed interface Additive {
+          public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+          public typealias Reference = dev.ohs.fhir.model.r5.Reference
+        }
+
         public class Builder(
           /**
            * Substance introduced in the kind of container to preserve, maintain or enhance the
@@ -603,7 +610,7 @@ public data class SpecimenDefinition(
            *
            * A FHIR choice type — one of: [CodeableConcept] | [Reference]
            */
-          public var additive: FhirChoiceTypes.CodeableConceptOrReference
+          public var additive: Additive
         ) {
           /**
            * Unique id for the element within a resource (for internal references). This may be any
@@ -645,14 +652,21 @@ public data class SpecimenDefinition(
            */
           public var modifierExtension: MutableList<Extension.Builder> = mutableListOf()
 
-          public fun build(): Additive =
-            Additive(
+          public fun build(): Container.Additive =
+            Container.Additive(
               id = id,
               extension = extension.map { it.build() },
               modifierExtension = modifierExtension.map { it.build() },
               additive = additive,
             )
         }
+      }
+
+      /** A FHIR choice type — one of: [Quantity] | [String] */
+      public sealed interface MinimumVolume {
+        public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+
+        public typealias String = dev.ohs.fhir.model.r5.String
       }
 
       public class Builder() {
@@ -720,7 +734,7 @@ public data class SpecimenDefinition(
          *
          * A FHIR choice type — one of: [Quantity] | [String]
          */
-        public var minimumVolume: Container.MinimumVolume? = null
+        public var minimumVolume: MinimumVolume? = null
 
         /**
          * Substance introduced in the kind of container to preserve, maintain or enhance the
@@ -746,9 +760,6 @@ public data class SpecimenDefinition(
             preparation = preparation?.build(),
           )
       }
-
-      /** A FHIR choice type — one of: [Quantity] | [String] */
-      public typealias MinimumVolume = FhirChoiceTypes.QuantityOrString
     }
 
     /**
@@ -992,6 +1003,20 @@ public data class SpecimenDefinition(
     }
   }
 
+  /** A FHIR choice type — one of: [Coding] | [String] */
+  public sealed interface VersionAlgorithm {
+    public typealias Coding = dev.ohs.fhir.model.r5.Coding
+
+    public typealias String = dev.ohs.fhir.model.r5.String
+  }
+
+  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+  public sealed interface Subject {
+    public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+    public typealias Reference = dev.ohs.fhir.model.r5.Reference
+  }
+
   public class Builder(
     /**
      * The current state of theSpecimenDefinition.
@@ -1148,7 +1173,7 @@ public data class SpecimenDefinition(
      *
      * A FHIR choice type — one of: [Coding] | [String]
      */
-    public var versionAlgorithm: SpecimenDefinition.VersionAlgorithm? = null
+    public var versionAlgorithm: VersionAlgorithm? = null
 
     /**
      * A natural language name identifying the {{title}}. This name should be usable as an
@@ -1189,7 +1214,7 @@ public data class SpecimenDefinition(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public var subject: SpecimenDefinition.Subject? = null
+    public var subject: Subject? = null
 
     /**
      * For draft definitions, indicates the date of initial creation. For active definitions,
@@ -1394,10 +1419,4 @@ public data class SpecimenDefinition(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [Coding] | [String] */
-  public typealias VersionAlgorithm = FhirChoiceTypes.CodingOrString
-
-  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
-  public typealias Subject = FhirChoiceTypes.CodeableConceptOrReference
 }

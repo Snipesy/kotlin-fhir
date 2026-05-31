@@ -147,7 +147,7 @@ public data class DeviceDefinition(
    *
    * A FHIR choice type — one of: [Reference] | [String]
    */
-  public val manufacturer: DeviceDefinition.Manufacturer? = null,
+  public val manufacturer: Manufacturer? = null,
   /** A name given to the device to identify it. */
   public val deviceName: List<DeviceName> = listOf(),
   /** The model number for the device. */
@@ -963,6 +963,13 @@ public data class DeviceDefinition(
     }
   }
 
+  /** A FHIR choice type — one of: [Reference] | [String] */
+  public sealed interface Manufacturer {
+    public typealias Reference = dev.ohs.fhir.model.r4b.Reference
+
+    public typealias String = dev.ohs.fhir.model.r4b.String
+  }
+
   public class Builder() : DomainResource.Builder() {
     /**
      * The logical id of the resource, as used in the URL for the resource. Once assigned, this
@@ -1087,7 +1094,7 @@ public data class DeviceDefinition(
      *
      * A FHIR choice type — one of: [Reference] | [String]
      */
-    public var manufacturer: DeviceDefinition.Manufacturer? = null
+    public var manufacturer: Manufacturer? = null
 
     /** A name given to the device to identify it. */
     public var deviceName: MutableList<DeviceName.Builder> = mutableListOf()
@@ -1250,7 +1257,4 @@ public data class DeviceDefinition(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [Reference] | [String] */
-  public typealias Manufacturer = FhirChoiceTypes.ReferenceOrString
 }

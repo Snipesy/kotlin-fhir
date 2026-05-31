@@ -53,7 +53,7 @@ public data class ContactDetail(
   public val name: String? = null,
   /** The contact details for the individual (if a name was provided) or the organization. */
   public val telecom: List<ContactPoint> = listOf(),
-) : Element(), FhirChoiceTypes.ElementDefinitionDefaultValueChoice {
+) : Element(), FhirChoiceParticipants.ContactDetailChoices {
   public fun toBuilder(): Builder =
     with(this) {
       Builder().apply {

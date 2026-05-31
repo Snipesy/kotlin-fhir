@@ -536,7 +536,7 @@ public data class CarePlan(
        *
        * A FHIR choice type — one of: [Period] | [String] | [Timing]
        */
-      public val scheduled: Detail.Scheduled? = null,
+      public val scheduled: Scheduled? = null,
       /**
        * Identifies the facility where the activity will occur; e.g. home, hospital, specific
        * clinic, etc.
@@ -555,7 +555,7 @@ public data class CarePlan(
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public val product: Detail.Product? = null,
+      public val product: Product? = null,
       /** Identifies the quantity expected to be consumed in a given day. */
       public val dailyAmount: Quantity? = null,
       /**
@@ -595,6 +595,22 @@ public data class CarePlan(
             description = this@with.description?.toBuilder()
           }
         }
+
+      /** A FHIR choice type — one of: [Period] | [String] | [Timing] */
+      public sealed interface Scheduled {
+        public typealias Period = dev.ohs.fhir.model.r4b.Period
+
+        public typealias String = dev.ohs.fhir.model.r4b.String
+
+        public typealias Timing = dev.ohs.fhir.model.r4b.Timing
+      }
+
+      /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+      public sealed interface Product {
+        public typealias CodeableConcept = dev.ohs.fhir.model.r4b.CodeableConcept
+
+        public typealias Reference = dev.ohs.fhir.model.r4b.Reference
+      }
 
       public class Builder(
         /**
@@ -726,7 +742,7 @@ public data class CarePlan(
          *
          * A FHIR choice type — one of: [Period] | [String] | [Timing]
          */
-        public var scheduled: Detail.Scheduled? = null
+        public var scheduled: Scheduled? = null
 
         /**
          * Identifies the facility where the activity will occur; e.g. home, hospital, specific
@@ -748,7 +764,7 @@ public data class CarePlan(
          *
          * A FHIR choice type — one of: [CodeableConcept] | [Reference]
          */
-        public var product: Detail.Product? = null
+        public var product: Product? = null
 
         /** Identifies the quantity expected to be consumed in a given day. */
         public var dailyAmount: Quantity.Builder? = null
@@ -790,12 +806,6 @@ public data class CarePlan(
             description = description?.build(),
           )
       }
-
-      /** A FHIR choice type — one of: [Period] | [String] | [Timing] */
-      public typealias Scheduled = FhirChoiceTypes.PeriodOrStringOrTiming
-
-      /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
-      public typealias Product = FhirChoiceTypes.CodeableConceptOrReference
     }
 
     public class Builder() {

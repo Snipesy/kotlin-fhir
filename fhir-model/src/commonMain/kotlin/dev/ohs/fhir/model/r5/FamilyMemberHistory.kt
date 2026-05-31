@@ -203,15 +203,15 @@ public data class FamilyMemberHistory(
    *
    * A FHIR choice type — one of: [Date] | [Period] | [String]
    */
-  public val born: FamilyMemberHistory.Born? = null,
+  public val born: Born? = null,
   /**
    * The age of the relative at the time the family member history is recorded.
    *
    * use estimatedAge to indicate whether the age is actual or not.
    *
-   * A FHIR choice type — one of: [Age] | [Range] | [String]
+   * A FHIR choice type — one of: [dev.ohs.fhir.model.r5.Age] | [Range] | [String]
    */
-  public val age: FhirChoiceTypes.AgeOrRangeOrString? = null,
+  public val age: Age? = null,
   /**
    * If true, indicates that the age value specified is an estimated value.
    *
@@ -223,9 +223,10 @@ public data class FamilyMemberHistory(
    * Deceased flag or the actual or approximate age of the relative at the time of death for the
    * family member history record.
    *
-   * A FHIR choice type — one of: [Age] | [Boolean] | [Date] | [Range] | [String]
+   * A FHIR choice type — one of: [dev.ohs.fhir.model.r5.Age] | [Boolean] | [Date] | [Range] |
+   * [String]
    */
-  public val deceased: FamilyMemberHistory.Deceased? = null,
+  public val deceased: Deceased? = null,
   /**
    * Describes why the family member history occurred in coded or textual form, or Indicates a
    * Condition, Observation, AllergyIntolerance, or QuestionnaireResponse that justifies this family
@@ -473,9 +474,9 @@ public data class FamilyMemberHistory(
      * Either the age of onset, range of approximate age or descriptive string can be recorded. For
      * conditions with multiple occurrences, this describes the first known occurrence.
      *
-     * A FHIR choice type — one of: [Age] | [Period] | [Range] | [String]
+     * A FHIR choice type — one of: [dev.ohs.fhir.model.r5.Age] | [Period] | [Range] | [String]
      */
-    public val onset: Condition.Onset? = null,
+    public val onset: Onset? = null,
     /** An area where general notes can be placed about this specific condition. */
     public val note: List<Annotation> = listOf(),
   ) : BackboneElement() {
@@ -491,6 +492,17 @@ public data class FamilyMemberHistory(
           note = this@with.note.map { it.toBuilder() }.toMutableList()
         }
       }
+
+    /** A FHIR choice type — one of: [dev.ohs.fhir.model.r5.Age] | [Period] | [Range] | [String] */
+    public sealed interface Onset {
+      public typealias Age = dev.ohs.fhir.model.r5.Age
+
+      public typealias Period = dev.ohs.fhir.model.r5.Period
+
+      public typealias Range = dev.ohs.fhir.model.r5.Range
+
+      public typealias String = dev.ohs.fhir.model.r5.String
+    }
 
     public class Builder(
       /**
@@ -556,9 +568,9 @@ public data class FamilyMemberHistory(
        * Either the age of onset, range of approximate age or descriptive string can be recorded.
        * For conditions with multiple occurrences, this describes the first known occurrence.
        *
-       * A FHIR choice type — one of: [Age] | [Period] | [Range] | [String]
+       * A FHIR choice type — one of: [dev.ohs.fhir.model.r5.Age] | [Period] | [Range] | [String]
        */
-      public var onset: Condition.Onset? = null
+      public var onset: Onset? = null
 
       /** An area where general notes can be placed about this specific condition. */
       public var note: MutableList<Annotation.Builder> = mutableListOf()
@@ -575,9 +587,6 @@ public data class FamilyMemberHistory(
           note = note.map { it.build() },
         )
     }
-
-    /** A FHIR choice type — one of: [Age] | [Period] | [Range] | [String] */
-    public typealias Onset = FhirChoiceTypes.AgeOrPeriodOrRangeOrString
   }
 
   /**
@@ -645,9 +654,10 @@ public data class FamilyMemberHistory(
      * a period to support complex procedures that span more than one date, and also allows for the
      * length of the procedure to be captured.
      *
-     * A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String]
+     * A FHIR choice type — one of: [dev.ohs.fhir.model.r5.Age] | [DateTime] | [Period] | [Range] |
+     * [String]
      */
-    public val performed: Procedure.Performed? = null,
+    public val performed: Performed? = null,
     /** An area where general notes can be placed about this specific procedure. */
     public val note: List<Annotation> = listOf(),
   ) : BackboneElement() {
@@ -663,6 +673,22 @@ public data class FamilyMemberHistory(
           note = this@with.note.map { it.toBuilder() }.toMutableList()
         }
       }
+
+    /**
+     * A FHIR choice type — one of: [dev.ohs.fhir.model.r5.Age] | [DateTime] | [Period] | [Range] |
+     * [String]
+     */
+    public sealed interface Performed {
+      public typealias Age = dev.ohs.fhir.model.r5.Age
+
+      public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+      public typealias Period = dev.ohs.fhir.model.r5.Period
+
+      public typealias Range = dev.ohs.fhir.model.r5.Range
+
+      public typealias String = dev.ohs.fhir.model.r5.String
+    }
 
     public class Builder(
       /**
@@ -729,9 +755,10 @@ public data class FamilyMemberHistory(
        * Allows a period to support complex procedures that span more than one date, and also allows
        * for the length of the procedure to be captured.
        *
-       * A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String]
+       * A FHIR choice type — one of: [dev.ohs.fhir.model.r5.Age] | [DateTime] | [Period] | [Range]
+       * | [String]
        */
-      public var performed: Procedure.Performed? = null
+      public var performed: Performed? = null
 
       /** An area where general notes can be placed about this specific procedure. */
       public var note: MutableList<Annotation.Builder> = mutableListOf()
@@ -748,9 +775,40 @@ public data class FamilyMemberHistory(
           note = note.map { it.build() },
         )
     }
+  }
 
-    /** A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String] */
-    public typealias Performed = FhirChoiceTypes.AgeOrDateTimeOrPeriodOrRangeOrString
+  /** A FHIR choice type — one of: [Date] | [Period] | [String] */
+  public sealed interface Born {
+    public typealias Date = dev.ohs.fhir.model.r5.Date
+
+    public typealias Period = dev.ohs.fhir.model.r5.Period
+
+    public typealias String = dev.ohs.fhir.model.r5.String
+  }
+
+  /** A FHIR choice type — one of: [dev.ohs.fhir.model.r5.Age] | [Range] | [String] */
+  public sealed interface Age {
+    public typealias Age = dev.ohs.fhir.model.r5.Age
+
+    public typealias Range = dev.ohs.fhir.model.r5.Range
+
+    public typealias String = dev.ohs.fhir.model.r5.String
+  }
+
+  /**
+   * A FHIR choice type — one of: [dev.ohs.fhir.model.r5.Age] | [Boolean] | [Date] | [Range] |
+   * [String]
+   */
+  public sealed interface Deceased {
+    public typealias Age = dev.ohs.fhir.model.r5.Age
+
+    public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
+
+    public typealias Date = dev.ohs.fhir.model.r5.Date
+
+    public typealias Range = dev.ohs.fhir.model.r5.Range
+
+    public typealias String = dev.ohs.fhir.model.r5.String
   }
 
   public class Builder(
@@ -944,16 +1002,16 @@ public data class FamilyMemberHistory(
      *
      * A FHIR choice type — one of: [Date] | [Period] | [String]
      */
-    public var born: FamilyMemberHistory.Born? = null
+    public var born: Born? = null
 
     /**
      * The age of the relative at the time the family member history is recorded.
      *
      * use estimatedAge to indicate whether the age is actual or not.
      *
-     * A FHIR choice type — one of: [Age] | [Range] | [String]
+     * A FHIR choice type — one of: [dev.ohs.fhir.model.r5.Age] | [Range] | [String]
      */
-    public var age: FhirChoiceTypes.AgeOrRangeOrString? = null
+    public var age: Age? = null
 
     /**
      * If true, indicates that the age value specified is an estimated value.
@@ -967,9 +1025,10 @@ public data class FamilyMemberHistory(
      * Deceased flag or the actual or approximate age of the relative at the time of death for the
      * family member history record.
      *
-     * A FHIR choice type — one of: [Age] | [Boolean] | [Date] | [Range] | [String]
+     * A FHIR choice type — one of: [dev.ohs.fhir.model.r5.Age] | [Boolean] | [Date] | [Range] |
+     * [String]
      */
-    public var deceased: FamilyMemberHistory.Deceased? = null
+    public var deceased: Deceased? = null
 
     /**
      * Describes why the family member history occurred in coded or textual form, or Indicates a
@@ -1062,10 +1121,4 @@ public data class FamilyMemberHistory(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [Date] | [Period] | [String] */
-  public typealias Born = FhirChoiceTypes.DateOrPeriodOrString
-
-  /** A FHIR choice type — one of: [Age] | [Boolean] | [Date] | [Range] | [String] */
-  public typealias Deceased = FhirChoiceTypes.AgeOrBooleanOrDateOrRangeOrString
 }

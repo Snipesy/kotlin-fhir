@@ -413,7 +413,7 @@ public data class ClaimResponse(
      *
      * A FHIR choice type — one of: [DateTime] | [Period]
      */
-    public val `when`: Event.When,
+    public val `when`: When,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -424,6 +424,13 @@ public data class ClaimResponse(
         }
       }
 
+    /** A FHIR choice type — one of: [DateTime] | [Period] */
+    public sealed interface When {
+      public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+      public typealias Period = dev.ohs.fhir.model.r5.Period
+    }
+
     public class Builder(
       /** A coded event such as when a service is expected or a card printed. */
       public var type: CodeableConcept.Builder,
@@ -433,7 +440,7 @@ public data class ClaimResponse(
        *
        * A FHIR choice type — one of: [DateTime] | [Period]
        */
-      public var `when`: Event.When,
+      public var `when`: When,
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -484,9 +491,6 @@ public data class ClaimResponse(
           `when` = `when`,
         )
     }
-
-    /** A FHIR choice type — one of: [DateTime] | [Period] */
-    public typealias When = FhirChoiceTypes.DateTimeOrPeriod
   }
 
   /**
@@ -1379,13 +1383,13 @@ public data class ClaimResponse(
      *
      * A FHIR choice type — one of: [Date] | [Period]
      */
-    public val serviced: AddItem.Serviced? = null,
+    public val serviced: Serviced? = null,
     /**
      * Where the product or service was provided.
      *
      * A FHIR choice type — one of: [Address] | [CodeableConcept] | [Reference]
      */
-    public val location: FhirChoiceTypes.AddressOrCodeableConceptOrReference? = null,
+    public val location: Location? = null,
     /** The number of repetitions of a service or product. */
     public val quantity: Quantity? = null,
     /**
@@ -2130,6 +2134,22 @@ public data class ClaimResponse(
       }
     }
 
+    /** A FHIR choice type — one of: [Date] | [Period] */
+    public sealed interface Serviced {
+      public typealias Date = dev.ohs.fhir.model.r5.Date
+
+      public typealias Period = dev.ohs.fhir.model.r5.Period
+    }
+
+    /** A FHIR choice type — one of: [Address] | [CodeableConcept] | [Reference] */
+    public sealed interface Location {
+      public typealias Address = dev.ohs.fhir.model.r5.Address
+
+      public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+      public typealias Reference = dev.ohs.fhir.model.r5.Reference
+    }
+
     public class Builder() {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -2243,14 +2263,14 @@ public data class ClaimResponse(
        *
        * A FHIR choice type — one of: [Date] | [Period]
        */
-      public var serviced: AddItem.Serviced? = null
+      public var serviced: Serviced? = null
 
       /**
        * Where the product or service was provided.
        *
        * A FHIR choice type — one of: [Address] | [CodeableConcept] | [Reference]
        */
-      public var location: FhirChoiceTypes.AddressOrCodeableConceptOrReference? = null
+      public var location: Location? = null
 
       /** The number of repetitions of a service or product. */
       public var quantity: Quantity.Builder? = null
@@ -2327,9 +2347,6 @@ public data class ClaimResponse(
           detail = detail.map { it.build() },
         )
     }
-
-    /** A FHIR choice type — one of: [Date] | [Period] */
-    public typealias Serviced = FhirChoiceTypes.DateOrPeriod
   }
 
   /** Categorized monetary totals for the adjudication. */

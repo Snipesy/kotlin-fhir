@@ -223,7 +223,7 @@ public data class MedicinalProductIndication(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public val medication: FhirChoiceTypes.CodeableConceptOrReference,
+    public val medication: Medication,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -233,6 +233,13 @@ public data class MedicinalProductIndication(
           modifierExtension = this@with.modifierExtension.map { it.toBuilder() }.toMutableList()
         }
       }
+
+    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+    public sealed interface Medication {
+      public typealias CodeableConcept = dev.ohs.fhir.model.r4.CodeableConcept
+
+      public typealias Reference = dev.ohs.fhir.model.r4.Reference
+    }
 
     public class Builder(
       /**
@@ -246,7 +253,7 @@ public data class MedicinalProductIndication(
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public var medication: FhirChoiceTypes.CodeableConceptOrReference,
+      public var medication: Medication,
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any

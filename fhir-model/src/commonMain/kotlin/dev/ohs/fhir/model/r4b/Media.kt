@@ -178,7 +178,7 @@ public data class Media(
    *
    * A FHIR choice type — one of: [DateTime] | [Period]
    */
-  public val created: Media.Created? = null,
+  public val created: Created? = null,
   /**
    * The date and time this version of the media was made available to providers, typically after
    * having been reviewed.
@@ -288,6 +288,13 @@ public data class Media(
         note = this@with.note.map { it.toBuilder() }.toMutableList()
       }
     }
+
+  /** A FHIR choice type — one of: [DateTime] | [Period] */
+  public sealed interface Created {
+    public typealias DateTime = dev.ohs.fhir.model.r4b.DateTime
+
+    public typealias Period = dev.ohs.fhir.model.r4b.Period
+  }
 
   public class Builder(
     /**
@@ -467,7 +474,7 @@ public data class Media(
      *
      * A FHIR choice type — one of: [DateTime] | [Period]
      */
-    public var created: Media.Created? = null
+    public var created: Created? = null
 
     /**
      * The date and time this version of the media was made available to providers, typically after
@@ -620,7 +627,4 @@ public data class Media(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [DateTime] | [Period] */
-  public typealias Created = FhirChoiceTypes.DateTimeOrPeriod
 }

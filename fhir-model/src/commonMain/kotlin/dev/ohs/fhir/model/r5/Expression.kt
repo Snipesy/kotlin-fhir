@@ -72,7 +72,7 @@ public data class Expression(
    * expression.
    */
   public val reference: Uri? = null,
-) : DataType(), FhirChoiceTypes.ElementDefinitionDefaultValueChoice {
+) : DataType(), FhirChoiceParticipants.ExpressionChoices {
   public fun toBuilder(): Builder =
     with(this) {
       Builder().apply {

@@ -424,7 +424,7 @@ public data class EvidenceVariable(
      * A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [DataRequirement] |
      * [Expression] | [Reference] | [TriggerDefinition]
      */
-    public val definition: Characteristic.Definition,
+    public val definition: Definition,
     /**
      * Use UsageContext to define the members of the population, such as Age Ranges, Genders,
      * Settings.
@@ -437,7 +437,7 @@ public data class EvidenceVariable(
      *
      * A FHIR choice type — one of: [DateTime] | [Duration] | [Period] | [Timing]
      */
-    public val participantEffective: Characteristic.ParticipantEffective? = null,
+    public val participantEffective: ParticipantEffective? = null,
     /** Indicates duration from the participant's study entry. */
     public val timeFromStart: Duration? = null,
     /** Indicates how elements are aggregated within the study effective period. */
@@ -458,6 +458,35 @@ public data class EvidenceVariable(
         }
       }
 
+    /**
+     * A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [DataRequirement] |
+     * [Expression] | [Reference] | [TriggerDefinition]
+     */
+    public sealed interface Definition {
+      public typealias Canonical = dev.ohs.fhir.model.r4.Canonical
+
+      public typealias CodeableConcept = dev.ohs.fhir.model.r4.CodeableConcept
+
+      public typealias DataRequirement = dev.ohs.fhir.model.r4.DataRequirement
+
+      public typealias Expression = dev.ohs.fhir.model.r4.Expression
+
+      public typealias Reference = dev.ohs.fhir.model.r4.Reference
+
+      public typealias TriggerDefinition = dev.ohs.fhir.model.r4.TriggerDefinition
+    }
+
+    /** A FHIR choice type — one of: [DateTime] | [Duration] | [Period] | [Timing] */
+    public sealed interface ParticipantEffective {
+      public typealias DateTime = dev.ohs.fhir.model.r4.DateTime
+
+      public typealias Duration = dev.ohs.fhir.model.r4.Duration
+
+      public typealias Period = dev.ohs.fhir.model.r4.Period
+
+      public typealias Timing = dev.ohs.fhir.model.r4.Timing
+    }
+
     public class Builder(
       /**
        * Define members of the evidence element using Codes (such as condition, medication, or
@@ -467,7 +496,7 @@ public data class EvidenceVariable(
        * A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [DataRequirement] |
        * [Expression] | [Reference] | [TriggerDefinition]
        */
-      public var definition: Characteristic.Definition
+      public var definition: Definition
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -529,7 +558,7 @@ public data class EvidenceVariable(
        *
        * A FHIR choice type — one of: [DateTime] | [Duration] | [Period] | [Timing]
        */
-      public var participantEffective: Characteristic.ParticipantEffective? = null
+      public var participantEffective: ParticipantEffective? = null
 
       /** Indicates duration from the participant's study entry. */
       public var timeFromStart: Duration.Builder? = null
@@ -551,15 +580,6 @@ public data class EvidenceVariable(
           groupMeasure = groupMeasure,
         )
     }
-
-    /**
-     * A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [DataRequirement] |
-     * [Expression] | [Reference] | [TriggerDefinition]
-     */
-    public typealias Definition = FhirChoiceTypes.EvidenceVariableCharacteristicDefinitionChoice
-
-    /** A FHIR choice type — one of: [DateTime] | [Duration] | [Period] | [Timing] */
-    public typealias ParticipantEffective = FhirChoiceTypes.DateTimeOrDurationOrPeriodOrTiming
   }
 
   public class Builder(

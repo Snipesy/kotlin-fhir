@@ -191,7 +191,7 @@ public data class MedicationStatement(
    *
    * A FHIR choice type — one of: [CodeableConcept] | [Reference]
    */
-  public val medication: FhirChoiceTypes.CodeableConceptOrReference,
+  public val medication: Medication,
   /** The person, animal or group who is/was taking the medication. */
   public val subject: Reference,
   /** The encounter or episode of care that establishes the context for this MedicationStatement. */
@@ -208,7 +208,7 @@ public data class MedicationStatement(
    *
    * A FHIR choice type — one of: [DateTime] | [Period]
    */
-  public val effective: MedicationStatement.Effective? = null,
+  public val effective: Effective? = null,
   /** The date when the medication statement was asserted by the information source. */
   public val dateAsserted: DateTime? = null,
   /**
@@ -286,6 +286,20 @@ public data class MedicationStatement(
       }
     }
 
+  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+  public sealed interface Medication {
+    public typealias CodeableConcept = dev.ohs.fhir.model.r4b.CodeableConcept
+
+    public typealias Reference = dev.ohs.fhir.model.r4b.Reference
+  }
+
+  /** A FHIR choice type — one of: [DateTime] | [Period] */
+  public sealed interface Effective {
+    public typealias DateTime = dev.ohs.fhir.model.r4b.DateTime
+
+    public typealias Period = dev.ohs.fhir.model.r4b.Period
+  }
+
   public class Builder(
     /**
      * A code representing the patient or other source's judgment about the state of the medication
@@ -312,7 +326,7 @@ public data class MedicationStatement(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public var medication: FhirChoiceTypes.CodeableConceptOrReference,
+    public var medication: Medication,
     /** The person, animal or group who is/was taking the medication. */
     public var subject: Reference.Builder,
   ) : DomainResource.Builder() {
@@ -467,7 +481,7 @@ public data class MedicationStatement(
      *
      * A FHIR choice type — one of: [DateTime] | [Period]
      */
-    public var effective: MedicationStatement.Effective? = null
+    public var effective: Effective? = null
 
     /** The date when the medication statement was asserted by the information source. */
     public var dateAsserted: DateTime.Builder? = null
@@ -607,7 +621,4 @@ public data class MedicationStatement(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [DateTime] | [Period] */
-  public typealias Effective = FhirChoiceTypes.DateTimeOrPeriod
 }

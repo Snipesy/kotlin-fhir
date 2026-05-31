@@ -765,7 +765,7 @@ public data class Citation(
      *
      * A FHIR choice type — one of: [Attachment] | [Identifier] | [Reference] | [Uri]
      */
-    public val target: RelatesTo.Target,
+    public val target: Target,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -777,6 +777,17 @@ public data class Citation(
         }
       }
 
+    /** A FHIR choice type — one of: [Attachment] | [Identifier] | [Reference] | [Uri] */
+    public sealed interface Target {
+      public typealias Attachment = dev.ohs.fhir.model.r4b.Attachment
+
+      public typealias Identifier = dev.ohs.fhir.model.r4b.Identifier
+
+      public typealias Reference = dev.ohs.fhir.model.r4b.Reference
+
+      public typealias Uri = dev.ohs.fhir.model.r4b.Uri
+    }
+
     public class Builder(
       /** How the Citation resource relates to the target artifact. */
       public var relationshipType: CodeableConcept.Builder,
@@ -785,7 +796,7 @@ public data class Citation(
        *
        * A FHIR choice type — one of: [Attachment] | [Identifier] | [Reference] | [Uri]
        */
-      public var target: RelatesTo.Target,
+      public var target: Target,
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -840,9 +851,6 @@ public data class Citation(
           target = target,
         )
     }
-
-    /** A FHIR choice type — one of: [Attachment] | [Identifier] | [Reference] | [Uri] */
-    public typealias Target = FhirChoiceTypes.AttachmentOrIdentifierOrReferenceOrUri
   }
 
   /** The article or artifact being described. */
@@ -1616,7 +1624,7 @@ public data class Citation(
        *
        * A FHIR choice type — one of: [Attachment] | [Identifier] | [Reference] | [Uri]
        */
-      public val target: RelatesTo.Target,
+      public val target: Target,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -1628,6 +1636,17 @@ public data class Citation(
           }
         }
 
+      /** A FHIR choice type — one of: [Attachment] | [Identifier] | [Reference] | [Uri] */
+      public sealed interface Target {
+        public typealias Attachment = dev.ohs.fhir.model.r4b.Attachment
+
+        public typealias Identifier = dev.ohs.fhir.model.r4b.Identifier
+
+        public typealias Reference = dev.ohs.fhir.model.r4b.Reference
+
+        public typealias Uri = dev.ohs.fhir.model.r4b.Uri
+      }
+
       public class Builder(
         /** How the cited artifact relates to the target artifact. */
         public var relationshipType: CodeableConcept.Builder,
@@ -1636,7 +1655,7 @@ public data class Citation(
          *
          * A FHIR choice type — one of: [Attachment] | [Identifier] | [Reference] | [Uri]
          */
-        public var target: RelatesTo.Target,
+        public var target: Target,
       ) {
         /**
          * Unique id for the element within a resource (for internal references). This may be any
@@ -1691,9 +1710,6 @@ public data class Citation(
             target = target,
           )
       }
-
-      /** A FHIR choice type — one of: [Attachment] | [Identifier] | [Reference] | [Uri] */
-      public typealias Target = FhirChoiceTypes.AttachmentOrIdentifierOrReferenceOrUri
     }
 
     /**

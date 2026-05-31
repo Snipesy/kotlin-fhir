@@ -45,7 +45,7 @@ public data class PositiveInt(
   override val extension: List<Extension> = listOf(),
   /** Primitive value for positiveInt */
   override val `value`: Int? = null,
-) : Integer(id, extension, `value`), FhirChoiceTypes.PositiveIntOrString {
+) : Integer(id, extension, `value`), FhirChoiceParticipants.PositiveIntChoices {
   override fun toBuilder(): Builder =
     with(this) {
       Builder().apply {

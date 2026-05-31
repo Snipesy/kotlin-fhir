@@ -903,7 +903,7 @@ public data class ImplementationGuide(
        *
        * A FHIR choice type — one of: [Boolean] | [Canonical]
        */
-      public val example: Resource.Example? = null,
+      public val example: Example? = null,
       /**
        * Reference to the id of the grouping this resource appears in.
        *
@@ -924,6 +924,13 @@ public data class ImplementationGuide(
             groupingId = this@with.groupingId?.toBuilder()
           }
         }
+
+      /** A FHIR choice type — one of: [Boolean] | [Canonical] */
+      public sealed interface Example {
+        public typealias Boolean = dev.ohs.fhir.model.r4.Boolean
+
+        public typealias Canonical = dev.ohs.fhir.model.r4.Canonical
+      }
 
       public class Builder(
         /**
@@ -1017,7 +1024,7 @@ public data class ImplementationGuide(
          *
          * A FHIR choice type — one of: [Boolean] | [Canonical]
          */
-        public var example: Resource.Example? = null
+        public var example: Example? = null
 
         /**
          * Reference to the id of the grouping this resource appears in.
@@ -1039,9 +1046,6 @@ public data class ImplementationGuide(
             groupingId = groupingId?.build(),
           )
       }
-
-      /** A FHIR choice type — one of: [Boolean] | [Canonical] */
-      public typealias Example = FhirChoiceTypes.BooleanOrCanonical
     }
 
     /**
@@ -1095,7 +1099,7 @@ public data class ImplementationGuide(
        *
        * A FHIR choice type — one of: [Reference] | [Url]
        */
-      public val name: Page.Name,
+      public val name: Name,
       /**
        * A short title used to represent this page in navigational structures such as table of
        * contents, bread crumbs, etc.
@@ -1120,6 +1124,13 @@ public data class ImplementationGuide(
           }
         }
 
+      /** A FHIR choice type — one of: [Reference] | [Url] */
+      public sealed interface Name {
+        public typealias Reference = dev.ohs.fhir.model.r4.Reference
+
+        public typealias Url = dev.ohs.fhir.model.r4.Url
+      }
+
       public class Builder(
         /**
          * The source address for the page.
@@ -1129,7 +1140,7 @@ public data class ImplementationGuide(
          *
          * A FHIR choice type — one of: [Reference] | [Url]
          */
-        public var name: Page.Name,
+        public var name: Name,
         /**
          * A short title used to represent this page in navigational structures such as table of
          * contents, bread crumbs, etc.
@@ -1196,9 +1207,6 @@ public data class ImplementationGuide(
             page = page.map { it.build() },
           )
       }
-
-      /** A FHIR choice type — one of: [Reference] | [Url] */
-      public typealias Name = FhirChoiceTypes.ReferenceOrUrl
     }
 
     /** Defines how IG is built by tools. */
@@ -1655,7 +1663,7 @@ public data class ImplementationGuide(
        *
        * A FHIR choice type — one of: [Boolean] | [Canonical]
        */
-      public val example: Resource.Example? = null,
+      public val example: Example? = null,
       /**
        * The relative path for primary page for this resource within the IG.
        *
@@ -1673,6 +1681,13 @@ public data class ImplementationGuide(
             relativePath = this@with.relativePath?.toBuilder()
           }
         }
+
+      /** A FHIR choice type — one of: [Boolean] | [Canonical] */
+      public sealed interface Example {
+        public typealias Boolean = dev.ohs.fhir.model.r4.Boolean
+
+        public typealias Canonical = dev.ohs.fhir.model.r4.Canonical
+      }
 
       public class Builder(
         /**
@@ -1735,7 +1750,7 @@ public data class ImplementationGuide(
          *
          * A FHIR choice type — one of: [Boolean] | [Canonical]
          */
-        public var example: Resource.Example? = null
+        public var example: Example? = null
 
         /**
          * The relative path for primary page for this resource within the IG.
@@ -1754,9 +1769,6 @@ public data class ImplementationGuide(
             relativePath = relativePath?.build(),
           )
       }
-
-      /** A FHIR choice type — one of: [Boolean] | [Canonical] */
-      public typealias Example = FhirChoiceTypes.BooleanOrCanonical
     }
 
     /** Information about a page within the IG. */

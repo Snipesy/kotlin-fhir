@@ -600,7 +600,7 @@ public data class Coverage(
      *
      * A FHIR choice type — one of: [Money] | [Quantity]
      */
-    public val `value`: CostToBeneficiary.Value? = null,
+    public val `value`: Value? = null,
     /**
      * A suite of codes indicating exceptions or reductions to patient costs and their effective
      * periods.
@@ -739,6 +739,13 @@ public data class Coverage(
       }
     }
 
+    /** A FHIR choice type — one of: [Money] | [Quantity] */
+    public sealed interface Value {
+      public typealias Money = dev.ohs.fhir.model.r5.Money
+
+      public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+    }
+
     public class Builder() {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -818,7 +825,7 @@ public data class Coverage(
        *
        * A FHIR choice type — one of: [Money] | [Quantity]
        */
-      public var `value`: CostToBeneficiary.Value? = null
+      public var `value`: Value? = null
 
       /**
        * A suite of codes indicating exceptions or reductions to patient costs and their effective
@@ -840,9 +847,6 @@ public data class Coverage(
           exception = exception.map { it.build() },
         )
     }
-
-    /** A FHIR choice type — one of: [Money] | [Quantity] */
-    public typealias Value = FhirChoiceTypes.MoneyOrQuantity
   }
 
   public class Builder(

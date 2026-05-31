@@ -331,7 +331,7 @@ public data class Communication(
      *
      * A FHIR choice type — one of: [Attachment] | [Reference] | [String]
      */
-    public val content: Payload.Content,
+    public val content: Content,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -342,6 +342,15 @@ public data class Communication(
         }
       }
 
+    /** A FHIR choice type — one of: [Attachment] | [Reference] | [String] */
+    public sealed interface Content {
+      public typealias Attachment = dev.ohs.fhir.model.r4.Attachment
+
+      public typealias Reference = dev.ohs.fhir.model.r4.Reference
+
+      public typealias String = dev.ohs.fhir.model.r4.String
+    }
+
     public class Builder(
       /**
        * A communicated content (or for multi-part communications, one portion of the
@@ -349,7 +358,7 @@ public data class Communication(
        *
        * A FHIR choice type — one of: [Attachment] | [Reference] | [String]
        */
-      public var content: Payload.Content
+      public var content: Content
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -399,9 +408,6 @@ public data class Communication(
           content = content,
         )
     }
-
-    /** A FHIR choice type — one of: [Attachment] | [Reference] | [String] */
-    public typealias Content = FhirChoiceTypes.AttachmentOrReferenceOrString
   }
 
   public class Builder(

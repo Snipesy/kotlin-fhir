@@ -253,7 +253,7 @@ public data class Group(
      * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range] |
      * [Reference]
      */
-    public val `value`: Characteristic.Value,
+    public val `value`: Value,
     /**
      * If true, indicates the characteristic is one that is NOT held by members of the group.
      *
@@ -277,6 +277,22 @@ public data class Group(
         }
       }
 
+    /**
+     * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range] |
+     * [Reference]
+     */
+    public sealed interface Value {
+      public typealias Boolean = dev.ohs.fhir.model.r4.Boolean
+
+      public typealias CodeableConcept = dev.ohs.fhir.model.r4.CodeableConcept
+
+      public typealias Quantity = dev.ohs.fhir.model.r4.Quantity
+
+      public typealias Range = dev.ohs.fhir.model.r4.Range
+
+      public typealias Reference = dev.ohs.fhir.model.r4.Reference
+    }
+
     public class Builder(
       /** A code that identifies the kind of trait being asserted. */
       public var code: CodeableConcept.Builder,
@@ -290,7 +306,7 @@ public data class Group(
        * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range] |
        * [Reference]
        */
-      public var `value`: Characteristic.Value,
+      public var `value`: Value,
       /**
        * If true, indicates the characteristic is one that is NOT held by members of the group.
        *
@@ -356,12 +372,6 @@ public data class Group(
           period = period?.build(),
         )
     }
-
-    /**
-     * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range] |
-     * [Reference]
-     */
-    public typealias Value = FhirChoiceTypes.BooleanOrCodeableConceptOrQuantityOrRangeOrReference
   }
 
   /** Identifies the resource instances that are members of the group. */

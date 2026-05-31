@@ -161,7 +161,7 @@ public data class ImmunizationEvaluation(
    *
    * A FHIR choice type — one of: [PositiveInt] | [String]
    */
-  public val doseNumber: ImmunizationEvaluation.DoseNumber? = null,
+  public val doseNumber: DoseNumber? = null,
   /**
    * The recommended number of doses to achieve immunity.
    *
@@ -170,7 +170,7 @@ public data class ImmunizationEvaluation(
    *
    * A FHIR choice type — one of: [PositiveInt] | [String]
    */
-  public val seriesDoses: ImmunizationEvaluation.SeriesDoses? = null,
+  public val seriesDoses: SeriesDoses? = null,
 ) : DomainResource() {
   override fun toBuilder(): Builder =
     with(this) {
@@ -200,6 +200,20 @@ public data class ImmunizationEvaluation(
           seriesDoses = this@with.seriesDoses
         }
     }
+
+  /** A FHIR choice type — one of: [PositiveInt] | [String] */
+  public sealed interface DoseNumber {
+    public typealias PositiveInt = dev.ohs.fhir.model.r4.PositiveInt
+
+    public typealias String = dev.ohs.fhir.model.r4.String
+  }
+
+  /** A FHIR choice type — one of: [PositiveInt] | [String] */
+  public sealed interface SeriesDoses {
+    public typealias PositiveInt = dev.ohs.fhir.model.r4.PositiveInt
+
+    public typealias String = dev.ohs.fhir.model.r4.String
+  }
 
   public class Builder(
     /** Indicates the current status of the evaluation of the vaccination administration event. */
@@ -352,7 +366,7 @@ public data class ImmunizationEvaluation(
      *
      * A FHIR choice type — one of: [PositiveInt] | [String]
      */
-    public var doseNumber: ImmunizationEvaluation.DoseNumber? = null
+    public var doseNumber: DoseNumber? = null
 
     /**
      * The recommended number of doses to achieve immunity.
@@ -362,7 +376,7 @@ public data class ImmunizationEvaluation(
      *
      * A FHIR choice type — one of: [PositiveInt] | [String]
      */
-    public var seriesDoses: ImmunizationEvaluation.SeriesDoses? = null
+    public var seriesDoses: SeriesDoses? = null
 
     override fun build(): ImmunizationEvaluation =
       ImmunizationEvaluation(
@@ -431,10 +445,4 @@ public data class ImmunizationEvaluation(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [PositiveInt] | [String] */
-  public typealias DoseNumber = FhirChoiceTypes.PositiveIntOrString
-
-  /** A FHIR choice type — one of: [PositiveInt] | [String] */
-  public typealias SeriesDoses = FhirChoiceTypes.PositiveIntOrString
 }

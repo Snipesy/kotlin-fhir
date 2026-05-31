@@ -188,7 +188,7 @@ public data class ConceptMap(
    *
    * A FHIR choice type — one of: [Coding] | [String]
    */
-  public val versionAlgorithm: ConceptMap.VersionAlgorithm? = null,
+  public val versionAlgorithm: VersionAlgorithm? = null,
   /**
    * A natural language name identifying the concept map. This name should be usable as an
    * identifier for the module by machine processing applications such as code generation.
@@ -421,7 +421,7 @@ public data class ConceptMap(
    *
    * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
    */
-  public val sourceScope: ConceptMap.SourceScope? = null,
+  public val sourceScope: SourceScope? = null,
   /**
    * Identifier for the target value set that provides important context about how the mapping
    * choices are made. Limits the scope of the map to target codes (ConceptMap.group.element.target
@@ -434,7 +434,7 @@ public data class ConceptMap(
    *
    * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
    */
-  public val targetScope: ConceptMap.TargetScope? = null,
+  public val targetScope: TargetScope? = null,
   /** A group of mappings that all have the same source and target system. */
   public val group: List<Group> = listOf(),
 ) : DomainResource() {
@@ -1117,7 +1117,7 @@ public data class ConceptMap(
            * A FHIR choice type — one of: [Boolean] | [CodeBox] | [Coding] | [DateTime] | [Decimal]
            * | [Integer] | [StringBox]
            */
-          public val `value`: Property.Value,
+          public val `value`: Value,
         ) : BackboneElement() {
           public fun toBuilder(): Builder =
             with(this) {
@@ -1129,6 +1129,26 @@ public data class ConceptMap(
               }
             }
 
+          /**
+           * A FHIR choice type — one of: [Boolean] | [CodeBox] | [Coding] | [DateTime] | [Decimal]
+           * | [Integer] | [StringBox]
+           */
+          public sealed interface Value {
+            public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
+
+            public typealias Code = CodeBox
+
+            public typealias Coding = dev.ohs.fhir.model.r5.Coding
+
+            public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+            public typealias Decimal = dev.ohs.fhir.model.r5.Decimal
+
+            public typealias Integer = dev.ohs.fhir.model.r5.Integer
+
+            public typealias String = StringBox
+          }
+
           public class Builder(
             /** A reference to a mapping property defined in ConceptMap.property. */
             public var code: Code.Builder,
@@ -1139,7 +1159,7 @@ public data class ConceptMap(
              * A FHIR choice type — one of: [Boolean] | [CodeBox] | [Coding] | [DateTime] |
              * [Decimal] | [Integer] | [StringBox]
              */
-            public var `value`: Property.Value,
+            public var `value`: Value,
           ) {
             /**
              * Unique id for the element within a resource (for internal references). This may be
@@ -1191,13 +1211,6 @@ public data class ConceptMap(
                 `value` = `value`,
               )
           }
-
-          /**
-           * A FHIR choice type — one of: [Boolean] | [CodeBox] | [Coding] | [DateTime] | [Decimal]
-           * | [Integer] | [StringBox]
-           */
-          public typealias Value =
-            FhirChoiceTypes.BooleanOrCodeOrCodingOrDateTimeOrDecimalOrIntegerOrString
         }
 
         /**
@@ -1255,7 +1268,7 @@ public data class ConceptMap(
            * A FHIR choice type — one of: [Boolean] | [CodeBox] | [Coding] | [Quantity] |
            * [StringBox]
            */
-          public val `value`: DependsOn.Value? = null,
+          public val `value`: Value? = null,
           /** This mapping applies if the data element value is a code from this value set. */
           public val valueSet: Canonical? = null,
         ) : BackboneElement() {
@@ -1270,6 +1283,22 @@ public data class ConceptMap(
                 valueSet = this@with.valueSet?.toBuilder()
               }
             }
+
+          /**
+           * A FHIR choice type — one of: [Boolean] | [CodeBox] | [Coding] | [Quantity] |
+           * [StringBox]
+           */
+          public sealed interface Value {
+            public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
+
+            public typealias Code = CodeBox
+
+            public typealias Coding = dev.ohs.fhir.model.r5.Coding
+
+            public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+
+            public typealias String = StringBox
+          }
 
           public class Builder(
             /** A reference to the additional attribute that holds a value the map depends on. */
@@ -1325,7 +1354,7 @@ public data class ConceptMap(
              * A FHIR choice type — one of: [Boolean] | [CodeBox] | [Coding] | [Quantity] |
              * [StringBox]
              */
-            public var `value`: DependsOn.Value? = null
+            public var `value`: Value? = null
 
             /** This mapping applies if the data element value is a code from this value set. */
             public var valueSet: Canonical.Builder? = null
@@ -1340,12 +1369,6 @@ public data class ConceptMap(
                 valueSet = valueSet?.build(),
               )
           }
-
-          /**
-           * A FHIR choice type — one of: [Boolean] | [CodeBox] | [Coding] | [Quantity] |
-           * [StringBox]
-           */
-          public typealias Value = FhirChoiceTypes.BooleanOrCodeOrCodingOrQuantityOrString
         }
 
         public class Builder(
@@ -1839,6 +1862,27 @@ public data class ConceptMap(
     }
   }
 
+  /** A FHIR choice type — one of: [Coding] | [String] */
+  public sealed interface VersionAlgorithm {
+    public typealias Coding = dev.ohs.fhir.model.r5.Coding
+
+    public typealias String = dev.ohs.fhir.model.r5.String
+  }
+
+  /** A FHIR choice type — one of: [CanonicalBox] | [UriBox] */
+  public sealed interface SourceScope {
+    public typealias Canonical = CanonicalBox
+
+    public typealias Uri = UriBox
+  }
+
+  /** A FHIR choice type — one of: [CanonicalBox] | [UriBox] */
+  public sealed interface TargetScope {
+    public typealias Canonical = CanonicalBox
+
+    public typealias Uri = UriBox
+  }
+
   public class Builder(
     /**
      * The status of this concept map. Enables tracking the life-cycle of the content.
@@ -2012,7 +2056,7 @@ public data class ConceptMap(
      *
      * A FHIR choice type — one of: [Coding] | [String]
      */
-    public var versionAlgorithm: ConceptMap.VersionAlgorithm? = null
+    public var versionAlgorithm: VersionAlgorithm? = null
 
     /**
      * A natural language name identifying the concept map. This name should be usable as an
@@ -2262,7 +2306,7 @@ public data class ConceptMap(
      *
      * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
      */
-    public var sourceScope: ConceptMap.SourceScope? = null
+    public var sourceScope: SourceScope? = null
 
     /**
      * Identifier for the target value set that provides important context about how the mapping
@@ -2276,7 +2320,7 @@ public data class ConceptMap(
      *
      * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
      */
-    public var targetScope: ConceptMap.TargetScope? = null
+    public var targetScope: TargetScope? = null
 
     /** A group of mappings that all have the same source and target system. */
     public var group: MutableList<Group.Builder> = mutableListOf()
@@ -2432,13 +2476,4 @@ public data class ConceptMap(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [Coding] | [String] */
-  public typealias VersionAlgorithm = FhirChoiceTypes.CodingOrString
-
-  /** A FHIR choice type — one of: [CanonicalBox] | [UriBox] */
-  public typealias SourceScope = FhirChoiceTypes.CanonicalOrUri
-
-  /** A FHIR choice type — one of: [CanonicalBox] | [UriBox] */
-  public typealias TargetScope = FhirChoiceTypes.CanonicalOrUri
 }

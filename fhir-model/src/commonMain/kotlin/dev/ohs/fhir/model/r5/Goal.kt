@@ -186,7 +186,7 @@ public data class Goal(
    *
    * A FHIR choice type — one of: [CodeableConcept] | [Date]
    */
-  public val start: Goal.Start? = null,
+  public val start: Start? = null,
   /**
    * Indicates what should be done by when.
    *
@@ -323,13 +323,13 @@ public data class Goal(
      * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Integer] | [Quantity] | [Range]
      * | [Ratio] | [String]
      */
-    public val detail: Target.Detail? = null,
+    public val detail: Detail? = null,
     /**
      * Indicates either the date or the duration after start by which the goal should be met.
      *
      * A FHIR choice type — one of: [Date] | [Duration]
      */
-    public val due: Target.Due? = null,
+    public val due: Due? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -342,6 +342,33 @@ public data class Goal(
           due = this@with.due
         }
       }
+
+    /**
+     * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Integer] | [Quantity] | [Range]
+     * | [Ratio] | [String]
+     */
+    public sealed interface Detail {
+      public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
+
+      public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+      public typealias Integer = dev.ohs.fhir.model.r5.Integer
+
+      public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+
+      public typealias Range = dev.ohs.fhir.model.r5.Range
+
+      public typealias Ratio = dev.ohs.fhir.model.r5.Ratio
+
+      public typealias String = dev.ohs.fhir.model.r5.String
+    }
+
+    /** A FHIR choice type — one of: [Date] | [Duration] */
+    public sealed interface Due {
+      public typealias Date = dev.ohs.fhir.model.r5.Date
+
+      public typealias Duration = dev.ohs.fhir.model.r5.Duration
+    }
 
     public class Builder() {
       /**
@@ -404,14 +431,14 @@ public data class Goal(
        * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Integer] | [Quantity] |
        * [Range] | [Ratio] | [String]
        */
-      public var detail: Target.Detail? = null
+      public var detail: Detail? = null
 
       /**
        * Indicates either the date or the duration after start by which the goal should be met.
        *
        * A FHIR choice type — one of: [Date] | [Duration]
        */
-      public var due: Target.Due? = null
+      public var due: Due? = null
 
       public fun build(): Target =
         Target(
@@ -423,15 +450,13 @@ public data class Goal(
           due = due,
         )
     }
+  }
 
-    /**
-     * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Integer] | [Quantity] | [Range]
-     * | [Ratio] | [String]
-     */
-    public typealias Detail = FhirChoiceTypes.GoalTargetDetailChoice
+  /** A FHIR choice type — one of: [CodeableConcept] | [Date] */
+  public sealed interface Start {
+    public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
 
-    /** A FHIR choice type — one of: [Date] | [Duration] */
-    public typealias Due = FhirChoiceTypes.DateOrDuration
+    public typealias Date = dev.ohs.fhir.model.r5.Date
   }
 
   public class Builder(
@@ -605,7 +630,7 @@ public data class Goal(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Date]
      */
-    public var start: Goal.Start? = null
+    public var start: Start? = null
 
     /**
      * Indicates what should be done by when.
@@ -736,7 +761,4 @@ public data class Goal(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [CodeableConcept] | [Date] */
-  public typealias Start = FhirChoiceTypes.CodeableConceptOrDate
 }

@@ -185,7 +185,7 @@ public data class StructureMap(
    *
    * A FHIR choice type — one of: [Coding] | [String]
    */
-  public val versionAlgorithm: StructureMap.VersionAlgorithm? = null,
+  public val versionAlgorithm: VersionAlgorithm? = null,
   /**
    * A natural language name identifying the structure map. This name should be usable as an
    * identifier for the module by machine processing applications such as code generation.
@@ -1227,7 +1227,7 @@ public data class StructureMap(
            * A FHIR choice type — one of: [Boolean] | [Date] | [DateTime] | [Decimal] | [IdBox] |
            * [Integer] | [StringBox] | [Time]
            */
-          public val `value`: Parameter.Value,
+          public val `value`: Value,
         ) : BackboneElement() {
           public fun toBuilder(): Builder =
             with(this) {
@@ -1239,6 +1239,28 @@ public data class StructureMap(
               }
             }
 
+          /**
+           * A FHIR choice type — one of: [Boolean] | [Date] | [DateTime] | [Decimal] | [IdBox] |
+           * [Integer] | [StringBox] | [Time]
+           */
+          public sealed interface Value {
+            public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
+
+            public typealias Date = dev.ohs.fhir.model.r5.Date
+
+            public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+            public typealias Decimal = dev.ohs.fhir.model.r5.Decimal
+
+            public typealias Id = IdBox
+
+            public typealias Integer = dev.ohs.fhir.model.r5.Integer
+
+            public typealias String = StringBox
+
+            public typealias Time = dev.ohs.fhir.model.r5.Time
+          }
+
           public class Builder(
             /**
              * Parameter value - variable or literal.
@@ -1246,7 +1268,7 @@ public data class StructureMap(
              * A FHIR choice type — one of: [Boolean] | [Date] | [DateTime] | [Decimal] | [IdBox] |
              * [Integer] | [StringBox] | [Time]
              */
-            public var `value`: Parameter.Value
+            public var `value`: Value
           ) {
             /**
              * Unique id for the element within a resource (for internal references). This may be
@@ -1297,13 +1319,6 @@ public data class StructureMap(
                 `value` = `value`,
               )
           }
-
-          /**
-           * A FHIR choice type — one of: [Boolean] | [Date] | [DateTime] | [Decimal] | [IdBox] |
-           * [Integer] | [StringBox] | [Time]
-           */
-          public typealias Value =
-            FhirChoiceTypes.BooleanOrDateOrDateTimeOrDecimalOrIdOrIntegerOrStringOrTime
         }
 
         public class Builder() {
@@ -1656,6 +1671,13 @@ public data class StructureMap(
     }
   }
 
+  /** A FHIR choice type — one of: [Coding] | [String] */
+  public sealed interface VersionAlgorithm {
+    public typealias Coding = dev.ohs.fhir.model.r5.Coding
+
+    public typealias String = dev.ohs.fhir.model.r5.String
+  }
+
   public class Builder(
     /**
      * An absolute URI that is used to identify this structure map when it is referenced in a
@@ -1837,7 +1859,7 @@ public data class StructureMap(
      *
      * A FHIR choice type — one of: [Coding] | [String]
      */
-    public var versionAlgorithm: StructureMap.VersionAlgorithm? = null
+    public var versionAlgorithm: VersionAlgorithm? = null
 
     /**
      * A short, descriptive, user-friendly title for the structure map.
@@ -2224,7 +2246,4 @@ public data class StructureMap(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [Coding] | [String] */
-  public typealias VersionAlgorithm = FhirChoiceTypes.CodingOrString
 }

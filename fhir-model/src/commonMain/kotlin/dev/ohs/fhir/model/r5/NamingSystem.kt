@@ -182,7 +182,7 @@ public data class NamingSystem(
    *
    * A FHIR choice type — one of: [Coding] | [String]
    */
-  public val versionAlgorithm: NamingSystem.VersionAlgorithm? = null,
+  public val versionAlgorithm: VersionAlgorithm? = null,
   /**
    * A natural language name identifying the naming system. This name should be usable as an
    * identifier for the module by machine processing applications such as code generation.
@@ -663,6 +663,13 @@ public data class NamingSystem(
     }
   }
 
+  /** A FHIR choice type — one of: [Coding] | [String] */
+  public sealed interface VersionAlgorithm {
+    public typealias Coding = dev.ohs.fhir.model.r5.Coding
+
+    public typealias String = dev.ohs.fhir.model.r5.String
+  }
+
   public class Builder(
     /**
      * A natural language name identifying the naming system. This name should be usable as an
@@ -870,7 +877,7 @@ public data class NamingSystem(
      *
      * A FHIR choice type — one of: [Coding] | [String]
      */
-    public var versionAlgorithm: NamingSystem.VersionAlgorithm? = null
+    public var versionAlgorithm: VersionAlgorithm? = null
 
     /**
      * A short, descriptive, user-friendly title for the naming system.
@@ -1197,7 +1204,4 @@ public data class NamingSystem(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [Coding] | [String] */
-  public typealias VersionAlgorithm = FhirChoiceTypes.CodingOrString
 }

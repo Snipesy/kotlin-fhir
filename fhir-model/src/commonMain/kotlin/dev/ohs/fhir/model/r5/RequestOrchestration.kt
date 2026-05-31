@@ -335,9 +335,10 @@ public data class RequestOrchestration(
      * (specified as an Age, Duration, or Range), or it may be a more complex, potentially repeating
      * timing specified using Timing.
      *
-     * A FHIR choice type — one of: [Age] | [DateTime] | [Duration] | [Period] | [Range] | [Timing]
+     * A FHIR choice type — one of: [Age] | [DateTime] | [Duration] | [Period] | [Range] |
+     * [dev.ohs.fhir.model.r5.Timing]
      */
-    public val timing: FhirChoiceTypes.AgeOrDateTimeOrDurationOrPeriodOrRangeOrTiming? = null,
+    public val timing: Timing? = null,
     /**
      * Identifies the facility where the action will occur; e.g. home, hospital, specific clinic,
      * etc.
@@ -384,7 +385,7 @@ public data class RequestOrchestration(
      *
      * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
      */
-    public val definition: Action.Definition? = null,
+    public val definition: Definition? = null,
     /**
      * A reference to a StructureMap resource that defines a transform that can be executed to
      * produce the intent resource using the ActivityDefinition instance as the input.
@@ -919,7 +920,7 @@ public data class RequestOrchestration(
        *
        * A FHIR choice type — one of: [Duration] | [Range]
        */
-      public val offset: RelatedAction.Offset? = null,
+      public val offset: Offset? = null,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -931,6 +932,13 @@ public data class RequestOrchestration(
             offset = this@with.offset
           }
         }
+
+      /** A FHIR choice type — one of: [Duration] | [Range] */
+      public sealed interface Offset {
+        public typealias Duration = dev.ohs.fhir.model.r5.Duration
+
+        public typealias Range = dev.ohs.fhir.model.r5.Range
+      }
 
       public class Builder(
         /** The element id of the target related action. */
@@ -987,7 +995,7 @@ public data class RequestOrchestration(
          *
          * A FHIR choice type — one of: [Duration] | [Range]
          */
-        public var offset: RelatedAction.Offset? = null
+        public var offset: Offset? = null
 
         public fun build(): RelatedAction =
           RelatedAction(
@@ -1000,9 +1008,6 @@ public data class RequestOrchestration(
             offset = offset,
           )
       }
-
-      /** A FHIR choice type — one of: [Duration] | [Range] */
-      public typealias Offset = FhirChoiceTypes.DurationOrRange
     }
 
     /** The participant that should perform or be responsible for this action. */
@@ -1067,7 +1072,7 @@ public data class RequestOrchestration(
        *
        * A FHIR choice type — one of: [Canonical] | [Reference]
        */
-      public val actor: Participant.Actor? = null,
+      public val actor: Actor? = null,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -1083,6 +1088,13 @@ public data class RequestOrchestration(
             actor = this@with.actor
           }
         }
+
+      /** A FHIR choice type — one of: [Canonical] | [Reference] */
+      public sealed interface Actor {
+        public typealias Canonical = dev.ohs.fhir.model.r5.Canonical
+
+        public typealias Reference = dev.ohs.fhir.model.r5.Reference
+      }
 
       public class Builder() {
         /**
@@ -1152,7 +1164,7 @@ public data class RequestOrchestration(
          *
          * A FHIR choice type — one of: [Canonical] | [Reference]
          */
-        public var actor: Participant.Actor? = null
+        public var actor: Actor? = null
 
         public fun build(): Participant =
           Participant(
@@ -1167,9 +1179,6 @@ public data class RequestOrchestration(
             actor = actor,
           )
       }
-
-      /** A FHIR choice type — one of: [Canonical] | [Reference] */
-      public typealias Actor = FhirChoiceTypes.CanonicalOrReference
     }
 
     /**
@@ -1329,6 +1338,31 @@ public data class RequestOrchestration(
       }
     }
 
+    /**
+     * A FHIR choice type — one of: [Age] | [DateTime] | [Duration] | [Period] | [Range] |
+     * [dev.ohs.fhir.model.r5.Timing]
+     */
+    public sealed interface Timing {
+      public typealias Age = dev.ohs.fhir.model.r5.Age
+
+      public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+      public typealias Duration = dev.ohs.fhir.model.r5.Duration
+
+      public typealias Period = dev.ohs.fhir.model.r5.Period
+
+      public typealias Range = dev.ohs.fhir.model.r5.Range
+
+      public typealias Timing = dev.ohs.fhir.model.r5.Timing
+    }
+
+    /** A FHIR choice type — one of: [CanonicalBox] | [UriBox] */
+    public sealed interface Definition {
+      public typealias Canonical = CanonicalBox
+
+      public typealias Uri = UriBox
+    }
+
     public class Builder() {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -1441,9 +1475,9 @@ public data class RequestOrchestration(
        * repeating timing specified using Timing.
        *
        * A FHIR choice type — one of: [Age] | [DateTime] | [Duration] | [Period] | [Range] |
-       * [Timing]
+       * [dev.ohs.fhir.model.r5.Timing]
        */
-      public var timing: FhirChoiceTypes.AgeOrDateTimeOrDurationOrPeriodOrRangeOrTiming? = null
+      public var timing: Timing? = null
 
       /**
        * Identifies the facility where the action will occur; e.g. home, hospital, specific clinic,
@@ -1500,7 +1534,7 @@ public data class RequestOrchestration(
        *
        * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
        */
-      public var definition: Action.Definition? = null
+      public var definition: Definition? = null
 
       /**
        * A reference to a StructureMap resource that defines a transform that can be executed to
@@ -1563,9 +1597,6 @@ public data class RequestOrchestration(
           action = action.map { it.build() },
         )
     }
-
-    /** A FHIR choice type — one of: [CanonicalBox] | [UriBox] */
-    public typealias Definition = FhirChoiceTypes.CanonicalOrUri
   }
 
   public class Builder(

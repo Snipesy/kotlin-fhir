@@ -61,9 +61,9 @@ public data class TriggerDefinition(
   /**
    * The timing of the event (if this is a periodic trigger).
    *
-   * A FHIR choice type — one of: [Date] | [DateTime] | [Reference] | [Timing]
+   * A FHIR choice type — one of: [Date] | [DateTime] | [Reference] | [dev.ohs.fhir.model.r4.Timing]
    */
-  public val timing: FhirChoiceTypes.DateOrDateTimeOrReferenceOrTiming? = null,
+  public val timing: Timing? = null,
   /**
    * The triggering data of the event (if this is a data trigger). If more than one data is
    * requirement is specified, then all the data requirements must be true.
@@ -99,6 +99,19 @@ public data class TriggerDefinition(
         condition = this@with.condition?.toBuilder()
       }
     }
+
+  /**
+   * A FHIR choice type — one of: [Date] | [DateTime] | [Reference] | [dev.ohs.fhir.model.r4.Timing]
+   */
+  public sealed interface Timing {
+    public typealias Date = dev.ohs.fhir.model.r4.Date
+
+    public typealias DateTime = dev.ohs.fhir.model.r4.DateTime
+
+    public typealias Reference = dev.ohs.fhir.model.r4.Reference
+
+    public typealias Timing = dev.ohs.fhir.model.r4.Timing
+  }
 
   public open class Builder(
     /** The type of triggering event. */
@@ -138,9 +151,10 @@ public data class TriggerDefinition(
     /**
      * The timing of the event (if this is a periodic trigger).
      *
-     * A FHIR choice type — one of: [Date] | [DateTime] | [Reference] | [Timing]
+     * A FHIR choice type — one of: [Date] | [DateTime] | [Reference] |
+     * [dev.ohs.fhir.model.r4.Timing]
      */
-    public open var timing: FhirChoiceTypes.DateOrDateTimeOrReferenceOrTiming? = null
+    public open var timing: Timing? = null
 
     /**
      * The triggering data of the event (if this is a data trigger). If more than one data is

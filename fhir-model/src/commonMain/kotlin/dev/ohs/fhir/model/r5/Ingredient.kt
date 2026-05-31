@@ -440,7 +440,7 @@ public data class Ingredient(
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Ratio] | [RatioRange]
        */
-      public val presentation: Strength.Presentation? = null,
+      public val presentation: Presentation? = null,
       /**
        * A textual represention of either the whole of the presentation strength or a part of it -
        * with the rest being in Strength.presentation as a ratio.
@@ -451,7 +451,7 @@ public data class Ingredient(
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Ratio] | [RatioRange]
        */
-      public val concentration: Strength.Concentration? = null,
+      public val concentration: Concentration? = null,
       /**
        * A textual represention of either the whole of the concentration strength or a part of it -
        * with the rest being in Strength.concentration as a ratio.
@@ -551,7 +551,7 @@ public data class Ingredient(
          *
          * A FHIR choice type — one of: [Quantity] | [Ratio] | [RatioRange]
          */
-        public val strength: ReferenceStrength.Strength,
+        public val strength: Strength,
         /** For when strength is measured at a particular point or distance. */
         public val measurementPoint: String? = null,
         /** The country or countries for which the strength range applies. */
@@ -568,6 +568,15 @@ public data class Ingredient(
             }
           }
 
+        /** A FHIR choice type — one of: [Quantity] | [Ratio] | [RatioRange] */
+        public sealed interface Strength {
+          public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+
+          public typealias Ratio = dev.ohs.fhir.model.r5.Ratio
+
+          public typealias RatioRange = dev.ohs.fhir.model.r5.RatioRange
+        }
+
         public class Builder(
           /** Relevant reference substance. */
           public var substance: CodeableReference.Builder,
@@ -576,7 +585,7 @@ public data class Ingredient(
            *
            * A FHIR choice type — one of: [Quantity] | [Ratio] | [RatioRange]
            */
-          public var strength: ReferenceStrength.Strength,
+          public var strength: Strength,
         ) {
           /**
            * Unique id for the element within a resource (for internal references). This may be any
@@ -635,9 +644,28 @@ public data class Ingredient(
               country = country.map { it.build() },
             )
         }
+      }
 
-        /** A FHIR choice type — one of: [Quantity] | [Ratio] | [RatioRange] */
-        public typealias Strength = FhirChoiceTypes.QuantityOrRatioOrRatioRange
+      /** A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Ratio] | [RatioRange] */
+      public sealed interface Presentation {
+        public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+        public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+
+        public typealias Ratio = dev.ohs.fhir.model.r5.Ratio
+
+        public typealias RatioRange = dev.ohs.fhir.model.r5.RatioRange
+      }
+
+      /** A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Ratio] | [RatioRange] */
+      public sealed interface Concentration {
+        public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+        public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+
+        public typealias Ratio = dev.ohs.fhir.model.r5.Ratio
+
+        public typealias RatioRange = dev.ohs.fhir.model.r5.RatioRange
       }
 
       public class Builder() {
@@ -690,7 +718,7 @@ public data class Ingredient(
          *
          * A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Ratio] | [RatioRange]
          */
-        public var presentation: Strength.Presentation? = null
+        public var presentation: Presentation? = null
 
         /**
          * A textual represention of either the whole of the presentation strength or a part of it -
@@ -703,7 +731,7 @@ public data class Ingredient(
          *
          * A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Ratio] | [RatioRange]
          */
-        public var concentration: Strength.Concentration? = null
+        public var concentration: Concentration? = null
 
         /**
          * A textual represention of either the whole of the concentration strength or a part of
@@ -753,12 +781,6 @@ public data class Ingredient(
             referenceStrength = referenceStrength.map { it.build() },
           )
       }
-
-      /** A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Ratio] | [RatioRange] */
-      public typealias Presentation = FhirChoiceTypes.CodeableConceptOrQuantityOrRatioOrRatioRange
-
-      /** A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Ratio] | [RatioRange] */
-      public typealias Concentration = FhirChoiceTypes.CodeableConceptOrQuantityOrRatioOrRatioRange
     }
 
     public class Builder(

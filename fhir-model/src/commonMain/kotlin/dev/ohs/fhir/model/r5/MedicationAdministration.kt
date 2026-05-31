@@ -197,7 +197,7 @@ public data class MedicationAdministration(
    *
    * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
    */
-  public val occurence: MedicationAdministration.Occurence,
+  public val occurence: Occurence,
   /**
    * The date the occurrence of the MedicationAdministration was first captured in the record -
    * potentially significantly after the occurrence of the event.
@@ -499,7 +499,7 @@ public data class MedicationAdministration(
      *
      * A FHIR choice type — one of: [Quantity] | [Ratio]
      */
-    public val rate: Dosage.Rate? = null,
+    public val rate: Rate? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -515,6 +515,13 @@ public data class MedicationAdministration(
           rate = this@with.rate
         }
       }
+
+    /** A FHIR choice type — one of: [Quantity] | [Ratio] */
+    public sealed interface Rate {
+      public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+
+      public typealias Ratio = dev.ohs.fhir.model.r5.Ratio
+    }
 
     public class Builder() {
       /**
@@ -623,7 +630,7 @@ public data class MedicationAdministration(
        *
        * A FHIR choice type — one of: [Quantity] | [Ratio]
        */
-      public var rate: Dosage.Rate? = null
+      public var rate: Rate? = null
 
       public fun build(): Dosage =
         Dosage(
@@ -638,9 +645,15 @@ public data class MedicationAdministration(
           rate = rate,
         )
     }
+  }
 
-    /** A FHIR choice type — one of: [Quantity] | [Ratio] */
-    public typealias Rate = FhirChoiceTypes.QuantityOrRatio
+  /** A FHIR choice type — one of: [DateTime] | [Period] | [Timing] */
+  public sealed interface Occurence {
+    public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+    public typealias Period = dev.ohs.fhir.model.r5.Period
+
+    public typealias Timing = dev.ohs.fhir.model.r5.Timing
   }
 
   public class Builder(
@@ -672,7 +685,7 @@ public data class MedicationAdministration(
      *
      * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
      */
-    public var occurence: MedicationAdministration.Occurence,
+    public var occurence: Occurence,
   ) : DomainResource.Builder() {
     /**
      * The logical id of the resource, as used in the URL for the resource. Once assigned, this
@@ -967,7 +980,4 @@ public data class MedicationAdministration(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [DateTime] | [Period] | [Timing] */
-  public typealias Occurence = FhirChoiceTypes.DateTimeOrPeriodOrTiming
 }

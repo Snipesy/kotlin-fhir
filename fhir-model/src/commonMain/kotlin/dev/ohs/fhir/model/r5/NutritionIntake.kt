@@ -194,7 +194,7 @@ public data class NutritionIntake(
    *
    * A FHIR choice type — one of: [DateTime] | [Period]
    */
-  public val occurrence: NutritionIntake.Occurrence? = null,
+  public val occurrence: Occurrence? = null,
   /** The date when the Nutrition Intake was asserted by the information source. */
   public val recorded: DateTime? = null,
   /**
@@ -203,7 +203,7 @@ public data class NutritionIntake(
    *
    * A FHIR choice type — one of: [Boolean] | [Reference]
    */
-  public val reported: NutritionIntake.Reported? = null,
+  public val reported: Reported? = null,
   /** What food or fluid product or item was consumed. */
   public val consumedItem: List<ConsumedItem>,
   /**
@@ -665,6 +665,20 @@ public data class NutritionIntake(
     }
   }
 
+  /** A FHIR choice type — one of: [DateTime] | [Period] */
+  public sealed interface Occurrence {
+    public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+    public typealias Period = dev.ohs.fhir.model.r5.Period
+  }
+
+  /** A FHIR choice type — one of: [Boolean] | [Reference] */
+  public sealed interface Reported {
+    public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
+
+    public typealias Reference = dev.ohs.fhir.model.r5.Reference
+  }
+
   public class Builder(
     /**
      * A code representing the patient or other source's judgment about the state of the intake that
@@ -843,7 +857,7 @@ public data class NutritionIntake(
      *
      * A FHIR choice type — one of: [DateTime] | [Period]
      */
-    public var occurrence: NutritionIntake.Occurrence? = null
+    public var occurrence: Occurrence? = null
 
     /** The date when the Nutrition Intake was asserted by the information source. */
     public var recorded: DateTime.Builder? = null
@@ -854,7 +868,7 @@ public data class NutritionIntake(
      *
      * A FHIR choice type — one of: [Boolean] | [Reference]
      */
-    public var reported: NutritionIntake.Reported? = null
+    public var reported: Reported? = null
 
     /**
      * Total nutrient amounts for the whole meal, product, serving, etc.
@@ -958,10 +972,4 @@ public data class NutritionIntake(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [DateTime] | [Period] */
-  public typealias Occurrence = FhirChoiceTypes.DateTimeOrPeriod
-
-  /** A FHIR choice type — one of: [Boolean] | [Reference] */
-  public typealias Reported = FhirChoiceTypes.BooleanOrReference
 }

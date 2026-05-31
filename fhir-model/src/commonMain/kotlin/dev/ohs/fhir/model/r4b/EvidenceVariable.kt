@@ -406,7 +406,7 @@ public data class EvidenceVariable(
      *
      * A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [Expression] | [Reference]
      */
-    public val definition: Characteristic.Definition,
+    public val definition: Definition,
     /** Method used for describing characteristic. */
     public val method: CodeableConcept? = null,
     /** Device used for determining characteristic. */
@@ -561,6 +561,17 @@ public data class EvidenceVariable(
       }
     }
 
+    /** A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [Expression] | [Reference] */
+    public sealed interface Definition {
+      public typealias Canonical = dev.ohs.fhir.model.r4b.Canonical
+
+      public typealias CodeableConcept = dev.ohs.fhir.model.r4b.CodeableConcept
+
+      public typealias Expression = dev.ohs.fhir.model.r4b.Expression
+
+      public typealias Reference = dev.ohs.fhir.model.r4b.Reference
+    }
+
     public class Builder(
       /**
        * Define members of the evidence element using Codes (such as condition, medication, or
@@ -569,7 +580,7 @@ public data class EvidenceVariable(
        *
        * A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [Expression] | [Reference]
        */
-      public var definition: Characteristic.Definition
+      public var definition: Definition
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -646,9 +657,6 @@ public data class EvidenceVariable(
           groupMeasure = groupMeasure,
         )
     }
-
-    /** A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [Expression] | [Reference] */
-    public typealias Definition = FhirChoiceTypes.CanonicalOrCodeableConceptOrExpressionOrReference
   }
 
   /**
@@ -701,7 +709,7 @@ public data class EvidenceVariable(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Range]
      */
-    public val `value`: Category.Value? = null,
+    public val `value`: Value? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -713,6 +721,15 @@ public data class EvidenceVariable(
           `value` = this@with.`value`
         }
       }
+
+    /** A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Range] */
+    public sealed interface Value {
+      public typealias CodeableConcept = dev.ohs.fhir.model.r4b.CodeableConcept
+
+      public typealias Quantity = dev.ohs.fhir.model.r4b.Quantity
+
+      public typealias Range = dev.ohs.fhir.model.r4b.Range
+    }
 
     public class Builder() {
       /**
@@ -763,7 +780,7 @@ public data class EvidenceVariable(
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Range]
        */
-      public var `value`: Category.Value? = null
+      public var `value`: Value? = null
 
       public fun build(): Category =
         Category(
@@ -774,9 +791,6 @@ public data class EvidenceVariable(
           `value` = `value`,
         )
     }
-
-    /** A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Range] */
-    public typealias Value = FhirChoiceTypes.CodeableConceptOrQuantityOrRange
   }
 
   public class Builder(

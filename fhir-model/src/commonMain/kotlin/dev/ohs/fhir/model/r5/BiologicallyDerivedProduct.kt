@@ -281,7 +281,7 @@ public data class BiologicallyDerivedProduct(
      *
      * A FHIR choice type — one of: [DateTime] | [Period]
      */
-    public val collected: Collection.Collected? = null,
+    public val collected: Collected? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -294,6 +294,13 @@ public data class BiologicallyDerivedProduct(
           collected = this@with.collected
         }
       }
+
+    /** A FHIR choice type — one of: [DateTime] | [Period] */
+    public sealed interface Collected {
+      public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+      public typealias Period = dev.ohs.fhir.model.r5.Period
+    }
 
     public class Builder() {
       /**
@@ -350,7 +357,7 @@ public data class BiologicallyDerivedProduct(
        *
        * A FHIR choice type — one of: [DateTime] | [Period]
        */
-      public var collected: Collection.Collected? = null
+      public var collected: Collected? = null
 
       public fun build(): Collection =
         Collection(
@@ -362,9 +369,6 @@ public data class BiologicallyDerivedProduct(
           collected = collected,
         )
     }
-
-    /** A FHIR choice type — one of: [DateTime] | [Period] */
-    public typealias Collected = FhirChoiceTypes.DateTimeOrPeriod
   }
 
   /** A property that is specific to this BiologicallyDerviedProduct instance. */
@@ -424,7 +428,7 @@ public data class BiologicallyDerivedProduct(
      * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Integer] |
      * [Period] | [Quantity] | [Range] | [Ratio] | [String]
      */
-    public val `value`: Property.Value,
+    public val `value`: Value,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -434,6 +438,30 @@ public data class BiologicallyDerivedProduct(
           modifierExtension = this@with.modifierExtension.map { it.toBuilder() }.toMutableList()
         }
       }
+
+    /**
+     * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Integer] |
+     * [Period] | [Quantity] | [Range] | [Ratio] | [String]
+     */
+    public sealed interface Value {
+      public typealias Attachment = dev.ohs.fhir.model.r5.Attachment
+
+      public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
+
+      public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+      public typealias Integer = dev.ohs.fhir.model.r5.Integer
+
+      public typealias Period = dev.ohs.fhir.model.r5.Period
+
+      public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+
+      public typealias Range = dev.ohs.fhir.model.r5.Range
+
+      public typealias Ratio = dev.ohs.fhir.model.r5.Ratio
+
+      public typealias String = dev.ohs.fhir.model.r5.String
+    }
 
     public class Builder(
       /**
@@ -453,7 +481,7 @@ public data class BiologicallyDerivedProduct(
        * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Integer] |
        * [Period] | [Quantity] | [Range] | [Ratio] | [String]
        */
-      public var `value`: Property.Value,
+      public var `value`: Value,
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -504,12 +532,6 @@ public data class BiologicallyDerivedProduct(
           `value` = `value`,
         )
     }
-
-    /**
-     * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Integer] |
-     * [Period] | [Quantity] | [Range] | [Ratio] | [String]
-     */
-    public typealias Value = FhirChoiceTypes.BiologicallyDerivedProductPropertyValueChoice
   }
 
   public class Builder() : DomainResource.Builder() {

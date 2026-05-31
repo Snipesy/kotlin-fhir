@@ -188,7 +188,7 @@ public data class DiagnosticReport(
    *
    * A FHIR choice type — one of: [DateTime] | [Period]
    */
-  public val effective: DiagnosticReport.Effective? = null,
+  public val effective: Effective? = null,
   /**
    * The date and time that this version of the report was made available to providers, typically
    * after the report was reviewed and verified.
@@ -565,6 +565,13 @@ public data class DiagnosticReport(
     }
   }
 
+  /** A FHIR choice type — one of: [DateTime] | [Period] */
+  public sealed interface Effective {
+    public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+    public typealias Period = dev.ohs.fhir.model.r5.Period
+  }
+
   public class Builder(
     /** The status of the diagnostic report. */
     public var status: Enumeration<DiagnosticReportStatus>,
@@ -734,7 +741,7 @@ public data class DiagnosticReport(
      *
      * A FHIR choice type — one of: [DateTime] | [Period]
      */
-    public var effective: DiagnosticReport.Effective? = null
+    public var effective: Effective? = null
 
     /**
      * The date and time that this version of the report was made available to providers, typically
@@ -930,7 +937,4 @@ public data class DiagnosticReport(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [DateTime] | [Period] */
-  public typealias Effective = FhirChoiceTypes.DateTimeOrPeriod
 }

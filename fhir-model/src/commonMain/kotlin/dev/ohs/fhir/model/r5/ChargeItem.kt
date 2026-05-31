@@ -174,7 +174,7 @@ public data class ChargeItem(
    *
    * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
    */
-  public val occurrence: ChargeItem.Occurrence? = null,
+  public val occurrence: Occurrence? = null,
   /** Indicates who or what performed or participated in the charged service. */
   public val performer: List<Performer> = listOf(),
   /**
@@ -435,6 +435,15 @@ public data class ChargeItem(
     }
   }
 
+  /** A FHIR choice type — one of: [DateTime] | [Period] | [Timing] */
+  public sealed interface Occurrence {
+    public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+    public typealias Period = dev.ohs.fhir.model.r5.Period
+
+    public typealias Timing = dev.ohs.fhir.model.r5.Timing
+  }
+
   public class Builder(
     /**
      * The current state of the ChargeItem.
@@ -592,7 +601,7 @@ public data class ChargeItem(
      *
      * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
      */
-    public var occurrence: ChargeItem.Occurrence? = null
+    public var occurrence: Occurrence? = null
 
     /** Indicates who or what performed or participated in the charged service. */
     public var performer: MutableList<Performer.Builder> = mutableListOf()
@@ -793,7 +802,4 @@ public data class ChargeItem(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [DateTime] | [Period] | [Timing] */
-  public typealias Occurrence = FhirChoiceTypes.DateTimeOrPeriodOrTiming
 }

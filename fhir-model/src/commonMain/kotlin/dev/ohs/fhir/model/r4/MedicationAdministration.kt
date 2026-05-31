@@ -169,7 +169,7 @@ public data class MedicationAdministration(
    *
    * A FHIR choice type — one of: [CodeableConcept] | [Reference]
    */
-  public val medication: FhirChoiceTypes.CodeableConceptOrReference,
+  public val medication: Medication,
   /** The person or animal or group receiving the medication. */
   public val subject: Reference,
   /**
@@ -189,7 +189,7 @@ public data class MedicationAdministration(
    *
    * A FHIR choice type — one of: [DateTime] | [Period]
    */
-  public val effective: MedicationAdministration.Effective,
+  public val effective: Effective,
   /** Indicates who or what performed the medication administration and how they were involved. */
   public val performer: List<Performer> = listOf(),
   /** A code indicating why the medication was given. */
@@ -477,7 +477,7 @@ public data class MedicationAdministration(
      *
      * A FHIR choice type — one of: [Quantity] | [Ratio]
      */
-    public val rate: Dosage.Rate? = null,
+    public val rate: Rate? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -493,6 +493,13 @@ public data class MedicationAdministration(
           rate = this@with.rate
         }
       }
+
+    /** A FHIR choice type — one of: [Quantity] | [Ratio] */
+    public sealed interface Rate {
+      public typealias Quantity = dev.ohs.fhir.model.r4.Quantity
+
+      public typealias Ratio = dev.ohs.fhir.model.r4.Ratio
+    }
 
     public class Builder() {
       /**
@@ -599,7 +606,7 @@ public data class MedicationAdministration(
        *
        * A FHIR choice type — one of: [Quantity] | [Ratio]
        */
-      public var rate: Dosage.Rate? = null
+      public var rate: Rate? = null
 
       public fun build(): Dosage =
         Dosage(
@@ -614,9 +621,20 @@ public data class MedicationAdministration(
           rate = rate,
         )
     }
+  }
 
-    /** A FHIR choice type — one of: [Quantity] | [Ratio] */
-    public typealias Rate = FhirChoiceTypes.QuantityOrRatio
+  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+  public sealed interface Medication {
+    public typealias CodeableConcept = dev.ohs.fhir.model.r4.CodeableConcept
+
+    public typealias Reference = dev.ohs.fhir.model.r4.Reference
+  }
+
+  /** A FHIR choice type — one of: [DateTime] | [Period] */
+  public sealed interface Effective {
+    public typealias DateTime = dev.ohs.fhir.model.r4.DateTime
+
+    public typealias Period = dev.ohs.fhir.model.r4.Period
   }
 
   public class Builder(
@@ -640,7 +658,7 @@ public data class MedicationAdministration(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public var medication: FhirChoiceTypes.CodeableConceptOrReference,
+    public var medication: Medication,
     /** The person or animal or group receiving the medication. */
     public var subject: Reference.Builder,
     /**
@@ -650,7 +668,7 @@ public data class MedicationAdministration(
      *
      * A FHIR choice type — one of: [DateTime] | [Period]
      */
-    public var effective: MedicationAdministration.Effective,
+    public var effective: Effective,
   ) : DomainResource.Builder() {
     /**
      * The logical id of the resource, as used in the URL for the resource. Once assigned, this
@@ -933,7 +951,4 @@ public data class MedicationAdministration(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [DateTime] | [Period] */
-  public typealias Effective = FhirChoiceTypes.DateTimeOrPeriod
 }

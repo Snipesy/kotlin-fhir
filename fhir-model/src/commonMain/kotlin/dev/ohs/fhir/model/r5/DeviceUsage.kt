@@ -169,9 +169,9 @@ public data class DeviceUsage(
   /**
    * How often the device was used.
    *
-   * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
+   * A FHIR choice type — one of: [DateTime] | [Period] | [dev.ohs.fhir.model.r5.Timing]
    */
-  public val timing: FhirChoiceTypes.DateTimeOrPeriodOrTiming? = null,
+  public val timing: Timing? = null,
   /** The time at which the statement was recorded by informationSource. */
   public val dateAsserted: DateTime? = null,
   /**
@@ -345,6 +345,15 @@ public data class DeviceUsage(
     }
   }
 
+  /** A FHIR choice type — one of: [DateTime] | [Period] | [dev.ohs.fhir.model.r5.Timing] */
+  public sealed interface Timing {
+    public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+    public typealias Period = dev.ohs.fhir.model.r5.Period
+
+    public typealias Timing = dev.ohs.fhir.model.r5.Timing
+  }
+
   public class Builder(
     /**
      * A code representing the patient or other source's judgment about the state of the device used
@@ -501,9 +510,9 @@ public data class DeviceUsage(
     /**
      * How often the device was used.
      *
-     * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
+     * A FHIR choice type — one of: [DateTime] | [Period] | [dev.ohs.fhir.model.r5.Timing]
      */
-    public var timing: FhirChoiceTypes.DateTimeOrPeriodOrTiming? = null
+    public var timing: Timing? = null
 
     /** The time at which the statement was recorded by informationSource. */
     public var dateAsserted: DateTime.Builder? = null

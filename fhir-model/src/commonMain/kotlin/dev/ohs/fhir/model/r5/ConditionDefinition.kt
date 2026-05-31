@@ -182,7 +182,7 @@ public data class ConditionDefinition(
    *
    * A FHIR choice type — one of: [Coding] | [String]
    */
-  public val versionAlgorithm: ConditionDefinition.VersionAlgorithm? = null,
+  public val versionAlgorithm: VersionAlgorithm? = null,
   /**
    * A natural language name identifying the condition definition. This name should be usable as an
    * identifier for the module by machine processing applications such as code generation.
@@ -652,7 +652,7 @@ public data class ConditionDefinition(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Quantity]
      */
-    public val `value`: Precondition.Value? = null,
+    public val `value`: Value? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -663,6 +663,13 @@ public data class ConditionDefinition(
           `value` = this@with.`value`
         }
       }
+
+    /** A FHIR choice type — one of: [CodeableConcept] | [Quantity] */
+    public sealed interface Value {
+      public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+      public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+    }
 
     public class Builder(
       /** Kind of pre-condition. */
@@ -715,7 +722,7 @@ public data class ConditionDefinition(
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Quantity]
        */
-      public var `value`: Precondition.Value? = null
+      public var `value`: Value? = null
 
       public fun build(): Precondition =
         Precondition(
@@ -727,9 +734,6 @@ public data class ConditionDefinition(
           `value` = `value`,
         )
     }
-
-    /** A FHIR choice type — one of: [CodeableConcept] | [Quantity] */
-    public typealias Value = FhirChoiceTypes.CodeableConceptOrQuantity
   }
 
   /** Questionnaire for this condition. */
@@ -956,6 +960,13 @@ public data class ConditionDefinition(
     }
   }
 
+  /** A FHIR choice type — one of: [Coding] | [String] */
+  public sealed interface VersionAlgorithm {
+    public typealias Coding = dev.ohs.fhir.model.r5.Coding
+
+    public typealias String = dev.ohs.fhir.model.r5.String
+  }
+
   public class Builder(
     /**
      * The status of this condition definition. Enables tracking the life-cycle of the content.
@@ -1132,7 +1143,7 @@ public data class ConditionDefinition(
      *
      * A FHIR choice type — one of: [Coding] | [String]
      */
-    public var versionAlgorithm: ConditionDefinition.VersionAlgorithm? = null
+    public var versionAlgorithm: VersionAlgorithm? = null
 
     /**
      * A natural language name identifying the condition definition. This name should be usable as
@@ -1401,7 +1412,4 @@ public data class ConditionDefinition(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [Coding] | [String] */
-  public typealias VersionAlgorithm = FhirChoiceTypes.CodingOrString
 }

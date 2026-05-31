@@ -67,7 +67,7 @@ public data class ParameterDefinition(
    * data will conform to.
    */
   public val profile: Canonical? = null,
-) : DataType(), FhirChoiceTypes.ElementDefinitionDefaultValueChoice {
+) : DataType(), FhirChoiceParticipants.ParameterDefinitionChoices {
   public fun toBuilder(): Builder =
     with(this) {
       Builder(use, type).apply {

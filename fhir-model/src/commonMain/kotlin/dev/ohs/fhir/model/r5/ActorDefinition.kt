@@ -175,7 +175,7 @@ public data class ActorDefinition(
    *
    * A FHIR choice type — one of: [Coding] | [String]
    */
-  public val versionAlgorithm: ActorDefinition.VersionAlgorithm? = null,
+  public val versionAlgorithm: VersionAlgorithm? = null,
   /**
    * A natural language name identifying the actor definition. This name should be usable as an
    * identifier for the module by machine processing applications such as code generation.
@@ -352,6 +352,13 @@ public data class ActorDefinition(
       }
     }
 
+  /** A FHIR choice type — one of: [Coding] | [String] */
+  public sealed interface VersionAlgorithm {
+    public typealias Coding = dev.ohs.fhir.model.r5.Coding
+
+    public typealias String = dev.ohs.fhir.model.r5.String
+  }
+
   public class Builder(
     /**
      * The status of this actor definition. Enables tracking the life-cycle of the content.
@@ -522,7 +529,7 @@ public data class ActorDefinition(
      *
      * A FHIR choice type — one of: [Coding] | [String]
      */
-    public var versionAlgorithm: ActorDefinition.VersionAlgorithm? = null
+    public var versionAlgorithm: VersionAlgorithm? = null
 
     /**
      * A natural language name identifying the actor definition. This name should be usable as an
@@ -735,7 +742,4 @@ public data class ActorDefinition(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [Coding] | [String] */
-  public typealias VersionAlgorithm = FhirChoiceTypes.CodingOrString
 }

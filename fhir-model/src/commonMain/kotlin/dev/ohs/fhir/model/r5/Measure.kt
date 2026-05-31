@@ -186,7 +186,7 @@ public data class Measure(
    *
    * A FHIR choice type — one of: [Coding] | [String]
    */
-  public val versionAlgorithm: Measure.VersionAlgorithm? = null,
+  public val versionAlgorithm: VersionAlgorithm? = null,
   /**
    * A natural language name identifying the measure. This name should be usable as an identifier
    * for the module by machine processing applications such as code generation.
@@ -234,7 +234,7 @@ public data class Measure(
    *
    * A FHIR choice type — one of: [CodeableConcept] | [Reference]
    */
-  public val subject: Measure.Subject? = null,
+  public val subject: Subject? = null,
   /**
    * The population basis specifies the type of elements in the population. For a subject-based
    * measure, this is boolean (because the subject and the population basis are the same, and the
@@ -770,7 +770,7 @@ public data class Measure(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public val subject: Group.Subject? = null,
+    public val subject: Subject? = null,
     /**
      * The population basis specifies the type of elements in the population. For a subject-based
      * measure, this is boolean (because the subject and the population basis are the same, and the
@@ -1476,6 +1476,13 @@ public data class Measure(
       }
     }
 
+    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+    public sealed interface Subject {
+      public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+      public typealias Reference = dev.ohs.fhir.model.r5.Reference
+    }
+
     public class Builder() {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -1559,7 +1566,7 @@ public data class Measure(
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public var subject: Group.Subject? = null
+      public var subject: Subject? = null
 
       /**
        * The population basis specifies the type of elements in the population. For a subject-based
@@ -1659,9 +1666,6 @@ public data class Measure(
           stratifier = stratifier.map { it.build() },
         )
     }
-
-    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
-    public typealias Subject = FhirChoiceTypes.CodeableConceptOrReference
   }
 
   /**
@@ -1845,6 +1849,20 @@ public data class Measure(
     }
   }
 
+  /** A FHIR choice type — one of: [Coding] | [String] */
+  public sealed interface VersionAlgorithm {
+    public typealias Coding = dev.ohs.fhir.model.r5.Coding
+
+    public typealias String = dev.ohs.fhir.model.r5.String
+  }
+
+  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+  public sealed interface Subject {
+    public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+    public typealias Reference = dev.ohs.fhir.model.r5.Reference
+  }
+
   public class Builder(
     /**
      * The status of this measure. Enables tracking the life-cycle of the content.
@@ -2020,7 +2038,7 @@ public data class Measure(
      *
      * A FHIR choice type — one of: [Coding] | [String]
      */
-    public var versionAlgorithm: Measure.VersionAlgorithm? = null
+    public var versionAlgorithm: VersionAlgorithm? = null
 
     /**
      * A natural language name identifying the measure. This name should be usable as an identifier
@@ -2064,7 +2082,7 @@ public data class Measure(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public var subject: Measure.Subject? = null
+    public var subject: Subject? = null
 
     /**
      * The population basis specifies the type of elements in the population. For a subject-based
@@ -2447,10 +2465,4 @@ public data class Measure(
         supplementalData = supplementalData.map { it.build() },
       )
   }
-
-  /** A FHIR choice type — one of: [Coding] | [String] */
-  public typealias VersionAlgorithm = FhirChoiceTypes.CodingOrString
-
-  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
-  public typealias Subject = FhirChoiceTypes.CodeableConceptOrReference
 }

@@ -153,7 +153,7 @@ public data class SupplyRequest(
    *
    * A FHIR choice type — one of: [CodeableConcept] | [Reference]
    */
-  public val item: SupplyRequest.Item,
+  public val item: Item,
   /** The amount that is being ordered of the indicated item. */
   public val quantity: Quantity,
   /** Specific parameters for the ordered item. For example, the size of the indicated item. */
@@ -163,7 +163,7 @@ public data class SupplyRequest(
    *
    * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
    */
-  public val occurrence: SupplyRequest.Occurrence? = null,
+  public val occurrence: Occurrence? = null,
   /** When the request was made. */
   public val authoredOn: DateTime? = null,
   /** The device, practitioner, etc. who initiated the request. */
@@ -255,7 +255,7 @@ public data class SupplyRequest(
      *
      * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range]
      */
-    public val `value`: Parameter.Value? = null,
+    public val `value`: Value? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -267,6 +267,17 @@ public data class SupplyRequest(
           `value` = this@with.`value`
         }
       }
+
+    /** A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range] */
+    public sealed interface Value {
+      public typealias Boolean = dev.ohs.fhir.model.r4b.Boolean
+
+      public typealias CodeableConcept = dev.ohs.fhir.model.r4b.CodeableConcept
+
+      public typealias Quantity = dev.ohs.fhir.model.r4b.Quantity
+
+      public typealias Range = dev.ohs.fhir.model.r4b.Range
+    }
 
     public class Builder() {
       /**
@@ -319,7 +330,7 @@ public data class SupplyRequest(
        *
        * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range]
        */
-      public var `value`: Parameter.Value? = null
+      public var `value`: Value? = null
 
       public fun build(): Parameter =
         Parameter(
@@ -330,9 +341,22 @@ public data class SupplyRequest(
           `value` = `value`,
         )
     }
+  }
 
-    /** A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range] */
-    public typealias Value = FhirChoiceTypes.BooleanOrCodeableConceptOrQuantityOrRange
+  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+  public sealed interface Item {
+    public typealias CodeableConcept = dev.ohs.fhir.model.r4b.CodeableConcept
+
+    public typealias Reference = dev.ohs.fhir.model.r4b.Reference
+  }
+
+  /** A FHIR choice type — one of: [DateTime] | [Period] | [Timing] */
+  public sealed interface Occurrence {
+    public typealias DateTime = dev.ohs.fhir.model.r4b.DateTime
+
+    public typealias Period = dev.ohs.fhir.model.r4b.Period
+
+    public typealias Timing = dev.ohs.fhir.model.r4b.Timing
   }
 
   public class Builder(
@@ -346,7 +370,7 @@ public data class SupplyRequest(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public var item: SupplyRequest.Item,
+    public var item: Item,
     /** The amount that is being ordered of the indicated item. */
     public var quantity: Quantity.Builder,
   ) : DomainResource.Builder() {
@@ -486,7 +510,7 @@ public data class SupplyRequest(
      *
      * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
      */
-    public var occurrence: SupplyRequest.Occurrence? = null
+    public var occurrence: Occurrence? = null
 
     /** When the request was made. */
     public var authoredOn: DateTime.Builder? = null
@@ -608,10 +632,4 @@ public data class SupplyRequest(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
-  public typealias Item = FhirChoiceTypes.CodeableConceptOrReference
-
-  /** A FHIR choice type — one of: [DateTime] | [Period] | [Timing] */
-  public typealias Occurrence = FhirChoiceTypes.DateTimeOrPeriodOrTiming
 }

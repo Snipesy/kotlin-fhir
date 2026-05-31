@@ -242,7 +242,7 @@ public data class ElementDefinition(
    * | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] | [UrlBox] | [UsageContext] |
    * [UuidBox]
    */
-  public val defaultValue: ElementDefinition.DefaultValue? = null,
+  public val defaultValue: DefaultValue? = null,
   /**
    * The Implicit meaning that is to be understood when this element is missing (e.g. 'when this
    * element is missing, the period is ongoing').
@@ -281,7 +281,7 @@ public data class ElementDefinition(
    * | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] | [UrlBox] | [UsageContext] |
    * [UuidBox]
    */
-  public val fixed: ElementDefinition.Fixed? = null,
+  public val fixed: Fixed? = null,
   /**
    * Specifies a value that the value in the instance SHALL follow - that is, any value in the
    * pattern must be found in the instance. Other additional values may be found too. This is
@@ -312,7 +312,7 @@ public data class ElementDefinition(
    * | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] | [UrlBox] | [UsageContext] |
    * [UuidBox]
    */
-  public val pattern: ElementDefinition.Pattern? = null,
+  public val pattern: Pattern? = null,
   /**
    * A sample value for this element demonstrating the type of information that would typically be
    * found in the element.
@@ -337,7 +337,7 @@ public data class ElementDefinition(
    * A FHIR choice type — one of: [Date] | [DateTime] | [Decimal] | [Instant] | [IntegerBox] |
    * [PositiveIntBox] | [Quantity] | [Time] | [UnsignedIntBox]
    */
-  public val minValue: ElementDefinition.MinValue? = null,
+  public val minValue: MinValue? = null,
   /**
    * The maximum allowed value for the element. The value is inclusive. This is allowed for the
    * types date, dateTime, instant, time, decimal, integer, and Quantity.
@@ -352,7 +352,7 @@ public data class ElementDefinition(
    * A FHIR choice type — one of: [Date] | [DateTime] | [Decimal] | [Instant] | [IntegerBox] |
    * [PositiveIntBox] | [Quantity] | [Time] | [UnsignedIntBox]
    */
-  public val maxValue: ElementDefinition.MaxValue? = null,
+  public val maxValue: MaxValue? = null,
   /**
    * Indicates the maximum length in characters that is permitted to be present in conformant
    * instances and which is expected to be supported by conformant consumers that support the
@@ -1049,7 +1049,7 @@ public data class ElementDefinition(
      * [StringBox] | [Time] | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] |
      * [UrlBox] | [UsageContext] | [UuidBox]
      */
-    public val `value`: Example.Value,
+    public val `value`: Value,
   ) : Element() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -1058,6 +1058,119 @@ public data class ElementDefinition(
           extension = this@with.extension.map { it.toBuilder() }.toMutableList()
         }
       }
+
+    /**
+     * A FHIR choice type — one of: [Address] | [AgeBox] | [Annotation] | [Attachment] |
+     * [Base64Binary] | [Boolean] | [CanonicalBox] | [CodeBox] | [CodeableConcept] | [Coding] |
+     * [ContactDetail] | [ContactPoint] | [Contributor] | [CountBox] | [DataRequirement] | [Date] |
+     * [DateTime] | [Decimal] | [DistanceBox] | [Dosage] | [DurationBox] | [Expression] |
+     * [HumanName] | [IdBox] | [Identifier] | [Instant] | [IntegerBox] | [MarkdownBox] | [Meta] |
+     * [Money] | [OidBox] | [ParameterDefinition] | [Period] | [PositiveIntBox] | [QuantityBox] |
+     * [Range] | [Ratio] | [Reference] | [RelatedArtifact] | [SampledData] | [Signature] |
+     * [StringBox] | [Time] | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] |
+     * [UrlBox] | [UsageContext] | [UuidBox]
+     */
+    public sealed interface Value {
+      public typealias Address = dev.ohs.fhir.model.r4.Address
+
+      public typealias Age = AgeBox
+
+      public typealias Annotation = dev.ohs.fhir.model.r4.Annotation
+
+      public typealias Attachment = dev.ohs.fhir.model.r4.Attachment
+
+      public typealias Base64Binary = dev.ohs.fhir.model.r4.Base64Binary
+
+      public typealias Boolean = dev.ohs.fhir.model.r4.Boolean
+
+      public typealias Canonical = CanonicalBox
+
+      public typealias Code = CodeBox
+
+      public typealias CodeableConcept = dev.ohs.fhir.model.r4.CodeableConcept
+
+      public typealias Coding = dev.ohs.fhir.model.r4.Coding
+
+      public typealias ContactDetail = dev.ohs.fhir.model.r4.ContactDetail
+
+      public typealias ContactPoint = dev.ohs.fhir.model.r4.ContactPoint
+
+      public typealias Contributor = dev.ohs.fhir.model.r4.Contributor
+
+      public typealias Count = CountBox
+
+      public typealias DataRequirement = dev.ohs.fhir.model.r4.DataRequirement
+
+      public typealias Date = dev.ohs.fhir.model.r4.Date
+
+      public typealias DateTime = dev.ohs.fhir.model.r4.DateTime
+
+      public typealias Decimal = dev.ohs.fhir.model.r4.Decimal
+
+      public typealias Distance = DistanceBox
+
+      public typealias Dosage = dev.ohs.fhir.model.r4.Dosage
+
+      public typealias Duration = DurationBox
+
+      public typealias Expression = dev.ohs.fhir.model.r4.Expression
+
+      public typealias HumanName = dev.ohs.fhir.model.r4.HumanName
+
+      public typealias Id = IdBox
+
+      public typealias Identifier = dev.ohs.fhir.model.r4.Identifier
+
+      public typealias Instant = dev.ohs.fhir.model.r4.Instant
+
+      public typealias Integer = IntegerBox
+
+      public typealias Markdown = MarkdownBox
+
+      public typealias Meta = dev.ohs.fhir.model.r4.Meta
+
+      public typealias Money = dev.ohs.fhir.model.r4.Money
+
+      public typealias Oid = OidBox
+
+      public typealias ParameterDefinition = dev.ohs.fhir.model.r4.ParameterDefinition
+
+      public typealias Period = dev.ohs.fhir.model.r4.Period
+
+      public typealias PositiveInt = PositiveIntBox
+
+      public typealias Quantity = QuantityBox
+
+      public typealias Range = dev.ohs.fhir.model.r4.Range
+
+      public typealias Ratio = dev.ohs.fhir.model.r4.Ratio
+
+      public typealias Reference = dev.ohs.fhir.model.r4.Reference
+
+      public typealias RelatedArtifact = dev.ohs.fhir.model.r4.RelatedArtifact
+
+      public typealias SampledData = dev.ohs.fhir.model.r4.SampledData
+
+      public typealias Signature = dev.ohs.fhir.model.r4.Signature
+
+      public typealias String = StringBox
+
+      public typealias Time = dev.ohs.fhir.model.r4.Time
+
+      public typealias Timing = dev.ohs.fhir.model.r4.Timing
+
+      public typealias TriggerDefinition = dev.ohs.fhir.model.r4.TriggerDefinition
+
+      public typealias UnsignedInt = UnsignedIntBox
+
+      public typealias Uri = UriBox
+
+      public typealias Url = UrlBox
+
+      public typealias UsageContext = dev.ohs.fhir.model.r4.UsageContext
+
+      public typealias Uuid = UuidBox
+    }
 
     public class Builder(
       /** Describes the purpose of this example amoung the set of examples. */
@@ -1075,7 +1188,7 @@ public data class ElementDefinition(
        * [StringBox] | [Time] | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] |
        * [UrlBox] | [UsageContext] | [UuidBox]
        */
-      public var `value`: Example.Value,
+      public var `value`: Value,
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -1105,19 +1218,6 @@ public data class ElementDefinition(
           `value` = `value`,
         )
     }
-
-    /**
-     * A FHIR choice type — one of: [Address] | [AgeBox] | [Annotation] | [Attachment] |
-     * [Base64Binary] | [Boolean] | [CanonicalBox] | [CodeBox] | [CodeableConcept] | [Coding] |
-     * [ContactDetail] | [ContactPoint] | [Contributor] | [CountBox] | [DataRequirement] | [Date] |
-     * [DateTime] | [Decimal] | [DistanceBox] | [Dosage] | [DurationBox] | [Expression] |
-     * [HumanName] | [IdBox] | [Identifier] | [Instant] | [IntegerBox] | [MarkdownBox] | [Meta] |
-     * [Money] | [OidBox] | [ParameterDefinition] | [Period] | [PositiveIntBox] | [QuantityBox] |
-     * [Range] | [Ratio] | [Reference] | [RelatedArtifact] | [SampledData] | [Signature] |
-     * [StringBox] | [Time] | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] |
-     * [UrlBox] | [UsageContext] | [UuidBox]
-     */
-    public typealias Value = FhirChoiceTypes.ElementDefinitionDefaultValueChoice
   }
 
   /**
@@ -1503,6 +1603,393 @@ public data class ElementDefinition(
     }
   }
 
+  /**
+   * A FHIR choice type — one of: [Address] | [AgeBox] | [Annotation] | [Attachment] |
+   * [Base64Binary] | [Boolean] | [CanonicalBox] | [CodeBox] | [CodeableConcept] | [Coding] |
+   * [ContactDetail] | [ContactPoint] | [Contributor] | [CountBox] | [DataRequirement] | [Date] |
+   * [DateTime] | [Decimal] | [DistanceBox] | [Dosage] | [DurationBox] | [Expression] | [HumanName]
+   * | [IdBox] | [Identifier] | [Instant] | [IntegerBox] | [MarkdownBox] | [Meta] | [Money] |
+   * [OidBox] | [ParameterDefinition] | [Period] | [PositiveIntBox] | [QuantityBox] | [Range] |
+   * [Ratio] | [Reference] | [RelatedArtifact] | [SampledData] | [Signature] | [StringBox] | [Time]
+   * | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] | [UrlBox] | [UsageContext] |
+   * [UuidBox]
+   */
+  public sealed interface DefaultValue {
+    public typealias Address = dev.ohs.fhir.model.r4.Address
+
+    public typealias Age = AgeBox
+
+    public typealias Annotation = dev.ohs.fhir.model.r4.Annotation
+
+    public typealias Attachment = dev.ohs.fhir.model.r4.Attachment
+
+    public typealias Base64Binary = dev.ohs.fhir.model.r4.Base64Binary
+
+    public typealias Boolean = dev.ohs.fhir.model.r4.Boolean
+
+    public typealias Canonical = CanonicalBox
+
+    public typealias Code = CodeBox
+
+    public typealias CodeableConcept = dev.ohs.fhir.model.r4.CodeableConcept
+
+    public typealias Coding = dev.ohs.fhir.model.r4.Coding
+
+    public typealias ContactDetail = dev.ohs.fhir.model.r4.ContactDetail
+
+    public typealias ContactPoint = dev.ohs.fhir.model.r4.ContactPoint
+
+    public typealias Contributor = dev.ohs.fhir.model.r4.Contributor
+
+    public typealias Count = CountBox
+
+    public typealias DataRequirement = dev.ohs.fhir.model.r4.DataRequirement
+
+    public typealias Date = dev.ohs.fhir.model.r4.Date
+
+    public typealias DateTime = dev.ohs.fhir.model.r4.DateTime
+
+    public typealias Decimal = dev.ohs.fhir.model.r4.Decimal
+
+    public typealias Distance = DistanceBox
+
+    public typealias Dosage = dev.ohs.fhir.model.r4.Dosage
+
+    public typealias Duration = DurationBox
+
+    public typealias Expression = dev.ohs.fhir.model.r4.Expression
+
+    public typealias HumanName = dev.ohs.fhir.model.r4.HumanName
+
+    public typealias Id = IdBox
+
+    public typealias Identifier = dev.ohs.fhir.model.r4.Identifier
+
+    public typealias Instant = dev.ohs.fhir.model.r4.Instant
+
+    public typealias Integer = IntegerBox
+
+    public typealias Markdown = MarkdownBox
+
+    public typealias Meta = dev.ohs.fhir.model.r4.Meta
+
+    public typealias Money = dev.ohs.fhir.model.r4.Money
+
+    public typealias Oid = OidBox
+
+    public typealias ParameterDefinition = dev.ohs.fhir.model.r4.ParameterDefinition
+
+    public typealias Period = dev.ohs.fhir.model.r4.Period
+
+    public typealias PositiveInt = PositiveIntBox
+
+    public typealias Quantity = QuantityBox
+
+    public typealias Range = dev.ohs.fhir.model.r4.Range
+
+    public typealias Ratio = dev.ohs.fhir.model.r4.Ratio
+
+    public typealias Reference = dev.ohs.fhir.model.r4.Reference
+
+    public typealias RelatedArtifact = dev.ohs.fhir.model.r4.RelatedArtifact
+
+    public typealias SampledData = dev.ohs.fhir.model.r4.SampledData
+
+    public typealias Signature = dev.ohs.fhir.model.r4.Signature
+
+    public typealias String = StringBox
+
+    public typealias Time = dev.ohs.fhir.model.r4.Time
+
+    public typealias Timing = dev.ohs.fhir.model.r4.Timing
+
+    public typealias TriggerDefinition = dev.ohs.fhir.model.r4.TriggerDefinition
+
+    public typealias UnsignedInt = UnsignedIntBox
+
+    public typealias Uri = UriBox
+
+    public typealias Url = UrlBox
+
+    public typealias UsageContext = dev.ohs.fhir.model.r4.UsageContext
+
+    public typealias Uuid = UuidBox
+  }
+
+  /**
+   * A FHIR choice type — one of: [Address] | [AgeBox] | [Annotation] | [Attachment] |
+   * [Base64Binary] | [Boolean] | [CanonicalBox] | [CodeBox] | [CodeableConcept] | [Coding] |
+   * [ContactDetail] | [ContactPoint] | [Contributor] | [CountBox] | [DataRequirement] | [Date] |
+   * [DateTime] | [Decimal] | [DistanceBox] | [Dosage] | [DurationBox] | [Expression] | [HumanName]
+   * | [IdBox] | [Identifier] | [Instant] | [IntegerBox] | [MarkdownBox] | [Meta] | [Money] |
+   * [OidBox] | [ParameterDefinition] | [Period] | [PositiveIntBox] | [QuantityBox] | [Range] |
+   * [Ratio] | [Reference] | [RelatedArtifact] | [SampledData] | [Signature] | [StringBox] | [Time]
+   * | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] | [UrlBox] | [UsageContext] |
+   * [UuidBox]
+   */
+  public sealed interface Fixed {
+    public typealias Address = dev.ohs.fhir.model.r4.Address
+
+    public typealias Age = AgeBox
+
+    public typealias Annotation = dev.ohs.fhir.model.r4.Annotation
+
+    public typealias Attachment = dev.ohs.fhir.model.r4.Attachment
+
+    public typealias Base64Binary = dev.ohs.fhir.model.r4.Base64Binary
+
+    public typealias Boolean = dev.ohs.fhir.model.r4.Boolean
+
+    public typealias Canonical = CanonicalBox
+
+    public typealias Code = CodeBox
+
+    public typealias CodeableConcept = dev.ohs.fhir.model.r4.CodeableConcept
+
+    public typealias Coding = dev.ohs.fhir.model.r4.Coding
+
+    public typealias ContactDetail = dev.ohs.fhir.model.r4.ContactDetail
+
+    public typealias ContactPoint = dev.ohs.fhir.model.r4.ContactPoint
+
+    public typealias Contributor = dev.ohs.fhir.model.r4.Contributor
+
+    public typealias Count = CountBox
+
+    public typealias DataRequirement = dev.ohs.fhir.model.r4.DataRequirement
+
+    public typealias Date = dev.ohs.fhir.model.r4.Date
+
+    public typealias DateTime = dev.ohs.fhir.model.r4.DateTime
+
+    public typealias Decimal = dev.ohs.fhir.model.r4.Decimal
+
+    public typealias Distance = DistanceBox
+
+    public typealias Dosage = dev.ohs.fhir.model.r4.Dosage
+
+    public typealias Duration = DurationBox
+
+    public typealias Expression = dev.ohs.fhir.model.r4.Expression
+
+    public typealias HumanName = dev.ohs.fhir.model.r4.HumanName
+
+    public typealias Id = IdBox
+
+    public typealias Identifier = dev.ohs.fhir.model.r4.Identifier
+
+    public typealias Instant = dev.ohs.fhir.model.r4.Instant
+
+    public typealias Integer = IntegerBox
+
+    public typealias Markdown = MarkdownBox
+
+    public typealias Meta = dev.ohs.fhir.model.r4.Meta
+
+    public typealias Money = dev.ohs.fhir.model.r4.Money
+
+    public typealias Oid = OidBox
+
+    public typealias ParameterDefinition = dev.ohs.fhir.model.r4.ParameterDefinition
+
+    public typealias Period = dev.ohs.fhir.model.r4.Period
+
+    public typealias PositiveInt = PositiveIntBox
+
+    public typealias Quantity = QuantityBox
+
+    public typealias Range = dev.ohs.fhir.model.r4.Range
+
+    public typealias Ratio = dev.ohs.fhir.model.r4.Ratio
+
+    public typealias Reference = dev.ohs.fhir.model.r4.Reference
+
+    public typealias RelatedArtifact = dev.ohs.fhir.model.r4.RelatedArtifact
+
+    public typealias SampledData = dev.ohs.fhir.model.r4.SampledData
+
+    public typealias Signature = dev.ohs.fhir.model.r4.Signature
+
+    public typealias String = StringBox
+
+    public typealias Time = dev.ohs.fhir.model.r4.Time
+
+    public typealias Timing = dev.ohs.fhir.model.r4.Timing
+
+    public typealias TriggerDefinition = dev.ohs.fhir.model.r4.TriggerDefinition
+
+    public typealias UnsignedInt = UnsignedIntBox
+
+    public typealias Uri = UriBox
+
+    public typealias Url = UrlBox
+
+    public typealias UsageContext = dev.ohs.fhir.model.r4.UsageContext
+
+    public typealias Uuid = UuidBox
+  }
+
+  /**
+   * A FHIR choice type — one of: [Address] | [AgeBox] | [Annotation] | [Attachment] |
+   * [Base64Binary] | [Boolean] | [CanonicalBox] | [CodeBox] | [CodeableConcept] | [Coding] |
+   * [ContactDetail] | [ContactPoint] | [Contributor] | [CountBox] | [DataRequirement] | [Date] |
+   * [DateTime] | [Decimal] | [DistanceBox] | [Dosage] | [DurationBox] | [Expression] | [HumanName]
+   * | [IdBox] | [Identifier] | [Instant] | [IntegerBox] | [MarkdownBox] | [Meta] | [Money] |
+   * [OidBox] | [ParameterDefinition] | [Period] | [PositiveIntBox] | [QuantityBox] | [Range] |
+   * [Ratio] | [Reference] | [RelatedArtifact] | [SampledData] | [Signature] | [StringBox] | [Time]
+   * | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] | [UrlBox] | [UsageContext] |
+   * [UuidBox]
+   */
+  public sealed interface Pattern {
+    public typealias Address = dev.ohs.fhir.model.r4.Address
+
+    public typealias Age = AgeBox
+
+    public typealias Annotation = dev.ohs.fhir.model.r4.Annotation
+
+    public typealias Attachment = dev.ohs.fhir.model.r4.Attachment
+
+    public typealias Base64Binary = dev.ohs.fhir.model.r4.Base64Binary
+
+    public typealias Boolean = dev.ohs.fhir.model.r4.Boolean
+
+    public typealias Canonical = CanonicalBox
+
+    public typealias Code = CodeBox
+
+    public typealias CodeableConcept = dev.ohs.fhir.model.r4.CodeableConcept
+
+    public typealias Coding = dev.ohs.fhir.model.r4.Coding
+
+    public typealias ContactDetail = dev.ohs.fhir.model.r4.ContactDetail
+
+    public typealias ContactPoint = dev.ohs.fhir.model.r4.ContactPoint
+
+    public typealias Contributor = dev.ohs.fhir.model.r4.Contributor
+
+    public typealias Count = CountBox
+
+    public typealias DataRequirement = dev.ohs.fhir.model.r4.DataRequirement
+
+    public typealias Date = dev.ohs.fhir.model.r4.Date
+
+    public typealias DateTime = dev.ohs.fhir.model.r4.DateTime
+
+    public typealias Decimal = dev.ohs.fhir.model.r4.Decimal
+
+    public typealias Distance = DistanceBox
+
+    public typealias Dosage = dev.ohs.fhir.model.r4.Dosage
+
+    public typealias Duration = DurationBox
+
+    public typealias Expression = dev.ohs.fhir.model.r4.Expression
+
+    public typealias HumanName = dev.ohs.fhir.model.r4.HumanName
+
+    public typealias Id = IdBox
+
+    public typealias Identifier = dev.ohs.fhir.model.r4.Identifier
+
+    public typealias Instant = dev.ohs.fhir.model.r4.Instant
+
+    public typealias Integer = IntegerBox
+
+    public typealias Markdown = MarkdownBox
+
+    public typealias Meta = dev.ohs.fhir.model.r4.Meta
+
+    public typealias Money = dev.ohs.fhir.model.r4.Money
+
+    public typealias Oid = OidBox
+
+    public typealias ParameterDefinition = dev.ohs.fhir.model.r4.ParameterDefinition
+
+    public typealias Period = dev.ohs.fhir.model.r4.Period
+
+    public typealias PositiveInt = PositiveIntBox
+
+    public typealias Quantity = QuantityBox
+
+    public typealias Range = dev.ohs.fhir.model.r4.Range
+
+    public typealias Ratio = dev.ohs.fhir.model.r4.Ratio
+
+    public typealias Reference = dev.ohs.fhir.model.r4.Reference
+
+    public typealias RelatedArtifact = dev.ohs.fhir.model.r4.RelatedArtifact
+
+    public typealias SampledData = dev.ohs.fhir.model.r4.SampledData
+
+    public typealias Signature = dev.ohs.fhir.model.r4.Signature
+
+    public typealias String = StringBox
+
+    public typealias Time = dev.ohs.fhir.model.r4.Time
+
+    public typealias Timing = dev.ohs.fhir.model.r4.Timing
+
+    public typealias TriggerDefinition = dev.ohs.fhir.model.r4.TriggerDefinition
+
+    public typealias UnsignedInt = UnsignedIntBox
+
+    public typealias Uri = UriBox
+
+    public typealias Url = UrlBox
+
+    public typealias UsageContext = dev.ohs.fhir.model.r4.UsageContext
+
+    public typealias Uuid = UuidBox
+  }
+
+  /**
+   * A FHIR choice type — one of: [Date] | [DateTime] | [Decimal] | [Instant] | [IntegerBox] |
+   * [PositiveIntBox] | [Quantity] | [Time] | [UnsignedIntBox]
+   */
+  public sealed interface MinValue {
+    public typealias Date = dev.ohs.fhir.model.r4.Date
+
+    public typealias DateTime = dev.ohs.fhir.model.r4.DateTime
+
+    public typealias Decimal = dev.ohs.fhir.model.r4.Decimal
+
+    public typealias Instant = dev.ohs.fhir.model.r4.Instant
+
+    public typealias Integer = IntegerBox
+
+    public typealias PositiveInt = PositiveIntBox
+
+    public typealias Quantity = dev.ohs.fhir.model.r4.Quantity
+
+    public typealias Time = dev.ohs.fhir.model.r4.Time
+
+    public typealias UnsignedInt = UnsignedIntBox
+  }
+
+  /**
+   * A FHIR choice type — one of: [Date] | [DateTime] | [Decimal] | [Instant] | [IntegerBox] |
+   * [PositiveIntBox] | [Quantity] | [Time] | [UnsignedIntBox]
+   */
+  public sealed interface MaxValue {
+    public typealias Date = dev.ohs.fhir.model.r4.Date
+
+    public typealias DateTime = dev.ohs.fhir.model.r4.DateTime
+
+    public typealias Decimal = dev.ohs.fhir.model.r4.Decimal
+
+    public typealias Instant = dev.ohs.fhir.model.r4.Instant
+
+    public typealias Integer = IntegerBox
+
+    public typealias PositiveInt = PositiveIntBox
+
+    public typealias Quantity = dev.ohs.fhir.model.r4.Quantity
+
+    public typealias Time = dev.ohs.fhir.model.r4.Time
+
+    public typealias UnsignedInt = UnsignedIntBox
+  }
+
   public open class Builder(
     /**
      * The path identifies the element and is expressed as a "."-separated list of ancestor
@@ -1731,7 +2218,7 @@ public data class ElementDefinition(
      * [StringBox] | [Time] | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] |
      * [UrlBox] | [UsageContext] | [UuidBox]
      */
-    public open var defaultValue: ElementDefinition.DefaultValue? = null
+    public open var defaultValue: DefaultValue? = null
 
     /**
      * The Implicit meaning that is to be understood when this element is missing (e.g. 'when this
@@ -1773,7 +2260,7 @@ public data class ElementDefinition(
      * [StringBox] | [Time] | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] |
      * [UrlBox] | [UsageContext] | [UuidBox]
      */
-    public open var fixed: ElementDefinition.Fixed? = null
+    public open var fixed: Fixed? = null
 
     /**
      * Specifies a value that the value in the instance SHALL follow - that is, any value in the
@@ -1805,7 +2292,7 @@ public data class ElementDefinition(
      * [StringBox] | [Time] | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] |
      * [UrlBox] | [UsageContext] | [UuidBox]
      */
-    public open var pattern: ElementDefinition.Pattern? = null
+    public open var pattern: Pattern? = null
 
     /**
      * A sample value for this element demonstrating the type of information that would typically be
@@ -1832,7 +2319,7 @@ public data class ElementDefinition(
      * A FHIR choice type — one of: [Date] | [DateTime] | [Decimal] | [Instant] | [IntegerBox] |
      * [PositiveIntBox] | [Quantity] | [Time] | [UnsignedIntBox]
      */
-    public open var minValue: ElementDefinition.MinValue? = null
+    public open var minValue: MinValue? = null
 
     /**
      * The maximum allowed value for the element. The value is inclusive. This is allowed for the
@@ -1848,7 +2335,7 @@ public data class ElementDefinition(
      * A FHIR choice type — one of: [Date] | [DateTime] | [Decimal] | [Instant] | [IntegerBox] |
      * [PositiveIntBox] | [Quantity] | [Time] | [UnsignedIntBox]
      */
-    public open var maxValue: ElementDefinition.MaxValue? = null
+    public open var maxValue: MaxValue? = null
 
     /**
      * Indicates the maximum length in characters that is permitted to be present in conformant
@@ -2184,55 +2671,4 @@ public data class ElementDefinition(
         }
     }
   }
-
-  /**
-   * A FHIR choice type — one of: [Address] | [AgeBox] | [Annotation] | [Attachment] |
-   * [Base64Binary] | [Boolean] | [CanonicalBox] | [CodeBox] | [CodeableConcept] | [Coding] |
-   * [ContactDetail] | [ContactPoint] | [Contributor] | [CountBox] | [DataRequirement] | [Date] |
-   * [DateTime] | [Decimal] | [DistanceBox] | [Dosage] | [DurationBox] | [Expression] | [HumanName]
-   * | [IdBox] | [Identifier] | [Instant] | [IntegerBox] | [MarkdownBox] | [Meta] | [Money] |
-   * [OidBox] | [ParameterDefinition] | [Period] | [PositiveIntBox] | [QuantityBox] | [Range] |
-   * [Ratio] | [Reference] | [RelatedArtifact] | [SampledData] | [Signature] | [StringBox] | [Time]
-   * | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] | [UrlBox] | [UsageContext] |
-   * [UuidBox]
-   */
-  public typealias DefaultValue = FhirChoiceTypes.ElementDefinitionDefaultValueChoice
-
-  /**
-   * A FHIR choice type — one of: [Address] | [AgeBox] | [Annotation] | [Attachment] |
-   * [Base64Binary] | [Boolean] | [CanonicalBox] | [CodeBox] | [CodeableConcept] | [Coding] |
-   * [ContactDetail] | [ContactPoint] | [Contributor] | [CountBox] | [DataRequirement] | [Date] |
-   * [DateTime] | [Decimal] | [DistanceBox] | [Dosage] | [DurationBox] | [Expression] | [HumanName]
-   * | [IdBox] | [Identifier] | [Instant] | [IntegerBox] | [MarkdownBox] | [Meta] | [Money] |
-   * [OidBox] | [ParameterDefinition] | [Period] | [PositiveIntBox] | [QuantityBox] | [Range] |
-   * [Ratio] | [Reference] | [RelatedArtifact] | [SampledData] | [Signature] | [StringBox] | [Time]
-   * | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] | [UrlBox] | [UsageContext] |
-   * [UuidBox]
-   */
-  public typealias Fixed = FhirChoiceTypes.ElementDefinitionDefaultValueChoice
-
-  /**
-   * A FHIR choice type — one of: [Address] | [AgeBox] | [Annotation] | [Attachment] |
-   * [Base64Binary] | [Boolean] | [CanonicalBox] | [CodeBox] | [CodeableConcept] | [Coding] |
-   * [ContactDetail] | [ContactPoint] | [Contributor] | [CountBox] | [DataRequirement] | [Date] |
-   * [DateTime] | [Decimal] | [DistanceBox] | [Dosage] | [DurationBox] | [Expression] | [HumanName]
-   * | [IdBox] | [Identifier] | [Instant] | [IntegerBox] | [MarkdownBox] | [Meta] | [Money] |
-   * [OidBox] | [ParameterDefinition] | [Period] | [PositiveIntBox] | [QuantityBox] | [Range] |
-   * [Ratio] | [Reference] | [RelatedArtifact] | [SampledData] | [Signature] | [StringBox] | [Time]
-   * | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] | [UrlBox] | [UsageContext] |
-   * [UuidBox]
-   */
-  public typealias Pattern = FhirChoiceTypes.ElementDefinitionDefaultValueChoice
-
-  /**
-   * A FHIR choice type — one of: [Date] | [DateTime] | [Decimal] | [Instant] | [IntegerBox] |
-   * [PositiveIntBox] | [Quantity] | [Time] | [UnsignedIntBox]
-   */
-  public typealias MinValue = FhirChoiceTypes.ElementDefinitionMaxValueChoice
-
-  /**
-   * A FHIR choice type — one of: [Date] | [DateTime] | [Decimal] | [Instant] | [IntegerBox] |
-   * [PositiveIntBox] | [Quantity] | [Time] | [UnsignedIntBox]
-   */
-  public typealias MaxValue = FhirChoiceTypes.ElementDefinitionMaxValueChoice
 }

@@ -302,12 +302,7 @@ private class BuilderSupportGenerator(
     open: Boolean,
   ) {
     val propertyMapper =
-      PropertyMapper(
-        PropertyMapper.MappingContext.BUILDER,
-        baseClassName,
-        valueSetMap,
-        choiceRegistry,
-      )
+      PropertyMapper(PropertyMapper.MappingContext.BUILDER, baseClassName, valueSetMap)
     val constructorBuilder = FunSpec.constructorBuilder()
     elements.forEach { element ->
       val propertyInfo = propertyMapper.mapToProperty(element)

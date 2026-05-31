@@ -42,7 +42,7 @@ public data class Url(
   override val extension: List<Extension> = listOf(),
   /** Primitive value for url */
   override val `value`: String? = null,
-) : Uri(id, extension, `value`), FhirChoiceTypes.ReferenceOrUrl {
+) : Uri(id, extension, `value`), ImplementationGuide.Definition.Page.Name {
   override fun toBuilder(): Builder =
     with(this) {
       Builder().apply {

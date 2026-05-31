@@ -103,7 +103,7 @@ public data class RelatedArtifact(
   public val publicationStatus: Enumeration<PublicationStatus>? = null,
   /** The date of publication of the artifact being referred to. */
   public val publicationDate: Date? = null,
-) : DataType(), FhirChoiceTypes.ElementDefinitionDefaultValueChoice {
+) : DataType(), FhirChoiceParticipants.RelatedArtifactChoices {
   public fun toBuilder(): Builder =
     with(this) {
       Builder(type).apply {

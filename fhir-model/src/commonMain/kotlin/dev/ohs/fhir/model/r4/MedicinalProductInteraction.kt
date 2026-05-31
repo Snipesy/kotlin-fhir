@@ -212,7 +212,7 @@ public data class MedicinalProductInteraction(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public val item: Interactant.Item,
+    public val item: Item,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -223,13 +223,20 @@ public data class MedicinalProductInteraction(
         }
       }
 
+    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+    public sealed interface Item {
+      public typealias CodeableConcept = dev.ohs.fhir.model.r4.CodeableConcept
+
+      public typealias Reference = dev.ohs.fhir.model.r4.Reference
+    }
+
     public class Builder(
       /**
        * The specific medication, food or laboratory test that interacts.
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public var item: Interactant.Item
+      public var item: Item
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -279,9 +286,6 @@ public data class MedicinalProductInteraction(
           item = item,
         )
     }
-
-    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
-    public typealias Item = FhirChoiceTypes.CodeableConceptOrReference
   }
 
   public class Builder() : DomainResource.Builder() {

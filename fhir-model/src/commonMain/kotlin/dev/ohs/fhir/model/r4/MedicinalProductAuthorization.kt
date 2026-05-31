@@ -383,7 +383,7 @@ public data class MedicinalProductAuthorization(
      *
      * A FHIR choice type — one of: [DateTime] | [Period]
      */
-    public val date: FhirChoiceTypes.DateTimeOrPeriod? = null,
+    public val date: Date? = null,
     /** Applcations submitted to obtain a marketing authorization. */
     public val application: List<Procedure> = listOf(),
   ) : BackboneElement() {
@@ -398,6 +398,13 @@ public data class MedicinalProductAuthorization(
           application = this@with.application.map { it.toBuilder() }.toMutableList()
         }
       }
+
+    /** A FHIR choice type — one of: [DateTime] | [Period] */
+    public sealed interface Date {
+      public typealias DateTime = dev.ohs.fhir.model.r4.DateTime
+
+      public typealias Period = dev.ohs.fhir.model.r4.Period
+    }
 
     public class Builder(
       /** Type of procedure. */
@@ -451,7 +458,7 @@ public data class MedicinalProductAuthorization(
        *
        * A FHIR choice type — one of: [DateTime] | [Period]
        */
-      public var date: FhirChoiceTypes.DateTimeOrPeriod? = null
+      public var date: Date? = null
 
       /** Applcations submitted to obtain a marketing authorization. */
       public var application: MutableList<Builder> = mutableListOf()

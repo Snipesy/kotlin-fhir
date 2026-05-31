@@ -520,7 +520,7 @@ public data class ClinicalUseDefinition(
      *
      * A FHIR choice type — one of: [Range] | [String]
      */
-    public val duration: FhirChoiceTypes.RangeOrString? = null,
+    public val duration: Duration? = null,
     /**
      * An unwanted side effect or negative outcome that may happen if you use the drug (or other
      * subject of this resource) for this indication.
@@ -547,6 +547,13 @@ public data class ClinicalUseDefinition(
           otherTherapy = this@with.otherTherapy.map { it.toBuilder() }.toMutableList()
         }
       }
+
+    /** A FHIR choice type — one of: [Range] | [String] */
+    public sealed interface Duration {
+      public typealias Range = dev.ohs.fhir.model.r4b.Range
+
+      public typealias String = dev.ohs.fhir.model.r4b.String
+    }
 
     public class Builder() {
       /**
@@ -611,7 +618,7 @@ public data class ClinicalUseDefinition(
        *
        * A FHIR choice type — one of: [Range] | [String]
        */
-      public var duration: FhirChoiceTypes.RangeOrString? = null
+      public var duration: Duration? = null
 
       /**
        * An unwanted side effect or negative outcome that may happen if you use the drug (or other
@@ -757,7 +764,7 @@ public data class ClinicalUseDefinition(
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public val item: Interactant.Item,
+      public val item: Item,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -768,13 +775,20 @@ public data class ClinicalUseDefinition(
           }
         }
 
+      /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+      public sealed interface Item {
+        public typealias CodeableConcept = dev.ohs.fhir.model.r4b.CodeableConcept
+
+        public typealias Reference = dev.ohs.fhir.model.r4b.Reference
+      }
+
       public class Builder(
         /**
          * The specific medication, food or laboratory test that interacts.
          *
          * A FHIR choice type — one of: [CodeableConcept] | [Reference]
          */
-        public var item: Interactant.Item
+        public var item: Item
       ) {
         /**
          * Unique id for the element within a resource (for internal references). This may be any
@@ -824,9 +838,6 @@ public data class ClinicalUseDefinition(
             item = item,
           )
       }
-
-      /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
-      public typealias Item = FhirChoiceTypes.CodeableConceptOrReference
     }
 
     public class Builder() {

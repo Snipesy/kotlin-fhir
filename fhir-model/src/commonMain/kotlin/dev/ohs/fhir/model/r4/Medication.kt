@@ -261,7 +261,7 @@ public data class Medication(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public val item: Ingredient.Item,
+    public val item: Item,
     /** Indication of whether this ingredient affects the therapeutic action of the drug. */
     public val isActive: Boolean? = null,
     /**
@@ -282,6 +282,13 @@ public data class Medication(
         }
       }
 
+    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+    public sealed interface Item {
+      public typealias CodeableConcept = dev.ohs.fhir.model.r4.CodeableConcept
+
+      public typealias Reference = dev.ohs.fhir.model.r4.Reference
+    }
+
     public class Builder(
       /**
        * The actual ingredient - either a substance (simple ingredient) or another medication of a
@@ -289,7 +296,7 @@ public data class Medication(
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public var item: Ingredient.Item
+      public var item: Item
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -351,9 +358,6 @@ public data class Medication(
           strength = strength?.build(),
         )
     }
-
-    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
-    public typealias Item = FhirChoiceTypes.CodeableConceptOrReference
   }
 
   /** Information that only applies to packages (not products). */

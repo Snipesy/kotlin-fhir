@@ -76,7 +76,7 @@ public data class SubstanceAmount(
    *
    * A FHIR choice type — one of: [Quantity] | [Range] | [String]
    */
-  public val amount: SubstanceAmount.Amount? = null,
+  public val amount: Amount? = null,
   /**
    * Most elements that require a quantitative value will also have a field called amount type.
    * Amount type should always be specified because the actual value of the amount is often
@@ -177,6 +177,15 @@ public data class SubstanceAmount(
     }
   }
 
+  /** A FHIR choice type — one of: [Quantity] | [Range] | [String] */
+  public sealed interface Amount {
+    public typealias Quantity = dev.ohs.fhir.model.r4.Quantity
+
+    public typealias Range = dev.ohs.fhir.model.r4.Range
+
+    public typealias String = dev.ohs.fhir.model.r4.String
+  }
+
   public open class Builder() {
     /**
      * Unique id for the element within a resource (for internal references). This may be any string
@@ -225,7 +234,7 @@ public data class SubstanceAmount(
      *
      * A FHIR choice type — one of: [Quantity] | [Range] | [String]
      */
-    public open var amount: SubstanceAmount.Amount? = null
+    public open var amount: Amount? = null
 
     /**
      * Most elements that require a quantitative value will also have a field called amount type.
@@ -254,7 +263,4 @@ public data class SubstanceAmount(
         referenceRange = referenceRange?.build(),
       )
   }
-
-  /** A FHIR choice type — one of: [Quantity] | [Range] | [String] */
-  public typealias Amount = FhirChoiceTypes.QuantityOrRangeOrString
 }

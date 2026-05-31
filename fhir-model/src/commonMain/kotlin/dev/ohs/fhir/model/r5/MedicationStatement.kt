@@ -202,7 +202,7 @@ public data class MedicationStatement(
    *
    * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
    */
-  public val effective: MedicationStatement.Effective? = null,
+  public val effective: Effective? = null,
   /** The date when the Medication Statement was asserted by the information source. */
   public val dateAsserted: DateTime? = null,
   /**
@@ -417,6 +417,15 @@ public data class MedicationStatement(
     }
   }
 
+  /** A FHIR choice type — one of: [DateTime] | [Period] | [Timing] */
+  public sealed interface Effective {
+    public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+    public typealias Period = dev.ohs.fhir.model.r5.Period
+
+    public typealias Timing = dev.ohs.fhir.model.r5.Timing
+  }
+
   public class Builder(
     /**
      * A code representing the status of recording the medication statement.
@@ -587,7 +596,7 @@ public data class MedicationStatement(
      *
      * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
      */
-    public var effective: MedicationStatement.Effective? = null
+    public var effective: Effective? = null
 
     /** The date when the Medication Statement was asserted by the information source. */
     public var dateAsserted: DateTime.Builder? = null
@@ -724,7 +733,4 @@ public data class MedicationStatement(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [DateTime] | [Period] | [Timing] */
-  public typealias Effective = FhirChoiceTypes.DateTimeOrPeriodOrTiming
 }

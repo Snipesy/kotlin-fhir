@@ -157,9 +157,9 @@ public data class DeviceUseStatement(
   /**
    * How often the device was used.
    *
-   * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
+   * A FHIR choice type — one of: [DateTime] | [Period] | [dev.ohs.fhir.model.r4.Timing]
    */
-  public val timing: FhirChoiceTypes.DateTimeOrPeriodOrTiming? = null,
+  public val timing: Timing? = null,
   /** The time at which the statement was made/recorded. */
   public val recordedOn: DateTime? = null,
   /** Who reported the device was being used by the patient. */
@@ -205,6 +205,15 @@ public data class DeviceUseStatement(
         note = this@with.note.map { it.toBuilder() }.toMutableList()
       }
     }
+
+  /** A FHIR choice type — one of: [DateTime] | [Period] | [dev.ohs.fhir.model.r4.Timing] */
+  public sealed interface Timing {
+    public typealias DateTime = dev.ohs.fhir.model.r4.DateTime
+
+    public typealias Period = dev.ohs.fhir.model.r4.Period
+
+    public typealias Timing = dev.ohs.fhir.model.r4.Timing
+  }
 
   public class Builder(
     /**
@@ -351,9 +360,9 @@ public data class DeviceUseStatement(
     /**
      * How often the device was used.
      *
-     * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
+     * A FHIR choice type — one of: [DateTime] | [Period] | [dev.ohs.fhir.model.r4.Timing]
      */
-    public var timing: FhirChoiceTypes.DateTimeOrPeriodOrTiming? = null
+    public var timing: Timing? = null
 
     /** The time at which the statement was made/recorded. */
     public var recordedOn: DateTime.Builder? = null

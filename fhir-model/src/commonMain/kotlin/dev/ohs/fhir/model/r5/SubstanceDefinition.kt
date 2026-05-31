@@ -298,7 +298,7 @@ public data class SubstanceDefinition(
      *
      * A FHIR choice type — one of: [Quantity] | [String]
      */
-    public val amount: Moiety.Amount? = null,
+    public val amount: Amount? = null,
     /**
      * The measurement type of the quantitative value. In capturing the actual relative amounts of
      * substances or molecular fragments it may be necessary to indicate whether the amount refers
@@ -322,6 +322,13 @@ public data class SubstanceDefinition(
           measurementType = this@with.measurementType?.toBuilder()
         }
       }
+
+    /** A FHIR choice type — one of: [Quantity] | [String] */
+    public sealed interface Amount {
+      public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+
+      public typealias String = dev.ohs.fhir.model.r5.String
+    }
 
     public class Builder() {
       /**
@@ -387,7 +394,7 @@ public data class SubstanceDefinition(
        *
        * A FHIR choice type — one of: [Quantity] | [String]
        */
-      public var amount: Moiety.Amount? = null
+      public var amount: Amount? = null
 
       /**
        * The measurement type of the quantitative value. In capturing the actual relative amounts of
@@ -411,9 +418,6 @@ public data class SubstanceDefinition(
           measurementType = measurementType?.build(),
         )
     }
-
-    /** A FHIR choice type — one of: [Quantity] | [String] */
-    public typealias Amount = FhirChoiceTypes.QuantityOrString
   }
 
   /** General specifications for this substance. */
@@ -604,7 +608,7 @@ public data class SubstanceDefinition(
      * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
      * [Quantity]
      */
-    public val `value`: Property.Value? = null,
+    public val `value`: Value? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -615,6 +619,22 @@ public data class SubstanceDefinition(
           `value` = this@with.`value`
         }
       }
+
+    /**
+     * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
+     * [Quantity]
+     */
+    public sealed interface Value {
+      public typealias Attachment = dev.ohs.fhir.model.r5.Attachment
+
+      public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
+
+      public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+      public typealias Date = dev.ohs.fhir.model.r5.Date
+
+      public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+    }
 
     public class Builder(
       /** A code expressing the type of property. */
@@ -666,7 +686,7 @@ public data class SubstanceDefinition(
        * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
        * [Quantity]
        */
-      public var `value`: Property.Value? = null
+      public var `value`: Value? = null
 
       public fun build(): Property =
         Property(
@@ -677,12 +697,6 @@ public data class SubstanceDefinition(
           `value` = `value`,
         )
     }
-
-    /**
-     * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
-     * [Quantity]
-     */
-    public typealias Value = FhirChoiceTypes.AttachmentOrBooleanOrCodeableConceptOrDateOrQuantity
   }
 
   /**
@@ -1618,7 +1632,7 @@ public data class SubstanceDefinition(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public val substanceDefinition: FhirChoiceTypes.CodeableConceptOrReference? = null,
+    public val substanceDefinition: SubstanceDefinition? = null,
     /**
      * For example "salt to parent", "active moiety", "starting material", "polymorph", "impurity
      * of".
@@ -1635,7 +1649,7 @@ public data class SubstanceDefinition(
      *
      * A FHIR choice type — one of: [Quantity] | [Ratio] | [String]
      */
-    public val amount: Relationship.Amount? = null,
+    public val amount: Amount? = null,
     /** For use when the numeric has an uncertain range. */
     public val ratioHighLimitAmount: Ratio? = null,
     /** An operator for the amount, for example "average", "approximately", "less than". */
@@ -1657,6 +1671,22 @@ public data class SubstanceDefinition(
           source = this@with.source.map { it.toBuilder() }.toMutableList()
         }
       }
+
+    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+    public sealed interface SubstanceDefinition {
+      public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+      public typealias Reference = dev.ohs.fhir.model.r5.Reference
+    }
+
+    /** A FHIR choice type — one of: [Quantity] | [Ratio] | [String] */
+    public sealed interface Amount {
+      public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+
+      public typealias Ratio = dev.ohs.fhir.model.r5.Ratio
+
+      public typealias String = dev.ohs.fhir.model.r5.String
+    }
 
     public class Builder(
       /**
@@ -1710,7 +1740,7 @@ public data class SubstanceDefinition(
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public var substanceDefinition: FhirChoiceTypes.CodeableConceptOrReference? = null
+      public var substanceDefinition: SubstanceDefinition? = null
 
       /**
        * For example where an enzyme strongly bonds with a particular substance, this is a defining
@@ -1724,7 +1754,7 @@ public data class SubstanceDefinition(
        *
        * A FHIR choice type — one of: [Quantity] | [Ratio] | [String]
        */
-      public var amount: Relationship.Amount? = null
+      public var amount: Amount? = null
 
       /** For use when the numeric has an uncertain range. */
       public var ratioHighLimitAmount: Ratio.Builder? = null
@@ -1749,9 +1779,6 @@ public data class SubstanceDefinition(
           source = source.map { it.build() },
         )
     }
-
-    /** A FHIR choice type — one of: [Quantity] | [Ratio] | [String] */
-    public typealias Amount = FhirChoiceTypes.QuantityOrRatioOrString
   }
 
   /** Material or taxonomic/anatomical source for the substance. */

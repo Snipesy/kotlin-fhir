@@ -159,7 +159,7 @@ public data class CoverageEligibilityResponse(
    *
    * A FHIR choice type — one of: [Date] | [Period]
    */
-  public val serviced: CoverageEligibilityResponse.Serviced? = null,
+  public val serviced: Serviced? = null,
   /** The date this resource was created. */
   public val created: DateTime,
   /**
@@ -291,7 +291,7 @@ public data class CoverageEligibilityResponse(
      *
      * A FHIR choice type — one of: [DateTime] | [Period]
      */
-    public val `when`: Event.When,
+    public val `when`: When,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -302,6 +302,13 @@ public data class CoverageEligibilityResponse(
         }
       }
 
+    /** A FHIR choice type — one of: [DateTime] | [Period] */
+    public sealed interface When {
+      public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+      public typealias Period = dev.ohs.fhir.model.r5.Period
+    }
+
     public class Builder(
       /** A coded event such as when a service is expected or a card printed. */
       public var type: CodeableConcept.Builder,
@@ -311,7 +318,7 @@ public data class CoverageEligibilityResponse(
        *
        * A FHIR choice type — one of: [DateTime] | [Period]
        */
-      public var `when`: Event.When,
+      public var `when`: When,
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -362,9 +369,6 @@ public data class CoverageEligibilityResponse(
           `when` = `when`,
         )
     }
-
-    /** A FHIR choice type — one of: [DateTime] | [Period] */
-    public typealias When = FhirChoiceTypes.DateTimeOrPeriod
   }
 
   /** Financial instruments for reimbursement for the health care products and services. */
@@ -625,13 +629,13 @@ public data class CoverageEligibilityResponse(
          *
          * A FHIR choice type — one of: [Money] | [String] | [UnsignedInt]
          */
-        public val allowed: Benefit.Allowed? = null,
+        public val allowed: Allowed? = null,
         /**
          * The quantity of the benefit which have been consumed to date.
          *
          * A FHIR choice type — one of: [Money] | [String] | [UnsignedInt]
          */
-        public val used: Benefit.Used? = null,
+        public val used: Used? = null,
       ) : BackboneElement() {
         public fun toBuilder(): Builder =
           with(this) {
@@ -643,6 +647,24 @@ public data class CoverageEligibilityResponse(
               used = this@with.used
             }
           }
+
+        /** A FHIR choice type — one of: [Money] | [String] | [UnsignedInt] */
+        public sealed interface Allowed {
+          public typealias Money = dev.ohs.fhir.model.r5.Money
+
+          public typealias String = dev.ohs.fhir.model.r5.String
+
+          public typealias UnsignedInt = dev.ohs.fhir.model.r5.UnsignedInt
+        }
+
+        /** A FHIR choice type — one of: [Money] | [String] | [UnsignedInt] */
+        public sealed interface Used {
+          public typealias Money = dev.ohs.fhir.model.r5.Money
+
+          public typealias String = dev.ohs.fhir.model.r5.String
+
+          public typealias UnsignedInt = dev.ohs.fhir.model.r5.UnsignedInt
+        }
 
         public class Builder(
           /**
@@ -697,14 +719,14 @@ public data class CoverageEligibilityResponse(
            *
            * A FHIR choice type — one of: [Money] | [String] | [UnsignedInt]
            */
-          public var allowed: Benefit.Allowed? = null
+          public var allowed: Allowed? = null
 
           /**
            * The quantity of the benefit which have been consumed to date.
            *
            * A FHIR choice type — one of: [Money] | [String] | [UnsignedInt]
            */
-          public var used: Benefit.Used? = null
+          public var used: Used? = null
 
           public fun build(): Benefit =
             Benefit(
@@ -716,12 +738,6 @@ public data class CoverageEligibilityResponse(
               used = used,
             )
         }
-
-        /** A FHIR choice type — one of: [Money] | [String] | [UnsignedInt] */
-        public typealias Allowed = FhirChoiceTypes.MoneyOrStringOrUnsignedInt
-
-        /** A FHIR choice type — one of: [Money] | [String] | [UnsignedInt] */
-        public typealias Used = FhirChoiceTypes.MoneyOrStringOrUnsignedInt
       }
 
       public class Builder() {
@@ -1080,6 +1096,13 @@ public data class CoverageEligibilityResponse(
     }
   }
 
+  /** A FHIR choice type — one of: [Date] | [Period] */
+  public sealed interface Serviced {
+    public typealias Date = dev.ohs.fhir.model.r5.Date
+
+    public typealias Period = dev.ohs.fhir.model.r5.Period
+  }
+
   public class Builder(
     /**
      * The status of the resource instance.
@@ -1233,7 +1256,7 @@ public data class CoverageEligibilityResponse(
      *
      * A FHIR choice type — one of: [Date] | [Period]
      */
-    public var serviced: CoverageEligibilityResponse.Serviced? = null
+    public var serviced: Serviced? = null
 
     /**
      * The provider which is responsible for the request.
@@ -1409,7 +1432,4 @@ public data class CoverageEligibilityResponse(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [Date] | [Period] */
-  public typealias Serviced = FhirChoiceTypes.DateOrPeriod
 }

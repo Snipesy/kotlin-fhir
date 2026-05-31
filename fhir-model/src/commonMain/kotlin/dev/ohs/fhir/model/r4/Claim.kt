@@ -812,7 +812,7 @@ public data class Claim(
      *
      * A FHIR choice type — one of: [Date] | [Period]
      */
-    public val timing: FhirChoiceTypes.DateOrPeriod? = null,
+    public val timing: Timing? = null,
     /**
      * Additional data or information such as resources, documents, images etc. including references
      * to the data or the actual inclusion of the data.
@@ -822,7 +822,7 @@ public data class Claim(
      *
      * A FHIR choice type — one of: [Attachment] | [Boolean] | [Quantity] | [Reference] | [String]
      */
-    public val `value`: SupportingInfo.Value? = null,
+    public val `value`: Value? = null,
     /**
      * Provides the reason in the situation where a reason code is required in addition to the
      * content.
@@ -843,6 +843,28 @@ public data class Claim(
           reason = this@with.reason?.toBuilder()
         }
       }
+
+    /** A FHIR choice type — one of: [Date] | [Period] */
+    public sealed interface Timing {
+      public typealias Date = dev.ohs.fhir.model.r4.Date
+
+      public typealias Period = dev.ohs.fhir.model.r4.Period
+    }
+
+    /**
+     * A FHIR choice type — one of: [Attachment] | [Boolean] | [Quantity] | [Reference] | [String]
+     */
+    public sealed interface Value {
+      public typealias Attachment = dev.ohs.fhir.model.r4.Attachment
+
+      public typealias Boolean = dev.ohs.fhir.model.r4.Boolean
+
+      public typealias Quantity = dev.ohs.fhir.model.r4.Quantity
+
+      public typealias Reference = dev.ohs.fhir.model.r4.Reference
+
+      public typealias String = dev.ohs.fhir.model.r4.String
+    }
 
     public class Builder(
       /** A number to uniquely identify supporting information entries. */
@@ -906,7 +928,7 @@ public data class Claim(
        *
        * A FHIR choice type — one of: [Date] | [Period]
        */
-      public var timing: FhirChoiceTypes.DateOrPeriod? = null
+      public var timing: Timing? = null
 
       /**
        * Additional data or information such as resources, documents, images etc. including
@@ -917,7 +939,7 @@ public data class Claim(
        *
        * A FHIR choice type — one of: [Attachment] | [Boolean] | [Quantity] | [Reference] | [String]
        */
-      public var `value`: SupportingInfo.Value? = null
+      public var `value`: Value? = null
 
       /**
        * Provides the reason in the situation where a reason code is required in addition to the
@@ -940,11 +962,6 @@ public data class Claim(
           reason = reason?.build(),
         )
     }
-
-    /**
-     * A FHIR choice type — one of: [Attachment] | [Boolean] | [Quantity] | [Reference] | [String]
-     */
-    public typealias Value = FhirChoiceTypes.AttachmentOrBooleanOrQuantityOrReferenceOrString
   }
 
   /** Information about diagnoses relevant to the claim items. */
@@ -999,7 +1016,7 @@ public data class Claim(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public val diagnosis: FhirChoiceTypes.CodeableConceptOrReference,
+    public val diagnosis: Diagnosis,
     /**
      * When the condition was observed or the relative ranking.
      *
@@ -1032,6 +1049,13 @@ public data class Claim(
         }
       }
 
+    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+    public sealed interface Diagnosis {
+      public typealias CodeableConcept = dev.ohs.fhir.model.r4.CodeableConcept
+
+      public typealias Reference = dev.ohs.fhir.model.r4.Reference
+    }
+
     public class Builder(
       /**
        * A number to uniquely identify diagnosis entries.
@@ -1046,7 +1070,7 @@ public data class Claim(
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public var diagnosis: FhirChoiceTypes.CodeableConceptOrReference,
+      public var diagnosis: Diagnosis,
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -1110,8 +1134,8 @@ public data class Claim(
        */
       public var packageCode: CodeableConcept.Builder? = null
 
-      public fun build(): Diagnosis =
-        Diagnosis(
+      public fun build(): Claim.Diagnosis =
+        Claim.Diagnosis(
           id = id,
           extension = extension.map { it.build() },
           modifierExtension = modifierExtension.map { it.build() },
@@ -1180,7 +1204,7 @@ public data class Claim(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public val procedure: FhirChoiceTypes.CodeableConceptOrReference,
+    public val procedure: Procedure,
     /** Unique Device Identifiers associated with this line item. */
     public val udi: List<Reference> = listOf(),
   ) : BackboneElement() {
@@ -1196,6 +1220,13 @@ public data class Claim(
         }
       }
 
+    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+    public sealed interface Procedure {
+      public typealias CodeableConcept = dev.ohs.fhir.model.r4.CodeableConcept
+
+      public typealias Reference = dev.ohs.fhir.model.r4.Reference
+    }
+
     public class Builder(
       /** A number to uniquely identify procedure entries. */
       public var sequence: PositiveInt.Builder,
@@ -1205,7 +1236,7 @@ public data class Claim(
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public var procedure: FhirChoiceTypes.CodeableConceptOrReference,
+      public var procedure: Procedure,
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -1260,8 +1291,8 @@ public data class Claim(
       /** Unique Device Identifiers associated with this line item. */
       public var udi: MutableList<Reference.Builder> = mutableListOf()
 
-      public fun build(): Procedure =
-        Procedure(
+      public fun build(): Claim.Procedure =
+        Claim.Procedure(
           id = id,
           extension = extension.map { it.build() },
           modifierExtension = modifierExtension.map { it.build() },
@@ -1557,7 +1588,7 @@ public data class Claim(
      *
      * A FHIR choice type — one of: [Address] | [Reference]
      */
-    public val location: FhirChoiceTypes.AddressOrReference? = null,
+    public val location: Location? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -1569,6 +1600,13 @@ public data class Claim(
           location = this@with.location
         }
       }
+
+    /** A FHIR choice type — one of: [Address] | [Reference] */
+    public sealed interface Location {
+      public typealias Address = dev.ohs.fhir.model.r4.Address
+
+      public typealias Reference = dev.ohs.fhir.model.r4.Reference
+    }
 
     public class Builder(
       /**
@@ -1630,7 +1668,7 @@ public data class Claim(
        *
        * A FHIR choice type — one of: [Address] | [Reference]
        */
-      public var location: FhirChoiceTypes.AddressOrReference? = null
+      public var location: Location? = null
 
       public fun build(): Accident =
         Accident(
@@ -1736,13 +1774,13 @@ public data class Claim(
      *
      * A FHIR choice type — one of: [Date] | [Period]
      */
-    public val serviced: Item.Serviced? = null,
+    public val serviced: Serviced? = null,
     /**
      * Where the product or service was provided.
      *
      * A FHIR choice type — one of: [Address] | [CodeableConcept] | [Reference]
      */
-    public val location: FhirChoiceTypes.AddressOrCodeableConceptOrReference? = null,
+    public val location: Location? = null,
     /** The number of repetitions of a service or product. */
     public val quantity: Quantity? = null,
     /**
@@ -2334,6 +2372,22 @@ public data class Claim(
       }
     }
 
+    /** A FHIR choice type — one of: [Date] | [Period] */
+    public sealed interface Serviced {
+      public typealias Date = dev.ohs.fhir.model.r4.Date
+
+      public typealias Period = dev.ohs.fhir.model.r4.Period
+    }
+
+    /** A FHIR choice type — one of: [Address] | [CodeableConcept] | [Reference] */
+    public sealed interface Location {
+      public typealias Address = dev.ohs.fhir.model.r4.Address
+
+      public typealias CodeableConcept = dev.ohs.fhir.model.r4.CodeableConcept
+
+      public typealias Reference = dev.ohs.fhir.model.r4.Reference
+    }
+
     public class Builder(
       /** A number to uniquely identify item entries. */
       public var sequence: PositiveInt.Builder,
@@ -2435,14 +2489,14 @@ public data class Claim(
        *
        * A FHIR choice type — one of: [Date] | [Period]
        */
-      public var serviced: Item.Serviced? = null
+      public var serviced: Serviced? = null
 
       /**
        * Where the product or service was provided.
        *
        * A FHIR choice type — one of: [Address] | [CodeableConcept] | [Reference]
        */
-      public var location: FhirChoiceTypes.AddressOrCodeableConceptOrReference? = null
+      public var location: Location? = null
 
       /** The number of repetitions of a service or product. */
       public var quantity: Quantity.Builder? = null
@@ -2528,9 +2582,6 @@ public data class Claim(
           detail = detail.map { it.build() },
         )
     }
-
-    /** A FHIR choice type — one of: [Date] | [Period] */
-    public typealias Serviced = FhirChoiceTypes.DateOrPeriod
   }
 
   public class Builder(

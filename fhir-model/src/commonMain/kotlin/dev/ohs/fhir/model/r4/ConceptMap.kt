@@ -278,7 +278,7 @@ public data class ConceptMap(
    *
    * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
    */
-  public val source: ConceptMap.Source? = null,
+  public val source: Source? = null,
   /**
    * The target value set provides context for the mappings. Note that the mapping is made between
    * concepts, not between value sets, but the value set provides important context about how the
@@ -289,7 +289,7 @@ public data class ConceptMap(
    *
    * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
    */
-  public val target: ConceptMap.Target? = null,
+  public val target: Target? = null,
   /** A group of mappings that all have the same source and target system. */
   public val group: List<Group> = listOf(),
 ) : DomainResource() {
@@ -1188,6 +1188,20 @@ public data class ConceptMap(
     }
   }
 
+  /** A FHIR choice type — one of: [CanonicalBox] | [UriBox] */
+  public sealed interface Source {
+    public typealias Canonical = CanonicalBox
+
+    public typealias Uri = UriBox
+  }
+
+  /** A FHIR choice type — one of: [CanonicalBox] | [UriBox] */
+  public sealed interface Target {
+    public typealias Canonical = CanonicalBox
+
+    public typealias Uri = UriBox
+  }
+
   public class Builder(
     /**
      * The status of this concept map. Enables tracking the life-cycle of the content.
@@ -1459,7 +1473,7 @@ public data class ConceptMap(
      *
      * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
      */
-    public var source: ConceptMap.Source? = null
+    public var source: Source? = null
 
     /**
      * The target value set provides context for the mappings. Note that the mapping is made between
@@ -1471,7 +1485,7 @@ public data class ConceptMap(
      *
      * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
      */
-    public var target: ConceptMap.Target? = null
+    public var target: Target? = null
 
     /** A group of mappings that all have the same source and target system. */
     public var group: MutableList<Group.Builder> = mutableListOf()
@@ -1538,10 +1552,4 @@ public data class ConceptMap(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [CanonicalBox] | [UriBox] */
-  public typealias Source = FhirChoiceTypes.CanonicalOrUri
-
-  /** A FHIR choice type — one of: [CanonicalBox] | [UriBox] */
-  public typealias Target = FhirChoiceTypes.CanonicalOrUri
 }

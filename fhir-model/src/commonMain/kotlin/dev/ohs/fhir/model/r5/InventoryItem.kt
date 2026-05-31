@@ -729,7 +729,7 @@ public data class InventoryItem(
      * [DateTime] | [Decimal] | [DurationBox] | [Integer] | [QuantityBox] | [Range] | [Ratio] |
      * [String] | [Url]
      */
-    public val `value`: Characteristic.Value,
+    public val `value`: Value,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -739,6 +739,39 @@ public data class InventoryItem(
           modifierExtension = this@with.modifierExtension.map { it.toBuilder() }.toMutableList()
         }
       }
+
+    /**
+     * A FHIR choice type — one of: [Address] | [Annotation] | [Boolean] | [CodeableConcept] |
+     * [DateTime] | [Decimal] | [DurationBox] | [Integer] | [QuantityBox] | [Range] | [Ratio] |
+     * [String] | [Url]
+     */
+    public sealed interface Value {
+      public typealias Address = dev.ohs.fhir.model.r5.Address
+
+      public typealias Annotation = dev.ohs.fhir.model.r5.Annotation
+
+      public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
+
+      public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+      public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+      public typealias Decimal = dev.ohs.fhir.model.r5.Decimal
+
+      public typealias Duration = DurationBox
+
+      public typealias Integer = dev.ohs.fhir.model.r5.Integer
+
+      public typealias Quantity = QuantityBox
+
+      public typealias Range = dev.ohs.fhir.model.r5.Range
+
+      public typealias Ratio = dev.ohs.fhir.model.r5.Ratio
+
+      public typealias String = dev.ohs.fhir.model.r5.String
+
+      public typealias Url = dev.ohs.fhir.model.r5.Url
+    }
 
     public class Builder(
       /** The type of characteristic that is being defined. */
@@ -754,7 +787,7 @@ public data class InventoryItem(
        * [DateTime] | [Decimal] | [DurationBox] | [Integer] | [QuantityBox] | [Range] | [Ratio] |
        * [String] | [Url]
        */
-      public var `value`: Characteristic.Value,
+      public var `value`: Value,
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -805,13 +838,6 @@ public data class InventoryItem(
           `value` = `value`,
         )
     }
-
-    /**
-     * A FHIR choice type — one of: [Address] | [Annotation] | [Boolean] | [CodeableConcept] |
-     * [DateTime] | [Decimal] | [DurationBox] | [Integer] | [QuantityBox] | [Range] | [Ratio] |
-     * [String] | [Url]
-     */
-    public typealias Value = FhirChoiceTypes.InventoryItemCharacteristicValueChoice
   }
 
   /** Instances or occurrences of the product. */

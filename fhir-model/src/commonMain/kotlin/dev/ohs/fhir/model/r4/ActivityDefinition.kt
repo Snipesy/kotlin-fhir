@@ -211,7 +211,7 @@ public data class ActivityDefinition(
    *
    * A FHIR choice type — one of: [CodeableConcept] | [Reference]
    */
-  public val subject: ActivityDefinition.Subject? = null,
+  public val subject: Subject? = null,
   /**
    * The date (and optionally time) when the activity definition was published. The date must change
    * when the business version changes and it must change if the status code changes. In addition,
@@ -378,9 +378,10 @@ public data class ActivityDefinition(
   /**
    * The period, timing or frequency upon which the described activity is to occur.
    *
-   * A FHIR choice type — one of: [Age] | [DateTime] | [Duration] | [Period] | [Range] | [Timing]
+   * A FHIR choice type — one of: [Age] | [DateTime] | [Duration] | [Period] | [Range] |
+   * [dev.ohs.fhir.model.r4.Timing]
    */
-  public val timing: FhirChoiceTypes.AgeOrDateTimeOrDurationOrPeriodOrRangeOrTiming? = null,
+  public val timing: Timing? = null,
   /**
    * Identifies the facility where the activity will occur; e.g. home, hospital, specific clinic,
    * etc.
@@ -395,7 +396,7 @@ public data class ActivityDefinition(
    *
    * A FHIR choice type — one of: [CodeableConcept] | [Reference]
    */
-  public val product: ActivityDefinition.Product? = null,
+  public val product: Product? = null,
   /** Identifies the quantity expected to be consumed at once (per dose, per meal, etc.). */
   public val quantity: Quantity? = null,
   /**
@@ -766,6 +767,38 @@ public data class ActivityDefinition(
     }
   }
 
+  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+  public sealed interface Subject {
+    public typealias CodeableConcept = dev.ohs.fhir.model.r4.CodeableConcept
+
+    public typealias Reference = dev.ohs.fhir.model.r4.Reference
+  }
+
+  /**
+   * A FHIR choice type — one of: [Age] | [DateTime] | [Duration] | [Period] | [Range] |
+   * [dev.ohs.fhir.model.r4.Timing]
+   */
+  public sealed interface Timing {
+    public typealias Age = dev.ohs.fhir.model.r4.Age
+
+    public typealias DateTime = dev.ohs.fhir.model.r4.DateTime
+
+    public typealias Duration = dev.ohs.fhir.model.r4.Duration
+
+    public typealias Period = dev.ohs.fhir.model.r4.Period
+
+    public typealias Range = dev.ohs.fhir.model.r4.Range
+
+    public typealias Timing = dev.ohs.fhir.model.r4.Timing
+  }
+
+  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+  public sealed interface Product {
+    public typealias CodeableConcept = dev.ohs.fhir.model.r4.CodeableConcept
+
+    public typealias Reference = dev.ohs.fhir.model.r4.Reference
+  }
+
   public class Builder(
     /**
      * The status of this activity definition. Enables tracking the life-cycle of the content.
@@ -964,7 +997,7 @@ public data class ActivityDefinition(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public var subject: ActivityDefinition.Subject? = null
+    public var subject: Subject? = null
 
     /**
      * The date (and optionally time) when the activity definition was published. The date must
@@ -1166,9 +1199,10 @@ public data class ActivityDefinition(
     /**
      * The period, timing or frequency upon which the described activity is to occur.
      *
-     * A FHIR choice type — one of: [Age] | [DateTime] | [Duration] | [Period] | [Range] | [Timing]
+     * A FHIR choice type — one of: [Age] | [DateTime] | [Duration] | [Period] | [Range] |
+     * [dev.ohs.fhir.model.r4.Timing]
      */
-    public var timing: FhirChoiceTypes.AgeOrDateTimeOrDurationOrPeriodOrRangeOrTiming? = null
+    public var timing: Timing? = null
 
     /**
      * Identifies the facility where the activity will occur; e.g. home, hospital, specific clinic,
@@ -1186,7 +1220,7 @@ public data class ActivityDefinition(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public var product: ActivityDefinition.Product? = null
+    public var product: Product? = null
 
     /** Identifies the quantity expected to be consumed at once (per dose, per meal, etc.). */
     public var quantity: Quantity.Builder? = null
@@ -1494,10 +1528,4 @@ public data class ActivityDefinition(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
-  public typealias Subject = FhirChoiceTypes.CodeableConceptOrReference
-
-  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
-  public typealias Product = FhirChoiceTypes.CodeableConceptOrReference
 }

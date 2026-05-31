@@ -350,7 +350,7 @@ public data class Communication(
      *
      * A FHIR choice type — one of: [Attachment] | [CodeableConcept] | [Reference]
      */
-    public val content: Payload.Content,
+    public val content: Content,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -360,6 +360,15 @@ public data class Communication(
           modifierExtension = this@with.modifierExtension.map { it.toBuilder() }.toMutableList()
         }
       }
+
+    /** A FHIR choice type — one of: [Attachment] | [CodeableConcept] | [Reference] */
+    public sealed interface Content {
+      public typealias Attachment = dev.ohs.fhir.model.r5.Attachment
+
+      public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+      public typealias Reference = dev.ohs.fhir.model.r5.Reference
+    }
 
     public class Builder(
       /**
@@ -378,7 +387,7 @@ public data class Communication(
        *
        * A FHIR choice type — one of: [Attachment] | [CodeableConcept] | [Reference]
        */
-      public var content: Payload.Content
+      public var content: Content
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -428,9 +437,6 @@ public data class Communication(
           content = content,
         )
     }
-
-    /** A FHIR choice type — one of: [Attachment] | [CodeableConcept] | [Reference] */
-    public typealias Content = FhirChoiceTypes.AttachmentOrCodeableConceptOrReference
   }
 
   public class Builder(

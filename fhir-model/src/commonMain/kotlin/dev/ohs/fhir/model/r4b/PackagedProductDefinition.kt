@@ -502,7 +502,7 @@ public data class PackagedProductDefinition(
        *
        * A FHIR choice type — one of: [Duration] | [String]
        */
-      public val period: FhirChoiceTypes.DurationOrString? = null,
+      public val period: Period? = null,
       /**
        * Special precautions for storage, if any, can be specified using an appropriate controlled
        * vocabulary. The controlled term and the controlled term identifier shall be specified.
@@ -521,6 +521,13 @@ public data class PackagedProductDefinition(
               this@with.specialPrecautionsForStorage.map { it.toBuilder() }.toMutableList()
           }
         }
+
+      /** A FHIR choice type — one of: [Duration] | [String] */
+      public sealed interface Period {
+        public typealias Duration = dev.ohs.fhir.model.r4b.Duration
+
+        public typealias String = dev.ohs.fhir.model.r4b.String
+      }
 
       public class Builder() {
         /**
@@ -580,7 +587,7 @@ public data class PackagedProductDefinition(
          *
          * A FHIR choice type — one of: [Duration] | [String]
          */
-        public var period: FhirChoiceTypes.DurationOrString? = null
+        public var period: Period? = null
 
         /**
          * Special precautions for storage, if any, can be specified using an appropriate controlled
@@ -649,7 +656,7 @@ public data class PackagedProductDefinition(
        * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
        * [Quantity]
        */
-      public val `value`: Property.Value? = null,
+      public val `value`: Value? = null,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -660,6 +667,22 @@ public data class PackagedProductDefinition(
             `value` = this@with.`value`
           }
         }
+
+      /**
+       * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
+       * [Quantity]
+       */
+      public sealed interface Value {
+        public typealias Attachment = dev.ohs.fhir.model.r4b.Attachment
+
+        public typealias Boolean = dev.ohs.fhir.model.r4b.Boolean
+
+        public typealias CodeableConcept = dev.ohs.fhir.model.r4b.CodeableConcept
+
+        public typealias Date = dev.ohs.fhir.model.r4b.Date
+
+        public typealias Quantity = dev.ohs.fhir.model.r4b.Quantity
+      }
 
       public class Builder(
         /** A code expressing the type of characteristic. */
@@ -711,7 +734,7 @@ public data class PackagedProductDefinition(
          * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
          * [Quantity]
          */
-        public var `value`: Property.Value? = null
+        public var `value`: Value? = null
 
         public fun build(): Property =
           Property(
@@ -722,12 +745,6 @@ public data class PackagedProductDefinition(
             `value` = `value`,
           )
       }
-
-      /**
-       * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
-       * [Quantity]
-       */
-      public typealias Value = FhirChoiceTypes.AttachmentOrBooleanOrCodeableConceptOrDateOrQuantity
     }
 
     /** The item(s) within the packaging. */

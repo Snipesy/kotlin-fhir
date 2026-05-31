@@ -138,7 +138,7 @@ public data class Observation(
    *
    * A FHIR choice type — one of: [Canonical] | [Reference]
    */
-  public val instantiates: Observation.Instantiates? = null,
+  public val instantiates: Instantiates? = null,
   /**
    * A plan, proposal or order that is fulfilled in whole or in part by this event. For example, a
    * MedicationRequest may require a patient to have laboratory test performed before it is
@@ -233,7 +233,7 @@ public data class Observation(
    *
    * A FHIR choice type — one of: [DateTime] | [Instant] | [Period] | [Timing]
    */
-  public val effective: Observation.Effective? = null,
+  public val effective: Effective? = null,
   /**
    * The date and time this version of the observation was made available to providers, typically
    * after the results have been reviewed and verified.
@@ -269,7 +269,7 @@ public data class Observation(
    * [Integer] | [Period] | [Quantity] | [Range] | [Ratio] | [Reference] | [SampledData] | [String]
    * | [Time]
    */
-  public val `value`: Observation.Value? = null,
+  public val `value`: Value? = null,
   /**
    * Provides a reason why the expected value in the element Observation.value[x] is missing.
    *
@@ -844,7 +844,7 @@ public data class Observation(
      * [Integer] | [Period] | [Quantity] | [Range] | [Ratio] | [Reference] | [SampledData] |
      * [String] | [Time]
      */
-    public val `value`: Component.Value? = null,
+    public val `value`: Value? = null,
     /**
      * Provides a reason why the expected value in the element Observation.component.value[x] is
      * missing.
@@ -892,6 +892,39 @@ public data class Observation(
           referenceRange = this@with.referenceRange.map { it.toBuilder() }.toMutableList()
         }
       }
+
+    /**
+     * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [DateTime] |
+     * [Integer] | [Period] | [Quantity] | [Range] | [Ratio] | [Reference] | [SampledData] |
+     * [String] | [Time]
+     */
+    public sealed interface Value {
+      public typealias Attachment = dev.ohs.fhir.model.r5.Attachment
+
+      public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
+
+      public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+      public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+      public typealias Integer = dev.ohs.fhir.model.r5.Integer
+
+      public typealias Period = dev.ohs.fhir.model.r5.Period
+
+      public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+
+      public typealias Range = dev.ohs.fhir.model.r5.Range
+
+      public typealias Ratio = dev.ohs.fhir.model.r5.Ratio
+
+      public typealias Reference = dev.ohs.fhir.model.r5.Reference
+
+      public typealias SampledData = dev.ohs.fhir.model.r5.SampledData
+
+      public typealias String = dev.ohs.fhir.model.r5.String
+
+      public typealias Time = dev.ohs.fhir.model.r5.Time
+    }
 
     public class Builder(
       /**
@@ -971,7 +1004,7 @@ public data class Observation(
        * [Integer] | [Period] | [Quantity] | [Range] | [Ratio] | [Reference] | [SampledData] |
        * [String] | [Time]
        */
-      public var `value`: Component.Value? = null
+      public var `value`: Value? = null
 
       /**
        * Provides a reason why the expected value in the element Observation.component.value[x] is
@@ -1023,13 +1056,57 @@ public data class Observation(
           referenceRange = referenceRange.map { it.build() },
         )
     }
+  }
 
-    /**
-     * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [DateTime] |
-     * [Integer] | [Period] | [Quantity] | [Range] | [Ratio] | [Reference] | [SampledData] |
-     * [String] | [Time]
-     */
-    public typealias Value = FhirChoiceTypes.ObservationComponentValueChoice
+  /** A FHIR choice type — one of: [Canonical] | [Reference] */
+  public sealed interface Instantiates {
+    public typealias Canonical = dev.ohs.fhir.model.r5.Canonical
+
+    public typealias Reference = dev.ohs.fhir.model.r5.Reference
+  }
+
+  /** A FHIR choice type — one of: [DateTime] | [Instant] | [Period] | [Timing] */
+  public sealed interface Effective {
+    public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+    public typealias Instant = dev.ohs.fhir.model.r5.Instant
+
+    public typealias Period = dev.ohs.fhir.model.r5.Period
+
+    public typealias Timing = dev.ohs.fhir.model.r5.Timing
+  }
+
+  /**
+   * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [DateTime] |
+   * [Integer] | [Period] | [Quantity] | [Range] | [Ratio] | [Reference] | [SampledData] | [String]
+   * | [Time]
+   */
+  public sealed interface Value {
+    public typealias Attachment = dev.ohs.fhir.model.r5.Attachment
+
+    public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
+
+    public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+    public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+    public typealias Integer = dev.ohs.fhir.model.r5.Integer
+
+    public typealias Period = dev.ohs.fhir.model.r5.Period
+
+    public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+
+    public typealias Range = dev.ohs.fhir.model.r5.Range
+
+    public typealias Ratio = dev.ohs.fhir.model.r5.Ratio
+
+    public typealias Reference = dev.ohs.fhir.model.r5.Reference
+
+    public typealias SampledData = dev.ohs.fhir.model.r5.SampledData
+
+    public typealias String = dev.ohs.fhir.model.r5.String
+
+    public typealias Time = dev.ohs.fhir.model.r5.Time
   }
 
   public class Builder(
@@ -1167,7 +1244,7 @@ public data class Observation(
      *
      * A FHIR choice type — one of: [Canonical] | [Reference]
      */
-    public var instantiates: Observation.Instantiates? = null
+    public var instantiates: Instantiates? = null
 
     /**
      * A plan, proposal or order that is fulfilled in whole or in part by this event. For example, a
@@ -1258,7 +1335,7 @@ public data class Observation(
      *
      * A FHIR choice type — one of: [DateTime] | [Instant] | [Period] | [Timing]
      */
-    public var effective: Observation.Effective? = null
+    public var effective: Effective? = null
 
     /**
      * The date and time this version of the observation was made available to providers, typically
@@ -1297,7 +1374,7 @@ public data class Observation(
      * [Integer] | [Period] | [Quantity] | [Range] | [Ratio] | [Reference] | [SampledData] |
      * [String] | [Time]
      */
-    public var `value`: Observation.Value? = null
+    public var `value`: Value? = null
 
     /**
      * Provides a reason why the expected value in the element Observation.value[x] is missing.
@@ -1540,17 +1617,4 @@ public data class Observation(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [Canonical] | [Reference] */
-  public typealias Instantiates = FhirChoiceTypes.CanonicalOrReference
-
-  /** A FHIR choice type — one of: [DateTime] | [Instant] | [Period] | [Timing] */
-  public typealias Effective = FhirChoiceTypes.DateTimeOrInstantOrPeriodOrTiming
-
-  /**
-   * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [DateTime] |
-   * [Integer] | [Period] | [Quantity] | [Range] | [Ratio] | [Reference] | [SampledData] | [String]
-   * | [Time]
-   */
-  public typealias Value = FhirChoiceTypes.ObservationComponentValueChoice
 }

@@ -970,13 +970,13 @@ public data class ClaimResponse(
      *
      * A FHIR choice type — one of: [Date] | [Period]
      */
-    public val serviced: AddItem.Serviced? = null,
+    public val serviced: Serviced? = null,
     /**
      * Where the product or service was provided.
      *
      * A FHIR choice type — one of: [Address] | [CodeableConcept] | [Reference]
      */
-    public val location: FhirChoiceTypes.AddressOrCodeableConceptOrReference? = null,
+    public val location: Location? = null,
     /** The number of repetitions of a service or product. */
     public val quantity: Quantity? = null,
     /**
@@ -1474,6 +1474,22 @@ public data class ClaimResponse(
       }
     }
 
+    /** A FHIR choice type — one of: [Date] | [Period] */
+    public sealed interface Serviced {
+      public typealias Date = dev.ohs.fhir.model.r4.Date
+
+      public typealias Period = dev.ohs.fhir.model.r4.Period
+    }
+
+    /** A FHIR choice type — one of: [Address] | [CodeableConcept] | [Reference] */
+    public sealed interface Location {
+      public typealias Address = dev.ohs.fhir.model.r4.Address
+
+      public typealias CodeableConcept = dev.ohs.fhir.model.r4.CodeableConcept
+
+      public typealias Reference = dev.ohs.fhir.model.r4.Reference
+    }
+
     public class Builder(
       /**
        * When the value is a group code then this item collects a set of related claim details,
@@ -1567,14 +1583,14 @@ public data class ClaimResponse(
        *
        * A FHIR choice type — one of: [Date] | [Period]
        */
-      public var serviced: AddItem.Serviced? = null
+      public var serviced: Serviced? = null
 
       /**
        * Where the product or service was provided.
        *
        * A FHIR choice type — one of: [Address] | [CodeableConcept] | [Reference]
        */
-      public var location: FhirChoiceTypes.AddressOrCodeableConceptOrReference? = null
+      public var location: Location? = null
 
       /** The number of repetitions of a service or product. */
       public var quantity: Quantity.Builder? = null
@@ -1644,9 +1660,6 @@ public data class ClaimResponse(
           detail = detail.map { it.build() },
         )
     }
-
-    /** A FHIR choice type — one of: [Date] | [Period] */
-    public typealias Serviced = FhirChoiceTypes.DateOrPeriod
   }
 
   /** Categorized monetary totals for the adjudication. */

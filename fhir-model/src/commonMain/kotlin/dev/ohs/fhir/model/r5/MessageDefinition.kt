@@ -180,7 +180,7 @@ public data class MessageDefinition(
    *
    * A FHIR choice type — one of: [Coding] | [String]
    */
-  public val versionAlgorithm: MessageDefinition.VersionAlgorithm? = null,
+  public val versionAlgorithm: VersionAlgorithm? = null,
   /**
    * A natural language name identifying the message definition. This name should be usable as an
    * identifier for the module by machine processing applications such as code generation.
@@ -324,7 +324,7 @@ public data class MessageDefinition(
    *
    * A FHIR choice type — one of: [Coding] | [Uri]
    */
-  public val event: MessageDefinition.Event,
+  public val event: Event,
   /** The impact of the content of the message. */
   public val category: Enumeration<MessageSignificanceCategory>? = null,
   /**
@@ -681,6 +681,20 @@ public data class MessageDefinition(
     }
   }
 
+  /** A FHIR choice type — one of: [Coding] | [String] */
+  public sealed interface VersionAlgorithm {
+    public typealias Coding = dev.ohs.fhir.model.r5.Coding
+
+    public typealias String = dev.ohs.fhir.model.r5.String
+  }
+
+  /** A FHIR choice type — one of: [Coding] | [Uri] */
+  public sealed interface Event {
+    public typealias Coding = dev.ohs.fhir.model.r5.Coding
+
+    public typealias Uri = dev.ohs.fhir.model.r5.Uri
+  }
+
   public class Builder(
     /**
      * The status of this message definition. Enables tracking the life-cycle of the content.
@@ -712,7 +726,7 @@ public data class MessageDefinition(
      *
      * A FHIR choice type — one of: [Coding] | [Uri]
      */
-    public var event: MessageDefinition.Event,
+    public var event: Event,
   ) : DomainResource.Builder() {
     /**
      * The logical id of the resource, as used in the URL for the resource. Once assigned, this
@@ -873,7 +887,7 @@ public data class MessageDefinition(
      *
      * A FHIR choice type — one of: [Coding] | [String]
      */
-    public var versionAlgorithm: MessageDefinition.VersionAlgorithm? = null
+    public var versionAlgorithm: VersionAlgorithm? = null
 
     /**
      * A natural language name identifying the message definition. This name should be usable as an
@@ -1159,10 +1173,4 @@ public data class MessageDefinition(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [Coding] | [String] */
-  public typealias VersionAlgorithm = FhirChoiceTypes.CodingOrString
-
-  /** A FHIR choice type — one of: [Coding] | [Uri] */
-  public typealias Event = FhirChoiceTypes.CodingOrUri
 }

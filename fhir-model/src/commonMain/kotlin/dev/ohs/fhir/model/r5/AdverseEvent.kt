@@ -203,7 +203,7 @@ public data class AdverseEvent(
    *
    * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
    */
-  public val occurrence: AdverseEvent.Occurrence? = null,
+  public val occurrence: Occurrence? = null,
   /** Estimated or actual date the AdverseEvent began, in the opinion of the reporter. */
   public val detected: DateTime? = null,
   /**
@@ -480,7 +480,7 @@ public data class AdverseEvent(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public val instance: SuspectEntity.Instance,
+    public val instance: Instance,
     /** Information on the possible cause of the event. */
     public val causality: Causality? = null,
   ) : BackboneElement() {
@@ -621,6 +621,13 @@ public data class AdverseEvent(
       }
     }
 
+    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+    public sealed interface Instance {
+      public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+      public typealias Reference = dev.ohs.fhir.model.r5.Reference
+    }
+
     public class Builder(
       /**
        * Identifies the actual instance of what caused the adverse event. May be a substance,
@@ -628,7 +635,7 @@ public data class AdverseEvent(
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public var instance: SuspectEntity.Instance
+      public var instance: Instance
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -682,9 +689,6 @@ public data class AdverseEvent(
           causality = causality?.build(),
         )
     }
-
-    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
-    public typealias Instance = FhirChoiceTypes.CodeableConceptOrReference
   }
 
   /**
@@ -736,7 +740,7 @@ public data class AdverseEvent(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public val item: ContributingFactor.Item,
+    public val item: Item,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -747,6 +751,13 @@ public data class AdverseEvent(
         }
       }
 
+    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+    public sealed interface Item {
+      public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+      public typealias Reference = dev.ohs.fhir.model.r5.Reference
+    }
+
     public class Builder(
       /**
        * The item that is suspected to have increased the probability or severity of the adverse
@@ -754,7 +765,7 @@ public data class AdverseEvent(
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public var item: ContributingFactor.Item
+      public var item: Item
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -804,9 +815,6 @@ public data class AdverseEvent(
           item = item,
         )
     }
-
-    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
-    public typealias Item = FhirChoiceTypes.CodeableConceptOrReference
   }
 
   /** Preventive actions that contributed to avoiding the adverse event. */
@@ -854,7 +862,7 @@ public data class AdverseEvent(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public val item: PreventiveAction.Item,
+    public val item: Item,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -865,13 +873,20 @@ public data class AdverseEvent(
         }
       }
 
+    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+    public sealed interface Item {
+      public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+      public typealias Reference = dev.ohs.fhir.model.r5.Reference
+    }
+
     public class Builder(
       /**
        * The action that contributed to avoiding the adverse event.
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public var item: PreventiveAction.Item
+      public var item: Item
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -921,9 +936,6 @@ public data class AdverseEvent(
           item = item,
         )
     }
-
-    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
-    public typealias Item = FhirChoiceTypes.CodeableConceptOrReference
   }
 
   /**
@@ -975,7 +987,7 @@ public data class AdverseEvent(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public val item: MitigatingAction.Item,
+    public val item: Item,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -986,6 +998,13 @@ public data class AdverseEvent(
         }
       }
 
+    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+    public sealed interface Item {
+      public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+      public typealias Reference = dev.ohs.fhir.model.r5.Reference
+    }
+
     public class Builder(
       /**
        * The ameliorating action taken after the adverse event occured in order to reduce the extent
@@ -993,7 +1012,7 @@ public data class AdverseEvent(
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public var item: MitigatingAction.Item
+      public var item: Item
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -1043,9 +1062,6 @@ public data class AdverseEvent(
           item = item,
         )
     }
-
-    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
-    public typealias Item = FhirChoiceTypes.CodeableConceptOrReference
   }
 
   /** Supporting information relevant to the event. */
@@ -1099,7 +1115,7 @@ public data class AdverseEvent(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public val item: SupportingInfo.Item,
+    public val item: Item,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -1109,6 +1125,13 @@ public data class AdverseEvent(
           modifierExtension = this@with.modifierExtension.map { it.toBuilder() }.toMutableList()
         }
       }
+
+    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+    public sealed interface Item {
+      public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+      public typealias Reference = dev.ohs.fhir.model.r5.Reference
+    }
 
     public class Builder(
       /**
@@ -1123,7 +1146,7 @@ public data class AdverseEvent(
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public var item: SupportingInfo.Item
+      public var item: Item
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -1173,9 +1196,15 @@ public data class AdverseEvent(
           item = item,
         )
     }
+  }
 
-    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
-    public typealias Item = FhirChoiceTypes.CodeableConceptOrReference
+  /** A FHIR choice type — one of: [DateTime] | [Period] | [Timing] */
+  public sealed interface Occurrence {
+    public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+    public typealias Period = dev.ohs.fhir.model.r5.Period
+
+    public typealias Timing = dev.ohs.fhir.model.r5.Timing
   }
 
   public class Builder(
@@ -1351,7 +1380,7 @@ public data class AdverseEvent(
      *
      * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
      */
-    public var occurrence: AdverseEvent.Occurrence? = null
+    public var occurrence: Occurrence? = null
 
     /** Estimated or actual date the AdverseEvent began, in the opinion of the reporter. */
     public var detected: DateTime.Builder? = null
@@ -1533,7 +1562,4 @@ public data class AdverseEvent(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [DateTime] | [Period] | [Timing] */
-  public typealias Occurrence = FhirChoiceTypes.DateTimeOrPeriodOrTiming
 }

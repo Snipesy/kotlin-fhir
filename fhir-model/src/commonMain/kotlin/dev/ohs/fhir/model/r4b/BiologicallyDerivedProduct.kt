@@ -248,7 +248,7 @@ public data class BiologicallyDerivedProduct(
      *
      * A FHIR choice type — one of: [DateTime] | [Period]
      */
-    public val collected: Collection.Collected? = null,
+    public val collected: Collected? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -261,6 +261,13 @@ public data class BiologicallyDerivedProduct(
           collected = this@with.collected
         }
       }
+
+    /** A FHIR choice type — one of: [DateTime] | [Period] */
+    public sealed interface Collected {
+      public typealias DateTime = dev.ohs.fhir.model.r4b.DateTime
+
+      public typealias Period = dev.ohs.fhir.model.r4b.Period
+    }
 
     public class Builder() {
       /**
@@ -317,7 +324,7 @@ public data class BiologicallyDerivedProduct(
        *
        * A FHIR choice type — one of: [DateTime] | [Period]
        */
-      public var collected: Collection.Collected? = null
+      public var collected: Collected? = null
 
       public fun build(): Collection =
         Collection(
@@ -329,9 +336,6 @@ public data class BiologicallyDerivedProduct(
           collected = collected,
         )
     }
-
-    /** A FHIR choice type — one of: [DateTime] | [Period] */
-    public typealias Collected = FhirChoiceTypes.DateTimeOrPeriod
   }
 
   /**
@@ -389,7 +393,7 @@ public data class BiologicallyDerivedProduct(
      *
      * A FHIR choice type — one of: [DateTime] | [Period]
      */
-    public val time: FhirChoiceTypes.DateTimeOrPeriod? = null,
+    public val time: Time? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -403,6 +407,13 @@ public data class BiologicallyDerivedProduct(
           time = this@with.time
         }
       }
+
+    /** A FHIR choice type — one of: [DateTime] | [Period] */
+    public sealed interface Time {
+      public typealias DateTime = dev.ohs.fhir.model.r4b.DateTime
+
+      public typealias Period = dev.ohs.fhir.model.r4b.Period
+    }
 
     public class Builder() {
       /**
@@ -459,7 +470,7 @@ public data class BiologicallyDerivedProduct(
        *
        * A FHIR choice type — one of: [DateTime] | [Period]
        */
-      public var time: FhirChoiceTypes.DateTimeOrPeriod? = null
+      public var time: Time? = null
 
       public fun build(): Processing =
         Processing(
@@ -525,7 +536,7 @@ public data class BiologicallyDerivedProduct(
      *
      * A FHIR choice type — one of: [DateTime] | [Period]
      */
-    public val time: FhirChoiceTypes.DateTimeOrPeriod? = null,
+    public val time: Time? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -537,6 +548,13 @@ public data class BiologicallyDerivedProduct(
           time = this@with.time
         }
       }
+
+    /** A FHIR choice type — one of: [DateTime] | [Period] */
+    public sealed interface Time {
+      public typealias DateTime = dev.ohs.fhir.model.r4b.DateTime
+
+      public typealias Period = dev.ohs.fhir.model.r4b.Period
+    }
 
     public class Builder() {
       /**
@@ -587,7 +605,7 @@ public data class BiologicallyDerivedProduct(
        *
        * A FHIR choice type — one of: [DateTime] | [Period]
        */
-      public var time: FhirChoiceTypes.DateTimeOrPeriod? = null
+      public var time: Time? = null
 
       public fun build(): Manipulation =
         Manipulation(

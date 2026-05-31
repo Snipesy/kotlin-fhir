@@ -204,7 +204,7 @@ public data class EventDefinition(
    *
    * A FHIR choice type — one of: [CodeableConcept] | [Reference]
    */
-  public val subject: EventDefinition.Subject? = null,
+  public val subject: Subject? = null,
   /**
    * The date (and optionally time) when the event definition was published. The date must change
    * when the business version changes and it must change if the status code changes. In addition,
@@ -372,6 +372,13 @@ public data class EventDefinition(
         relatedArtifact = this@with.relatedArtifact.map { it.toBuilder() }.toMutableList()
       }
     }
+
+  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+  public sealed interface Subject {
+    public typealias CodeableConcept = dev.ohs.fhir.model.r4b.CodeableConcept
+
+    public typealias Reference = dev.ohs.fhir.model.r4b.Reference
+  }
 
   public class Builder(
     /**
@@ -571,7 +578,7 @@ public data class EventDefinition(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public var subject: EventDefinition.Subject? = null
+    public var subject: Subject? = null
 
     /**
      * The date (and optionally time) when the event definition was published. The date must change
@@ -759,7 +766,4 @@ public data class EventDefinition(
         trigger = trigger.map { it.build() },
       )
   }
-
-  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
-  public typealias Subject = FhirChoiceTypes.CodeableConceptOrReference
 }

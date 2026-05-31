@@ -194,7 +194,7 @@ public data class Consent(
    *
    * A FHIR choice type — one of: [Attachment] | [Reference]
    */
-  public val source: Consent.Source? = null,
+  public val source: Source? = null,
   /**
    * The references to the policies that are included in this consent scope. Policies may be
    * organizational, but are often defined jurisdictionally, or in law.
@@ -1008,6 +1008,13 @@ public data class Consent(
     }
   }
 
+  /** A FHIR choice type — one of: [Attachment] | [Reference] */
+  public sealed interface Source {
+    public typealias Attachment = dev.ohs.fhir.model.r4b.Attachment
+
+    public typealias Reference = dev.ohs.fhir.model.r4b.Reference
+  }
+
   public class Builder(
     /**
      * Indicates the current state of this consent.
@@ -1182,7 +1189,7 @@ public data class Consent(
      *
      * A FHIR choice type — one of: [Attachment] | [Reference]
      */
-    public var source: Consent.Source? = null
+    public var source: Source? = null
 
     /**
      * The references to the policies that are included in this consent scope. Policies may be
@@ -1332,7 +1339,4 @@ public data class Consent(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [Attachment] | [Reference] */
-  public typealias Source = FhirChoiceTypes.AttachmentOrReference
 }

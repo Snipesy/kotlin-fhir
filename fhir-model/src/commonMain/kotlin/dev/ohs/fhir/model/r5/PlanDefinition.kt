@@ -195,7 +195,7 @@ public data class PlanDefinition(
    *
    * A FHIR choice type — one of: [Coding] | [String]
    */
-  public val versionAlgorithm: PlanDefinition.VersionAlgorithm? = null,
+  public val versionAlgorithm: VersionAlgorithm? = null,
   /**
    * A natural language name identifying the plan definition. This name should be usable as an
    * identifier for the module by machine processing applications such as code generation.
@@ -250,7 +250,7 @@ public data class PlanDefinition(
    *
    * A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [Reference]
    */
-  public val subject: PlanDefinition.Subject? = null,
+  public val subject: Subject? = null,
   /**
    * The date (and optionally time) when the plan definition was last significantly changed. The
    * date must change when the business version changes and it must change if the status code
@@ -455,7 +455,7 @@ public data class PlanDefinition(
    *
    * A FHIR choice type — one of: [Boolean] | [CodeableConcept]
    */
-  public val asNeeded: PlanDefinition.AsNeeded? = null,
+  public val asNeeded: AsNeeded? = null,
 ) : DomainResource() {
   override fun toBuilder(): Builder =
     with(this) {
@@ -652,7 +652,7 @@ public data class PlanDefinition(
        * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Integer] | [Quantity] |
        * [Range] | [Ratio] | [String]
        */
-      public val detail: Target.Detail? = null,
+      public val detail: Detail? = null,
       /** Indicates the timeframe after the start of the goal in which the goal should be met. */
       public val due: Duration? = null,
     ) : BackboneElement() {
@@ -667,6 +667,26 @@ public data class PlanDefinition(
             due = this@with.due?.toBuilder()
           }
         }
+
+      /**
+       * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Integer] | [Quantity] |
+       * [Range] | [Ratio] | [String]
+       */
+      public sealed interface Detail {
+        public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
+
+        public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+        public typealias Integer = dev.ohs.fhir.model.r5.Integer
+
+        public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+
+        public typealias Range = dev.ohs.fhir.model.r5.Range
+
+        public typealias Ratio = dev.ohs.fhir.model.r5.Ratio
+
+        public typealias String = dev.ohs.fhir.model.r5.String
+      }
 
       public class Builder() {
         /**
@@ -730,7 +750,7 @@ public data class PlanDefinition(
          * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Integer] | [Quantity] |
          * [Range] | [Ratio] | [String]
          */
-        public var detail: Target.Detail? = null
+        public var detail: Detail? = null
 
         /** Indicates the timeframe after the start of the goal in which the goal should be met. */
         public var due: Duration.Builder? = null
@@ -745,12 +765,6 @@ public data class PlanDefinition(
             due = due?.build(),
           )
       }
-
-      /**
-       * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Integer] | [Quantity] |
-       * [Range] | [Ratio] | [String]
-       */
-      public typealias Detail = FhirChoiceTypes.GoalTargetDetailChoice
     }
 
     public class Builder(
@@ -1219,7 +1233,7 @@ public data class PlanDefinition(
      *
      * A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [Reference]
      */
-    public val subject: Action.Subject? = null,
+    public val subject: Subject? = null,
     /**
      * A description of when the action should be triggered. When multiple triggers are specified on
      * an action, any triggering event invokes the action.
@@ -1257,9 +1271,9 @@ public data class PlanDefinition(
      * range for the expected timing of the resulting activity. When the timing is a Timing, it is
      * establishing a schedule for the timing of the resulting activity.
      *
-     * A FHIR choice type — one of: [Age] | [Duration] | [Range] | [Timing]
+     * A FHIR choice type — one of: [Age] | [Duration] | [Range] | [dev.ohs.fhir.model.r5.Timing]
      */
-    public val timing: FhirChoiceTypes.AgeOrDurationOrRangeOrTiming? = null,
+    public val timing: Timing? = null,
     /**
      * Identifies the facility where the action will occur; e.g. home, hospital, specific clinic,
      * etc.
@@ -1293,7 +1307,7 @@ public data class PlanDefinition(
      *
      * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
      */
-    public val definition: Action.Definition? = null,
+    public val definition: Definition? = null,
     /**
      * A reference to a StructureMap resource that defines a transform that can be executed to
      * produce the intent resource using the ActivityDefinition instance as the input.
@@ -1833,7 +1847,7 @@ public data class PlanDefinition(
        *
        * A FHIR choice type — one of: [Duration] | [Range]
        */
-      public val offset: RelatedAction.Offset? = null,
+      public val offset: Offset? = null,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -1845,6 +1859,13 @@ public data class PlanDefinition(
             offset = this@with.offset
           }
         }
+
+      /** A FHIR choice type — one of: [Duration] | [Range] */
+      public sealed interface Offset {
+        public typealias Duration = dev.ohs.fhir.model.r5.Duration
+
+        public typealias Range = dev.ohs.fhir.model.r5.Range
+      }
 
       public class Builder(
         /** The element id of the target related action. */
@@ -1901,7 +1922,7 @@ public data class PlanDefinition(
          *
          * A FHIR choice type — one of: [Duration] | [Range]
          */
-        public var offset: RelatedAction.Offset? = null
+        public var offset: Offset? = null
 
         public fun build(): RelatedAction =
           RelatedAction(
@@ -1914,9 +1935,6 @@ public data class PlanDefinition(
             offset = offset,
           )
       }
-
-      /** A FHIR choice type — one of: [Duration] | [Range] */
-      public typealias Offset = FhirChoiceTypes.DurationOrRange
     }
 
     /** Indicates who should participate in performing the action described. */
@@ -2232,6 +2250,35 @@ public data class PlanDefinition(
       }
     }
 
+    /** A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [Reference] */
+    public sealed interface Subject {
+      public typealias Canonical = dev.ohs.fhir.model.r5.Canonical
+
+      public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+      public typealias Reference = dev.ohs.fhir.model.r5.Reference
+    }
+
+    /**
+     * A FHIR choice type — one of: [Age] | [Duration] | [Range] | [dev.ohs.fhir.model.r5.Timing]
+     */
+    public sealed interface Timing {
+      public typealias Age = dev.ohs.fhir.model.r5.Age
+
+      public typealias Duration = dev.ohs.fhir.model.r5.Duration
+
+      public typealias Range = dev.ohs.fhir.model.r5.Range
+
+      public typealias Timing = dev.ohs.fhir.model.r5.Timing
+    }
+
+    /** A FHIR choice type — one of: [CanonicalBox] | [UriBox] */
+    public sealed interface Definition {
+      public typealias Canonical = CanonicalBox
+
+      public typealias Uri = UriBox
+    }
+
     public class Builder() {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -2352,7 +2399,7 @@ public data class PlanDefinition(
        *
        * A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [Reference]
        */
-      public var subject: Action.Subject? = null
+      public var subject: Subject? = null
 
       /**
        * A description of when the action should be triggered. When multiple triggers are specified
@@ -2397,9 +2444,9 @@ public data class PlanDefinition(
        * Durations, providing a range for the expected timing of the resulting activity. When the
        * timing is a Timing, it is establishing a schedule for the timing of the resulting activity.
        *
-       * A FHIR choice type — one of: [Age] | [Duration] | [Range] | [Timing]
+       * A FHIR choice type — one of: [Age] | [Duration] | [Range] | [dev.ohs.fhir.model.r5.Timing]
        */
-      public var timing: FhirChoiceTypes.AgeOrDurationOrRangeOrTiming? = null
+      public var timing: Timing? = null
 
       /**
        * Identifies the facility where the action will occur; e.g. home, hospital, specific clinic,
@@ -2442,7 +2489,7 @@ public data class PlanDefinition(
        *
        * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
        */
-      public var definition: Action.Definition? = null
+      public var definition: Definition? = null
 
       /**
        * A reference to a StructureMap resource that defines a transform that can be executed to
@@ -2512,12 +2559,29 @@ public data class PlanDefinition(
           action = action.map { it.build() },
         )
     }
+  }
 
-    /** A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [Reference] */
-    public typealias Subject = FhirChoiceTypes.CanonicalOrCodeableConceptOrReference
+  /** A FHIR choice type — one of: [Coding] | [String] */
+  public sealed interface VersionAlgorithm {
+    public typealias Coding = dev.ohs.fhir.model.r5.Coding
 
-    /** A FHIR choice type — one of: [CanonicalBox] | [UriBox] */
-    public typealias Definition = FhirChoiceTypes.CanonicalOrUri
+    public typealias String = dev.ohs.fhir.model.r5.String
+  }
+
+  /** A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [Reference] */
+  public sealed interface Subject {
+    public typealias Canonical = dev.ohs.fhir.model.r5.Canonical
+
+    public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+    public typealias Reference = dev.ohs.fhir.model.r5.Reference
+  }
+
+  /** A FHIR choice type — one of: [Boolean] | [CodeableConcept] */
+  public sealed interface AsNeeded {
+    public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
+
+    public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
   }
 
   public class Builder(
@@ -2696,7 +2760,7 @@ public data class PlanDefinition(
      *
      * A FHIR choice type — one of: [Coding] | [String]
      */
-    public var versionAlgorithm: PlanDefinition.VersionAlgorithm? = null
+    public var versionAlgorithm: VersionAlgorithm? = null
 
     /**
      * A natural language name identifying the plan definition. This name should be usable as an
@@ -2748,7 +2812,7 @@ public data class PlanDefinition(
      *
      * A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [Reference]
      */
-    public var subject: PlanDefinition.Subject? = null
+    public var subject: Subject? = null
 
     /**
      * The date (and optionally time) when the plan definition was last significantly changed. The
@@ -2983,7 +3047,7 @@ public data class PlanDefinition(
      *
      * A FHIR choice type — one of: [Boolean] | [CodeableConcept]
      */
-    public var asNeeded: PlanDefinition.AsNeeded? = null
+    public var asNeeded: AsNeeded? = null
 
     override fun build(): PlanDefinition =
       PlanDefinition(
@@ -3354,13 +3418,4 @@ public data class PlanDefinition(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [Coding] | [String] */
-  public typealias VersionAlgorithm = FhirChoiceTypes.CodingOrString
-
-  /** A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [Reference] */
-  public typealias Subject = FhirChoiceTypes.CanonicalOrCodeableConceptOrReference
-
-  /** A FHIR choice type — one of: [Boolean] | [CodeableConcept] */
-  public typealias AsNeeded = FhirChoiceTypes.BooleanOrCodeableConcept
 }

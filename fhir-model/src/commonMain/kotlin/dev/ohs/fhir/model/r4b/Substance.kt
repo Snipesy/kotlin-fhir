@@ -358,7 +358,7 @@ public data class Substance(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public val substance: FhirChoiceTypes.CodeableConceptOrReference,
+    public val substance: Substance,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -370,13 +370,20 @@ public data class Substance(
         }
       }
 
+    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+    public sealed interface Substance {
+      public typealias CodeableConcept = dev.ohs.fhir.model.r4b.CodeableConcept
+
+      public typealias Reference = dev.ohs.fhir.model.r4b.Reference
+    }
+
     public class Builder(
       /**
        * Another substance that is a component of this substance.
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public var substance: FhirChoiceTypes.CodeableConceptOrReference
+      public var substance: Substance
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any

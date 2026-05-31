@@ -234,9 +234,9 @@ public data class ServiceRequest(
    * modification), a ratio ( for example, 20 half day visits per month), or a range (2.0 to 1.8 Gy
    * per fraction).
    *
-   * A FHIR choice type — one of: [Quantity] | [Range] | [Ratio]
+   * A FHIR choice type — one of: [dev.ohs.fhir.model.r5.Quantity] | [Range] | [Ratio]
    */
-  public val quantity: FhirChoiceTypes.QuantityOrRangeOrRatio? = null,
+  public val quantity: Quantity? = null,
   /**
    * On whom or what the service is to be performed. This is usually a human patient, but can also
    * be requested on animals, groups of humans or animals, devices such as dialysis machines, or
@@ -261,14 +261,14 @@ public data class ServiceRequest(
    *
    * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
    */
-  public val occurrence: ServiceRequest.Occurrence? = null,
+  public val occurrence: Occurrence? = null,
   /**
    * If a CodeableConcept is present, it indicates the pre-condition for performing the service. For
    * example "pain", "on flare-up", etc.
    *
    * A FHIR choice type — one of: [Boolean] | [CodeableConcept]
    */
-  public val asNeeded: ServiceRequest.AsNeeded? = null,
+  public val asNeeded: AsNeeded? = null,
   /** When the request transitioned to being actionable. */
   public val authoredOn: DateTime? = null,
   /**
@@ -528,10 +528,10 @@ public data class ServiceRequest(
        * a code is not available for a concept, CodeableConcept.text can be used. When the data is a
        * text or not a single identifiable concept, string should be used.
        *
-       * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Period] | [Quantity] |
-       * [Range] | [Ratio] | [String]
+       * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Period] |
+       * [dev.ohs.fhir.model.r5.Quantity] | [Range] | [Ratio] | [String]
        */
-      public val `value`: Parameter.Value,
+      public val `value`: Value,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -541,6 +541,26 @@ public data class ServiceRequest(
             modifierExtension = this@with.modifierExtension.map { it.toBuilder() }.toMutableList()
           }
         }
+
+      /**
+       * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Period] |
+       * [dev.ohs.fhir.model.r5.Quantity] | [Range] | [Ratio] | [String]
+       */
+      public sealed interface Value {
+        public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
+
+        public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+        public typealias Period = dev.ohs.fhir.model.r5.Period
+
+        public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+
+        public typealias Range = dev.ohs.fhir.model.r5.Range
+
+        public typealias Ratio = dev.ohs.fhir.model.r5.Ratio
+
+        public typealias String = dev.ohs.fhir.model.r5.String
+      }
 
       public class Builder(
         /**
@@ -555,10 +575,10 @@ public data class ServiceRequest(
          * when a code is not available for a concept, CodeableConcept.text can be used. When the
          * data is a text or not a single identifiable concept, string should be used.
          *
-         * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Period] | [Quantity] |
-         * [Range] | [Ratio] | [String]
+         * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Period] |
+         * [dev.ohs.fhir.model.r5.Quantity] | [Range] | [Ratio] | [String]
          */
-        public var `value`: Parameter.Value,
+        public var `value`: Value,
       ) {
         /**
          * Unique id for the element within a resource (for internal references). This may be any
@@ -609,13 +629,6 @@ public data class ServiceRequest(
             `value` = `value`,
           )
       }
-
-      /**
-       * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Period] | [Quantity] |
-       * [Range] | [Ratio] | [String]
-       */
-      public typealias Value =
-        FhirChoiceTypes.BooleanOrCodeableConceptOrPeriodOrQuantityOrRangeOrRatioOrString
     }
 
     public class Builder(
@@ -721,7 +734,7 @@ public data class ServiceRequest(
      *
      * A FHIR choice type — one of: [Markdown] | [Reference]
      */
-    public val instruction: PatientInstruction.Instruction? = null,
+    public val instruction: Instruction? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -732,6 +745,13 @@ public data class ServiceRequest(
           instruction = this@with.instruction
         }
       }
+
+    /** A FHIR choice type — one of: [Markdown] | [Reference] */
+    public sealed interface Instruction {
+      public typealias Markdown = dev.ohs.fhir.model.r5.Markdown
+
+      public typealias Reference = dev.ohs.fhir.model.r5.Reference
+    }
 
     public class Builder() {
       /**
@@ -779,7 +799,7 @@ public data class ServiceRequest(
        *
        * A FHIR choice type — one of: [Markdown] | [Reference]
        */
-      public var instruction: PatientInstruction.Instruction? = null
+      public var instruction: Instruction? = null
 
       public fun build(): PatientInstruction =
         PatientInstruction(
@@ -789,9 +809,31 @@ public data class ServiceRequest(
           instruction = instruction,
         )
     }
+  }
 
-    /** A FHIR choice type — one of: [Markdown] | [Reference] */
-    public typealias Instruction = FhirChoiceTypes.MarkdownOrReference
+  /** A FHIR choice type — one of: [dev.ohs.fhir.model.r5.Quantity] | [Range] | [Ratio] */
+  public sealed interface Quantity {
+    public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+
+    public typealias Range = dev.ohs.fhir.model.r5.Range
+
+    public typealias Ratio = dev.ohs.fhir.model.r5.Ratio
+  }
+
+  /** A FHIR choice type — one of: [DateTime] | [Period] | [Timing] */
+  public sealed interface Occurrence {
+    public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+    public typealias Period = dev.ohs.fhir.model.r5.Period
+
+    public typealias Timing = dev.ohs.fhir.model.r5.Timing
+  }
+
+  /** A FHIR choice type — one of: [Boolean] | [CodeableConcept] */
+  public sealed interface AsNeeded {
+    public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
+
+    public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
   }
 
   public class Builder(
@@ -1025,9 +1067,9 @@ public data class ServiceRequest(
      * modification), a ratio ( for example, 20 half day visits per month), or a range (2.0 to 1.8
      * Gy per fraction).
      *
-     * A FHIR choice type — one of: [Quantity] | [Range] | [Ratio]
+     * A FHIR choice type — one of: [dev.ohs.fhir.model.r5.Quantity] | [Range] | [Ratio]
      */
-    public var quantity: FhirChoiceTypes.QuantityOrRangeOrRatio? = null
+    public var quantity: Quantity? = null
 
     /**
      * The actual focus of a service request when it is not the subject of record representing
@@ -1049,7 +1091,7 @@ public data class ServiceRequest(
      *
      * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
      */
-    public var occurrence: ServiceRequest.Occurrence? = null
+    public var occurrence: Occurrence? = null
 
     /**
      * If a CodeableConcept is present, it indicates the pre-condition for performing the service.
@@ -1057,7 +1099,7 @@ public data class ServiceRequest(
      *
      * A FHIR choice type — one of: [Boolean] | [CodeableConcept]
      */
-    public var asNeeded: ServiceRequest.AsNeeded? = null
+    public var asNeeded: AsNeeded? = null
 
     /** When the request transitioned to being actionable. */
     public var authoredOn: DateTime.Builder? = null
@@ -1328,10 +1370,4 @@ public data class ServiceRequest(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [DateTime] | [Period] | [Timing] */
-  public typealias Occurrence = FhirChoiceTypes.DateTimeOrPeriodOrTiming
-
-  /** A FHIR choice type — one of: [Boolean] | [CodeableConcept] */
-  public typealias AsNeeded = FhirChoiceTypes.BooleanOrCodeableConcept
 }

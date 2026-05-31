@@ -67,7 +67,7 @@ public data class DataRequirement(
    *
    * A FHIR choice type — one of: [CodeableConcept] | [Reference]
    */
-  public val subject: DataRequirement.Subject? = null,
+  public val subject: Subject? = null,
   /**
    * Indicates that specific elements of the type are referenced by the knowledge module and must be
    * supported by the consumer in order to obtain an effective evaluation. This does not mean that a
@@ -312,7 +312,7 @@ public data class DataRequirement(
      *
      * A FHIR choice type — one of: [DateTime] | [Duration] | [Period]
      */
-    public val `value`: DateFilter.Value? = null,
+    public val `value`: Value? = null,
   ) : Element() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -324,6 +324,15 @@ public data class DataRequirement(
           `value` = this@with.`value`
         }
       }
+
+    /** A FHIR choice type — one of: [DateTime] | [Duration] | [Period] */
+    public sealed interface Value {
+      public typealias DateTime = dev.ohs.fhir.model.r4b.DateTime
+
+      public typealias Duration = dev.ohs.fhir.model.r4b.Duration
+
+      public typealias Period = dev.ohs.fhir.model.r4b.Period
+    }
 
     public class Builder() {
       /**
@@ -376,7 +385,7 @@ public data class DataRequirement(
        *
        * A FHIR choice type — one of: [DateTime] | [Duration] | [Period]
        */
-      public var `value`: DateFilter.Value? = null
+      public var `value`: Value? = null
 
       public fun build(): DateFilter =
         DateFilter(
@@ -387,9 +396,6 @@ public data class DataRequirement(
           `value` = `value`,
         )
     }
-
-    /** A FHIR choice type — one of: [DateTime] | [Duration] | [Period] */
-    public typealias Value = FhirChoiceTypes.DateTimeOrDurationOrPeriod
   }
 
   /** Specifies the order of the results to be returned. */
@@ -472,6 +478,13 @@ public data class DataRequirement(
     }
   }
 
+  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+  public sealed interface Subject {
+    public typealias CodeableConcept = dev.ohs.fhir.model.r4b.CodeableConcept
+
+    public typealias Reference = dev.ohs.fhir.model.r4b.Reference
+  }
+
   public open class Builder(
     /**
      * The type of the required data, specified as the type name of a resource. For profiles, this
@@ -513,7 +526,7 @@ public data class DataRequirement(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public open var subject: DataRequirement.Subject? = null
+    public open var subject: Subject? = null
 
     /**
      * Indicates that specific elements of the type are referenced by the knowledge module and must
@@ -599,7 +612,4 @@ public data class DataRequirement(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
-  public typealias Subject = FhirChoiceTypes.CodeableConceptOrReference
 }

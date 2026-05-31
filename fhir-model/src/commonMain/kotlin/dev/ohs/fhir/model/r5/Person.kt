@@ -172,7 +172,7 @@ public data class Person(
    *
    * A FHIR choice type — one of: [Boolean] | [DateTime]
    */
-  public val deceased: Person.Deceased? = null,
+  public val deceased: Deceased? = null,
   /**
    * One or more addresses for the person.
    *
@@ -490,6 +490,13 @@ public data class Person(
     }
   }
 
+  /** A FHIR choice type — one of: [Boolean] | [DateTime] */
+  public sealed interface Deceased {
+    public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
+
+    public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+  }
+
   public class Builder() : DomainResource.Builder() {
     /**
      * The logical id of the resource, as used in the URL for the resource. Once assigned, this
@@ -645,7 +652,7 @@ public data class Person(
      *
      * A FHIR choice type — one of: [Boolean] | [DateTime]
      */
-    public var deceased: Person.Deceased? = null
+    public var deceased: Deceased? = null
 
     /**
      * One or more addresses for the person.
@@ -750,7 +757,4 @@ public data class Person(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [Boolean] | [DateTime] */
-  public typealias Deceased = FhirChoiceTypes.BooleanOrDateTime
 }

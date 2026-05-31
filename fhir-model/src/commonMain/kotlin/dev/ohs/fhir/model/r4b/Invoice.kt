@@ -419,7 +419,7 @@ public data class Invoice(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public val chargeItem: FhirChoiceTypes.CodeableConceptOrReference,
+    public val chargeItem: ChargeItem,
     /**
      * The price for a ChargeItem may be calculated as a base price with surcharges/deductions that
      * apply in certain conditions. A ChargeItemDefinition resource that defines the prices, factors
@@ -609,6 +609,13 @@ public data class Invoice(
       }
     }
 
+    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+    public sealed interface ChargeItem {
+      public typealias CodeableConcept = dev.ohs.fhir.model.r4b.CodeableConcept
+
+      public typealias Reference = dev.ohs.fhir.model.r4b.Reference
+    }
+
     public class Builder(
       /**
        * The ChargeItem contains information such as the billing code, date, amount etc. If no
@@ -617,7 +624,7 @@ public data class Invoice(
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public var chargeItem: FhirChoiceTypes.CodeableConceptOrReference
+      public var chargeItem: ChargeItem
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any

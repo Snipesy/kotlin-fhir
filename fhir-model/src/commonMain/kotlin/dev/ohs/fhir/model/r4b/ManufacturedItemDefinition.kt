@@ -220,7 +220,7 @@ public data class ManufacturedItemDefinition(
      * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
      * [Quantity]
      */
-    public val `value`: Property.Value? = null,
+    public val `value`: Value? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -231,6 +231,22 @@ public data class ManufacturedItemDefinition(
           `value` = this@with.`value`
         }
       }
+
+    /**
+     * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
+     * [Quantity]
+     */
+    public sealed interface Value {
+      public typealias Attachment = dev.ohs.fhir.model.r4b.Attachment
+
+      public typealias Boolean = dev.ohs.fhir.model.r4b.Boolean
+
+      public typealias CodeableConcept = dev.ohs.fhir.model.r4b.CodeableConcept
+
+      public typealias Date = dev.ohs.fhir.model.r4b.Date
+
+      public typealias Quantity = dev.ohs.fhir.model.r4b.Quantity
+    }
 
     public class Builder(
       /** A code expressing the type of characteristic. */
@@ -282,7 +298,7 @@ public data class ManufacturedItemDefinition(
        * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
        * [Quantity]
        */
-      public var `value`: Property.Value? = null
+      public var `value`: Value? = null
 
       public fun build(): Property =
         Property(
@@ -293,12 +309,6 @@ public data class ManufacturedItemDefinition(
           `value` = `value`,
         )
     }
-
-    /**
-     * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
-     * [Quantity]
-     */
-    public typealias Value = FhirChoiceTypes.AttachmentOrBooleanOrCodeableConceptOrDateOrQuantity
   }
 
   public class Builder(

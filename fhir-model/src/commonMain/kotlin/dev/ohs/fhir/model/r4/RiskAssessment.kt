@@ -147,7 +147,7 @@ public data class RiskAssessment(
    *
    * A FHIR choice type — one of: [DateTime] | [Period]
    */
-  public val occurrence: RiskAssessment.Occurrence? = null,
+  public val occurrence: Occurrence? = null,
   /**
    * For assessments or prognosis specific to a particular condition, indicates the condition being
    * assessed.
@@ -258,7 +258,7 @@ public data class RiskAssessment(
      *
      * A FHIR choice type — one of: [Decimal] | [Range]
      */
-    public val probability: Prediction.Probability? = null,
+    public val probability: Probability? = null,
     /**
      * Indicates how likely the outcome is (in the specified timeframe), expressed as a qualitative
      * value (e.g. low, medium, or high).
@@ -278,7 +278,7 @@ public data class RiskAssessment(
      *
      * A FHIR choice type — one of: [Period] | [Range]
      */
-    public val `when`: Prediction.When? = null,
+    public val `when`: When? = null,
     /** Additional information explaining the basis for the prediction. */
     public val rationale: String? = null,
   ) : BackboneElement() {
@@ -296,6 +296,20 @@ public data class RiskAssessment(
           rationale = this@with.rationale?.toBuilder()
         }
       }
+
+    /** A FHIR choice type — one of: [Decimal] | [Range] */
+    public sealed interface Probability {
+      public typealias Decimal = dev.ohs.fhir.model.r4.Decimal
+
+      public typealias Range = dev.ohs.fhir.model.r4.Range
+    }
+
+    /** A FHIR choice type — one of: [Period] | [Range] */
+    public sealed interface When {
+      public typealias Period = dev.ohs.fhir.model.r4.Period
+
+      public typealias Range = dev.ohs.fhir.model.r4.Range
+    }
 
     public class Builder() {
       /**
@@ -352,7 +366,7 @@ public data class RiskAssessment(
        *
        * A FHIR choice type — one of: [Decimal] | [Range]
        */
-      public var probability: Prediction.Probability? = null
+      public var probability: Probability? = null
 
       /**
        * Indicates how likely the outcome is (in the specified timeframe), expressed as a
@@ -375,7 +389,7 @@ public data class RiskAssessment(
        *
        * A FHIR choice type — one of: [Period] | [Range]
        */
-      public var `when`: Prediction.When? = null
+      public var `when`: When? = null
 
       /** Additional information explaining the basis for the prediction. */
       public var rationale: String.Builder? = null
@@ -393,12 +407,13 @@ public data class RiskAssessment(
           rationale = rationale?.build(),
         )
     }
+  }
 
-    /** A FHIR choice type — one of: [Decimal] | [Range] */
-    public typealias Probability = FhirChoiceTypes.DecimalOrRange
+  /** A FHIR choice type — one of: [DateTime] | [Period] */
+  public sealed interface Occurrence {
+    public typealias DateTime = dev.ohs.fhir.model.r4.DateTime
 
-    /** A FHIR choice type — one of: [Period] | [Range] */
-    public typealias When = FhirChoiceTypes.PeriodOrRange
+    public typealias Period = dev.ohs.fhir.model.r4.Period
   }
 
   public class Builder(
@@ -535,7 +550,7 @@ public data class RiskAssessment(
      *
      * A FHIR choice type — one of: [DateTime] | [Period]
      */
-    public var occurrence: RiskAssessment.Occurrence? = null
+    public var occurrence: Occurrence? = null
 
     /**
      * For assessments or prognosis specific to a particular condition, indicates the condition
@@ -644,7 +659,4 @@ public data class RiskAssessment(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [DateTime] | [Period] */
-  public typealias Occurrence = FhirChoiceTypes.DateTimeOrPeriod
 }

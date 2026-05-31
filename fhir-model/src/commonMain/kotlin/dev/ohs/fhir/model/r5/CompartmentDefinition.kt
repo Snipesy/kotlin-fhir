@@ -170,7 +170,7 @@ public data class CompartmentDefinition(
    *
    * A FHIR choice type — one of: [Coding] | [String]
    */
-  public val versionAlgorithm: CompartmentDefinition.VersionAlgorithm? = null,
+  public val versionAlgorithm: VersionAlgorithm? = null,
   /**
    * A natural language name identifying the compartment definition. This name should be usable as
    * an identifier for the module by machine processing applications such as code generation.
@@ -470,6 +470,13 @@ public data class CompartmentDefinition(
     }
   }
 
+  /** A FHIR choice type — one of: [Coding] | [String] */
+  public sealed interface VersionAlgorithm {
+    public typealias Coding = dev.ohs.fhir.model.r5.Coding
+
+    public typealias String = dev.ohs.fhir.model.r5.String
+  }
+
   public class Builder(
     /**
      * An absolute URI that is used to identify this compartment definition when it is referenced in
@@ -656,7 +663,7 @@ public data class CompartmentDefinition(
      *
      * A FHIR choice type — one of: [Coding] | [String]
      */
-    public var versionAlgorithm: CompartmentDefinition.VersionAlgorithm? = null
+    public var versionAlgorithm: VersionAlgorithm? = null
 
     /**
      * A short, descriptive, user-friendly title for the capability statement.
@@ -815,7 +822,4 @@ public data class CompartmentDefinition(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [Coding] | [String] */
-  public typealias VersionAlgorithm = FhirChoiceTypes.CodingOrString
 }

@@ -187,7 +187,7 @@ public data class ExampleScenario(
    *
    * A FHIR choice type — one of: [Coding] | [String]
    */
-  public val versionAlgorithm: ExampleScenario.VersionAlgorithm? = null,
+  public val versionAlgorithm: VersionAlgorithm? = null,
   /**
    * Temporarily retained for tooling purposes.
    *
@@ -534,7 +534,7 @@ public data class ExampleScenario(
      *
      * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
      */
-    public val structureProfile: Instance.StructureProfile? = null,
+    public val structureProfile: StructureProfile? = null,
     /** A short descriptive label the instance to be used in tables or diagrams. */
     public val title: String,
     /** An explanation of what the instance contains and what it's for. */
@@ -840,6 +840,13 @@ public data class ExampleScenario(
       }
     }
 
+    /** A FHIR choice type — one of: [CanonicalBox] | [UriBox] */
+    public sealed interface StructureProfile {
+      public typealias Canonical = CanonicalBox
+
+      public typealias Uri = UriBox
+    }
+
     public class Builder(
       /** A unique string within the scenario that is used to reference the instance. */
       public var key: String.Builder,
@@ -902,7 +909,7 @@ public data class ExampleScenario(
        *
        * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
        */
-      public var structureProfile: Instance.StructureProfile? = null
+      public var structureProfile: StructureProfile? = null
 
       /** An explanation of what the instance contains and what it's for. */
       public var description: Markdown.Builder? = null
@@ -945,9 +952,6 @@ public data class ExampleScenario(
           containedInstance = containedInstance.map { it.build() },
         )
     }
-
-    /** A FHIR choice type — one of: [CanonicalBox] | [UriBox] */
-    public typealias StructureProfile = FhirChoiceTypes.CanonicalOrUri
   }
 
   /** A group of operations that represents a significant step within a scenario. */
@@ -1637,6 +1641,13 @@ public data class ExampleScenario(
     }
   }
 
+  /** A FHIR choice type — one of: [Coding] | [String] */
+  public sealed interface VersionAlgorithm {
+    public typealias Coding = dev.ohs.fhir.model.r5.Coding
+
+    public typealias String = dev.ohs.fhir.model.r5.String
+  }
+
   public class Builder(
     /**
      * The status of this example scenario. Enables tracking the life-cycle of the content.
@@ -1809,7 +1820,7 @@ public data class ExampleScenario(
      *
      * A FHIR choice type — one of: [Coding] | [String]
      */
-    public var versionAlgorithm: ExampleScenario.VersionAlgorithm? = null
+    public var versionAlgorithm: VersionAlgorithm? = null
 
     /**
      * Temporarily retained for tooling purposes.
@@ -2011,7 +2022,4 @@ public data class ExampleScenario(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [Coding] | [String] */
-  public typealias VersionAlgorithm = FhirChoiceTypes.CodingOrString
 }

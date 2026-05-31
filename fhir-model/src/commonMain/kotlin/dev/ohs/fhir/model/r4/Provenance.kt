@@ -155,7 +155,7 @@ public data class Provenance(
    *
    * A FHIR choice type — one of: [DateTime] | [Period]
    */
-  public val occurred: Provenance.Occurred? = null,
+  public val occurred: Occurred? = null,
   /**
    * The instant of time at which the activity was recorded.
    *
@@ -541,6 +541,13 @@ public data class Provenance(
     }
   }
 
+  /** A FHIR choice type — one of: [DateTime] | [Period] */
+  public sealed interface Occurred {
+    public typealias DateTime = dev.ohs.fhir.model.r4.DateTime
+
+    public typealias Period = dev.ohs.fhir.model.r4.Period
+  }
+
   public class Builder(
     /**
      * The Reference(s) that were generated or updated by the activity described in this resource. A
@@ -684,7 +691,7 @@ public data class Provenance(
      *
      * A FHIR choice type — one of: [DateTime] | [Period]
      */
-    public var occurred: Provenance.Occurred? = null
+    public var occurred: Occurred? = null
 
     /**
      * Policy or plan the activity was defined by. Typically, a single activity may have multiple
@@ -773,7 +780,4 @@ public data class Provenance(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [DateTime] | [Period] */
-  public typealias Occurred = FhirChoiceTypes.DateTimeOrPeriod
 }

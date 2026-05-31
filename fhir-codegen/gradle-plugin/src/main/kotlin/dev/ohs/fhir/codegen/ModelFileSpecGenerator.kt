@@ -192,11 +192,7 @@ class ModelFileSpecGenerator(val codegenContext: CodegenContext) {
             },
           )
 
-          addChoiceTypeAliases(
-            modelClassName,
-            structureDefinition.rootElements,
-            codegenContext.choiceRegistry,
-          )
+          addSealedInterfaces(structureDefinition.rootElements, codegenContext.choiceRegistry)
 
           addModelBuilderSupport(
             structureDefinition,
@@ -259,7 +255,6 @@ class ModelFileSpecGenerator(val codegenContext: CodegenContext) {
         PropertyMapper.MappingContext.MODEL,
         modelClassName,
         codegenContext.valueSetMap,
-        codegenContext.choiceRegistry,
       )
     val properties = elements.map { propertyMapper.mapToProperty(it) }
     val equalsFunSpec =
@@ -354,8 +349,8 @@ class ModelFileSpecGenerator(val codegenContext: CodegenContext) {
               valueSetMap,
               createEnumNameToTypeSpecEntry,
             )
-            // Add choice-type aliases inside a backbone element
-            .addChoiceTypeAliases(backboneElementClassName, elements, codegenContext.choiceRegistry)
+            // Add sealed interfaces inside a backbone element
+            .addSealedInterfaces(elements, codegenContext.choiceRegistry)
             .addBackboneElementBuilderSupport(
               structureDefinition,
               backboneElementClassName,
@@ -429,12 +424,7 @@ private fun TypeSpec.Builder.buildProperties(
   val propertyParameterPairs =
     elements.map { element ->
       val propertyMapper =
-        PropertyMapper(
-          PropertyMapper.MappingContext.MODEL,
-          modelClassName,
-          valueSetMap,
-          choiceRegistry,
-        )
+        PropertyMapper(PropertyMapper.MappingContext.MODEL, modelClassName, valueSetMap)
       val propertyInfo = propertyMapper.mapToProperty(element)
       val property =
         PropertySpec.builder(propertyInfo.name, propertyInfo.typeName)
@@ -525,26 +515,43 @@ private fun TypeSpec.Builder.buildProperties(
 }
 
 /**
- * Adds a nested type alias for each choice type ("value[x]") element, pointing at the shared
- * consolidated option-set interface (e.g. `Observation.typealias Value = …`). Preserves the public
- * API spelling (`Observation.Value`, `Observation.Value.Quantity` via the interface's own nested
- * aliases, exhaustive `when`) while the member types implement the interface directly. The shared
- * interfaces and their `<Type>Box` box types are emitted by [ChoiceTypesFileSpecGenerator].
+ * Adds a nested sealed interface for each choice type ("value[x]") element (e.g.
+ * `Observation.Value`). Each member type is exposed as a nested `typealias` so the public spelling
+ * (`Observation.Value.Quantity`) keeps resolving — to the model type for a bare member, or to its
+ * shared `<Type>Box` for a wrapped one. The member types implement the interface directly (bare,
+ * via their `<Type>Choices` aggregate) or through the box; both are emitted by
+ * [ChoiceTypesFileSpecGenerator].
  */
-private fun TypeSpec.Builder.addChoiceTypeAliases(
-  enclosingModelClassName: ClassName,
+private fun TypeSpec.Builder.addSealedInterfaces(
   elements: List<Element>,
   registry: ChoiceTypeRegistry,
 ): TypeSpec.Builder {
   for (element in elements.filter { it.path.endsWith("[x]") }) {
-    // Skip the alias when its name would shadow a type in scope (e.g. `DeviceRequest.code[x]` → a
-    // `Code` alias clashing with the `Code` primitive); the property is typed with the shared set
-    // directly in that case (see PropertyMapper.getSealedInterfaceType).
-    if (registry.aliasNameCollides(element, enclosingModelClassName)) continue
-    val fieldName = element.getElementName().capitalized()
+    // Inherited `versionAlgorithm[x]` fields reuse the base declaration's interface (see
+    // ChoiceTypeRegistry.interfacePathOf); only the declaring class emits it.
+    if (element.base != null && element.id != element.base.path) continue
     val set = registry.choiceSetFor(element)
-    addTypeAlias(
-      TypeAliasSpec.builder(fieldName, set.className).addKdoc(registry.unionDoc(set)).build()
+    addType(
+      TypeSpec.interfaceBuilder(set.className.simpleName)
+        .addModifiers(KModifier.SEALED)
+        .addKdoc(registry.unionDoc(set))
+        .apply {
+          for (type in set.types) {
+            val expansion = choiceTypeExpansionName(type)
+            // Bare members alias the model type. Its simple name equals the expansion, so a plain
+            // `typealias Quantity = Quantity` would be self-cyclic; aliasing the fully-qualified
+            // name (rendered verbatim) breaks the cycle without a file-wide aliased import that
+            // would rename every other use of the type in this file.
+            val rhs =
+              if (registry.isWrapped(set, expansion)) {
+                registry.wrapperClassName(expansion)
+              } else {
+                ClassName("", registry.modelType(expansion).canonicalName)
+              }
+            addTypeAlias(TypeAliasSpec.builder(expansion, rhs).build())
+          }
+        }
+        .build()
     )
   }
   return this

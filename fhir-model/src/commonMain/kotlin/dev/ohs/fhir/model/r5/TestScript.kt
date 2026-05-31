@@ -197,7 +197,7 @@ public data class TestScript(
    *
    * A FHIR choice type — one of: [Coding] | [String]
    */
-  public val versionAlgorithm: TestScript.VersionAlgorithm? = null,
+  public val versionAlgorithm: VersionAlgorithm? = null,
   /**
    * A natural language name identifying the test script. This name should be usable as an
    * identifier for the module by machine processing applications such as code generation.
@@ -2798,7 +2798,7 @@ public data class TestScript(
            *
            * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
            */
-          public val link: Requirement.Link? = null,
+          public val link: Link? = null,
         ) : BackboneElement() {
           public fun toBuilder(): Builder =
             with(this) {
@@ -2810,6 +2810,13 @@ public data class TestScript(
                 link = this@with.link
               }
             }
+
+          /** A FHIR choice type — one of: [CanonicalBox] | [UriBox] */
+          public sealed interface Link {
+            public typealias Canonical = CanonicalBox
+
+            public typealias Uri = UriBox
+          }
 
           public class Builder() {
             /**
@@ -2858,7 +2865,7 @@ public data class TestScript(
              *
              * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
              */
-            public var link: Requirement.Link? = null
+            public var link: Link? = null
 
             public fun build(): Requirement =
               Requirement(
@@ -2868,9 +2875,6 @@ public data class TestScript(
                 link = link,
               )
           }
-
-          /** A FHIR choice type — one of: [CanonicalBox] | [UriBox] */
-          public typealias Link = FhirChoiceTypes.CanonicalOrUri
         }
 
         public class Builder(
@@ -3801,6 +3805,13 @@ public data class TestScript(
     }
   }
 
+  /** A FHIR choice type — one of: [Coding] | [String] */
+  public sealed interface VersionAlgorithm {
+    public typealias Coding = dev.ohs.fhir.model.r5.Coding
+
+    public typealias String = dev.ohs.fhir.model.r5.String
+  }
+
   public class Builder(
     /**
      * A natural language name identifying the test script. This name should be usable as an
@@ -3981,7 +3992,7 @@ public data class TestScript(
      *
      * A FHIR choice type — one of: [Coding] | [String]
      */
-    public var versionAlgorithm: TestScript.VersionAlgorithm? = null
+    public var versionAlgorithm: VersionAlgorithm? = null
 
     /**
      * A short, descriptive, user-friendly title for the test script.
@@ -4579,7 +4590,4 @@ public data class TestScript(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [Coding] | [String] */
-  public typealias VersionAlgorithm = FhirChoiceTypes.CodingOrString
 }

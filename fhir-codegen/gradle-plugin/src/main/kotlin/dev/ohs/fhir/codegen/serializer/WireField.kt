@@ -49,15 +49,15 @@ internal data class WireField(
  * Wire fields matching the FLAT FHIR JSON wire shape exactly — every top-level key that appears on
  * the wire is a separate entry. Choice types expand to per-expansion pairs (`deceasedBoolean`,
  * `_deceasedBoolean`, `deceasedDateTime`, …). Encode writes these slots directly via
- * `emitChoiceTypeExpansionEncoding`; decode reads them into locals and synthesizes the sealed value
- * via the companion `from(…)` factory.
+ * `emitChoiceTypeExpansionEncoding`; decode reads them into locals and synthesizes the choice value
+ * inline (the one non-null local, boxed where the member is wrapped).
  */
 internal fun CodegenContext.buildJsonWireFields(
   modelClassName: ClassName,
   elements: List<Element>,
 ): List<WireField> {
   val propertyMapper =
-    PropertyMapper(PropertyMapper.MappingContext.WIRE, modelClassName, valueSetMap, choiceRegistry)
+    PropertyMapper(PropertyMapper.MappingContext.WIRE, modelClassName, valueSetMap)
   return elements.flatMap { element ->
     propertyMapper.mapToProperties(element).map { info ->
       WireField(

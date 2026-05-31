@@ -56,8 +56,8 @@ public data class UsageContext(
    *
    * A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Range] | [Reference]
    */
-  public val `value`: UsageContext.Value,
-) : Element(), FhirChoiceTypes.ElementDefinitionDefaultValueChoice {
+  public val `value`: Value,
+) : Element(), FhirChoiceParticipants.UsageContextChoices {
   public fun toBuilder(): Builder =
     with(this) {
       Builder(code.toBuilder(), `value`).apply {
@@ -65,6 +65,17 @@ public data class UsageContext(
         extension = this@with.extension.map { it.toBuilder() }.toMutableList()
       }
     }
+
+  /** A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Range] | [Reference] */
+  public sealed interface Value {
+    public typealias CodeableConcept = dev.ohs.fhir.model.r4.CodeableConcept
+
+    public typealias Quantity = dev.ohs.fhir.model.r4.Quantity
+
+    public typealias Range = dev.ohs.fhir.model.r4.Range
+
+    public typealias Reference = dev.ohs.fhir.model.r4.Reference
+  }
 
   public open class Builder(
     /** A code that identifies the type of context being specified by this usage context. */
@@ -75,7 +86,7 @@ public data class UsageContext(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Range] | [Reference]
      */
-    public open var `value`: UsageContext.Value,
+    public open var `value`: Value,
   ) {
     /**
      * Unique id for the element within a resource (for internal references). This may be any string
@@ -105,7 +116,4 @@ public data class UsageContext(
         `value` = `value`,
       )
   }
-
-  /** A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Range] | [Reference] */
-  public typealias Value = FhirChoiceTypes.CodeableConceptOrQuantityOrRangeOrReference
 }

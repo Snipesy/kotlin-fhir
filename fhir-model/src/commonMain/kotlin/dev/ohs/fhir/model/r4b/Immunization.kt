@@ -169,7 +169,7 @@ public data class Immunization(
    *
    * A FHIR choice type — one of: [DateTime] | [String]
    */
-  public val occurrence: Immunization.Occurrence,
+  public val occurrence: Occurrence,
   /**
    * The date the occurrence of the immunization was first captured in the record - potentially
    * significantly after the occurrence of the event.
@@ -731,7 +731,7 @@ public data class Immunization(
      *
      * A FHIR choice type — one of: [PositiveInt] | [String]
      */
-    public val doseNumber: ProtocolApplied.DoseNumber,
+    public val doseNumber: DoseNumber,
     /**
      * The recommended number of doses to achieve immunity.
      *
@@ -740,7 +740,7 @@ public data class Immunization(
      *
      * A FHIR choice type — one of: [PositiveInt] | [String]
      */
-    public val seriesDoses: ProtocolApplied.SeriesDoses? = null,
+    public val seriesDoses: SeriesDoses? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -755,6 +755,20 @@ public data class Immunization(
         }
       }
 
+    /** A FHIR choice type — one of: [PositiveInt] | [String] */
+    public sealed interface DoseNumber {
+      public typealias PositiveInt = dev.ohs.fhir.model.r4b.PositiveInt
+
+      public typealias String = dev.ohs.fhir.model.r4b.String
+    }
+
+    /** A FHIR choice type — one of: [PositiveInt] | [String] */
+    public sealed interface SeriesDoses {
+      public typealias PositiveInt = dev.ohs.fhir.model.r4b.PositiveInt
+
+      public typealias String = dev.ohs.fhir.model.r4b.String
+    }
+
     public class Builder(
       /**
        * Nominal position in a series.
@@ -764,7 +778,7 @@ public data class Immunization(
        *
        * A FHIR choice type — one of: [PositiveInt] | [String]
        */
-      public var doseNumber: ProtocolApplied.DoseNumber
+      public var doseNumber: DoseNumber
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -826,7 +840,7 @@ public data class Immunization(
        *
        * A FHIR choice type — one of: [PositiveInt] | [String]
        */
-      public var seriesDoses: ProtocolApplied.SeriesDoses? = null
+      public var seriesDoses: SeriesDoses? = null
 
       public fun build(): ProtocolApplied =
         ProtocolApplied(
@@ -840,12 +854,13 @@ public data class Immunization(
           seriesDoses = seriesDoses,
         )
     }
+  }
 
-    /** A FHIR choice type — one of: [PositiveInt] | [String] */
-    public typealias DoseNumber = FhirChoiceTypes.PositiveIntOrString
+  /** A FHIR choice type — one of: [DateTime] | [String] */
+  public sealed interface Occurrence {
+    public typealias DateTime = dev.ohs.fhir.model.r4b.DateTime
 
-    /** A FHIR choice type — one of: [PositiveInt] | [String] */
-    public typealias SeriesDoses = FhirChoiceTypes.PositiveIntOrString
+    public typealias String = dev.ohs.fhir.model.r4b.String
   }
 
   public class Builder(
@@ -875,7 +890,7 @@ public data class Immunization(
      *
      * A FHIR choice type — one of: [DateTime] | [String]
      */
-    public var occurrence: Immunization.Occurrence,
+    public var occurrence: Occurrence,
   ) : DomainResource.Builder() {
     /**
      * The logical id of the resource, as used in the URL for the resource. Once assigned, this
@@ -1178,7 +1193,4 @@ public data class Immunization(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [DateTime] | [String] */
-  public typealias Occurrence = FhirChoiceTypes.DateTimeOrString
 }

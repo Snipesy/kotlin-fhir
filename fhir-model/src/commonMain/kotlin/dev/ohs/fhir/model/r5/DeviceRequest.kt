@@ -200,7 +200,7 @@ public data class DeviceRequest(
    *
    * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
    */
-  public val occurrence: DeviceRequest.Occurrence? = null,
+  public val occurrence: Occurrence? = null,
   /** When the request transitioned to being actionable. */
   public val authoredOn: DateTime? = null,
   /**
@@ -334,7 +334,7 @@ public data class DeviceRequest(
      *
      * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range]
      */
-    public val `value`: Parameter.Value? = null,
+    public val `value`: Value? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -346,6 +346,17 @@ public data class DeviceRequest(
           `value` = this@with.`value`
         }
       }
+
+    /** A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range] */
+    public sealed interface Value {
+      public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
+
+      public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+      public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+
+      public typealias Range = dev.ohs.fhir.model.r5.Range
+    }
 
     public class Builder() {
       /**
@@ -398,7 +409,7 @@ public data class DeviceRequest(
        *
        * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range]
        */
-      public var `value`: Parameter.Value? = null
+      public var `value`: Value? = null
 
       public fun build(): Parameter =
         Parameter(
@@ -409,9 +420,15 @@ public data class DeviceRequest(
           `value` = `value`,
         )
     }
+  }
 
-    /** A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range] */
-    public typealias Value = FhirChoiceTypes.BooleanOrCodeableConceptOrQuantityOrRange
+  /** A FHIR choice type — one of: [DateTime] | [Period] | [Timing] */
+  public sealed interface Occurrence {
+    public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+    public typealias Period = dev.ohs.fhir.model.r5.Period
+
+    public typealias Timing = dev.ohs.fhir.model.r5.Timing
   }
 
   public class Builder(
@@ -607,7 +624,7 @@ public data class DeviceRequest(
      *
      * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
      */
-    public var occurrence: DeviceRequest.Occurrence? = null
+    public var occurrence: Occurrence? = null
 
     /** When the request transitioned to being actionable. */
     public var authoredOn: DateTime.Builder? = null
@@ -811,7 +828,4 @@ public data class DeviceRequest(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [DateTime] | [Period] | [Timing] */
-  public typealias Occurrence = FhirChoiceTypes.DateTimeOrPeriodOrTiming
 }

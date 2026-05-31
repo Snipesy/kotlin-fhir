@@ -221,7 +221,7 @@ public data class ResearchDefinition(
    *
    * A FHIR choice type — one of: [CodeableConcept] | [Reference]
    */
-  public val subject: ResearchDefinition.Subject? = null,
+  public val subject: Subject? = null,
   /**
    * The date (and optionally time) when the research definition was published. The date must change
    * when the business version changes and it must change if the status code changes. In addition,
@@ -417,6 +417,13 @@ public data class ResearchDefinition(
         outcome = this@with.outcome?.toBuilder()
       }
     }
+
+  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+  public sealed interface Subject {
+    public typealias CodeableConcept = dev.ohs.fhir.model.r4b.CodeableConcept
+
+    public typealias Reference = dev.ohs.fhir.model.r4b.Reference
+  }
 
   public class Builder(
     /**
@@ -634,7 +641,7 @@ public data class ResearchDefinition(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public var subject: ResearchDefinition.Subject? = null
+    public var subject: Subject? = null
 
     /**
      * The date (and optionally time) when the research definition was published. The date must
@@ -859,7 +866,4 @@ public data class ResearchDefinition(
         outcome = outcome?.build(),
       )
   }
-
-  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
-  public typealias Subject = FhirChoiceTypes.CodeableConceptOrReference
 }

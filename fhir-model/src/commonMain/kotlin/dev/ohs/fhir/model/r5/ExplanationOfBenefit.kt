@@ -680,7 +680,7 @@ public data class ExplanationOfBenefit(
      *
      * A FHIR choice type — one of: [DateTime] | [Period]
      */
-    public val `when`: Event.When,
+    public val `when`: When,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -691,6 +691,13 @@ public data class ExplanationOfBenefit(
         }
       }
 
+    /** A FHIR choice type — one of: [DateTime] | [Period] */
+    public sealed interface When {
+      public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+      public typealias Period = dev.ohs.fhir.model.r5.Period
+    }
+
     public class Builder(
       /** A coded event such as when a service is expected or a card printed. */
       public var type: CodeableConcept.Builder,
@@ -700,7 +707,7 @@ public data class ExplanationOfBenefit(
        *
        * A FHIR choice type — one of: [DateTime] | [Period]
        */
-      public var `when`: Event.When,
+      public var `when`: When,
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -751,9 +758,6 @@ public data class ExplanationOfBenefit(
           `when` = `when`,
         )
     }
-
-    /** A FHIR choice type — one of: [DateTime] | [Period] */
-    public typealias When = FhirChoiceTypes.DateTimeOrPeriod
   }
 
   /**
@@ -1097,7 +1101,7 @@ public data class ExplanationOfBenefit(
      *
      * A FHIR choice type — one of: [Date] | [Period]
      */
-    public val timing: FhirChoiceTypes.DateOrPeriod? = null,
+    public val timing: Timing? = null,
     /**
      * Additional data or information such as resources, documents, images etc. including references
      * to the data or the actual inclusion of the data.
@@ -1108,7 +1112,7 @@ public data class ExplanationOfBenefit(
      * A FHIR choice type — one of: [Attachment] | [Boolean] | [Identifier] | [Quantity] |
      * [Reference] | [String]
      */
-    public val `value`: SupportingInfo.Value? = null,
+    public val `value`: Value? = null,
     /**
      * Provides the reason in the situation where a reason code is required in addition to the
      * content.
@@ -1129,6 +1133,31 @@ public data class ExplanationOfBenefit(
           reason = this@with.reason?.toBuilder()
         }
       }
+
+    /** A FHIR choice type — one of: [Date] | [Period] */
+    public sealed interface Timing {
+      public typealias Date = dev.ohs.fhir.model.r5.Date
+
+      public typealias Period = dev.ohs.fhir.model.r5.Period
+    }
+
+    /**
+     * A FHIR choice type — one of: [Attachment] | [Boolean] | [Identifier] | [Quantity] |
+     * [Reference] | [String]
+     */
+    public sealed interface Value {
+      public typealias Attachment = dev.ohs.fhir.model.r5.Attachment
+
+      public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
+
+      public typealias Identifier = dev.ohs.fhir.model.r5.Identifier
+
+      public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+
+      public typealias Reference = dev.ohs.fhir.model.r5.Reference
+
+      public typealias String = dev.ohs.fhir.model.r5.String
+    }
 
     public class Builder(
       /** A number to uniquely identify supporting information entries. */
@@ -1194,7 +1223,7 @@ public data class ExplanationOfBenefit(
        *
        * A FHIR choice type — one of: [Date] | [Period]
        */
-      public var timing: FhirChoiceTypes.DateOrPeriod? = null
+      public var timing: Timing? = null
 
       /**
        * Additional data or information such as resources, documents, images etc. including
@@ -1206,7 +1235,7 @@ public data class ExplanationOfBenefit(
        * A FHIR choice type — one of: [Attachment] | [Boolean] | [Identifier] | [Quantity] |
        * [Reference] | [String]
        */
-      public var `value`: SupportingInfo.Value? = null
+      public var `value`: Value? = null
 
       /**
        * Provides the reason in the situation where a reason code is required in addition to the
@@ -1229,13 +1258,6 @@ public data class ExplanationOfBenefit(
           reason = reason?.build(),
         )
     }
-
-    /**
-     * A FHIR choice type — one of: [Attachment] | [Boolean] | [Identifier] | [Quantity] |
-     * [Reference] | [String]
-     */
-    public typealias Value =
-      FhirChoiceTypes.AttachmentOrBooleanOrIdentifierOrQuantityOrReferenceOrString
   }
 
   /** Information about diagnoses relevant to the claim items. */
@@ -1290,7 +1312,7 @@ public data class ExplanationOfBenefit(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public val diagnosis: FhirChoiceTypes.CodeableConceptOrReference,
+    public val diagnosis: Diagnosis,
     /**
      * When the condition was observed or the relative ranking.
      *
@@ -1311,6 +1333,13 @@ public data class ExplanationOfBenefit(
         }
       }
 
+    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+    public sealed interface Diagnosis {
+      public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+      public typealias Reference = dev.ohs.fhir.model.r5.Reference
+    }
+
     public class Builder(
       /**
        * A number to uniquely identify diagnosis entries.
@@ -1325,7 +1354,7 @@ public data class ExplanationOfBenefit(
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public var diagnosis: FhirChoiceTypes.CodeableConceptOrReference,
+      public var diagnosis: Diagnosis,
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -1377,8 +1406,8 @@ public data class ExplanationOfBenefit(
       /** Indication of whether the diagnosis was present on admission to a facility. */
       public var onAdmission: CodeableConcept.Builder? = null
 
-      public fun build(): Diagnosis =
-        Diagnosis(
+      public fun build(): ExplanationOfBenefit.Diagnosis =
+        ExplanationOfBenefit.Diagnosis(
           id = id,
           extension = extension.map { it.build() },
           modifierExtension = modifierExtension.map { it.build() },
@@ -1442,7 +1471,7 @@ public data class ExplanationOfBenefit(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public val procedure: FhirChoiceTypes.CodeableConceptOrReference,
+    public val procedure: Procedure,
     /** Unique Device Identifiers associated with this line item. */
     public val udi: List<Reference> = listOf(),
   ) : BackboneElement() {
@@ -1458,6 +1487,13 @@ public data class ExplanationOfBenefit(
         }
       }
 
+    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+    public sealed interface Procedure {
+      public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+      public typealias Reference = dev.ohs.fhir.model.r5.Reference
+    }
+
     public class Builder(
       /** A number to uniquely identify procedure entries. */
       public var sequence: PositiveInt.Builder,
@@ -1467,7 +1503,7 @@ public data class ExplanationOfBenefit(
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public var procedure: FhirChoiceTypes.CodeableConceptOrReference,
+      public var procedure: Procedure,
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -1518,8 +1554,8 @@ public data class ExplanationOfBenefit(
       /** Unique Device Identifiers associated with this line item. */
       public var udi: MutableList<Reference.Builder> = mutableListOf()
 
-      public fun build(): Procedure =
-        Procedure(
+      public fun build(): ExplanationOfBenefit.Procedure =
+        ExplanationOfBenefit.Procedure(
           id = id,
           extension = extension.map { it.build() },
           modifierExtension = modifierExtension.map { it.build() },
@@ -1753,7 +1789,7 @@ public data class ExplanationOfBenefit(
      *
      * A FHIR choice type — one of: [Address] | [Reference]
      */
-    public val location: FhirChoiceTypes.AddressOrReference? = null,
+    public val location: Location? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -1766,6 +1802,13 @@ public data class ExplanationOfBenefit(
           location = this@with.location
         }
       }
+
+    /** A FHIR choice type — one of: [Address] | [Reference] */
+    public sealed interface Location {
+      public typealias Address = dev.ohs.fhir.model.r5.Address
+
+      public typealias Reference = dev.ohs.fhir.model.r5.Reference
+    }
 
     public class Builder() {
       /**
@@ -1827,7 +1870,7 @@ public data class ExplanationOfBenefit(
        *
        * A FHIR choice type — one of: [Address] | [Reference]
        */
-      public var location: FhirChoiceTypes.AddressOrReference? = null
+      public var location: Location? = null
 
       public fun build(): Accident =
         Accident(
@@ -1949,13 +1992,13 @@ public data class ExplanationOfBenefit(
      *
      * A FHIR choice type — one of: [Date] | [Period]
      */
-    public val serviced: Item.Serviced? = null,
+    public val serviced: Serviced? = null,
     /**
      * Where the product or service was provided.
      *
      * A FHIR choice type — one of: [Address] | [CodeableConcept] | [Reference]
      */
-    public val location: FhirChoiceTypes.AddressOrCodeableConceptOrReference? = null,
+    public val location: Location? = null,
     /**
      * The amount paid by the patient, in total at the claim claim level or specifically for the
      * item and detail level, to the provider for goods and services.
@@ -3179,6 +3222,22 @@ public data class ExplanationOfBenefit(
       }
     }
 
+    /** A FHIR choice type — one of: [Date] | [Period] */
+    public sealed interface Serviced {
+      public typealias Date = dev.ohs.fhir.model.r5.Date
+
+      public typealias Period = dev.ohs.fhir.model.r5.Period
+    }
+
+    /** A FHIR choice type — one of: [Address] | [CodeableConcept] | [Reference] */
+    public sealed interface Location {
+      public typealias Address = dev.ohs.fhir.model.r5.Address
+
+      public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+      public typealias Reference = dev.ohs.fhir.model.r5.Reference
+    }
+
     public class Builder(
       /** A number to uniquely identify item entries. */
       public var sequence: PositiveInt.Builder
@@ -3300,14 +3359,14 @@ public data class ExplanationOfBenefit(
        *
        * A FHIR choice type — one of: [Date] | [Period]
        */
-      public var serviced: Item.Serviced? = null
+      public var serviced: Serviced? = null
 
       /**
        * Where the product or service was provided.
        *
        * A FHIR choice type — one of: [Address] | [CodeableConcept] | [Reference]
        */
-      public var location: FhirChoiceTypes.AddressOrCodeableConceptOrReference? = null
+      public var location: Location? = null
 
       /**
        * The amount paid by the patient, in total at the claim claim level or specifically for the
@@ -3405,9 +3464,6 @@ public data class ExplanationOfBenefit(
           detail = detail.map { it.build() },
         )
     }
-
-    /** A FHIR choice type — one of: [Date] | [Period] */
-    public typealias Serviced = FhirChoiceTypes.DateOrPeriod
   }
 
   /** The first-tier service adjudications for payor added product or service lines. */
@@ -3510,13 +3566,13 @@ public data class ExplanationOfBenefit(
      *
      * A FHIR choice type — one of: [Date] | [Period]
      */
-    public val serviced: AddItem.Serviced? = null,
+    public val serviced: Serviced? = null,
     /**
      * Where the product or service was provided.
      *
      * A FHIR choice type — one of: [Address] | [CodeableConcept] | [Reference]
      */
-    public val location: FhirChoiceTypes.AddressOrCodeableConceptOrReference? = null,
+    public val location: Location? = null,
     /**
      * The amount paid by the patient, in total at the claim claim level or specifically for the
      * item and detail level, to the provider for goods and services.
@@ -4293,6 +4349,22 @@ public data class ExplanationOfBenefit(
       }
     }
 
+    /** A FHIR choice type — one of: [Date] | [Period] */
+    public sealed interface Serviced {
+      public typealias Date = dev.ohs.fhir.model.r5.Date
+
+      public typealias Period = dev.ohs.fhir.model.r5.Period
+    }
+
+    /** A FHIR choice type — one of: [Address] | [CodeableConcept] | [Reference] */
+    public sealed interface Location {
+      public typealias Address = dev.ohs.fhir.model.r5.Address
+
+      public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+      public typealias Reference = dev.ohs.fhir.model.r5.Reference
+    }
+
     public class Builder() {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -4406,14 +4478,14 @@ public data class ExplanationOfBenefit(
        *
        * A FHIR choice type — one of: [Date] | [Period]
        */
-      public var serviced: AddItem.Serviced? = null
+      public var serviced: Serviced? = null
 
       /**
        * Where the product or service was provided.
        *
        * A FHIR choice type — one of: [Address] | [CodeableConcept] | [Reference]
        */
-      public var location: FhirChoiceTypes.AddressOrCodeableConceptOrReference? = null
+      public var location: Location? = null
 
       /**
        * The amount paid by the patient, in total at the claim claim level or specifically for the
@@ -4497,9 +4569,6 @@ public data class ExplanationOfBenefit(
           detail = detail.map { it.build() },
         )
     }
-
-    /** A FHIR choice type — one of: [Date] | [Period] */
-    public typealias Serviced = FhirChoiceTypes.DateOrPeriod
   }
 
   /** Categorized monetary totals for the adjudication. */
@@ -5073,13 +5142,13 @@ public data class ExplanationOfBenefit(
        *
        * A FHIR choice type — one of: [Money] | [String] | [UnsignedInt]
        */
-      public val allowed: Financial.Allowed? = null,
+      public val allowed: Allowed? = null,
       /**
        * The quantity of the benefit which have been consumed to date.
        *
        * A FHIR choice type — one of: [Money] | [UnsignedInt]
        */
-      public val used: Financial.Used? = null,
+      public val used: Used? = null,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -5091,6 +5160,22 @@ public data class ExplanationOfBenefit(
             used = this@with.used
           }
         }
+
+      /** A FHIR choice type — one of: [Money] | [String] | [UnsignedInt] */
+      public sealed interface Allowed {
+        public typealias Money = dev.ohs.fhir.model.r5.Money
+
+        public typealias String = dev.ohs.fhir.model.r5.String
+
+        public typealias UnsignedInt = dev.ohs.fhir.model.r5.UnsignedInt
+      }
+
+      /** A FHIR choice type — one of: [Money] | [UnsignedInt] */
+      public sealed interface Used {
+        public typealias Money = dev.ohs.fhir.model.r5.Money
+
+        public typealias UnsignedInt = dev.ohs.fhir.model.r5.UnsignedInt
+      }
 
       public class Builder(
         /**
@@ -5145,14 +5230,14 @@ public data class ExplanationOfBenefit(
          *
          * A FHIR choice type — one of: [Money] | [String] | [UnsignedInt]
          */
-        public var allowed: Financial.Allowed? = null
+        public var allowed: Allowed? = null
 
         /**
          * The quantity of the benefit which have been consumed to date.
          *
          * A FHIR choice type — one of: [Money] | [UnsignedInt]
          */
-        public var used: Financial.Used? = null
+        public var used: Used? = null
 
         public fun build(): Financial =
           Financial(
@@ -5164,12 +5249,6 @@ public data class ExplanationOfBenefit(
             used = used,
           )
       }
-
-      /** A FHIR choice type — one of: [Money] | [String] | [UnsignedInt] */
-      public typealias Allowed = FhirChoiceTypes.MoneyOrStringOrUnsignedInt
-
-      /** A FHIR choice type — one of: [Money] | [UnsignedInt] */
-      public typealias Used = FhirChoiceTypes.MoneyOrUnsignedInt
     }
 
     public class Builder(

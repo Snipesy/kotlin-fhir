@@ -208,7 +208,7 @@ public data class Immunization(
    *
    * A FHIR choice type — one of: [DateTime] | [String]
    */
-  public val occurrence: Immunization.Occurrence,
+  public val occurrence: Occurrence,
   /**
    * Indicates whether the data contained in the resource was captured by the
    * individual/organization which was responsible for the administration of the vaccine rather than
@@ -834,6 +834,13 @@ public data class Immunization(
     }
   }
 
+  /** A FHIR choice type — one of: [DateTime] | [String] */
+  public sealed interface Occurrence {
+    public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+    public typealias String = dev.ohs.fhir.model.r5.String
+  }
+
   public class Builder(
     /**
      * Indicates the current status of the immunization event.
@@ -871,7 +878,7 @@ public data class Immunization(
      *
      * A FHIR choice type — one of: [DateTime] | [String]
      */
-    public var occurrence: Immunization.Occurrence,
+    public var occurrence: Occurrence,
   ) : DomainResource.Builder() {
     /**
      * The logical id of the resource, as used in the URL for the resource. Once assigned, this
@@ -1189,7 +1196,4 @@ public data class Immunization(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [DateTime] | [String] */
-  public typealias Occurrence = FhirChoiceTypes.DateTimeOrString
 }

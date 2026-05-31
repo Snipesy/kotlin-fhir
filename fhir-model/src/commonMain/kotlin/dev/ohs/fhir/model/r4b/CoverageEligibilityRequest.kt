@@ -160,7 +160,7 @@ public data class CoverageEligibilityRequest(
    *
    * A FHIR choice type — one of: [Date] | [Period]
    */
-  public val serviced: CoverageEligibilityRequest.Serviced? = null,
+  public val serviced: Serviced? = null,
   /** The date when this resource was created. */
   public val created: DateTime,
   /** Person who created the request. */
@@ -674,7 +674,7 @@ public data class CoverageEligibilityRequest(
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public val diagnosis: FhirChoiceTypes.CodeableConceptOrReference? = null,
+      public val diagnosis: Diagnosis? = null,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -685,6 +685,13 @@ public data class CoverageEligibilityRequest(
             diagnosis = this@with.diagnosis
           }
         }
+
+      /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+      public sealed interface Diagnosis {
+        public typealias CodeableConcept = dev.ohs.fhir.model.r4b.CodeableConcept
+
+        public typealias Reference = dev.ohs.fhir.model.r4b.Reference
+      }
 
       public class Builder() {
         /**
@@ -733,10 +740,10 @@ public data class CoverageEligibilityRequest(
          *
          * A FHIR choice type — one of: [CodeableConcept] | [Reference]
          */
-        public var diagnosis: FhirChoiceTypes.CodeableConceptOrReference? = null
+        public var diagnosis: Diagnosis? = null
 
-        public fun build(): Diagnosis =
-          Diagnosis(
+        public fun build(): Item.Diagnosis =
+          Item.Diagnosis(
             id = id,
             extension = extension.map { it.build() },
             modifierExtension = modifierExtension.map { it.build() },
@@ -855,6 +862,13 @@ public data class CoverageEligibilityRequest(
           detail = detail.map { it.build() },
         )
     }
+  }
+
+  /** A FHIR choice type — one of: [Date] | [Period] */
+  public sealed interface Serviced {
+    public typealias Date = dev.ohs.fhir.model.r4b.Date
+
+    public typealias Period = dev.ohs.fhir.model.r4b.Period
   }
 
   public class Builder(
@@ -999,7 +1013,7 @@ public data class CoverageEligibilityRequest(
      *
      * A FHIR choice type — one of: [Date] | [Period]
      */
-    public var serviced: CoverageEligibilityRequest.Serviced? = null
+    public var serviced: Serviced? = null
 
     /** Person who created the request. */
     public var enterer: Reference.Builder? = null
@@ -1143,7 +1157,4 @@ public data class CoverageEligibilityRequest(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [Date] | [Period] */
-  public typealias Serviced = FhirChoiceTypes.DateOrPeriod
 }

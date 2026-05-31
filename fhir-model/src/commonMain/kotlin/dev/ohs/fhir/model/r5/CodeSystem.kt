@@ -187,7 +187,7 @@ public data class CodeSystem(
    *
    * A FHIR choice type — one of: [Coding] | [String]
    */
-  public val versionAlgorithm: CodeSystem.VersionAlgorithm? = null,
+  public val versionAlgorithm: VersionAlgorithm? = null,
   /**
    * A natural language name identifying the code system. This name should be usable as an
    * identifier for the module by machine processing applications such as code generation.
@@ -1105,7 +1105,7 @@ public data class CodeSystem(
        * A FHIR choice type — one of: [Boolean] | [CodeBox] | [Coding] | [DateTime] | [Decimal] |
        * [Integer] | [StringBox]
        */
-      public val `value`: Property.Value,
+      public val `value`: Value,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -1116,6 +1116,26 @@ public data class CodeSystem(
           }
         }
 
+      /**
+       * A FHIR choice type — one of: [Boolean] | [CodeBox] | [Coding] | [DateTime] | [Decimal] |
+       * [Integer] | [StringBox]
+       */
+      public sealed interface Value {
+        public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
+
+        public typealias Code = CodeBox
+
+        public typealias Coding = dev.ohs.fhir.model.r5.Coding
+
+        public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+        public typealias Decimal = dev.ohs.fhir.model.r5.Decimal
+
+        public typealias Integer = dev.ohs.fhir.model.r5.Integer
+
+        public typealias String = StringBox
+      }
+
       public class Builder(
         /** A code that is a reference to CodeSystem.property.code. */
         public var code: Code.Builder,
@@ -1125,7 +1145,7 @@ public data class CodeSystem(
          * A FHIR choice type — one of: [Boolean] | [CodeBox] | [Coding] | [DateTime] | [Decimal] |
          * [Integer] | [StringBox]
          */
-        public var `value`: Property.Value,
+        public var `value`: Value,
       ) {
         /**
          * Unique id for the element within a resource (for internal references). This may be any
@@ -1176,13 +1196,6 @@ public data class CodeSystem(
             `value` = `value`,
           )
       }
-
-      /**
-       * A FHIR choice type — one of: [Boolean] | [CodeBox] | [Coding] | [DateTime] | [Decimal] |
-       * [Integer] | [StringBox]
-       */
-      public typealias Value =
-        FhirChoiceTypes.BooleanOrCodeOrCodingOrDateTimeOrDecimalOrIntegerOrString
     }
 
     public class Builder(
@@ -1274,6 +1287,13 @@ public data class CodeSystem(
           concept = concept.map { it.build() },
         )
     }
+  }
+
+  /** A FHIR choice type — one of: [Coding] | [String] */
+  public sealed interface VersionAlgorithm {
+    public typealias Coding = dev.ohs.fhir.model.r5.Coding
+
+    public typealias String = dev.ohs.fhir.model.r5.String
   }
 
   public class Builder(
@@ -1457,7 +1477,7 @@ public data class CodeSystem(
      *
      * A FHIR choice type — one of: [Coding] | [String]
      */
-    public var versionAlgorithm: CodeSystem.VersionAlgorithm? = null
+    public var versionAlgorithm: VersionAlgorithm? = null
 
     /**
      * A natural language name identifying the code system. This name should be usable as an
@@ -1984,7 +2004,4 @@ public data class CodeSystem(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [Coding] | [String] */
-  public typealias VersionAlgorithm = FhirChoiceTypes.CodingOrString
 }

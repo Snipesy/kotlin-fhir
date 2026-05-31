@@ -305,9 +305,10 @@ public data class RequestGroup(
     /**
      * An optional value describing when the action should be performed.
      *
-     * A FHIR choice type — one of: [Age] | [DateTime] | [Duration] | [Period] | [Range] | [Timing]
+     * A FHIR choice type — one of: [Age] | [DateTime] | [Duration] | [Period] | [Range] |
+     * [dev.ohs.fhir.model.r4b.Timing]
      */
-    public val timing: FhirChoiceTypes.AgeOrDateTimeOrDurationOrPeriodOrRangeOrTiming? = null,
+    public val timing: Timing? = null,
     /** The participant that should perform or be responsible for this action. */
     public val participant: List<Reference> = listOf(),
     /** The type of action to perform (create, update, remove). */
@@ -549,7 +550,7 @@ public data class RequestGroup(
        *
        * A FHIR choice type — one of: [Duration] | [Range]
        */
-      public val offset: RelatedAction.Offset? = null,
+      public val offset: Offset? = null,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -560,6 +561,13 @@ public data class RequestGroup(
             offset = this@with.offset
           }
         }
+
+      /** A FHIR choice type — one of: [Duration] | [Range] */
+      public sealed interface Offset {
+        public typealias Duration = dev.ohs.fhir.model.r4b.Duration
+
+        public typealias Range = dev.ohs.fhir.model.r4b.Range
+      }
 
       public class Builder(
         /** The element id of the action this is related to. */
@@ -613,7 +621,7 @@ public data class RequestGroup(
          *
          * A FHIR choice type — one of: [Duration] | [Range]
          */
-        public var offset: RelatedAction.Offset? = null
+        public var offset: Offset? = null
 
         public fun build(): RelatedAction =
           RelatedAction(
@@ -625,9 +633,24 @@ public data class RequestGroup(
             offset = offset,
           )
       }
+    }
 
-      /** A FHIR choice type — one of: [Duration] | [Range] */
-      public typealias Offset = FhirChoiceTypes.DurationOrRange
+    /**
+     * A FHIR choice type — one of: [Age] | [DateTime] | [Duration] | [Period] | [Range] |
+     * [dev.ohs.fhir.model.r4b.Timing]
+     */
+    public sealed interface Timing {
+      public typealias Age = dev.ohs.fhir.model.r4b.Age
+
+      public typealias DateTime = dev.ohs.fhir.model.r4b.DateTime
+
+      public typealias Duration = dev.ohs.fhir.model.r4b.Duration
+
+      public typealias Period = dev.ohs.fhir.model.r4b.Period
+
+      public typealias Range = dev.ohs.fhir.model.r4b.Range
+
+      public typealias Timing = dev.ohs.fhir.model.r4b.Timing
     }
 
     public class Builder() {
@@ -719,9 +742,9 @@ public data class RequestGroup(
        * An optional value describing when the action should be performed.
        *
        * A FHIR choice type — one of: [Age] | [DateTime] | [Duration] | [Period] | [Range] |
-       * [Timing]
+       * [dev.ohs.fhir.model.r4b.Timing]
        */
-      public var timing: FhirChoiceTypes.AgeOrDateTimeOrDurationOrPeriodOrRangeOrTiming? = null
+      public var timing: Timing? = null
 
       /** The participant that should perform or be responsible for this action. */
       public var participant: MutableList<Reference.Builder> = mutableListOf()

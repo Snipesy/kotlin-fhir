@@ -681,7 +681,7 @@ public data class TestReport(
            *
            * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
            */
-          public val link: Requirement.Link? = null,
+          public val link: Link? = null,
         ) : BackboneElement() {
           public fun toBuilder(): Builder =
             with(this) {
@@ -693,6 +693,13 @@ public data class TestReport(
                 link = this@with.link
               }
             }
+
+          /** A FHIR choice type — one of: [CanonicalBox] | [UriBox] */
+          public sealed interface Link {
+            public typealias Canonical = CanonicalBox
+
+            public typealias Uri = UriBox
+          }
 
           public class Builder() {
             /**
@@ -741,7 +748,7 @@ public data class TestReport(
              *
              * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
              */
-            public var link: Requirement.Link? = null
+            public var link: Link? = null
 
             public fun build(): Requirement =
               Requirement(
@@ -751,9 +758,6 @@ public data class TestReport(
                 link = link,
               )
           }
-
-          /** A FHIR choice type — one of: [CanonicalBox] | [UriBox] */
-          public typealias Link = FhirChoiceTypes.CanonicalOrUri
         }
 
         public class Builder(

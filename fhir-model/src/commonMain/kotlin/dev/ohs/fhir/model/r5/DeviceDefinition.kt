@@ -1621,7 +1621,7 @@ public data class DeviceDefinition(
      * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Integer] |
      * [Quantity] | [Range] | [String]
      */
-    public val `value`: Property.Value,
+    public val `value`: Value,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -1631,6 +1631,26 @@ public data class DeviceDefinition(
           modifierExtension = this@with.modifierExtension.map { it.toBuilder() }.toMutableList()
         }
       }
+
+    /**
+     * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Integer] |
+     * [Quantity] | [Range] | [String]
+     */
+    public sealed interface Value {
+      public typealias Attachment = dev.ohs.fhir.model.r5.Attachment
+
+      public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
+
+      public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+      public typealias Integer = dev.ohs.fhir.model.r5.Integer
+
+      public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+
+      public typealias Range = dev.ohs.fhir.model.r5.Range
+
+      public typealias String = dev.ohs.fhir.model.r5.String
+    }
 
     public class Builder(
       /** Code that specifies the property such as a resolution or color being represented. */
@@ -1649,7 +1669,7 @@ public data class DeviceDefinition(
        * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Integer] |
        * [Quantity] | [Range] | [String]
        */
-      public var `value`: Property.Value,
+      public var `value`: Value,
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -1700,12 +1720,6 @@ public data class DeviceDefinition(
           `value` = `value`,
         )
     }
-
-    /**
-     * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Integer] |
-     * [Quantity] | [Range] | [String]
-     */
-    public typealias Value = FhirChoiceTypes.DevicePropertyValueChoice
   }
 
   /**

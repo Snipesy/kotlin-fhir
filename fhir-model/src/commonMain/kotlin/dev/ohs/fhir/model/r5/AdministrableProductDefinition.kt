@@ -273,7 +273,7 @@ public data class AdministrableProductDefinition(
      * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
      * [Markdown] | [Quantity] | [Reference]
      */
-    public val `value`: Property.Value? = null,
+    public val `value`: Value? = null,
     /** The status of characteristic e.g. assigned or pending. */
     public val status: CodeableConcept? = null,
   ) : BackboneElement() {
@@ -287,6 +287,26 @@ public data class AdministrableProductDefinition(
           status = this@with.status?.toBuilder()
         }
       }
+
+    /**
+     * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
+     * [Markdown] | [Quantity] | [Reference]
+     */
+    public sealed interface Value {
+      public typealias Attachment = dev.ohs.fhir.model.r5.Attachment
+
+      public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
+
+      public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+      public typealias Date = dev.ohs.fhir.model.r5.Date
+
+      public typealias Markdown = dev.ohs.fhir.model.r5.Markdown
+
+      public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+
+      public typealias Reference = dev.ohs.fhir.model.r5.Reference
+    }
 
     public class Builder(
       /** A code expressing the type of characteristic. */
@@ -338,7 +358,7 @@ public data class AdministrableProductDefinition(
        * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
        * [Markdown] | [Quantity] | [Reference]
        */
-      public var `value`: Property.Value? = null
+      public var `value`: Value? = null
 
       /** The status of characteristic e.g. assigned or pending. */
       public var status: CodeableConcept.Builder? = null
@@ -353,12 +373,6 @@ public data class AdministrableProductDefinition(
           status = status?.build(),
         )
     }
-
-    /**
-     * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
-     * [Markdown] | [Quantity] | [Reference]
-     */
-    public typealias Value = FhirChoiceTypes.AdministrableProductDefinitionPropertyValueChoice
   }
 
   /**

@@ -202,7 +202,7 @@ public data class Condition(
    *
    * A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String]
    */
-  public val onset: Condition.Onset? = null,
+  public val onset: Onset? = null,
   /**
    * The date or estimated date that the condition resolved or went into remission. This is called
    * "abatement" because of the many overloaded connotations associated with "remission" or
@@ -216,7 +216,7 @@ public data class Condition(
    *
    * A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String]
    */
-  public val abatement: Condition.Abatement? = null,
+  public val abatement: Abatement? = null,
   /**
    * The recordedDate represents when this particular Condition record was created in the system,
    * which is often a system-generated date.
@@ -516,6 +516,32 @@ public data class Condition(
     }
   }
 
+  /** A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String] */
+  public sealed interface Onset {
+    public typealias Age = dev.ohs.fhir.model.r4b.Age
+
+    public typealias DateTime = dev.ohs.fhir.model.r4b.DateTime
+
+    public typealias Period = dev.ohs.fhir.model.r4b.Period
+
+    public typealias Range = dev.ohs.fhir.model.r4b.Range
+
+    public typealias String = dev.ohs.fhir.model.r4b.String
+  }
+
+  /** A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String] */
+  public sealed interface Abatement {
+    public typealias Age = dev.ohs.fhir.model.r4b.Age
+
+    public typealias DateTime = dev.ohs.fhir.model.r4b.DateTime
+
+    public typealias Period = dev.ohs.fhir.model.r4b.Period
+
+    public typealias Range = dev.ohs.fhir.model.r4b.Range
+
+    public typealias String = dev.ohs.fhir.model.r4b.String
+  }
+
   public class Builder(
     /** Indicates the patient or group who the condition record is associated with. */
     public var subject: Reference.Builder
@@ -706,7 +732,7 @@ public data class Condition(
      *
      * A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String]
      */
-    public var onset: Condition.Onset? = null
+    public var onset: Onset? = null
 
     /**
      * The date or estimated date that the condition resolved or went into remission. This is called
@@ -721,7 +747,7 @@ public data class Condition(
      *
      * A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String]
      */
-    public var abatement: Condition.Abatement? = null
+    public var abatement: Abatement? = null
 
     /**
      * The recordedDate represents when this particular Condition record was created in the system,
@@ -782,10 +808,4 @@ public data class Condition(
         note = note.map { it.build() },
       )
   }
-
-  /** A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String] */
-  public typealias Onset = FhirChoiceTypes.AgeOrDateTimeOrPeriodOrRangeOrString
-
-  /** A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String] */
-  public typealias Abatement = FhirChoiceTypes.AgeOrDateTimeOrPeriodOrRangeOrString
 }

@@ -1114,7 +1114,7 @@ public data class MedicinalProductDefinition(
      * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
      * [Integer] | [Markdown] | [Quantity]
      */
-    public val `value`: Characteristic.Value? = null,
+    public val `value`: Value? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -1125,6 +1125,26 @@ public data class MedicinalProductDefinition(
           `value` = this@with.`value`
         }
       }
+
+    /**
+     * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
+     * [Integer] | [Markdown] | [Quantity]
+     */
+    public sealed interface Value {
+      public typealias Attachment = dev.ohs.fhir.model.r5.Attachment
+
+      public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
+
+      public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+      public typealias Date = dev.ohs.fhir.model.r5.Date
+
+      public typealias Integer = dev.ohs.fhir.model.r5.Integer
+
+      public typealias Markdown = dev.ohs.fhir.model.r5.Markdown
+
+      public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+    }
 
     public class Builder(
       /** A code expressing the type of characteristic. */
@@ -1180,7 +1200,7 @@ public data class MedicinalProductDefinition(
        * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
        * [Integer] | [Markdown] | [Quantity]
        */
-      public var `value`: Characteristic.Value? = null
+      public var `value`: Value? = null
 
       public fun build(): Characteristic =
         Characteristic(
@@ -1191,12 +1211,6 @@ public data class MedicinalProductDefinition(
           `value` = `value`,
         )
     }
-
-    /**
-     * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
-     * [Integer] | [Markdown] | [Quantity]
-     */
-    public typealias Value = FhirChoiceTypes.MedicinalProductDefinitionCharacteristicValueChoice
   }
 
   public class Builder(

@@ -230,7 +230,7 @@ public data class ImmunizationRecommendation(
      *
      * A FHIR choice type — one of: [PositiveInt] | [String]
      */
-    public val doseNumber: Recommendation.DoseNumber? = null,
+    public val doseNumber: DoseNumber? = null,
     /**
      * The recommended number of doses to achieve immunity.
      *
@@ -239,7 +239,7 @@ public data class ImmunizationRecommendation(
      *
      * A FHIR choice type — one of: [PositiveInt] | [String]
      */
-    public val seriesDoses: Recommendation.SeriesDoses? = null,
+    public val seriesDoses: SeriesDoses? = null,
     /** Immunization event history and/or evaluation that supports the status and recommendation. */
     public val supportingImmunization: List<Reference> = listOf(),
     /**
@@ -391,6 +391,20 @@ public data class ImmunizationRecommendation(
       }
     }
 
+    /** A FHIR choice type — one of: [PositiveInt] | [String] */
+    public sealed interface DoseNumber {
+      public typealias PositiveInt = dev.ohs.fhir.model.r4.PositiveInt
+
+      public typealias String = dev.ohs.fhir.model.r4.String
+    }
+
+    /** A FHIR choice type — one of: [PositiveInt] | [String] */
+    public sealed interface SeriesDoses {
+      public typealias PositiveInt = dev.ohs.fhir.model.r4.PositiveInt
+
+      public typealias String = dev.ohs.fhir.model.r4.String
+    }
+
     public class Builder(
       /**
        * Indicates the patient status with respect to the path to immunity for the target disease.
@@ -473,7 +487,7 @@ public data class ImmunizationRecommendation(
        *
        * A FHIR choice type — one of: [PositiveInt] | [String]
        */
-      public var doseNumber: Recommendation.DoseNumber? = null
+      public var doseNumber: DoseNumber? = null
 
       /**
        * The recommended number of doses to achieve immunity.
@@ -483,7 +497,7 @@ public data class ImmunizationRecommendation(
        *
        * A FHIR choice type — one of: [PositiveInt] | [String]
        */
-      public var seriesDoses: Recommendation.SeriesDoses? = null
+      public var seriesDoses: SeriesDoses? = null
 
       /**
        * Immunization event history and/or evaluation that supports the status and recommendation.
@@ -515,12 +529,6 @@ public data class ImmunizationRecommendation(
           supportingPatientInformation = supportingPatientInformation.map { it.build() },
         )
     }
-
-    /** A FHIR choice type — one of: [PositiveInt] | [String] */
-    public typealias DoseNumber = FhirChoiceTypes.PositiveIntOrString
-
-    /** A FHIR choice type — one of: [PositiveInt] | [String] */
-    public typealias SeriesDoses = FhirChoiceTypes.PositiveIntOrString
   }
 
   public class Builder(

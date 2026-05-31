@@ -318,7 +318,7 @@ public data class MolecularSequence(
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Reference] | [String]
        */
-      public val sequence: StartingSequence.Sequence? = null,
+      public val sequence: Sequence? = null,
       /**
        * Start position of the window on the starting sequence. This value should honor the rules of
        * the coordinateSystem.
@@ -357,6 +357,15 @@ public data class MolecularSequence(
             strand = this@with.strand
           }
         }
+
+      /** A FHIR choice type — one of: [CodeableConcept] | [Reference] | [String] */
+      public sealed interface Sequence {
+        public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+        public typealias Reference = dev.ohs.fhir.model.r5.Reference
+
+        public typealias String = dev.ohs.fhir.model.r5.String
+      }
 
       public class Builder() {
         /**
@@ -419,7 +428,7 @@ public data class MolecularSequence(
          *
          * A FHIR choice type — one of: [CodeableConcept] | [Reference] | [String]
          */
-        public var sequence: StartingSequence.Sequence? = null
+        public var sequence: Sequence? = null
 
         /**
          * Start position of the window on the starting sequence. This value should honor the rules
@@ -461,9 +470,6 @@ public data class MolecularSequence(
             strand = strand,
           )
       }
-
-      /** A FHIR choice type — one of: [CodeableConcept] | [Reference] | [String] */
-      public typealias Sequence = FhirChoiceTypes.CodeableConceptOrReferenceOrString
     }
 
     /** Changes in sequence from the starting sequence. */

@@ -179,7 +179,7 @@ public data class EventDefinition(
    *
    * A FHIR choice type — one of: [Coding] | [String]
    */
-  public val versionAlgorithm: EventDefinition.VersionAlgorithm? = null,
+  public val versionAlgorithm: VersionAlgorithm? = null,
   /**
    * A natural language name identifying the event definition. This name should be usable as an
    * identifier for the module by machine processing applications such as code generation.
@@ -221,7 +221,7 @@ public data class EventDefinition(
    *
    * A FHIR choice type — one of: [CodeableConcept] | [Reference]
    */
-  public val subject: EventDefinition.Subject? = null,
+  public val subject: Subject? = null,
   /**
    * The date (and optionally time) when the event definition was last significantly changed. The
    * date must change when the business version changes and it must change if the status code
@@ -441,6 +441,20 @@ public data class EventDefinition(
       }
     }
 
+  /** A FHIR choice type — one of: [Coding] | [String] */
+  public sealed interface VersionAlgorithm {
+    public typealias Coding = dev.ohs.fhir.model.r5.Coding
+
+    public typealias String = dev.ohs.fhir.model.r5.String
+  }
+
+  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+  public sealed interface Subject {
+    public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+    public typealias Reference = dev.ohs.fhir.model.r5.Reference
+  }
+
   public class Builder(
     /**
      * The status of this event definition. Enables tracking the life-cycle of the content.
@@ -618,7 +632,7 @@ public data class EventDefinition(
      *
      * A FHIR choice type — one of: [Coding] | [String]
      */
-    public var versionAlgorithm: EventDefinition.VersionAlgorithm? = null
+    public var versionAlgorithm: VersionAlgorithm? = null
 
     /**
      * A natural language name identifying the event definition. This name should be usable as an
@@ -656,7 +670,7 @@ public data class EventDefinition(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public var subject: EventDefinition.Subject? = null
+    public var subject: Subject? = null
 
     /**
      * The date (and optionally time) when the event definition was last significantly changed. The
@@ -895,10 +909,4 @@ public data class EventDefinition(
         trigger = trigger.map { it.build() },
       )
   }
-
-  /** A FHIR choice type — one of: [Coding] | [String] */
-  public typealias VersionAlgorithm = FhirChoiceTypes.CodingOrString
-
-  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
-  public typealias Subject = FhirChoiceTypes.CodeableConceptOrReference
 }

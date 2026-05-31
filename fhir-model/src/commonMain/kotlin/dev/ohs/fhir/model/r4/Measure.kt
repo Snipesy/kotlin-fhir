@@ -215,7 +215,7 @@ public data class Measure(
    *
    * A FHIR choice type — one of: [CodeableConcept] | [Reference]
    */
-  public val subject: Measure.Subject? = null,
+  public val subject: Subject? = null,
   /**
    * The date (and optionally time) when the measure was published. The date must change when the
    * business version changes and it must change if the status code changes. In addition, it should
@@ -1209,6 +1209,13 @@ public data class Measure(
     }
   }
 
+  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+  public sealed interface Subject {
+    public typealias CodeableConcept = dev.ohs.fhir.model.r4.CodeableConcept
+
+    public typealias Reference = dev.ohs.fhir.model.r4.Reference
+  }
+
   public class Builder(
     /**
      * The status of this measure. Enables tracking the life-cycle of the content.
@@ -1410,7 +1417,7 @@ public data class Measure(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public var subject: Measure.Subject? = null
+    public var subject: Subject? = null
 
     /**
      * The date (and optionally time) when the measure was published. The date must change when the
@@ -1704,7 +1711,4 @@ public data class Measure(
         supplementalData = supplementalData.map { it.build() },
       )
   }
-
-  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
-  public typealias Subject = FhirChoiceTypes.CodeableConceptOrReference
 }

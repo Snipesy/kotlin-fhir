@@ -235,7 +235,7 @@ public data class CommunicationRequest(
    *
    * A FHIR choice type — one of: [DateTime] | [Period]
    */
-  public val occurrence: CommunicationRequest.Occurrence? = null,
+  public val occurrence: Occurrence? = null,
   /**
    * For draft requests, indicates the date of initial creation. For requests with other statuses,
    * indicates the date of activation.
@@ -355,7 +355,7 @@ public data class CommunicationRequest(
      *
      * A FHIR choice type — one of: [Attachment] | [CodeableConcept] | [Reference]
      */
-    public val content: Payload.Content,
+    public val content: Content,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -365,6 +365,15 @@ public data class CommunicationRequest(
           modifierExtension = this@with.modifierExtension.map { it.toBuilder() }.toMutableList()
         }
       }
+
+    /** A FHIR choice type — one of: [Attachment] | [CodeableConcept] | [Reference] */
+    public sealed interface Content {
+      public typealias Attachment = dev.ohs.fhir.model.r5.Attachment
+
+      public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+      public typealias Reference = dev.ohs.fhir.model.r5.Reference
+    }
 
     public class Builder(
       /**
@@ -383,7 +392,7 @@ public data class CommunicationRequest(
        *
        * A FHIR choice type — one of: [Attachment] | [CodeableConcept] | [Reference]
        */
-      public var content: Payload.Content
+      public var content: Content
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -433,9 +442,13 @@ public data class CommunicationRequest(
           content = content,
         )
     }
+  }
 
-    /** A FHIR choice type — one of: [Attachment] | [CodeableConcept] | [Reference] */
-    public typealias Content = FhirChoiceTypes.AttachmentOrCodeableConceptOrReference
+  /** A FHIR choice type — one of: [DateTime] | [Period] */
+  public sealed interface Occurrence {
+    public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+    public typealias Period = dev.ohs.fhir.model.r5.Period
   }
 
   public class Builder(
@@ -665,7 +678,7 @@ public data class CommunicationRequest(
      *
      * A FHIR choice type — one of: [DateTime] | [Period]
      */
-    public var occurrence: CommunicationRequest.Occurrence? = null
+    public var occurrence: Occurrence? = null
 
     /**
      * For draft requests, indicates the date of initial creation. For requests with other statuses,
@@ -844,7 +857,4 @@ public data class CommunicationRequest(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [DateTime] | [Period] */
-  public typealias Occurrence = FhirChoiceTypes.DateTimeOrPeriod
 }

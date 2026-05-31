@@ -183,7 +183,7 @@ public data class TestPlan(
    *
    * A FHIR choice type — one of: [Coding] | [String]
    */
-  public val versionAlgorithm: TestPlan.VersionAlgorithm? = null,
+  public val versionAlgorithm: VersionAlgorithm? = null,
   /**
    * A natural language name identifying the test plan. This name should be usable as an identifier
    * for the module by machine processing applications such as code generation.
@@ -781,7 +781,7 @@ public data class TestPlan(
          *
          * A FHIR choice type — one of: [Reference] | [String]
          */
-        public val source: Script.Source? = null,
+        public val source: Source? = null,
       ) : BackboneElement() {
         public fun toBuilder(): Builder =
           with(this) {
@@ -793,6 +793,13 @@ public data class TestPlan(
               source = this@with.source
             }
           }
+
+        /** A FHIR choice type — one of: [Reference] | [String] */
+        public sealed interface Source {
+          public typealias Reference = dev.ohs.fhir.model.r5.Reference
+
+          public typealias String = dev.ohs.fhir.model.r5.String
+        }
 
         public class Builder() {
           /**
@@ -844,7 +851,7 @@ public data class TestPlan(
            *
            * A FHIR choice type — one of: [Reference] | [String]
            */
-          public var source: Script.Source? = null
+          public var source: Source? = null
 
           public fun build(): Script =
             Script(
@@ -855,9 +862,6 @@ public data class TestPlan(
               source = source,
             )
         }
-
-        /** A FHIR choice type — one of: [Reference] | [String] */
-        public typealias Source = FhirChoiceTypes.ReferenceOrString
       }
 
       public class Builder() {
@@ -968,7 +972,7 @@ public data class TestPlan(
        *
        * A FHIR choice type — one of: [Reference] | [String]
        */
-      public val source: TestData.Source? = null,
+      public val source: Source? = null,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -980,6 +984,13 @@ public data class TestPlan(
             source = this@with.source
           }
         }
+
+      /** A FHIR choice type — one of: [Reference] | [String] */
+      public sealed interface Source {
+        public typealias Reference = dev.ohs.fhir.model.r5.Reference
+
+        public typealias String = dev.ohs.fhir.model.r5.String
+      }
 
       public class Builder(
         /** The type of test data description, e.g. 'synthea'. */
@@ -1034,7 +1045,7 @@ public data class TestPlan(
          *
          * A FHIR choice type — one of: [Reference] | [String]
          */
-        public var source: TestData.Source? = null
+        public var source: Source? = null
 
         public fun build(): TestData =
           TestData(
@@ -1046,9 +1057,6 @@ public data class TestPlan(
             source = source,
           )
       }
-
-      /** A FHIR choice type — one of: [Reference] | [String] */
-      public typealias Source = FhirChoiceTypes.ReferenceOrString
     }
 
     /**
@@ -1262,6 +1270,13 @@ public data class TestPlan(
     }
   }
 
+  /** A FHIR choice type — one of: [Coding] | [String] */
+  public sealed interface VersionAlgorithm {
+    public typealias Coding = dev.ohs.fhir.model.r5.Coding
+
+    public typealias String = dev.ohs.fhir.model.r5.String
+  }
+
   public class Builder(
     /**
      * The status of this test plan. Enables tracking the life-cycle of the content.
@@ -1434,7 +1449,7 @@ public data class TestPlan(
      *
      * A FHIR choice type — one of: [Coding] | [String]
      */
-    public var versionAlgorithm: TestPlan.VersionAlgorithm? = null
+    public var versionAlgorithm: VersionAlgorithm? = null
 
     /**
      * A natural language name identifying the test plan. This name should be usable as an
@@ -1622,7 +1637,4 @@ public data class TestPlan(
         testCase = testCase.map { it.build() },
       )
   }
-
-  /** A FHIR choice type — one of: [Coding] | [String] */
-  public typealias VersionAlgorithm = FhirChoiceTypes.CodingOrString
 }

@@ -52,12 +52,12 @@ public data class Annotation(
    *
    * A FHIR choice type — one of: [Reference] | [String]
    */
-  public val author: Annotation.Author? = null,
+  public val author: Author? = null,
   /** Indicates when this particular annotation was made. */
   public val time: DateTime? = null,
   /** The text of the annotation in markdown format. */
   public val text: Markdown,
-) : Element(), FhirChoiceTypes.ElementDefinitionDefaultValueChoice {
+) : Element(), FhirChoiceParticipants.AnnotationChoices {
   public fun toBuilder(): Builder =
     with(this) {
       Builder(text.toBuilder()).apply {
@@ -67,6 +67,13 @@ public data class Annotation(
         time = this@with.time?.toBuilder()
       }
     }
+
+  /** A FHIR choice type — one of: [Reference] | [String] */
+  public sealed interface Author {
+    public typealias Reference = dev.ohs.fhir.model.r4.Reference
+
+    public typealias String = dev.ohs.fhir.model.r4.String
+  }
 
   public open class Builder(
     /** The text of the annotation in markdown format. */
@@ -100,7 +107,7 @@ public data class Annotation(
      *
      * A FHIR choice type — one of: [Reference] | [String]
      */
-    public open var author: Annotation.Author? = null
+    public open var author: Author? = null
 
     /** Indicates when this particular annotation was made. */
     public open var time: DateTime.Builder? = null
@@ -114,7 +121,4 @@ public data class Annotation(
         text = text.build(),
       )
   }
-
-  /** A FHIR choice type — one of: [Reference] | [String] */
-  public typealias Author = FhirChoiceTypes.ReferenceOrString
 }

@@ -293,7 +293,7 @@ public data class SpecimenDefinition(
        *
        * A FHIR choice type — one of: [Quantity] | [String]
        */
-      public val minimumVolume: Container.MinimumVolume? = null,
+      public val minimumVolume: MinimumVolume? = null,
       /**
        * Substance introduced in the kind of container to preserve, maintain or enhance the
        * specimen. Examples: Formalin, Citrate, EDTA.
@@ -368,7 +368,7 @@ public data class SpecimenDefinition(
          *
          * A FHIR choice type — one of: [CodeableConcept] | [Reference]
          */
-        public val additive: FhirChoiceTypes.CodeableConceptOrReference,
+        public val additive: Additive,
       ) : BackboneElement() {
         public fun toBuilder(): Builder =
           with(this) {
@@ -379,6 +379,13 @@ public data class SpecimenDefinition(
             }
           }
 
+        /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+        public sealed interface Additive {
+          public typealias CodeableConcept = dev.ohs.fhir.model.r4b.CodeableConcept
+
+          public typealias Reference = dev.ohs.fhir.model.r4b.Reference
+        }
+
         public class Builder(
           /**
            * Substance introduced in the kind of container to preserve, maintain or enhance the
@@ -386,7 +393,7 @@ public data class SpecimenDefinition(
            *
            * A FHIR choice type — one of: [CodeableConcept] | [Reference]
            */
-          public var additive: FhirChoiceTypes.CodeableConceptOrReference
+          public var additive: Additive
         ) {
           /**
            * Unique id for the element within a resource (for internal references). This may be any
@@ -428,14 +435,21 @@ public data class SpecimenDefinition(
            */
           public var modifierExtension: MutableList<Extension.Builder> = mutableListOf()
 
-          public fun build(): Additive =
-            Additive(
+          public fun build(): Container.Additive =
+            Container.Additive(
               id = id,
               extension = extension.map { it.build() },
               modifierExtension = modifierExtension.map { it.build() },
               additive = additive,
             )
         }
+      }
+
+      /** A FHIR choice type — one of: [Quantity] | [String] */
+      public sealed interface MinimumVolume {
+        public typealias Quantity = dev.ohs.fhir.model.r4b.Quantity
+
+        public typealias String = dev.ohs.fhir.model.r4b.String
       }
 
       public class Builder() {
@@ -499,7 +513,7 @@ public data class SpecimenDefinition(
          *
          * A FHIR choice type — one of: [Quantity] | [String]
          */
-        public var minimumVolume: Container.MinimumVolume? = null
+        public var minimumVolume: MinimumVolume? = null
 
         /**
          * Substance introduced in the kind of container to preserve, maintain or enhance the
@@ -525,9 +539,6 @@ public data class SpecimenDefinition(
             preparation = preparation?.build(),
           )
       }
-
-      /** A FHIR choice type — one of: [Quantity] | [String] */
-      public typealias MinimumVolume = FhirChoiceTypes.QuantityOrString
     }
 
     /**

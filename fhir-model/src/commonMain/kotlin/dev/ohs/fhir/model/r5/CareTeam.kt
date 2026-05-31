@@ -283,7 +283,7 @@ public data class CareTeam(
      *
      * A FHIR choice type — one of: [Period] | [Timing]
      */
-    public val coverage: FhirChoiceTypes.PeriodOrTiming? = null,
+    public val coverage: Coverage? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -297,6 +297,13 @@ public data class CareTeam(
           coverage = this@with.coverage
         }
       }
+
+    /** A FHIR choice type — one of: [Period] | [Timing] */
+    public sealed interface Coverage {
+      public typealias Period = dev.ohs.fhir.model.r5.Period
+
+      public typealias Timing = dev.ohs.fhir.model.r5.Timing
+    }
 
     public class Builder() {
       /**
@@ -372,7 +379,7 @@ public data class CareTeam(
        *
        * A FHIR choice type — one of: [Period] | [Timing]
        */
-      public var coverage: FhirChoiceTypes.PeriodOrTiming? = null
+      public var coverage: Coverage? = null
 
       public fun build(): Participant =
         Participant(

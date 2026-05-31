@@ -269,7 +269,7 @@ public data class RegulatedAuthorization(
      *
      * A FHIR choice type — one of: [DateTime] | [Period]
      */
-    public val date: FhirChoiceTypes.DateTimeOrPeriod? = null,
+    public val date: Date? = null,
     /**
      * A regulatory submission from an organization to a regulator, as part of an assessing case.
      * Multiple applications may occur over time, with more or different information to support or
@@ -291,6 +291,13 @@ public data class RegulatedAuthorization(
           application = this@with.application.map { it.toBuilder() }.toMutableList()
         }
       }
+
+    /** A FHIR choice type — one of: [DateTime] | [Period] */
+    public sealed interface Date {
+      public typealias DateTime = dev.ohs.fhir.model.r4b.DateTime
+
+      public typealias Period = dev.ohs.fhir.model.r4b.Period
+    }
 
     public class Builder() {
       /**
@@ -347,7 +354,7 @@ public data class RegulatedAuthorization(
        *
        * A FHIR choice type — one of: [DateTime] | [Period]
        */
-      public var date: FhirChoiceTypes.DateTimeOrPeriod? = null
+      public var date: Date? = null
 
       /**
        * A regulatory submission from an organization to a regulator, as part of an assessing case.

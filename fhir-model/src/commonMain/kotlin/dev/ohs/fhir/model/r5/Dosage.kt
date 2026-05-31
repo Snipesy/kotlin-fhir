@@ -141,7 +141,7 @@ public data class Dosage(
   public val maxDosePerAdministration: Quantity? = null,
   /** Upper limit on medication per lifetime of the patient. */
   public val maxDosePerLifetime: Quantity? = null,
-) : BackboneType(), FhirChoiceTypes.ElementDefinitionDefaultValueChoice {
+) : BackboneType(), FhirChoiceParticipants.DosageChoices {
   public fun toBuilder(): Builder =
     with(this) {
       Builder().apply {
@@ -210,7 +210,7 @@ public data class Dosage(
      *
      * A FHIR choice type — one of: [Quantity] | [Range]
      */
-    public val dose: DoseAndRate.Dose? = null,
+    public val dose: Dose? = null,
     /**
      * Amount of medication per unit of time.
      *
@@ -229,7 +229,7 @@ public data class Dosage(
      *
      * A FHIR choice type — one of: [Quantity] | [Range] | [Ratio]
      */
-    public val rate: DoseAndRate.Rate? = null,
+    public val rate: Rate? = null,
   ) : Element() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -241,6 +241,22 @@ public data class Dosage(
           rate = this@with.rate
         }
       }
+
+    /** A FHIR choice type — one of: [Quantity] | [Range] */
+    public sealed interface Dose {
+      public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+
+      public typealias Range = dev.ohs.fhir.model.r5.Range
+    }
+
+    /** A FHIR choice type — one of: [Quantity] | [Range] | [Ratio] */
+    public sealed interface Rate {
+      public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+
+      public typealias Range = dev.ohs.fhir.model.r5.Range
+
+      public typealias Ratio = dev.ohs.fhir.model.r5.Ratio
+    }
 
     public class Builder() {
       /**
@@ -284,7 +300,7 @@ public data class Dosage(
        *
        * A FHIR choice type — one of: [Quantity] | [Range]
        */
-      public var dose: DoseAndRate.Dose? = null
+      public var dose: Dose? = null
 
       /**
        * Amount of medication per unit of time.
@@ -304,7 +320,7 @@ public data class Dosage(
        *
        * A FHIR choice type — one of: [Quantity] | [Range] | [Ratio]
        */
-      public var rate: DoseAndRate.Rate? = null
+      public var rate: Rate? = null
 
       public fun build(): DoseAndRate =
         DoseAndRate(
@@ -315,12 +331,6 @@ public data class Dosage(
           rate = rate,
         )
     }
-
-    /** A FHIR choice type — one of: [Quantity] | [Range] */
-    public typealias Dose = FhirChoiceTypes.QuantityOrRange
-
-    /** A FHIR choice type — one of: [Quantity] | [Range] | [Ratio] */
-    public typealias Rate = FhirChoiceTypes.QuantityOrRangeOrRatio
   }
 
   public open class Builder() {

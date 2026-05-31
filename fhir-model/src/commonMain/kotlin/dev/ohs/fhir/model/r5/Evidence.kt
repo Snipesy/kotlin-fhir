@@ -180,7 +180,7 @@ public data class Evidence(
    *
    * A FHIR choice type — one of: [Coding] | [String]
    */
-  public val versionAlgorithm: Evidence.VersionAlgorithm? = null,
+  public val versionAlgorithm: VersionAlgorithm? = null,
   /**
    * A natural language name identifying the evidence. This name should be usable as an identifier
    * for the module by machine processing applications such as code generation.
@@ -196,7 +196,7 @@ public data class Evidence(
    *
    * A FHIR choice type — one of: [Markdown] | [Reference]
    */
-  public val citeAs: Evidence.CiteAs? = null,
+  public val citeAs: CiteAs? = null,
   /**
    * The status of this summary. Enables tracking the life-cycle of the content.
    *
@@ -1496,6 +1496,20 @@ public data class Evidence(
     }
   }
 
+  /** A FHIR choice type — one of: [Coding] | [String] */
+  public sealed interface VersionAlgorithm {
+    public typealias Coding = dev.ohs.fhir.model.r5.Coding
+
+    public typealias String = dev.ohs.fhir.model.r5.String
+  }
+
+  /** A FHIR choice type — one of: [Markdown] | [Reference] */
+  public sealed interface CiteAs {
+    public typealias Markdown = dev.ohs.fhir.model.r5.Markdown
+
+    public typealias Reference = dev.ohs.fhir.model.r5.Reference
+  }
+
   public class Builder(
     /**
      * The status of this summary. Enables tracking the life-cycle of the content.
@@ -1662,7 +1676,7 @@ public data class Evidence(
      *
      * A FHIR choice type — one of: [Coding] | [String]
      */
-    public var versionAlgorithm: Evidence.VersionAlgorithm? = null
+    public var versionAlgorithm: VersionAlgorithm? = null
 
     /**
      * A natural language name identifying the evidence. This name should be usable as an identifier
@@ -1681,7 +1695,7 @@ public data class Evidence(
      *
      * A FHIR choice type — one of: [Markdown] | [Reference]
      */
-    public var citeAs: Evidence.CiteAs? = null
+    public var citeAs: CiteAs? = null
 
     /**
      * A Boolean value to indicate that this resource is authored for testing purposes (or
@@ -1952,10 +1966,4 @@ public data class Evidence(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [Coding] | [String] */
-  public typealias VersionAlgorithm = FhirChoiceTypes.CodingOrString
-
-  /** A FHIR choice type — one of: [Markdown] | [Reference] */
-  public typealias CiteAs = FhirChoiceTypes.MarkdownOrReference
 }

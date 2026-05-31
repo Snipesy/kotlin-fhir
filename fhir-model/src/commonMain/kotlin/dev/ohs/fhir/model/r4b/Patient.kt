@@ -199,7 +199,7 @@ public data class Patient(
    *
    * A FHIR choice type — one of: [Boolean] | [DateTime]
    */
-  public val deceased: Patient.Deceased? = null,
+  public val deceased: Deceased? = null,
   /**
    * An address for the individual.
    *
@@ -219,7 +219,7 @@ public data class Patient(
    *
    * A FHIR choice type — one of: [Boolean] | [Integer]
    */
-  public val multipleBirth: Patient.MultipleBirth? = null,
+  public val multipleBirth: MultipleBirth? = null,
   /**
    * Image of the patient.
    *
@@ -742,6 +742,20 @@ public data class Patient(
     }
   }
 
+  /** A FHIR choice type — one of: [Boolean] | [DateTime] */
+  public sealed interface Deceased {
+    public typealias Boolean = dev.ohs.fhir.model.r4b.Boolean
+
+    public typealias DateTime = dev.ohs.fhir.model.r4b.DateTime
+  }
+
+  /** A FHIR choice type — one of: [Boolean] | [Integer] */
+  public sealed interface MultipleBirth {
+    public typealias Boolean = dev.ohs.fhir.model.r4b.Boolean
+
+    public typealias Integer = dev.ohs.fhir.model.r4b.Integer
+  }
+
   public class Builder() : DomainResource.Builder() {
     /**
      * The logical id of the resource, as used in the URL for the resource. Once assigned, this
@@ -923,7 +937,7 @@ public data class Patient(
      *
      * A FHIR choice type — one of: [Boolean] | [DateTime]
      */
-    public var deceased: Patient.Deceased? = null
+    public var deceased: Deceased? = null
 
     /**
      * An address for the individual.
@@ -946,7 +960,7 @@ public data class Patient(
      *
      * A FHIR choice type — one of: [Boolean] | [Integer]
      */
-    public var multipleBirth: Patient.MultipleBirth? = null
+    public var multipleBirth: MultipleBirth? = null
 
     /**
      * Image of the patient.
@@ -1068,10 +1082,4 @@ public data class Patient(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [Boolean] | [DateTime] */
-  public typealias Deceased = FhirChoiceTypes.BooleanOrDateTime
-
-  /** A FHIR choice type — one of: [Boolean] | [Integer] */
-  public typealias MultipleBirth = FhirChoiceTypes.BooleanOrInteger
 }

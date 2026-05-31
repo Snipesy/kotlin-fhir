@@ -59,7 +59,7 @@ public data class VirtualServiceDetail(
    *
    * A FHIR choice type — one of: [ContactPoint] | [ExtendedContactDetail] | [String] | [Url]
    */
-  public val address: FhirChoiceTypes.ContactPointOrExtendedContactDetailOrStringOrUrl? = null,
+  public val address: Address? = null,
   /**
    * Address to see alternative connection details.
    *
@@ -98,6 +98,17 @@ public data class VirtualServiceDetail(
         sessionKey = this@with.sessionKey?.toBuilder()
       }
     }
+
+  /** A FHIR choice type — one of: [ContactPoint] | [ExtendedContactDetail] | [String] | [Url] */
+  public sealed interface Address {
+    public typealias ContactPoint = dev.ohs.fhir.model.r5.ContactPoint
+
+    public typealias ExtendedContactDetail = dev.ohs.fhir.model.r5.ExtendedContactDetail
+
+    public typealias String = dev.ohs.fhir.model.r5.String
+
+    public typealias Url = dev.ohs.fhir.model.r5.Url
+  }
 
   public open class Builder() {
     /**
@@ -139,8 +150,7 @@ public data class VirtualServiceDetail(
      *
      * A FHIR choice type — one of: [ContactPoint] | [ExtendedContactDetail] | [String] | [Url]
      */
-    public open var address: FhirChoiceTypes.ContactPointOrExtendedContactDetailOrStringOrUrl? =
-      null
+    public open var address: Address? = null
 
     /**
      * Address to see alternative connection details.

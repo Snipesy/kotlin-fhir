@@ -377,7 +377,7 @@ public data class QuestionnaireResponse(
        * A FHIR choice type — one of: [Attachment] | [Boolean] | [Coding] | [Date] | [DateTime] |
        * [Decimal] | [Integer] | [Quantity] | [Reference] | [String] | [Time] | [Uri]
        */
-      public val `value`: Answer.Value? = null,
+      public val `value`: Value? = null,
       /** Nested groups and/or questions found within this particular answer. */
       public val item: List<Item> = listOf(),
     ) : BackboneElement() {
@@ -391,6 +391,36 @@ public data class QuestionnaireResponse(
             item = this@with.item.map { it.toBuilder() }.toMutableList()
           }
         }
+
+      /**
+       * A FHIR choice type — one of: [Attachment] | [Boolean] | [Coding] | [Date] | [DateTime] |
+       * [Decimal] | [Integer] | [Quantity] | [Reference] | [String] | [Time] | [Uri]
+       */
+      public sealed interface Value {
+        public typealias Attachment = dev.ohs.fhir.model.r4.Attachment
+
+        public typealias Boolean = dev.ohs.fhir.model.r4.Boolean
+
+        public typealias Coding = dev.ohs.fhir.model.r4.Coding
+
+        public typealias Date = dev.ohs.fhir.model.r4.Date
+
+        public typealias DateTime = dev.ohs.fhir.model.r4.DateTime
+
+        public typealias Decimal = dev.ohs.fhir.model.r4.Decimal
+
+        public typealias Integer = dev.ohs.fhir.model.r4.Integer
+
+        public typealias Quantity = dev.ohs.fhir.model.r4.Quantity
+
+        public typealias Reference = dev.ohs.fhir.model.r4.Reference
+
+        public typealias String = dev.ohs.fhir.model.r4.String
+
+        public typealias Time = dev.ohs.fhir.model.r4.Time
+
+        public typealias Uri = dev.ohs.fhir.model.r4.Uri
+      }
 
       public class Builder() {
         /**
@@ -445,7 +475,7 @@ public data class QuestionnaireResponse(
          * A FHIR choice type — one of: [Attachment] | [Boolean] | [Coding] | [Date] | [DateTime] |
          * [Decimal] | [Integer] | [Quantity] | [Reference] | [String] | [Time] | [Uri]
          */
-        public var `value`: Answer.Value? = null
+        public var `value`: Value? = null
 
         /** Nested groups and/or questions found within this particular answer. */
         public var item: MutableList<Item.Builder> = mutableListOf()
@@ -459,12 +489,6 @@ public data class QuestionnaireResponse(
             item = item.map { it.build() },
           )
       }
-
-      /**
-       * A FHIR choice type — one of: [Attachment] | [Boolean] | [Coding] | [Date] | [DateTime] |
-       * [Decimal] | [Integer] | [Quantity] | [Reference] | [String] | [Time] | [Uri]
-       */
-      public typealias Value = FhirChoiceTypes.ContractTermOfferAnswerValueChoice
     }
 
     public class Builder(

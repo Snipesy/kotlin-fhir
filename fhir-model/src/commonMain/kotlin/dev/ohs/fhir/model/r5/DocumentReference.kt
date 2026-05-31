@@ -696,7 +696,7 @@ public data class DocumentReference(
        *
        * A FHIR choice type — one of: [CanonicalBox] | [Coding] | [UriBox]
        */
-      public val `value`: Profile.Value,
+      public val `value`: Value,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -707,13 +707,22 @@ public data class DocumentReference(
           }
         }
 
+      /** A FHIR choice type — one of: [CanonicalBox] | [Coding] | [UriBox] */
+      public sealed interface Value {
+        public typealias Canonical = CanonicalBox
+
+        public typealias Coding = dev.ohs.fhir.model.r5.Coding
+
+        public typealias Uri = UriBox
+      }
+
       public class Builder(
         /**
          * Code|uri|canonical.
          *
          * A FHIR choice type — one of: [CanonicalBox] | [Coding] | [UriBox]
          */
-        public var `value`: Profile.Value
+        public var `value`: Value
       ) {
         /**
          * Unique id for the element within a resource (for internal references). This may be any
@@ -763,9 +772,6 @@ public data class DocumentReference(
             `value` = `value`,
           )
       }
-
-      /** A FHIR choice type — one of: [CanonicalBox] | [Coding] | [UriBox] */
-      public typealias Value = FhirChoiceTypes.CanonicalOrCodingOrUri
     }
 
     public class Builder(

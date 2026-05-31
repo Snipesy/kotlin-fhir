@@ -83,7 +83,7 @@ public data class RelatedArtifact(
    * type is successor, this is a reference to the prior knowledge resource.
    */
   public val resource: Canonical? = null,
-) : Element(), FhirChoiceTypes.ElementDefinitionDefaultValueChoice {
+) : Element(), FhirChoiceParticipants.RelatedArtifactChoices {
   public fun toBuilder(): Builder =
     with(this) {
       Builder(type).apply {

@@ -514,7 +514,7 @@ public data class PackagedProductDefinition(
        * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
        * [Quantity]
        */
-      public val `value`: Property.Value? = null,
+      public val `value`: Value? = null,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -525,6 +525,22 @@ public data class PackagedProductDefinition(
             `value` = this@with.`value`
           }
         }
+
+      /**
+       * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
+       * [Quantity]
+       */
+      public sealed interface Value {
+        public typealias Attachment = dev.ohs.fhir.model.r5.Attachment
+
+        public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
+
+        public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+        public typealias Date = dev.ohs.fhir.model.r5.Date
+
+        public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+      }
 
       public class Builder(
         /** A code expressing the type of characteristic. */
@@ -576,7 +592,7 @@ public data class PackagedProductDefinition(
          * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
          * [Quantity]
          */
-        public var `value`: Property.Value? = null
+        public var `value`: Value? = null
 
         public fun build(): Property =
           Property(
@@ -587,12 +603,6 @@ public data class PackagedProductDefinition(
             `value` = `value`,
           )
       }
-
-      /**
-       * A FHIR choice type — one of: [Attachment] | [Boolean] | [CodeableConcept] | [Date] |
-       * [Quantity]
-       */
-      public typealias Value = FhirChoiceTypes.AttachmentOrBooleanOrCodeableConceptOrDateOrQuantity
     }
 
     /** The item(s) within the packaging. */

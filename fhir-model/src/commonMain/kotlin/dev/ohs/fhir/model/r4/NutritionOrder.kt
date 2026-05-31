@@ -1050,7 +1050,7 @@ public data class NutritionOrder(
        *
        * A FHIR choice type — one of: [Quantity] | [Ratio]
        */
-      public val rate: Administration.Rate? = null,
+      public val rate: Rate? = null,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -1063,6 +1063,13 @@ public data class NutritionOrder(
             rate = this@with.rate
           }
         }
+
+      /** A FHIR choice type — one of: [Quantity] | [Ratio] */
+      public sealed interface Rate {
+        public typealias Quantity = dev.ohs.fhir.model.r4.Quantity
+
+        public typealias Ratio = dev.ohs.fhir.model.r4.Ratio
+      }
 
       public class Builder() {
         /**
@@ -1127,7 +1134,7 @@ public data class NutritionOrder(
          *
          * A FHIR choice type — one of: [Quantity] | [Ratio]
          */
-        public var rate: Administration.Rate? = null
+        public var rate: Rate? = null
 
         public fun build(): Administration =
           Administration(
@@ -1139,9 +1146,6 @@ public data class NutritionOrder(
             rate = rate,
           )
       }
-
-      /** A FHIR choice type — one of: [Quantity] | [Ratio] */
-      public typealias Rate = FhirChoiceTypes.QuantityOrRatio
     }
 
     public class Builder() {

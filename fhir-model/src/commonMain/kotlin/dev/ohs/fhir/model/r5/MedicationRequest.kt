@@ -846,7 +846,7 @@ public data class MedicationRequest(
      *
      * A FHIR choice type — one of: [Boolean] | [CodeableConcept]
      */
-    public val allowed: Substitution.Allowed,
+    public val allowed: Allowed,
     /**
      * Indicates the reason for the substitution, or why substitution must or must not be performed.
      */
@@ -862,6 +862,13 @@ public data class MedicationRequest(
         }
       }
 
+    /** A FHIR choice type — one of: [Boolean] | [CodeableConcept] */
+    public sealed interface Allowed {
+      public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
+
+      public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+    }
+
     public class Builder(
       /**
        * True if the prescriber allows a different drug to be dispensed from what was prescribed.
@@ -871,7 +878,7 @@ public data class MedicationRequest(
        *
        * A FHIR choice type — one of: [Boolean] | [CodeableConcept]
        */
-      public var allowed: Substitution.Allowed
+      public var allowed: Allowed
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -928,9 +935,6 @@ public data class MedicationRequest(
           reason = reason?.build(),
         )
     }
-
-    /** A FHIR choice type — one of: [Boolean] | [CodeableConcept] */
-    public typealias Allowed = FhirChoiceTypes.BooleanOrCodeableConcept
   }
 
   public class Builder(

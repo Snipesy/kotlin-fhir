@@ -142,7 +142,7 @@ public data class MessageHeader(
    *
    * A FHIR choice type — one of: [Canonical] | [Coding]
    */
-  public val event: MessageHeader.Event,
+  public val event: Event,
   /**
    * The destination application which the message is intended for.
    *
@@ -271,7 +271,7 @@ public data class MessageHeader(
      *
      * A FHIR choice type — one of: [Reference] | [Url]
      */
-    public val endpoint: FhirChoiceTypes.ReferenceOrUrl? = null,
+    public val endpoint: Endpoint? = null,
     /** Human-readable name for the target system. */
     public val name: String? = null,
     /**
@@ -297,6 +297,13 @@ public data class MessageHeader(
           `receiver` = this@with.`receiver`?.toBuilder()
         }
       }
+
+    /** A FHIR choice type — one of: [Reference] | [Url] */
+    public sealed interface Endpoint {
+      public typealias Reference = dev.ohs.fhir.model.r5.Reference
+
+      public typealias Url = dev.ohs.fhir.model.r5.Url
+    }
 
     public class Builder() {
       /**
@@ -347,7 +354,7 @@ public data class MessageHeader(
        *
        * A FHIR choice type — one of: [Reference] | [Url]
        */
-      public var endpoint: FhirChoiceTypes.ReferenceOrUrl? = null
+      public var endpoint: Endpoint? = null
 
       /** Human-readable name for the target system. */
       public var name: String.Builder? = null
@@ -425,7 +432,7 @@ public data class MessageHeader(
      *
      * A FHIR choice type — one of: [Reference] | [Url]
      */
-    public val endpoint: FhirChoiceTypes.ReferenceOrUrl? = null,
+    public val endpoint: Endpoint? = null,
     /** Human-readable name for the source system. */
     public val name: String? = null,
     /** May include configuration or other information useful in debugging. */
@@ -454,6 +461,13 @@ public data class MessageHeader(
           contact = this@with.contact?.toBuilder()
         }
       }
+
+    /** A FHIR choice type — one of: [Reference] | [Url] */
+    public sealed interface Endpoint {
+      public typealias Reference = dev.ohs.fhir.model.r5.Reference
+
+      public typealias Url = dev.ohs.fhir.model.r5.Url
+    }
 
     public class Builder() {
       /**
@@ -504,7 +518,7 @@ public data class MessageHeader(
        *
        * A FHIR choice type — one of: [Reference] | [Url]
        */
-      public var endpoint: FhirChoiceTypes.ReferenceOrUrl? = null
+      public var endpoint: Endpoint? = null
 
       /** Human-readable name for the source system. */
       public var name: String.Builder? = null
@@ -681,6 +695,13 @@ public data class MessageHeader(
     }
   }
 
+  /** A FHIR choice type — one of: [Canonical] | [Coding] */
+  public sealed interface Event {
+    public typealias Canonical = dev.ohs.fhir.model.r5.Canonical
+
+    public typealias Coding = dev.ohs.fhir.model.r5.Coding
+  }
+
   public class Builder(
     /**
      * Code that identifies the event this message represents and connects it with its definition.
@@ -692,7 +713,7 @@ public data class MessageHeader(
      *
      * A FHIR choice type — one of: [Canonical] | [Coding]
      */
-    public var event: MessageHeader.Event,
+    public var event: Event,
     /** The source application from which this message originated. */
     public var source: Source.Builder,
   ) : DomainResource.Builder() {
@@ -918,7 +939,4 @@ public data class MessageHeader(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [Canonical] | [Coding] */
-  public typealias Event = FhirChoiceTypes.CanonicalOrCoding
 }

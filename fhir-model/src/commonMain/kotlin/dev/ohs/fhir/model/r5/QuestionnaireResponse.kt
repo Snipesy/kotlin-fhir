@@ -420,7 +420,7 @@ public data class QuestionnaireResponse(
        * A FHIR choice type — one of: [Attachment] | [Boolean] | [Coding] | [Date] | [DateTime] |
        * [Decimal] | [Integer] | [Quantity] | [Reference] | [String] | [Time] | [Uri]
        */
-      public val `value`: Answer.Value,
+      public val `value`: Value,
       /**
        * Nested groups and/or questions found within this particular answer.
        *
@@ -437,6 +437,36 @@ public data class QuestionnaireResponse(
             item = this@with.item.map { it.toBuilder() }.toMutableList()
           }
         }
+
+      /**
+       * A FHIR choice type — one of: [Attachment] | [Boolean] | [Coding] | [Date] | [DateTime] |
+       * [Decimal] | [Integer] | [Quantity] | [Reference] | [String] | [Time] | [Uri]
+       */
+      public sealed interface Value {
+        public typealias Attachment = dev.ohs.fhir.model.r5.Attachment
+
+        public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
+
+        public typealias Coding = dev.ohs.fhir.model.r5.Coding
+
+        public typealias Date = dev.ohs.fhir.model.r5.Date
+
+        public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+        public typealias Decimal = dev.ohs.fhir.model.r5.Decimal
+
+        public typealias Integer = dev.ohs.fhir.model.r5.Integer
+
+        public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+
+        public typealias Reference = dev.ohs.fhir.model.r5.Reference
+
+        public typealias String = dev.ohs.fhir.model.r5.String
+
+        public typealias Time = dev.ohs.fhir.model.r5.Time
+
+        public typealias Uri = dev.ohs.fhir.model.r5.Uri
+      }
 
       public class Builder(
         /**
@@ -462,7 +492,7 @@ public data class QuestionnaireResponse(
          * A FHIR choice type — one of: [Attachment] | [Boolean] | [Coding] | [Date] | [DateTime] |
          * [Decimal] | [Integer] | [Quantity] | [Reference] | [String] | [Time] | [Uri]
          */
-        public var `value`: Answer.Value
+        public var `value`: Value
       ) {
         /**
          * Unique id for the element within a resource (for internal references). This may be any
@@ -520,12 +550,6 @@ public data class QuestionnaireResponse(
             item = item.map { it.build() },
           )
       }
-
-      /**
-       * A FHIR choice type — one of: [Attachment] | [Boolean] | [Coding] | [Date] | [DateTime] |
-       * [Decimal] | [Integer] | [Quantity] | [Reference] | [String] | [Time] | [Uri]
-       */
-      public typealias Value = FhirChoiceTypes.ContractTermOfferAnswerValueChoice
     }
 
     public class Builder(

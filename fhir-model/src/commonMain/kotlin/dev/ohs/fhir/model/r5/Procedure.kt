@@ -245,7 +245,7 @@ public data class Procedure(
    *
    * A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String] | [Timing]
    */
-  public val occurrence: Procedure.Occurrence? = null,
+  public val occurrence: Occurrence? = null,
   /**
    * The date the occurrence of the procedure was first captured in the record regardless of
    * Procedure.status (potentially after the occurrence of the event).
@@ -259,7 +259,7 @@ public data class Procedure(
    *
    * A FHIR choice type — one of: [Boolean] | [Reference]
    */
-  public val reported: Procedure.Reported? = null,
+  public val reported: Reported? = null,
   /** Indicates who or what performed the procedure and how they were involved. */
   public val performer: List<Performer> = listOf(),
   /**
@@ -640,6 +640,28 @@ public data class Procedure(
     }
   }
 
+  /** A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String] | [Timing] */
+  public sealed interface Occurrence {
+    public typealias Age = dev.ohs.fhir.model.r5.Age
+
+    public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+    public typealias Period = dev.ohs.fhir.model.r5.Period
+
+    public typealias Range = dev.ohs.fhir.model.r5.Range
+
+    public typealias String = dev.ohs.fhir.model.r5.String
+
+    public typealias Timing = dev.ohs.fhir.model.r5.Timing
+  }
+
+  /** A FHIR choice type — one of: [Boolean] | [Reference] */
+  public sealed interface Reported {
+    public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
+
+    public typealias Reference = dev.ohs.fhir.model.r5.Reference
+  }
+
   public class Builder(
     /**
      * A code specifying the state of the procedure. Generally, this will be the in-progress or
@@ -872,7 +894,7 @@ public data class Procedure(
      *
      * A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String] | [Timing]
      */
-    public var occurrence: Procedure.Occurrence? = null
+    public var occurrence: Occurrence? = null
 
     /**
      * The date the occurrence of the procedure was first captured in the record regardless of
@@ -889,7 +911,7 @@ public data class Procedure(
      *
      * A FHIR choice type — one of: [Boolean] | [Reference]
      */
-    public var reported: Procedure.Reported? = null
+    public var reported: Reported? = null
 
     /** Indicates who or what performed the procedure and how they were involved. */
     public var performer: MutableList<Performer.Builder> = mutableListOf()
@@ -1059,10 +1081,4 @@ public data class Procedure(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String] | [Timing] */
-  public typealias Occurrence = FhirChoiceTypes.AgeOrDateTimeOrPeriodOrRangeOrStringOrTiming
-
-  /** A FHIR choice type — one of: [Boolean] | [Reference] */
-  public typealias Reported = FhirChoiceTypes.BooleanOrReference
 }

@@ -188,7 +188,7 @@ public data class Questionnaire(
    *
    * A FHIR choice type — one of: [Coding] | [String]
    */
-  public val versionAlgorithm: Questionnaire.VersionAlgorithm? = null,
+  public val versionAlgorithm: VersionAlgorithm? = null,
   /**
    * A natural language name identifying the questionnaire. This name should be usable as an
    * identifier for the module by machine processing applications such as code generation.
@@ -742,7 +742,7 @@ public data class Questionnaire(
        * A FHIR choice type — one of: [Boolean] | [Coding] | [Date] | [DateTime] | [Decimal] |
        * [Integer] | [Quantity] | [Reference] | [String] | [Time]
        */
-      public val answer: EnableWhen.Answer,
+      public val answer: Answer,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -752,6 +752,32 @@ public data class Questionnaire(
             modifierExtension = this@with.modifierExtension.map { it.toBuilder() }.toMutableList()
           }
         }
+
+      /**
+       * A FHIR choice type — one of: [Boolean] | [Coding] | [Date] | [DateTime] | [Decimal] |
+       * [Integer] | [Quantity] | [Reference] | [String] | [Time]
+       */
+      public sealed interface Answer {
+        public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
+
+        public typealias Coding = dev.ohs.fhir.model.r5.Coding
+
+        public typealias Date = dev.ohs.fhir.model.r5.Date
+
+        public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+        public typealias Decimal = dev.ohs.fhir.model.r5.Decimal
+
+        public typealias Integer = dev.ohs.fhir.model.r5.Integer
+
+        public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+
+        public typealias Reference = dev.ohs.fhir.model.r5.Reference
+
+        public typealias String = dev.ohs.fhir.model.r5.String
+
+        public typealias Time = dev.ohs.fhir.model.r5.Time
+      }
 
       public class Builder(
         /**
@@ -777,7 +803,7 @@ public data class Questionnaire(
          * A FHIR choice type — one of: [Boolean] | [Coding] | [Date] | [DateTime] | [Decimal] |
          * [Integer] | [Quantity] | [Reference] | [String] | [Time]
          */
-        public var answer: EnableWhen.Answer,
+        public var answer: Answer,
       ) {
         /**
          * Unique id for the element within a resource (for internal references). This may be any
@@ -829,12 +855,6 @@ public data class Questionnaire(
             answer = answer,
           )
       }
-
-      /**
-       * A FHIR choice type — one of: [Boolean] | [Coding] | [Date] | [DateTime] | [Decimal] |
-       * [Integer] | [Quantity] | [Reference] | [String] | [Time]
-       */
-      public typealias Answer = FhirChoiceTypes.QuestionnaireItemEnableWhenAnswerChoice
     }
 
     /** One of the permitted answers for the question. */
@@ -885,7 +905,7 @@ public data class Questionnaire(
        * A FHIR choice type — one of: [Coding] | [Date] | [Integer] | [Reference] | [String] |
        * [Time]
        */
-      public val `value`: AnswerOption.Value,
+      public val `value`: Value,
       /**
        * Indicates whether the answer value is selected when the list of possible answers is
        * initially shown.
@@ -902,6 +922,24 @@ public data class Questionnaire(
           }
         }
 
+      /**
+       * A FHIR choice type — one of: [Coding] | [Date] | [Integer] | [Reference] | [String] |
+       * [Time]
+       */
+      public sealed interface Value {
+        public typealias Coding = dev.ohs.fhir.model.r5.Coding
+
+        public typealias Date = dev.ohs.fhir.model.r5.Date
+
+        public typealias Integer = dev.ohs.fhir.model.r5.Integer
+
+        public typealias Reference = dev.ohs.fhir.model.r5.Reference
+
+        public typealias String = dev.ohs.fhir.model.r5.String
+
+        public typealias Time = dev.ohs.fhir.model.r5.Time
+      }
+
       public class Builder(
         /**
          * A potential answer that's allowed as the answer to this question.
@@ -911,7 +949,7 @@ public data class Questionnaire(
          * A FHIR choice type — one of: [Coding] | [Date] | [Integer] | [Reference] | [String] |
          * [Time]
          */
-        public var `value`: AnswerOption.Value
+        public var `value`: Value
       ) {
         /**
          * Unique id for the element within a resource (for internal references). This may be any
@@ -968,12 +1006,6 @@ public data class Questionnaire(
             initialSelected = initialSelected?.build(),
           )
       }
-
-      /**
-       * A FHIR choice type — one of: [Coding] | [Date] | [Integer] | [Reference] | [String] |
-       * [Time]
-       */
-      public typealias Value = FhirChoiceTypes.CodingOrDateOrIntegerOrReferenceOrStringOrTime
     }
 
     /**
@@ -1027,7 +1059,7 @@ public data class Questionnaire(
        * A FHIR choice type — one of: [Attachment] | [Boolean] | [Coding] | [Date] | [DateTime] |
        * [Decimal] | [Integer] | [Quantity] | [Reference] | [String] | [Time] | [Uri]
        */
-      public val `value`: Initial.Value,
+      public val `value`: Value,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -1038,6 +1070,36 @@ public data class Questionnaire(
           }
         }
 
+      /**
+       * A FHIR choice type — one of: [Attachment] | [Boolean] | [Coding] | [Date] | [DateTime] |
+       * [Decimal] | [Integer] | [Quantity] | [Reference] | [String] | [Time] | [Uri]
+       */
+      public sealed interface Value {
+        public typealias Attachment = dev.ohs.fhir.model.r5.Attachment
+
+        public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
+
+        public typealias Coding = dev.ohs.fhir.model.r5.Coding
+
+        public typealias Date = dev.ohs.fhir.model.r5.Date
+
+        public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+        public typealias Decimal = dev.ohs.fhir.model.r5.Decimal
+
+        public typealias Integer = dev.ohs.fhir.model.r5.Integer
+
+        public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+
+        public typealias Reference = dev.ohs.fhir.model.r5.Reference
+
+        public typealias String = dev.ohs.fhir.model.r5.String
+
+        public typealias Time = dev.ohs.fhir.model.r5.Time
+
+        public typealias Uri = dev.ohs.fhir.model.r5.Uri
+      }
+
       public class Builder(
         /**
          * The actual value to for an initial answer.
@@ -1047,7 +1109,7 @@ public data class Questionnaire(
          * A FHIR choice type — one of: [Attachment] | [Boolean] | [Coding] | [Date] | [DateTime] |
          * [Decimal] | [Integer] | [Quantity] | [Reference] | [String] | [Time] | [Uri]
          */
-        public var `value`: Initial.Value
+        public var `value`: Value
       ) {
         /**
          * Unique id for the element within a resource (for internal references). This may be any
@@ -1097,12 +1159,6 @@ public data class Questionnaire(
             `value` = `value`,
           )
       }
-
-      /**
-       * A FHIR choice type — one of: [Attachment] | [Boolean] | [Coding] | [Date] | [DateTime] |
-       * [Decimal] | [Integer] | [Quantity] | [Reference] | [String] | [Time] | [Uri]
-       */
-      public typealias Value = FhirChoiceTypes.ContractTermOfferAnswerValueChoice
     }
 
     public class Builder(
@@ -1392,6 +1448,13 @@ public data class Questionnaire(
     }
   }
 
+  /** A FHIR choice type — one of: [Coding] | [String] */
+  public sealed interface VersionAlgorithm {
+    public typealias Coding = dev.ohs.fhir.model.r5.Coding
+
+    public typealias String = dev.ohs.fhir.model.r5.String
+  }
+
   public class Builder(
     /**
      * The current state of this questionnaire.
@@ -1570,7 +1633,7 @@ public data class Questionnaire(
      *
      * A FHIR choice type — one of: [Coding] | [String]
      */
-    public var versionAlgorithm: Questionnaire.VersionAlgorithm? = null
+    public var versionAlgorithm: VersionAlgorithm? = null
 
     /**
      * A natural language name identifying the questionnaire. This name should be usable as an
@@ -2002,7 +2065,4 @@ public data class Questionnaire(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [Coding] | [String] */
-  public typealias VersionAlgorithm = FhirChoiceTypes.CodingOrString
 }

@@ -153,7 +153,7 @@ public data class MedicationDispense(
    *
    * A FHIR choice type — one of: [CodeableConcept] | [Reference]
    */
-  public val statusReason: MedicationDispense.StatusReason? = null,
+  public val statusReason: StatusReason? = null,
   /**
    * Indicates the type of medication dispense (for example, where the medication is expected to be
    * consumed or administered (i.e. inpatient or outpatient)).
@@ -174,7 +174,7 @@ public data class MedicationDispense(
    *
    * A FHIR choice type — one of: [CodeableConcept] | [Reference]
    */
-  public val medication: FhirChoiceTypes.CodeableConceptOrReference,
+  public val medication: Medication,
   /**
    * A link to a resource representing the person or the group to whom the medication will be given.
    *
@@ -558,6 +558,20 @@ public data class MedicationDispense(
     }
   }
 
+  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+  public sealed interface StatusReason {
+    public typealias CodeableConcept = dev.ohs.fhir.model.r4.CodeableConcept
+
+    public typealias Reference = dev.ohs.fhir.model.r4.Reference
+  }
+
+  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+  public sealed interface Medication {
+    public typealias CodeableConcept = dev.ohs.fhir.model.r4.CodeableConcept
+
+    public typealias Reference = dev.ohs.fhir.model.r4.Reference
+  }
+
   public class Builder(
     /**
      * A code specifying the state of the set of dispense events.
@@ -577,7 +591,7 @@ public data class MedicationDispense(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public var medication: FhirChoiceTypes.CodeableConceptOrReference,
+    public var medication: Medication,
   ) : DomainResource.Builder() {
     /**
      * The logical id of the resource, as used in the URL for the resource. Once assigned, this
@@ -703,7 +717,7 @@ public data class MedicationDispense(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public var statusReason: MedicationDispense.StatusReason? = null
+    public var statusReason: StatusReason? = null
 
     /**
      * Indicates the type of medication dispense (for example, where the medication is expected to
@@ -934,7 +948,4 @@ public data class MedicationDispense(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
-  public typealias StatusReason = FhirChoiceTypes.CodeableConceptOrReference
 }

@@ -179,7 +179,7 @@ public data class Practitioner(
    *
    * A FHIR choice type — one of: [Boolean] | [DateTime]
    */
-  public val deceased: Practitioner.Deceased? = null,
+  public val deceased: Deceased? = null,
   /**
    * Address(es) of the practitioner that are not role specific (typically home address). Work
    * addresses are not typically entered in this property as they are usually role dependent.
@@ -524,6 +524,13 @@ public data class Practitioner(
     }
   }
 
+  /** A FHIR choice type — one of: [Boolean] | [DateTime] */
+  public sealed interface Deceased {
+    public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
+
+    public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+  }
+
   public class Builder() : DomainResource.Builder() {
     /**
      * The logical id of the resource, as used in the URL for the resource. Once assigned, this
@@ -686,7 +693,7 @@ public data class Practitioner(
      *
      * A FHIR choice type — one of: [Boolean] | [DateTime]
      */
-    public var deceased: Practitioner.Deceased? = null
+    public var deceased: Deceased? = null
 
     /**
      * Address(es) of the practitioner that are not role specific (typically home address). Work
@@ -752,7 +759,4 @@ public data class Practitioner(
         communication = communication.map { it.build() },
       )
   }
-
-  /** A FHIR choice type — one of: [Boolean] | [DateTime] */
-  public typealias Deceased = FhirChoiceTypes.BooleanOrDateTime
 }

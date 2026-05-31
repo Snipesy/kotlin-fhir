@@ -479,7 +479,7 @@ public data class NutritionProduct(
      * A FHIR choice type — one of: [Attachment] | [Base64Binary] | [Boolean] | [CodeableConcept] |
      * [Quantity] | [String]
      */
-    public val `value`: ProductCharacteristic.Value,
+    public val `value`: Value,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -489,6 +489,24 @@ public data class NutritionProduct(
           modifierExtension = this@with.modifierExtension.map { it.toBuilder() }.toMutableList()
         }
       }
+
+    /**
+     * A FHIR choice type — one of: [Attachment] | [Base64Binary] | [Boolean] | [CodeableConcept] |
+     * [Quantity] | [String]
+     */
+    public sealed interface Value {
+      public typealias Attachment = dev.ohs.fhir.model.r4b.Attachment
+
+      public typealias Base64Binary = dev.ohs.fhir.model.r4b.Base64Binary
+
+      public typealias Boolean = dev.ohs.fhir.model.r4b.Boolean
+
+      public typealias CodeableConcept = dev.ohs.fhir.model.r4b.CodeableConcept
+
+      public typealias Quantity = dev.ohs.fhir.model.r4b.Quantity
+
+      public typealias String = dev.ohs.fhir.model.r4b.String
+    }
 
     public class Builder(
       /**
@@ -505,7 +523,7 @@ public data class NutritionProduct(
        * A FHIR choice type — one of: [Attachment] | [Base64Binary] | [Boolean] | [CodeableConcept]
        * | [Quantity] | [String]
        */
-      public var `value`: ProductCharacteristic.Value,
+      public var `value`: Value,
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -556,12 +574,6 @@ public data class NutritionProduct(
           `value` = `value`,
         )
     }
-
-    /**
-     * A FHIR choice type — one of: [Attachment] | [Base64Binary] | [Boolean] | [CodeableConcept] |
-     * [Quantity] | [String]
-     */
-    public typealias Value = FhirChoiceTypes.NutritionProductProductCharacteristicValueChoice
   }
 
   /**

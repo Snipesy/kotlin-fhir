@@ -181,7 +181,7 @@ public data class ClinicalImpression(
    *
    * A FHIR choice type — one of: [DateTime] | [Period]
    */
-  public val effective: ClinicalImpression.Effective? = null,
+  public val effective: Effective? = null,
   /** Indicates when the documentation of the assessment was complete. */
   public val date: DateTime? = null,
   /** The clinician performing the assessment. */
@@ -388,6 +388,13 @@ public data class ClinicalImpression(
     }
   }
 
+  /** A FHIR choice type — one of: [DateTime] | [Period] */
+  public sealed interface Effective {
+    public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+    public typealias Period = dev.ohs.fhir.model.r5.Period
+  }
+
   public class Builder(
     /**
      * Identifies the workflow status of the assessment.
@@ -551,7 +558,7 @@ public data class ClinicalImpression(
      *
      * A FHIR choice type — one of: [DateTime] | [Period]
      */
-    public var effective: ClinicalImpression.Effective? = null
+    public var effective: Effective? = null
 
     /** Indicates when the documentation of the assessment was complete. */
     public var date: DateTime.Builder? = null
@@ -686,7 +693,4 @@ public data class ClinicalImpression(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [DateTime] | [Period] */
-  public typealias Effective = FhirChoiceTypes.DateTimeOrPeriod
 }

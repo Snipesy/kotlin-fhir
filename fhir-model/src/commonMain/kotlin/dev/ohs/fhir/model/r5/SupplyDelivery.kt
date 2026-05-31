@@ -167,7 +167,7 @@ public data class SupplyDelivery(
    *
    * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
    */
-  public val occurrence: SupplyDelivery.Occurrence? = null,
+  public val occurrence: Occurrence? = null,
   /** The individual or organization responsible for supplying the delivery. */
   public val supplier: Reference? = null,
   /** Identification of the facility/location where the delivery was shipped to. */
@@ -249,7 +249,7 @@ public data class SupplyDelivery(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public val item: SuppliedItem.Item? = null,
+    public val item: Item? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -261,6 +261,13 @@ public data class SupplyDelivery(
           item = this@with.item
         }
       }
+
+    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+    public sealed interface Item {
+      public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+      public typealias Reference = dev.ohs.fhir.model.r5.Reference
+    }
 
     public class Builder() {
       /**
@@ -313,7 +320,7 @@ public data class SupplyDelivery(
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public var item: SuppliedItem.Item? = null
+      public var item: Item? = null
 
       public fun build(): SuppliedItem =
         SuppliedItem(
@@ -324,9 +331,15 @@ public data class SupplyDelivery(
           item = item,
         )
     }
+  }
 
-    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
-    public typealias Item = FhirChoiceTypes.CodeableConceptOrReference
+  /** A FHIR choice type — one of: [DateTime] | [Period] | [Timing] */
+  public sealed interface Occurrence {
+    public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+    public typealias Period = dev.ohs.fhir.model.r5.Period
+
+    public typealias Timing = dev.ohs.fhir.model.r5.Timing
   }
 
   public class Builder() : DomainResource.Builder() {
@@ -485,7 +498,7 @@ public data class SupplyDelivery(
      *
      * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
      */
-    public var occurrence: SupplyDelivery.Occurrence? = null
+    public var occurrence: Occurrence? = null
 
     /** The individual or organization responsible for supplying the delivery. */
     public var supplier: Reference.Builder? = null
@@ -554,7 +567,4 @@ public data class SupplyDelivery(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [DateTime] | [Period] | [Timing] */
-  public typealias Occurrence = FhirChoiceTypes.DateTimeOrPeriodOrTiming
 }

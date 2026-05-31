@@ -453,7 +453,7 @@ public data class Composition(
      *
      * A FHIR choice type — one of: [Identifier] | [Reference]
      */
-    public val target: RelatesTo.Target,
+    public val target: Target,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -463,6 +463,13 @@ public data class Composition(
           modifierExtension = this@with.modifierExtension.map { it.toBuilder() }.toMutableList()
         }
       }
+
+    /** A FHIR choice type — one of: [Identifier] | [Reference] */
+    public sealed interface Target {
+      public typealias Identifier = dev.ohs.fhir.model.r4.Identifier
+
+      public typealias Reference = dev.ohs.fhir.model.r4.Reference
+    }
 
     public class Builder(
       /**
@@ -477,7 +484,7 @@ public data class Composition(
        *
        * A FHIR choice type — one of: [Identifier] | [Reference]
        */
-      public var target: RelatesTo.Target,
+      public var target: Target,
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -528,9 +535,6 @@ public data class Composition(
           target = target,
         )
     }
-
-    /** A FHIR choice type — one of: [Identifier] | [Reference] */
-    public typealias Target = FhirChoiceTypes.IdentifierOrReference
   }
 
   /** The clinical service, such as a colonoscopy or an appendectomy, being documented. */

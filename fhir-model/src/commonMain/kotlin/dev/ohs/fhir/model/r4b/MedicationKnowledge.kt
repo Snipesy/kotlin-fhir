@@ -555,7 +555,7 @@ public data class MedicationKnowledge(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public val item: Ingredient.Item,
+    public val item: Item,
     /** Indication of whether this ingredient affects the therapeutic action of the drug. */
     public val isActive: Boolean? = null,
     /**
@@ -576,13 +576,20 @@ public data class MedicationKnowledge(
         }
       }
 
+    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+    public sealed interface Item {
+      public typealias CodeableConcept = dev.ohs.fhir.model.r4b.CodeableConcept
+
+      public typealias Reference = dev.ohs.fhir.model.r4b.Reference
+    }
+
     public class Builder(
       /**
        * The actual ingredient - either a substance (simple ingredient) or another medication.
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public var item: Ingredient.Item
+      public var item: Item
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -644,9 +651,6 @@ public data class MedicationKnowledge(
           strength = strength?.build(),
         )
     }
-
-    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
-    public typealias Item = FhirChoiceTypes.CodeableConceptOrReference
   }
 
   /** The price of the medication. */
@@ -934,7 +938,7 @@ public data class MedicationKnowledge(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public val indication: AdministrationGuidelines.Indication? = null,
+    public val indication: Indication? = null,
     /**
      * Characteristics of the patient that are relevant to the administration guidelines (for
      * example, height, weight, gender, etc.).
@@ -1116,7 +1120,7 @@ public data class MedicationKnowledge(
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Quantity]
        */
-      public val characteristic: PatientCharacteristics.Characteristic,
+      public val characteristic: Characteristic,
       /** The specific characteristic (e.g. height, weight, gender, etc.). */
       public val `value`: List<String> = listOf(),
     ) : BackboneElement() {
@@ -1130,6 +1134,13 @@ public data class MedicationKnowledge(
           }
         }
 
+      /** A FHIR choice type — one of: [CodeableConcept] | [Quantity] */
+      public sealed interface Characteristic {
+        public typealias CodeableConcept = dev.ohs.fhir.model.r4b.CodeableConcept
+
+        public typealias Quantity = dev.ohs.fhir.model.r4b.Quantity
+      }
+
       public class Builder(
         /**
          * Specific characteristic that is relevant to the administration guideline (e.g. height,
@@ -1137,7 +1148,7 @@ public data class MedicationKnowledge(
          *
          * A FHIR choice type — one of: [CodeableConcept] | [Quantity]
          */
-        public var characteristic: PatientCharacteristics.Characteristic
+        public var characteristic: Characteristic
       ) {
         /**
          * Unique id for the element within a resource (for internal references). This may be any
@@ -1191,9 +1202,13 @@ public data class MedicationKnowledge(
             `value` = `value`.map { it.build() },
           )
       }
+    }
 
-      /** A FHIR choice type — one of: [CodeableConcept] | [Quantity] */
-      public typealias Characteristic = FhirChoiceTypes.CodeableConceptOrQuantity
+    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+    public sealed interface Indication {
+      public typealias CodeableConcept = dev.ohs.fhir.model.r4b.CodeableConcept
+
+      public typealias Reference = dev.ohs.fhir.model.r4b.Reference
     }
 
     public class Builder() {
@@ -1245,7 +1260,7 @@ public data class MedicationKnowledge(
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public var indication: AdministrationGuidelines.Indication? = null
+      public var indication: Indication? = null
 
       /**
        * Characteristics of the patient that are relevant to the administration guidelines (for
@@ -1264,9 +1279,6 @@ public data class MedicationKnowledge(
           patientCharacteristics = patientCharacteristics.map { it.build() },
         )
     }
-
-    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
-    public typealias Indication = FhirChoiceTypes.CodeableConceptOrReference
   }
 
   /** Categorization of the medication within a formulary or classification system. */
@@ -1567,7 +1579,7 @@ public data class MedicationKnowledge(
      *
      * A FHIR choice type — one of: [Base64Binary] | [CodeableConcept] | [Quantity] | [String]
      */
-    public val `value`: DrugCharacteristic.Value? = null,
+    public val `value`: Value? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -1579,6 +1591,17 @@ public data class MedicationKnowledge(
           `value` = this@with.`value`
         }
       }
+
+    /** A FHIR choice type — one of: [Base64Binary] | [CodeableConcept] | [Quantity] | [String] */
+    public sealed interface Value {
+      public typealias Base64Binary = dev.ohs.fhir.model.r4b.Base64Binary
+
+      public typealias CodeableConcept = dev.ohs.fhir.model.r4b.CodeableConcept
+
+      public typealias Quantity = dev.ohs.fhir.model.r4b.Quantity
+
+      public typealias String = dev.ohs.fhir.model.r4b.String
+    }
 
     public class Builder() {
       /**
@@ -1635,7 +1658,7 @@ public data class MedicationKnowledge(
        *
        * A FHIR choice type — one of: [Base64Binary] | [CodeableConcept] | [Quantity] | [String]
        */
-      public var `value`: DrugCharacteristic.Value? = null
+      public var `value`: Value? = null
 
       public fun build(): DrugCharacteristic =
         DrugCharacteristic(
@@ -1646,9 +1669,6 @@ public data class MedicationKnowledge(
           `value` = `value`,
         )
     }
-
-    /** A FHIR choice type — one of: [Base64Binary] | [CodeableConcept] | [Quantity] | [String] */
-    public typealias Value = FhirChoiceTypes.Base64BinaryOrCodeableConceptOrQuantityOrString
   }
 
   /** Regulatory information about a medication. */

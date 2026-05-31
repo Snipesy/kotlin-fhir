@@ -258,7 +258,7 @@ public data class AllergyIntolerance(
    *
    * A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String]
    */
-  public val onset: AllergyIntolerance.Onset? = null,
+  public val onset: Onset? = null,
   /**
    * The recordedDate represents when this particular AllergyIntolerance record was created in the
    * system, which is often a system-generated date.
@@ -710,6 +710,19 @@ public data class AllergyIntolerance(
     }
   }
 
+  /** A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String] */
+  public sealed interface Onset {
+    public typealias Age = dev.ohs.fhir.model.r5.Age
+
+    public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+    public typealias Period = dev.ohs.fhir.model.r5.Period
+
+    public typealias Range = dev.ohs.fhir.model.r5.Range
+
+    public typealias String = dev.ohs.fhir.model.r5.String
+  }
+
   public class Builder(
     /** The patient who has the allergy or intolerance. */
     public var patient: Reference.Builder
@@ -957,7 +970,7 @@ public data class AllergyIntolerance(
      *
      * A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String]
      */
-    public var onset: AllergyIntolerance.Onset? = null
+    public var onset: Onset? = null
 
     /**
      * The recordedDate represents when this particular AllergyIntolerance record was created in the
@@ -1133,7 +1146,4 @@ public data class AllergyIntolerance(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String] */
-  public typealias Onset = FhirChoiceTypes.AgeOrDateTimeOrPeriodOrRangeOrString
 }

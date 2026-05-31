@@ -165,7 +165,7 @@ public data class CoverageEligibilityRequest(
    *
    * A FHIR choice type — one of: [Date] | [Period]
    */
-  public val serviced: CoverageEligibilityRequest.Serviced? = null,
+  public val serviced: Serviced? = null,
   /** The date when this resource was created. */
   public val created: DateTime,
   /** Person who created the request. */
@@ -287,7 +287,7 @@ public data class CoverageEligibilityRequest(
      *
      * A FHIR choice type — one of: [DateTime] | [Period]
      */
-    public val `when`: Event.When,
+    public val `when`: When,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -298,6 +298,13 @@ public data class CoverageEligibilityRequest(
         }
       }
 
+    /** A FHIR choice type — one of: [DateTime] | [Period] */
+    public sealed interface When {
+      public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+      public typealias Period = dev.ohs.fhir.model.r5.Period
+    }
+
     public class Builder(
       /** A coded event such as when a service is expected or a card printed. */
       public var type: CodeableConcept.Builder,
@@ -307,7 +314,7 @@ public data class CoverageEligibilityRequest(
        *
        * A FHIR choice type — one of: [DateTime] | [Period]
        */
-      public var `when`: Event.When,
+      public var `when`: When,
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -358,9 +365,6 @@ public data class CoverageEligibilityRequest(
           `when` = `when`,
         )
     }
-
-    /** A FHIR choice type — one of: [DateTime] | [Period] */
-    public typealias When = FhirChoiceTypes.DateTimeOrPeriod
   }
 
   /**
@@ -805,7 +809,7 @@ public data class CoverageEligibilityRequest(
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public val diagnosis: FhirChoiceTypes.CodeableConceptOrReference? = null,
+      public val diagnosis: Diagnosis? = null,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -816,6 +820,13 @@ public data class CoverageEligibilityRequest(
             diagnosis = this@with.diagnosis
           }
         }
+
+      /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+      public sealed interface Diagnosis {
+        public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+        public typealias Reference = dev.ohs.fhir.model.r5.Reference
+      }
 
       public class Builder() {
         /**
@@ -864,10 +875,10 @@ public data class CoverageEligibilityRequest(
          *
          * A FHIR choice type — one of: [CodeableConcept] | [Reference]
          */
-        public var diagnosis: FhirChoiceTypes.CodeableConceptOrReference? = null
+        public var diagnosis: Diagnosis? = null
 
-        public fun build(): Diagnosis =
-          Diagnosis(
+        public fun build(): Item.Diagnosis =
+          Item.Diagnosis(
             id = id,
             extension = extension.map { it.build() },
             modifierExtension = modifierExtension.map { it.build() },
@@ -986,6 +997,13 @@ public data class CoverageEligibilityRequest(
           detail = detail.map { it.build() },
         )
     }
+  }
+
+  /** A FHIR choice type — one of: [Date] | [Period] */
+  public sealed interface Serviced {
+    public typealias Date = dev.ohs.fhir.model.r5.Date
+
+    public typealias Period = dev.ohs.fhir.model.r5.Period
   }
 
   public class Builder(
@@ -1135,7 +1153,7 @@ public data class CoverageEligibilityRequest(
      *
      * A FHIR choice type — one of: [Date] | [Period]
      */
-    public var serviced: CoverageEligibilityRequest.Serviced? = null
+    public var serviced: Serviced? = null
 
     /** Person who created the request. */
     public var enterer: Reference.Builder? = null
@@ -1281,7 +1299,4 @@ public data class CoverageEligibilityRequest(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [Date] | [Period] */
-  public typealias Serviced = FhirChoiceTypes.DateOrPeriod
 }

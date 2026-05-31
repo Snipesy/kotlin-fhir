@@ -264,7 +264,7 @@ public data class SubstanceSpecification(
      *
      * A FHIR choice type — one of: [Quantity] | [String]
      */
-    public val amount: Moiety.Amount? = null,
+    public val amount: Amount? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -281,6 +281,13 @@ public data class SubstanceSpecification(
           amount = this@with.amount
         }
       }
+
+    /** A FHIR choice type — one of: [Quantity] | [String] */
+    public sealed interface Amount {
+      public typealias Quantity = dev.ohs.fhir.model.r4.Quantity
+
+      public typealias String = dev.ohs.fhir.model.r4.String
+    }
 
     public class Builder() {
       /**
@@ -346,7 +353,7 @@ public data class SubstanceSpecification(
        *
        * A FHIR choice type — one of: [Quantity] | [String]
        */
-      public var amount: Moiety.Amount? = null
+      public var amount: Amount? = null
 
       public fun build(): Moiety =
         Moiety(
@@ -362,9 +369,6 @@ public data class SubstanceSpecification(
           amount = amount,
         )
     }
-
-    /** A FHIR choice type — one of: [Quantity] | [String] */
-    public typealias Amount = FhirChoiceTypes.QuantityOrString
   }
 
   /** General specifications for this substance, including how it is related to other substances. */
@@ -422,13 +426,13 @@ public data class SubstanceSpecification(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public val definingSubstance: Property.DefiningSubstance? = null,
+    public val definingSubstance: DefiningSubstance? = null,
     /**
      * Quantitative value for this property.
      *
      * A FHIR choice type — one of: [Quantity] | [String]
      */
-    public val amount: Property.Amount? = null,
+    public val amount: Amount? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -443,6 +447,20 @@ public data class SubstanceSpecification(
           amount = this@with.amount
         }
       }
+
+    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+    public sealed interface DefiningSubstance {
+      public typealias CodeableConcept = dev.ohs.fhir.model.r4.CodeableConcept
+
+      public typealias Reference = dev.ohs.fhir.model.r4.Reference
+    }
+
+    /** A FHIR choice type — one of: [Quantity] | [String] */
+    public sealed interface Amount {
+      public typealias Quantity = dev.ohs.fhir.model.r4.Quantity
+
+      public typealias String = dev.ohs.fhir.model.r4.String
+    }
 
     public class Builder() {
       /**
@@ -503,14 +521,14 @@ public data class SubstanceSpecification(
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public var definingSubstance: Property.DefiningSubstance? = null
+      public var definingSubstance: DefiningSubstance? = null
 
       /**
        * Quantitative value for this property.
        *
        * A FHIR choice type — one of: [Quantity] | [String]
        */
-      public var amount: Property.Amount? = null
+      public var amount: Amount? = null
 
       public fun build(): Property =
         Property(
@@ -524,12 +542,6 @@ public data class SubstanceSpecification(
           amount = amount,
         )
     }
-
-    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
-    public typealias DefiningSubstance = FhirChoiceTypes.CodeableConceptOrReference
-
-    /** A FHIR choice type — one of: [Quantity] | [String] */
-    public typealias Amount = FhirChoiceTypes.QuantityOrString
   }
 
   /** Structural information. */
@@ -1580,7 +1592,7 @@ public data class SubstanceSpecification(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public val substance: FhirChoiceTypes.CodeableConceptOrReference? = null,
+    public val substance: Substance? = null,
     /** For example "salt to parent", "active moiety", "starting material". */
     public val relationship: CodeableConcept? = null,
     /**
@@ -1594,7 +1606,7 @@ public data class SubstanceSpecification(
      *
      * A FHIR choice type — one of: [Quantity] | [Range] | [Ratio] | [String]
      */
-    public val amount: Relationship.Amount? = null,
+    public val amount: Amount? = null,
     /** For use when the numeric. */
     public val amountRatioLowLimit: Ratio? = null,
     /** An operator for the amount, for example "average", "approximately", "less than". */
@@ -1617,6 +1629,24 @@ public data class SubstanceSpecification(
           source = this@with.source.map { it.toBuilder() }.toMutableList()
         }
       }
+
+    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+    public sealed interface Substance {
+      public typealias CodeableConcept = dev.ohs.fhir.model.r4.CodeableConcept
+
+      public typealias Reference = dev.ohs.fhir.model.r4.Reference
+    }
+
+    /** A FHIR choice type — one of: [Quantity] | [Range] | [Ratio] | [String] */
+    public sealed interface Amount {
+      public typealias Quantity = dev.ohs.fhir.model.r4.Quantity
+
+      public typealias Range = dev.ohs.fhir.model.r4.Range
+
+      public typealias Ratio = dev.ohs.fhir.model.r4.Ratio
+
+      public typealias String = dev.ohs.fhir.model.r4.String
+    }
 
     public class Builder() {
       /**
@@ -1664,7 +1694,7 @@ public data class SubstanceSpecification(
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public var substance: FhirChoiceTypes.CodeableConceptOrReference? = null
+      public var substance: Substance? = null
 
       /** For example "salt to parent", "active moiety", "starting material". */
       public var relationship: CodeableConcept.Builder? = null
@@ -1681,7 +1711,7 @@ public data class SubstanceSpecification(
        *
        * A FHIR choice type — one of: [Quantity] | [Range] | [Ratio] | [String]
        */
-      public var amount: Relationship.Amount? = null
+      public var amount: Amount? = null
 
       /** For use when the numeric. */
       public var amountRatioLowLimit: Ratio.Builder? = null
@@ -1706,9 +1736,6 @@ public data class SubstanceSpecification(
           source = source.map { it.build() },
         )
     }
-
-    /** A FHIR choice type — one of: [Quantity] | [Range] | [Ratio] | [String] */
-    public typealias Amount = FhirChoiceTypes.QuantityOrRangeOrRatioOrString
   }
 
   public class Builder() : DomainResource.Builder() {

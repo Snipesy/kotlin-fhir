@@ -1391,7 +1391,7 @@ public data class ValueSet(
        * A FHIR choice type — one of: [Boolean] | [CodeBox] | [DateTime] | [Decimal] | [Integer] |
        * [StringBox] | [Uri]
        */
-      public val `value`: Parameter.Value? = null,
+      public val `value`: Value? = null,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -1402,6 +1402,26 @@ public data class ValueSet(
             `value` = this@with.`value`
           }
         }
+
+      /**
+       * A FHIR choice type — one of: [Boolean] | [CodeBox] | [DateTime] | [Decimal] | [Integer] |
+       * [StringBox] | [Uri]
+       */
+      public sealed interface Value {
+        public typealias Boolean = dev.ohs.fhir.model.r4.Boolean
+
+        public typealias Code = CodeBox
+
+        public typealias DateTime = dev.ohs.fhir.model.r4.DateTime
+
+        public typealias Decimal = dev.ohs.fhir.model.r4.Decimal
+
+        public typealias Integer = dev.ohs.fhir.model.r4.Integer
+
+        public typealias String = StringBox
+
+        public typealias Uri = dev.ohs.fhir.model.r4.Uri
+      }
 
       public class Builder(
         /**
@@ -1459,7 +1479,7 @@ public data class ValueSet(
          * A FHIR choice type — one of: [Boolean] | [CodeBox] | [DateTime] | [Decimal] | [Integer] |
          * [StringBox] | [Uri]
          */
-        public var `value`: Parameter.Value? = null
+        public var `value`: Value? = null
 
         public fun build(): Parameter =
           Parameter(
@@ -1470,13 +1490,6 @@ public data class ValueSet(
             `value` = `value`,
           )
       }
-
-      /**
-       * A FHIR choice type — one of: [Boolean] | [CodeBox] | [DateTime] | [Decimal] | [Integer] |
-       * [StringBox] | [Uri]
-       */
-      public typealias Value =
-        FhirChoiceTypes.BooleanOrCodeOrDateTimeOrDecimalOrIntegerOrStringOrUri
     }
 
     /** The codes that are contained in the value set expansion. */

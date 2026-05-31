@@ -22,16 +22,16 @@ import dev.ohs.fhir.codegen.schema.Element
 import dev.ohs.fhir.codegen.schema.StructureDefinition
 import dev.ohs.fhir.codegen.schema.Type
 import dev.ohs.fhir.codegen.schema.capitalized
-import dev.ohs.fhir.codegen.schema.getElementName
 
 /**
- * Registry of the consolidated choice-type ("value[x]") option-sets for a single FHIR version.
+ * Registry of the choice-type ("value[x]") option-sets for a single FHIR version.
  *
- * FHIR choice types (e.g. `Patient.deceased[x]` → boolean | dateTime) are modelled as a sealed
- * interface with one permitted subtype per allowed type. The same option-sets recur across hundreds
- * of resources, so instead of regenerating a nested sealed interface (with a wrapper data class per
- * type) per resource, we emit **one shared sealed interface per distinct option-set** and let the
- * member types implement it directly — *bare* — wherever that is type-safe.
+ * FHIR choice types (e.g. `Patient.deceased[x]` → boolean | dateTime) are modelled as a nested
+ * sealed interface, one per declaring field (e.g. `Patient.Deceased`, `Observation.Value`), with
+ * one permitted subtype per allowed type. Rather than wrapping every member in a value class, the
+ * member types implement the interface directly — *bare* — wherever that is type-safe, and the
+ * interface exposes each member via a nested `typealias` (so `Observation.Value.Quantity` keeps
+ * resolving to the member type).
  *
  * A member type T is **bare** in a set S (the model type implements S directly, no wrapper) unless
  * either:
@@ -39,60 +39,37 @@ import dev.ohs.fhir.codegen.schema.getElementName
  * - S contains another member that is an ancestor or descendant of T (FHIR inheritance: `Quantity`
  *   ⊃ Age/Count/Distance/Duration, `String` ⊃ Code/Id/Markdown, `Uri` ⊃ Url/Canonical/Oid/Uuid,
  *   `Integer` ⊃ PositiveInt/UnsignedInt). Two members that are indistinguishable at an `is`-check
- *   would break exhaustiveness, so those are **boxed** in a shared `<Type>Box` data class instead.
+ *   would break exhaustiveness, so those are **boxed** in a shared `<Type>Box` value class instead.
  *   This only happens in the ~50-type "open" set and a handful of others.
  *
- * Each resource keeps its API via a nested type alias (e.g. `Observation.Value = …`), and the set
- * interface exposes each member via a nested alias + `asX()` extension. The generated file is
- * produced by [ChoiceTypesFileSpecGenerator]; the same instance is shared with the model and
- * serializer generators so all references resolve consistently.
+ * A bare member implements potentially many of these per-field interfaces, so its memberships are
+ * collapsed into a single `<Type>Choices` aggregate (see [choiceParticipants]) to keep the model
+ * class header readable. The box classes and the aggregates are emitted by
+ * [ChoiceTypesFileSpecGenerator]; the same instance is shared with the model and serializer
+ * generators so all references resolve consistently.
  */
 class ChoiceTypeRegistry
 private constructor(
   val packageName: String,
   /** Expansion name (e.g. `Quantity`) → the wrapped model value type (e.g. `…r4.Quantity`). */
   private val modelTypes: Map<String, ClassName>,
-  private val setsBySignature: Map<String, ChoiceSet>,
+  /** Interface path (e.g. `Observation.value`) → its nested sealed-interface option-set. */
+  private val setsByPath: Map<String, ChoiceSet>,
   /** Capitalized type name → its transitive ancestor capitalized names (via `baseDefinition`). */
   private val ancestorsByType: Map<String, Set<String>>,
-  /** Simple names of every generated FHIR type — used to detect choice-alias name collisions. */
-  val typeNames: Set<String>,
 ) {
-  /** A distinct choice option-set, shared across every element that declares it. */
+  /** A choice option-set: the nested sealed interface for one field and its member types. */
   data class ChoiceSet(
     val className: ClassName,
     /** Member types in canonical (alphabetical-by-expansion) order. */
     val types: List<Type>,
-    /**
-     * True when [className] is a compact `Choice<hash>` name (too many members to join). Such names
-     * are not meaningful at a field's use-site, but are never surfaced to users.
-     */
-    val compressed: Boolean,
-    /** Dotted paths of the fields this set is the choice type for (e.g. `Observation.value`). */
-    val declaringPaths: List<String>,
   )
 
-  /** All distinct option-sets, ordered by interface name for deterministic output. */
-  val choiceSets: List<ChoiceSet> = setsBySignature.values.sortedBy { it.className.simpleName }
+  /** All option-sets, ordered by interface name for deterministic output. */
+  val choiceSets: List<ChoiceSet> = setsByPath.values.sortedBy { it.className.canonicalName }
 
-  /** The shared sealed interface [element] resolves to. */
-  fun choiceSetFor(element: Element): ChoiceSet =
-    setsBySignature.getValue(signatureOf(element.type!!))
-
-  /**
-   * Whether the per-resource nested alias for [element] (named after the field) would shadow a name
-   * already in scope — a generated FHIR type (e.g. `DeviceRequest.code[x]` → `Code`) or the
-   * enclosing class itself (e.g. `Claim.Diagnosis.diagnosis[x]` → `Diagnosis`). Nested type aliases
-   * aren't tracked by KotlinPoet, so it can't qualify around such a clash; the alias is skipped and
-   * the property is typed with the shared set directly instead.
-   */
-  fun aliasNameCollides(element: Element, enclosingClassName: ClassName): Boolean {
-    val aliasName = element.getElementName().capitalized()
-    return aliasName in typeNames || aliasName == enclosingClassName.simpleName
-  }
-
-  /** [element]'s member types in canonical order (the order used everywhere). */
-  fun canonicalTypes(element: Element): List<Type> = choiceSetFor(element).types
+  /** The nested sealed interface [element] resolves to. */
+  fun choiceSetFor(element: Element): ChoiceSet = setsByPath.getValue(interfacePathOf(element))
 
   /** The model value type for an expansion, e.g. `…r4.Quantity`, or `kotlin.Long` for integer64. */
   fun modelType(expansionName: String): ClassName = modelTypes.getValue(expansionName)
@@ -183,16 +160,14 @@ private constructor(
     return if (sets.size >= 2) listOf(aggregateClassName(modelSimpleName)) else sets
   }
 
-  /**
-   * KDoc describing the choice as the union of its members (each linked), wrapping long unions
-   * across lines. Bare members link the model type; wrapped members link the `<Type>Box` box type.
-   * When [includeDeclaringPaths] is set (the shared interface itself), also lists the fields this
-   * is the choice type for (e.g. `Observation.value`).
-   */
   /** The union KDoc for [element]'s choice type — for the property/parameter that holds it. */
   fun unionDoc(element: Element): CodeBlock = unionDoc(choiceSetFor(element))
 
-  fun unionDoc(set: ChoiceSet, includeDeclaringPaths: Boolean = false): CodeBlock {
+  /**
+   * KDoc describing the choice as the union of its members (each linked), wrapping long unions
+   * across lines. Bare members link the model type; wrapped members link the `<Type>Box` box type.
+   */
+  fun unionDoc(set: ChoiceSet): CodeBlock {
     val members =
       set.types.map { type ->
         val exp = choiceTypeExpansionName(type)
@@ -213,13 +188,6 @@ private constructor(
       doc.add("[%T]", member)
       lineLength += member.simpleName.length + 2
     }
-    if (includeDeclaringPaths && set.declaringPaths.isNotEmpty()) {
-      doc.add("\n\nThe choice type for:\n")
-      val shown = set.declaringPaths.take(MAX_DECLARING_PATHS)
-      shown.forEach { doc.add("- `%L`\n", it) }
-      val extra = set.declaringPaths.size - shown.size
-      if (extra > 0) doc.add("- … and %L more\n", extra)
-    }
     return doc.build()
   }
 
@@ -233,27 +201,31 @@ private constructor(
     // model type.
     private const val WRAPPER_SUFFIX = "Box"
     // Per-type aggregate of a model type's bare set memberships, e.g. `DateTimeChoices`. The plural
-    // suffix avoids colliding with the singular `…Choice` option-set names.
+    // suffix avoids colliding with the singular `…` option-set names.
     private const val AGGREGATE_SUFFIX = "Choices"
 
-    // The choice types and the per-type aggregates are each namespaced under a single object so
-    // they
-    // don't clutter the model package's top-level namespace. They must remain in this package —
-    // sealed subtypes can't cross packages — so an object is the only namespacing device available.
-    const val CHOICE_TYPES_OBJECT = "FhirChoiceTypes"
+    // The per-type aggregates are namespaced under a single object so they don't clutter the model
+    // package's top-level namespace. They must remain in this package — sealed subtypes can't cross
+    // packages — so an object is the only namespacing device available.
     const val PARTICIPANTS_OBJECT = "FhirChoiceParticipants"
     /** Approximate column at which the union KDoc wraps to the next line. */
     private const val MAX_DOC_LINE_LENGTH = 72
 
-    // A member "Or"-join longer than this is dropped in favour of the first declaring path. Sized
-    // so a readable four-member join still wins (e.g. the 55-char
-    // `CanonicalOrCodeableConceptOrDataRequirementOrExpression`).
-    private const val MAX_JOINED_NAME_LENGTH = 64
-    /** Cap on declaring-field paths listed in an interface's KDoc. */
-    private const val MAX_DECLARING_PATHS = 20
+    /**
+     * The dotted path of the nested sealed interface for [element]. Normally the element's own path
+     * (`Observation.value`). The one exception is `MetadataResource.versionAlgorithm[x]`, inherited
+     * by every canonical resource: those reuse the base declaration's interface
+     * (`CanonicalResource.VersionAlgorithm`) rather than each declaring their own — matching
+     * [PropertyMapper.getSealedInterfaceType].
+     */
+    private fun interfacePathOf(element: Element): String {
+      val base = element.base
+      val path = if (base != null && element.id != base.path) base.path else element.path
+      return path.removeSuffix("[x]")
+    }
 
-    private fun signatureOf(types: List<Type>): String =
-      types.map { choiceTypeExpansionName(it) }.sorted().joinToString("|")
+    private fun interfaceClassName(packageName: String, interfacePath: String): ClassName =
+      ClassName(packageName, interfacePath.split('.').map { it.capitalized() })
 
     fun build(
       packageName: String,
@@ -268,12 +240,9 @@ private constructor(
         )
 
       val modelTypes = sortedMapOf<String, ClassName>()
-      // Insertion order preserved; canonical (sorted-by-expansion) member list per option-set.
-      val canonicalTypesBySignature = linkedMapOf<String, List<Type>>()
-      // Distinct dotted element paths declaring each option-set (e.g. `Observation.value`) — used
-      // both to name a set whose "Or"-join is too long (`ObservationComponentValueChoice`) and to
-      // document, in each interface's KDoc, which fields it is the choice type for.
-      val pathsBySignature = linkedMapOf<String, MutableSet<String>>()
+      // Insertion order preserved; one option-set per declaring interface path (inherited
+      // versionAlgorithm fields collapse onto the base path, see interfacePathOf).
+      val setsByPath = linkedMapOf<String, ChoiceSet>()
 
       structureDefinitions
         .asSequence()
@@ -291,22 +260,21 @@ private constructor(
               "Inconsistent model type for choice expansion '$expansion': $previous vs $mapped"
             }
           }
-          val signature = signatureOf(types)
-          canonicalTypesBySignature.putIfAbsent(
-            signature,
-            types.sortedBy { choiceTypeExpansionName(it) },
+          val interfacePath = interfacePathOf(element)
+          setsByPath.putIfAbsent(
+            interfacePath,
+            ChoiceSet(
+              interfaceClassName(packageName, interfacePath),
+              types.sortedBy { choiceTypeExpansionName(it) },
+            ),
           )
-          pathsBySignature
-            .getOrPut(signature) { sortedSetOf() }
-            .add(element.path.removeSuffix("[x]"))
         }
 
       return ChoiceTypeRegistry(
         packageName,
         modelTypes,
-        assignSetNames(packageName, canonicalTypesBySignature, pathsBySignature),
+        setsByPath,
         ancestorClosure(structureDefinitions),
-        structureDefinitions.mapTo(hashSetOf()) { it.name.capitalized() },
       )
     }
 
@@ -338,54 +306,6 @@ private constructor(
         return result
       }
       return parent.keys.associateWith { ancestorsOf(it) }
-    }
-
-    /**
-     * Names each distinct option-set, preferring human-readable names:
-     * 1. the member "Or"-join when short enough (`CodeableConceptOrReference`,
-     *    `DateTimeOrPeriodOrTiming`, `CanonicalOrCodeableConceptOrDataRequirementOrExpression`);
-     * 2. otherwise the lexicographically-first declaring field path + `Choice` (e.g.
-     *    `Observation.component.value` → `ObservationComponentValueChoice`).
-     *
-     * The fallback is keyed on a *declaring path* rather than a bare field name on purpose: a path
-     * declares exactly one option-set, so the first (sorted) path is both unique across sets and
-     * stable across regenerations. A bare field name is neither — every `value[x]` in the spec
-     * would collapse to `ValueChoice` and only be told apart by an order-dependent `X` suffix.
-     *
-     * All names are deterministic and made unique with a trailing `X` only on the (now practically
-     * impossible) clash. The tier-2 names set [ChoiceSet.compressed] (the name isn't the member
-     * list), so callers prefer the per-resource alias at a use-site.
-     */
-    private fun assignSetNames(
-      packageName: String,
-      canonicalTypesBySignature: Map<String, List<Type>>,
-      pathsBySignature: Map<String, Set<String>>,
-    ): Map<String, ChoiceSet> {
-      val usedNames = hashSetOf<String>()
-      return canonicalTypesBySignature.entries
-        .sortedBy { it.key }
-        .associate { (signature, types) ->
-          val joined = types.joinToString("Or") { choiceTypeExpansionName(it) }
-          val paths = pathsBySignature[signature].orEmpty()
-          val compressed = joined.length > MAX_JOINED_NAME_LENGTH
-          var name =
-            when {
-              !compressed -> joined
-              paths.isNotEmpty() ->
-                paths.first().split('.').joinToString("") { it.capitalized() } + "Choice"
-              // Every set is derived from at least one element, so a declaring path is always
-              // present; this only guards against a future change and stays deterministic.
-              else -> "Choice" + signature.hashCode().toUInt().toString(36)
-            }
-          while (!usedNames.add(name)) name += "X"
-          signature to
-            ChoiceSet(
-              ClassName(packageName, CHOICE_TYPES_OBJECT, name),
-              types,
-              compressed,
-              paths.toList(),
-            )
-        }
     }
   }
 }

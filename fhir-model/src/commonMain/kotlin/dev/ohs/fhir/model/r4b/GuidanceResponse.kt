@@ -139,7 +139,7 @@ public data class GuidanceResponse(
    *
    * A FHIR choice type — one of: [CanonicalBox] | [CodeableConcept] | [UriBox]
    */
-  public val module: GuidanceResponse.Module,
+  public val module: Module,
   /**
    * The status of the response. If the evaluation is completed successfully, the status will
    * indicate success. However, in order to complete the evaluation, the engine may require more
@@ -228,13 +228,22 @@ public data class GuidanceResponse(
       }
     }
 
+  /** A FHIR choice type — one of: [CanonicalBox] | [CodeableConcept] | [UriBox] */
+  public sealed interface Module {
+    public typealias Canonical = CanonicalBox
+
+    public typealias CodeableConcept = dev.ohs.fhir.model.r4b.CodeableConcept
+
+    public typealias Uri = UriBox
+  }
+
   public class Builder(
     /**
      * An identifier, CodeableConcept or canonical reference to the guidance that was requested.
      *
      * A FHIR choice type — one of: [CanonicalBox] | [CodeableConcept] | [UriBox]
      */
-    public var module: GuidanceResponse.Module,
+    public var module: Module,
     /**
      * The status of the response. If the evaluation is completed successfully, the status will
      * indicate success. However, in order to complete the evaluation, the engine may require more
@@ -493,7 +502,4 @@ public data class GuidanceResponse(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [CanonicalBox] | [CodeableConcept] | [UriBox] */
-  public typealias Module = FhirChoiceTypes.CanonicalOrCodeableConceptOrUri
 }

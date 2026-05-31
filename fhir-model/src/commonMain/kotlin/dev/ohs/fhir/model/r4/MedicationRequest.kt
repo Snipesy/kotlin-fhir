@@ -195,7 +195,7 @@ public data class MedicationRequest(
    *
    * A FHIR choice type — one of: [Boolean] | [Reference]
    */
-  public val reported: MedicationRequest.Reported? = null,
+  public val reported: Reported? = null,
   /**
    * Identifies the medication being requested. This is a link to a resource that represents the
    * medication which may be the details of the medication or simply an attribute carrying a code
@@ -208,7 +208,7 @@ public data class MedicationRequest(
    *
    * A FHIR choice type — one of: [CodeableConcept] | [Reference]
    */
-  public val medication: FhirChoiceTypes.CodeableConceptOrReference,
+  public val medication: Medication,
   /**
    * A link to a resource representing the person or set of individuals to whom the medication will
    * be given.
@@ -777,7 +777,7 @@ public data class MedicationRequest(
      *
      * A FHIR choice type — one of: [Boolean] | [CodeableConcept]
      */
-    public val allowed: Substitution.Allowed,
+    public val allowed: Allowed,
     /**
      * Indicates the reason for the substitution, or why substitution must or must not be performed.
      */
@@ -793,6 +793,13 @@ public data class MedicationRequest(
         }
       }
 
+    /** A FHIR choice type — one of: [Boolean] | [CodeableConcept] */
+    public sealed interface Allowed {
+      public typealias Boolean = dev.ohs.fhir.model.r4.Boolean
+
+      public typealias CodeableConcept = dev.ohs.fhir.model.r4.CodeableConcept
+    }
+
     public class Builder(
       /**
        * True if the prescriber allows a different drug to be dispensed from what was prescribed.
@@ -802,7 +809,7 @@ public data class MedicationRequest(
        *
        * A FHIR choice type — one of: [Boolean] | [CodeableConcept]
        */
-      public var allowed: Substitution.Allowed
+      public var allowed: Allowed
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -859,9 +866,20 @@ public data class MedicationRequest(
           reason = reason?.build(),
         )
     }
+  }
 
-    /** A FHIR choice type — one of: [Boolean] | [CodeableConcept] */
-    public typealias Allowed = FhirChoiceTypes.BooleanOrCodeableConcept
+  /** A FHIR choice type — one of: [Boolean] | [Reference] */
+  public sealed interface Reported {
+    public typealias Boolean = dev.ohs.fhir.model.r4.Boolean
+
+    public typealias Reference = dev.ohs.fhir.model.r4.Reference
+  }
+
+  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+  public sealed interface Medication {
+    public typealias CodeableConcept = dev.ohs.fhir.model.r4.CodeableConcept
+
+    public typealias Reference = dev.ohs.fhir.model.r4.Reference
   }
 
   public class Builder(
@@ -900,7 +918,7 @@ public data class MedicationRequest(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public var medication: FhirChoiceTypes.CodeableConceptOrReference,
+    public var medication: Medication,
     /**
      * A link to a resource representing the person or set of individuals to whom the medication
      * will be given.
@@ -1062,7 +1080,7 @@ public data class MedicationRequest(
      *
      * A FHIR choice type — one of: [Boolean] | [Reference]
      */
-    public var reported: MedicationRequest.Reported? = null
+    public var reported: Reported? = null
 
     /**
      * The Encounter during which this [x] was created or to which the creation of this record is
@@ -1398,7 +1416,4 @@ public data class MedicationRequest(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [Boolean] | [Reference] */
-  public typealias Reported = FhirChoiceTypes.BooleanOrReference
 }

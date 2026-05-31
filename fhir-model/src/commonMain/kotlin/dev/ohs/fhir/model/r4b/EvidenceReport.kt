@@ -181,7 +181,7 @@ public data class EvidenceReport(
    *
    * A FHIR choice type — one of: [Markdown] | [Reference]
    */
-  public val citeAs: EvidenceReport.CiteAs? = null,
+  public val citeAs: CiteAs? = null,
   /**
    * Specifies the kind of report, such as grouping of classifiers, search results, or
    * human-compiled expression.
@@ -398,7 +398,7 @@ public data class EvidenceReport(
        * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range] |
        * [Reference]
        */
-      public val `value`: Characteristic.Value,
+      public val `value`: Value,
       /** Is used to express not the characteristic. */
       public val exclude: Boolean? = null,
       /** Timeframe for the characteristic. */
@@ -414,6 +414,22 @@ public data class EvidenceReport(
             period = this@with.period?.toBuilder()
           }
         }
+
+      /**
+       * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range] |
+       * [Reference]
+       */
+      public sealed interface Value {
+        public typealias Boolean = dev.ohs.fhir.model.r4b.Boolean
+
+        public typealias CodeableConcept = dev.ohs.fhir.model.r4b.CodeableConcept
+
+        public typealias Quantity = dev.ohs.fhir.model.r4b.Quantity
+
+        public typealias Range = dev.ohs.fhir.model.r4b.Range
+
+        public typealias Reference = dev.ohs.fhir.model.r4b.Reference
+      }
 
       public class Builder(
         /**
@@ -431,7 +447,7 @@ public data class EvidenceReport(
          * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range] |
          * [Reference]
          */
-        public var `value`: Characteristic.Value,
+        public var `value`: Value,
       ) {
         /**
          * Unique id for the element within a resource (for internal references). This may be any
@@ -490,12 +506,6 @@ public data class EvidenceReport(
             period = period?.build(),
           )
       }
-
-      /**
-       * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range] |
-       * [Reference]
-       */
-      public typealias Value = FhirChoiceTypes.BooleanOrCodeableConceptOrQuantityOrRangeOrReference
     }
 
     public class Builder() {
@@ -611,7 +621,7 @@ public data class EvidenceReport(
      *
      * A FHIR choice type — one of: [Identifier] | [Reference]
      */
-    public val target: RelatesTo.Target,
+    public val target: Target,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -621,6 +631,13 @@ public data class EvidenceReport(
           modifierExtension = this@with.modifierExtension.map { it.toBuilder() }.toMutableList()
         }
       }
+
+    /** A FHIR choice type — one of: [Identifier] | [Reference] */
+    public sealed interface Target {
+      public typealias Identifier = dev.ohs.fhir.model.r4b.Identifier
+
+      public typealias Reference = dev.ohs.fhir.model.r4b.Reference
+    }
 
     public class Builder(
       /**
@@ -635,7 +652,7 @@ public data class EvidenceReport(
        *
        * A FHIR choice type — one of: [Identifier] | [Reference]
        */
-      public var target: RelatesTo.Target,
+      public var target: Target,
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -686,9 +703,6 @@ public data class EvidenceReport(
           target = target,
         )
     }
-
-    /** A FHIR choice type — one of: [Identifier] | [Reference] */
-    public typealias Target = FhirChoiceTypes.IdentifierOrReference
   }
 
   /** The root of the sections that make up the composition. */
@@ -1001,6 +1015,13 @@ public data class EvidenceReport(
     }
   }
 
+  /** A FHIR choice type — one of: [Markdown] | [Reference] */
+  public sealed interface CiteAs {
+    public typealias Markdown = dev.ohs.fhir.model.r4b.Markdown
+
+    public typealias Reference = dev.ohs.fhir.model.r4b.Reference
+  }
+
   public class Builder(
     /**
      * The status of this summary. Enables tracking the life-cycle of the content.
@@ -1168,7 +1189,7 @@ public data class EvidenceReport(
      *
      * A FHIR choice type — one of: [Markdown] | [Reference]
      */
-    public var citeAs: EvidenceReport.CiteAs? = null
+    public var citeAs: CiteAs? = null
 
     /**
      * Specifies the kind of report, such as grouping of classifiers, search results, or
@@ -1352,7 +1373,4 @@ public data class EvidenceReport(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [Markdown] | [Reference] */
-  public typealias CiteAs = FhirChoiceTypes.MarkdownOrReference
 }

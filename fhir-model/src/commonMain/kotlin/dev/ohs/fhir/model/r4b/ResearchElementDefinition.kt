@@ -223,7 +223,7 @@ public data class ResearchElementDefinition(
    *
    * A FHIR choice type — one of: [CodeableConcept] | [Reference]
    */
-  public val subject: ResearchElementDefinition.Subject? = null,
+  public val subject: Subject? = null,
   /**
    * The date (and optionally time) when the research element definition was published. The date
    * must change when the business version changes and it must change if the status code changes. In
@@ -473,7 +473,7 @@ public data class ResearchElementDefinition(
      * A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [DataRequirement] |
      * [Expression]
      */
-    public val definition: Characteristic.Definition,
+    public val definition: Definition,
     /**
      * Use UsageContext to define the members of the population, such as Age Ranges, Genders,
      * Settings.
@@ -490,7 +490,7 @@ public data class ResearchElementDefinition(
      *
      * A FHIR choice type — one of: [DateTime] | [Duration] | [Period] | [Timing]
      */
-    public val studyEffective: Characteristic.StudyEffective? = null,
+    public val studyEffective: StudyEffective? = null,
     /** Indicates duration from the study initiation. */
     public val studyEffectiveTimeFromStart: Duration? = null,
     /** Indicates how elements are aggregated within the study effective period. */
@@ -502,7 +502,7 @@ public data class ResearchElementDefinition(
      *
      * A FHIR choice type — one of: [DateTime] | [Duration] | [Period] | [Timing]
      */
-    public val participantEffective: Characteristic.ParticipantEffective? = null,
+    public val participantEffective: ParticipantEffective? = null,
     /** Indicates duration from the participant's study entry. */
     public val participantEffectiveTimeFromStart: Duration? = null,
     /** Indicates how elements are aggregated within the study effective period. */
@@ -529,6 +529,42 @@ public data class ResearchElementDefinition(
         }
       }
 
+    /**
+     * A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [DataRequirement] |
+     * [Expression]
+     */
+    public sealed interface Definition {
+      public typealias Canonical = dev.ohs.fhir.model.r4b.Canonical
+
+      public typealias CodeableConcept = dev.ohs.fhir.model.r4b.CodeableConcept
+
+      public typealias DataRequirement = dev.ohs.fhir.model.r4b.DataRequirement
+
+      public typealias Expression = dev.ohs.fhir.model.r4b.Expression
+    }
+
+    /** A FHIR choice type — one of: [DateTime] | [Duration] | [Period] | [Timing] */
+    public sealed interface StudyEffective {
+      public typealias DateTime = dev.ohs.fhir.model.r4b.DateTime
+
+      public typealias Duration = dev.ohs.fhir.model.r4b.Duration
+
+      public typealias Period = dev.ohs.fhir.model.r4b.Period
+
+      public typealias Timing = dev.ohs.fhir.model.r4b.Timing
+    }
+
+    /** A FHIR choice type — one of: [DateTime] | [Duration] | [Period] | [Timing] */
+    public sealed interface ParticipantEffective {
+      public typealias DateTime = dev.ohs.fhir.model.r4b.DateTime
+
+      public typealias Duration = dev.ohs.fhir.model.r4b.Duration
+
+      public typealias Period = dev.ohs.fhir.model.r4b.Period
+
+      public typealias Timing = dev.ohs.fhir.model.r4b.Timing
+    }
+
     public class Builder(
       /**
        * Define members of the research element using Codes (such as condition, medication, or
@@ -538,7 +574,7 @@ public data class ResearchElementDefinition(
        * A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [DataRequirement] |
        * [Expression]
        */
-      public var definition: Characteristic.Definition
+      public var definition: Definition
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -600,7 +636,7 @@ public data class ResearchElementDefinition(
        *
        * A FHIR choice type — one of: [DateTime] | [Duration] | [Period] | [Timing]
        */
-      public var studyEffective: Characteristic.StudyEffective? = null
+      public var studyEffective: StudyEffective? = null
 
       /** Indicates duration from the study initiation. */
       public var studyEffectiveTimeFromStart: Duration.Builder? = null
@@ -616,7 +652,7 @@ public data class ResearchElementDefinition(
        *
        * A FHIR choice type — one of: [DateTime] | [Duration] | [Period] | [Timing]
        */
-      public var participantEffective: Characteristic.ParticipantEffective? = null
+      public var participantEffective: ParticipantEffective? = null
 
       /** Indicates duration from the participant's study entry. */
       public var participantEffectiveTimeFromStart: Duration.Builder? = null
@@ -643,19 +679,13 @@ public data class ResearchElementDefinition(
           participantEffectiveGroupMeasure = participantEffectiveGroupMeasure,
         )
     }
+  }
 
-    /**
-     * A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [DataRequirement] |
-     * [Expression]
-     */
-    public typealias Definition =
-      FhirChoiceTypes.CanonicalOrCodeableConceptOrDataRequirementOrExpression
+  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+  public sealed interface Subject {
+    public typealias CodeableConcept = dev.ohs.fhir.model.r4b.CodeableConcept
 
-    /** A FHIR choice type — one of: [DateTime] | [Duration] | [Period] | [Timing] */
-    public typealias StudyEffective = FhirChoiceTypes.DateTimeOrDurationOrPeriodOrTiming
-
-    /** A FHIR choice type — one of: [DateTime] | [Duration] | [Period] | [Timing] */
-    public typealias ParticipantEffective = FhirChoiceTypes.DateTimeOrDurationOrPeriodOrTiming
+    public typealias Reference = dev.ohs.fhir.model.r4b.Reference
   }
 
   public class Builder(
@@ -883,7 +913,7 @@ public data class ResearchElementDefinition(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public var subject: ResearchElementDefinition.Subject? = null
+    public var subject: Subject? = null
 
     /**
      * The date (and optionally time) when the research element definition was published. The date
@@ -1196,7 +1226,4 @@ public data class ResearchElementDefinition(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
-  public typealias Subject = FhirChoiceTypes.CodeableConceptOrReference
 }

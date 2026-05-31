@@ -178,7 +178,7 @@ public data class EvidenceVariable(
    *
    * A FHIR choice type — one of: [Coding] | [String]
    */
-  public val versionAlgorithm: EvidenceVariable.VersionAlgorithm? = null,
+  public val versionAlgorithm: VersionAlgorithm? = null,
   /**
    * A natural language name identifying the evidence variable. This name should be usable as an
    * identifier for the module by machine processing applications such as code generation.
@@ -516,13 +516,13 @@ public data class EvidenceVariable(
      *
      * A FHIR choice type — one of: [Quantity] | [Range]
      */
-    public val instances: Characteristic.Instances? = null,
+    public val instances: Instances? = null,
     /**
      * Length of time in which the characteristic is met.
      *
      * A FHIR choice type — one of: [Quantity] | [Range]
      */
-    public val duration: FhirChoiceTypes.QuantityOrRange? = null,
+    public val duration: Duration? = null,
     /** Timing in which the characteristic is determined. */
     public val timeFromEvent: List<TimeFromEvent> = listOf(),
   ) : BackboneElement() {
@@ -601,7 +601,7 @@ public data class EvidenceVariable(
        * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Id] | [Quantity] | [Range] |
        * [Reference]
        */
-      public val `value`: DefinitionByTypeAndValue.Value,
+      public val `value`: Value,
       /**
        * Defines the reference point for comparison when valueQuantity or valueRange is not compared
        * to zero.
@@ -620,6 +620,24 @@ public data class EvidenceVariable(
           }
         }
 
+      /**
+       * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Id] | [Quantity] | [Range] |
+       * [Reference]
+       */
+      public sealed interface Value {
+        public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
+
+        public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+        public typealias Id = dev.ohs.fhir.model.r5.Id
+
+        public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+
+        public typealias Range = dev.ohs.fhir.model.r5.Range
+
+        public typealias Reference = dev.ohs.fhir.model.r5.Reference
+      }
+
       public class Builder(
         /** Used to express the type of characteristic. */
         public var type: CodeableConcept.Builder,
@@ -629,7 +647,7 @@ public data class EvidenceVariable(
          * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Id] | [Quantity] | [Range]
          * | [Reference]
          */
-        public var `value`: DefinitionByTypeAndValue.Value,
+        public var `value`: Value,
       ) {
         /**
          * Unique id for the element within a resource (for internal references). This may be any
@@ -695,13 +713,6 @@ public data class EvidenceVariable(
             offset = offset?.build(),
           )
       }
-
-      /**
-       * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Id] | [Quantity] | [Range] |
-       * [Reference]
-       */
-      public typealias Value =
-        FhirChoiceTypes.BooleanOrCodeableConceptOrIdOrQuantityOrRangeOrReference
     }
 
     /** Defines the characteristic as a combination of two or more characteristics. */
@@ -871,7 +882,7 @@ public data class EvidenceVariable(
        *
        * A FHIR choice type — one of: [CodeableConcept] | [DateTime] | [Id] | [Reference]
        */
-      public val event: TimeFromEvent.Event? = null,
+      public val event: Event? = null,
       /** Used to express the observation at a defined amount of time before or after the event. */
       public val quantity: Quantity? = null,
       /** Used to express the observation within a period before and/or after the event. */
@@ -890,6 +901,17 @@ public data class EvidenceVariable(
             range = this@with.range?.toBuilder()
           }
         }
+
+      /** A FHIR choice type — one of: [CodeableConcept] | [DateTime] | [Id] | [Reference] */
+      public sealed interface Event {
+        public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+        public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+        public typealias Id = dev.ohs.fhir.model.r5.Id
+
+        public typealias Reference = dev.ohs.fhir.model.r5.Reference
+      }
 
       public class Builder() {
         /**
@@ -943,7 +965,7 @@ public data class EvidenceVariable(
          *
          * A FHIR choice type — one of: [CodeableConcept] | [DateTime] | [Id] | [Reference]
          */
-        public var event: TimeFromEvent.Event? = null
+        public var event: Event? = null
 
         /**
          * Used to express the observation at a defined amount of time before or after the event.
@@ -965,9 +987,20 @@ public data class EvidenceVariable(
             range = range?.build(),
           )
       }
+    }
 
-      /** A FHIR choice type — one of: [CodeableConcept] | [DateTime] | [Id] | [Reference] */
-      public typealias Event = FhirChoiceTypes.CodeableConceptOrDateTimeOrIdOrReference
+    /** A FHIR choice type — one of: [Quantity] | [Range] */
+    public sealed interface Instances {
+      public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+
+      public typealias Range = dev.ohs.fhir.model.r5.Range
+    }
+
+    /** A FHIR choice type — one of: [Quantity] | [Range] */
+    public sealed interface Duration {
+      public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+
+      public typealias Range = dev.ohs.fhir.model.r5.Range
     }
 
     public class Builder() {
@@ -1061,14 +1094,14 @@ public data class EvidenceVariable(
        *
        * A FHIR choice type — one of: [Quantity] | [Range]
        */
-      public var instances: Characteristic.Instances? = null
+      public var instances: Instances? = null
 
       /**
        * Length of time in which the characteristic is met.
        *
        * A FHIR choice type — one of: [Quantity] | [Range]
        */
-      public var duration: FhirChoiceTypes.QuantityOrRange? = null
+      public var duration: Duration? = null
 
       /** Timing in which the characteristic is determined. */
       public var timeFromEvent: MutableList<TimeFromEvent.Builder> = mutableListOf()
@@ -1094,9 +1127,6 @@ public data class EvidenceVariable(
           timeFromEvent = timeFromEvent.map { it.build() },
         )
     }
-
-    /** A FHIR choice type — one of: [Quantity] | [Range] */
-    public typealias Instances = FhirChoiceTypes.QuantityOrRange
   }
 
   /** A grouping for ordinal or polychotomous variables. */
@@ -1146,7 +1176,7 @@ public data class EvidenceVariable(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Range]
      */
-    public val `value`: Category.Value? = null,
+    public val `value`: Value? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -1158,6 +1188,15 @@ public data class EvidenceVariable(
           `value` = this@with.`value`
         }
       }
+
+    /** A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Range] */
+    public sealed interface Value {
+      public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+      public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+
+      public typealias Range = dev.ohs.fhir.model.r5.Range
+    }
 
     public class Builder() {
       /**
@@ -1208,7 +1247,7 @@ public data class EvidenceVariable(
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Range]
        */
-      public var `value`: Category.Value? = null
+      public var `value`: Value? = null
 
       public fun build(): Category =
         Category(
@@ -1219,9 +1258,13 @@ public data class EvidenceVariable(
           `value` = `value`,
         )
     }
+  }
 
-    /** A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Range] */
-    public typealias Value = FhirChoiceTypes.CodeableConceptOrQuantityOrRange
+  /** A FHIR choice type — one of: [Coding] | [String] */
+  public sealed interface VersionAlgorithm {
+    public typealias Coding = dev.ohs.fhir.model.r5.Coding
+
+    public typealias String = dev.ohs.fhir.model.r5.String
   }
 
   public class Builder(
@@ -1395,7 +1438,7 @@ public data class EvidenceVariable(
      *
      * A FHIR choice type — one of: [Coding] | [String]
      */
-    public var versionAlgorithm: EvidenceVariable.VersionAlgorithm? = null
+    public var versionAlgorithm: VersionAlgorithm? = null
 
     /**
      * A natural language name identifying the evidence variable. This name should be usable as an
@@ -1744,7 +1787,4 @@ public data class EvidenceVariable(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [Coding] | [String] */
-  public typealias VersionAlgorithm = FhirChoiceTypes.CodingOrString
 }

@@ -166,9 +166,9 @@ public data class Invoice(
   /**
    * Date/time(s) range of services included in this invoice.
    *
-   * A FHIR choice type — one of: [Date] | [Period]
+   * A FHIR choice type — one of: [Date] | [dev.ohs.fhir.model.r5.Period]
    */
-  public val period: FhirChoiceTypes.DateOrPeriod? = null,
+  public val period: Period? = null,
   /** Indicates who or what performed or participated in the charged service. */
   public val participant: List<Participant> = listOf(),
   /**
@@ -426,9 +426,9 @@ public data class Invoice(
     /**
      * Date/time(s) range when this service was delivered or completed.
      *
-     * A FHIR choice type — one of: [Date] | [Period]
+     * A FHIR choice type — one of: [Date] | [dev.ohs.fhir.model.r5.Period]
      */
-    public val serviced: LineItem.Serviced? = null,
+    public val serviced: Serviced? = null,
     /**
      * The ChargeItem contains information such as the billing code, date, amount etc. If no further
      * details are required for the lineItem, inline billing codes can be added using the
@@ -436,7 +436,7 @@ public data class Invoice(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public val chargeItem: FhirChoiceTypes.CodeableConceptOrReference,
+    public val chargeItem: ChargeItem,
     /**
      * The price for a ChargeItem may be calculated as a base price with surcharges/deductions that
      * apply in certain conditions. A ChargeItemDefinition resource that defines the prices, factors
@@ -458,6 +458,20 @@ public data class Invoice(
         }
       }
 
+    /** A FHIR choice type — one of: [Date] | [dev.ohs.fhir.model.r5.Period] */
+    public sealed interface Serviced {
+      public typealias Date = dev.ohs.fhir.model.r5.Date
+
+      public typealias Period = dev.ohs.fhir.model.r5.Period
+    }
+
+    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+    public sealed interface ChargeItem {
+      public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+      public typealias Reference = dev.ohs.fhir.model.r5.Reference
+    }
+
     public class Builder(
       /**
        * The ChargeItem contains information such as the billing code, date, amount etc. If no
@@ -466,7 +480,7 @@ public data class Invoice(
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public var chargeItem: FhirChoiceTypes.CodeableConceptOrReference
+      public var chargeItem: ChargeItem
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -514,9 +528,9 @@ public data class Invoice(
       /**
        * Date/time(s) range when this service was delivered or completed.
        *
-       * A FHIR choice type — one of: [Date] | [Period]
+       * A FHIR choice type — one of: [Date] | [dev.ohs.fhir.model.r5.Period]
        */
-      public var serviced: LineItem.Serviced? = null
+      public var serviced: Serviced? = null
 
       /**
        * The price for a ChargeItem may be calculated as a base price with surcharges/deductions
@@ -538,9 +552,13 @@ public data class Invoice(
           priceComponent = priceComponent.map { it.build() },
         )
     }
+  }
 
-    /** A FHIR choice type — one of: [Date] | [Period] */
-    public typealias Serviced = FhirChoiceTypes.DateOrPeriod
+  /** A FHIR choice type — one of: [Date] | [dev.ohs.fhir.model.r5.Period] */
+  public sealed interface Period {
+    public typealias Date = dev.ohs.fhir.model.r5.Date
+
+    public typealias Period = dev.ohs.fhir.model.r5.Period
   }
 
   public class Builder(
@@ -696,9 +714,9 @@ public data class Invoice(
     /**
      * Date/time(s) range of services included in this invoice.
      *
-     * A FHIR choice type — one of: [Date] | [Period]
+     * A FHIR choice type — one of: [Date] | [dev.ohs.fhir.model.r5.Period]
      */
-    public var period: FhirChoiceTypes.DateOrPeriod? = null
+    public var period: Period? = null
 
     /** Indicates who or what performed or participated in the charged service. */
     public var participant: MutableList<Participant.Builder> = mutableListOf()

@@ -329,7 +329,7 @@ public data class MeasureReport(
      * A FHIR choice type — one of: [CodeableConcept] | [DateTime] | [DurationBox] | [Period] |
      * [QuantityBox] | [Range]
      */
-    public val measureScore: Group.MeasureScore? = null,
+    public val measureScore: MeasureScore? = null,
     /**
      * When a measure includes multiple stratifiers, there will be a stratifier group for each
      * stratifier defined by the measure.
@@ -659,7 +659,7 @@ public data class MeasureReport(
          * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range] |
          * [Reference]
          */
-        public val `value`: Stratum.Value? = null,
+        public val `value`: Value? = null,
         /** A stratifier component value. */
         public val component: List<Component> = listOf(),
         /**
@@ -674,7 +674,7 @@ public data class MeasureReport(
          * A FHIR choice type — one of: [CodeableConcept] | [DateTime] | [DurationBox] | [Period] |
          * [QuantityBox] | [Range]
          */
-        public val measureScore: Stratum.MeasureScore? = null,
+        public val measureScore: MeasureScore? = null,
       ) : BackboneElement() {
         public fun toBuilder(): Builder =
           with(this) {
@@ -742,7 +742,7 @@ public data class MeasureReport(
            * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range] |
            * [Reference]
            */
-          public val `value`: Component.Value,
+          public val `value`: Value,
         ) : BackboneElement() {
           public fun toBuilder(): Builder =
             with(this) {
@@ -755,6 +755,22 @@ public data class MeasureReport(
               }
             }
 
+          /**
+           * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range] |
+           * [Reference]
+           */
+          public sealed interface Value {
+            public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
+
+            public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+            public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+
+            public typealias Range = dev.ohs.fhir.model.r5.Range
+
+            public typealias Reference = dev.ohs.fhir.model.r5.Reference
+          }
+
           public class Builder(
             /** The code for the stratum component value. */
             public var code: CodeableConcept.Builder,
@@ -764,7 +780,7 @@ public data class MeasureReport(
              * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range] |
              * [Reference]
              */
-            public var `value`: Component.Value,
+            public var `value`: Value,
           ) {
             /**
              * Unique id for the element within a resource (for internal references). This may be
@@ -823,13 +839,6 @@ public data class MeasureReport(
                 `value` = `value`,
               )
           }
-
-          /**
-           * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range] |
-           * [Reference]
-           */
-          public typealias Value =
-            FhirChoiceTypes.BooleanOrCodeableConceptOrQuantityOrRangeOrReference
         }
 
         /**
@@ -1023,6 +1032,40 @@ public data class MeasureReport(
           }
         }
 
+        /**
+         * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range] |
+         * [Reference]
+         */
+        public sealed interface Value {
+          public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
+
+          public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+          public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+
+          public typealias Range = dev.ohs.fhir.model.r5.Range
+
+          public typealias Reference = dev.ohs.fhir.model.r5.Reference
+        }
+
+        /**
+         * A FHIR choice type — one of: [CodeableConcept] | [DateTime] | [DurationBox] | [Period] |
+         * [QuantityBox] | [Range]
+         */
+        public sealed interface MeasureScore {
+          public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+          public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+          public typealias Duration = DurationBox
+
+          public typealias Period = dev.ohs.fhir.model.r5.Period
+
+          public typealias Quantity = QuantityBox
+
+          public typealias Range = dev.ohs.fhir.model.r5.Range
+        }
+
         public class Builder() {
           /**
            * Unique id for the element within a resource (for internal references). This may be any
@@ -1072,7 +1115,7 @@ public data class MeasureReport(
            * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range] |
            * [Reference]
            */
-          public var `value`: Stratum.Value? = null
+          public var `value`: Value? = null
 
           /** A stratifier component value. */
           public var component: MutableList<Component.Builder> = mutableListOf()
@@ -1090,7 +1133,7 @@ public data class MeasureReport(
            * A FHIR choice type — one of: [CodeableConcept] | [DateTime] | [DurationBox] | [Period]
            * | [QuantityBox] | [Range]
            */
-          public var measureScore: Stratum.MeasureScore? = null
+          public var measureScore: MeasureScore? = null
 
           public fun build(): Stratum =
             Stratum(
@@ -1103,20 +1146,6 @@ public data class MeasureReport(
               measureScore = measureScore,
             )
         }
-
-        /**
-         * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range] |
-         * [Reference]
-         */
-        public typealias Value =
-          FhirChoiceTypes.BooleanOrCodeableConceptOrQuantityOrRangeOrReference
-
-        /**
-         * A FHIR choice type — one of: [CodeableConcept] | [DateTime] | [DurationBox] | [Period] |
-         * [QuantityBox] | [Range]
-         */
-        public typealias MeasureScore =
-          FhirChoiceTypes.CodeableConceptOrDateTimeOrDurationOrPeriodOrQuantityOrRange
       }
 
       public class Builder() {
@@ -1188,6 +1217,24 @@ public data class MeasureReport(
       }
     }
 
+    /**
+     * A FHIR choice type — one of: [CodeableConcept] | [DateTime] | [DurationBox] | [Period] |
+     * [QuantityBox] | [Range]
+     */
+    public sealed interface MeasureScore {
+      public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+      public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+      public typealias Duration = DurationBox
+
+      public typealias Period = dev.ohs.fhir.model.r5.Period
+
+      public typealias Quantity = QuantityBox
+
+      public typealias Range = dev.ohs.fhir.model.r5.Range
+    }
+
     public class Builder() {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -1253,7 +1300,7 @@ public data class MeasureReport(
        * A FHIR choice type — one of: [CodeableConcept] | [DateTime] | [DurationBox] | [Period] |
        * [QuantityBox] | [Range]
        */
-      public var measureScore: Group.MeasureScore? = null
+      public var measureScore: MeasureScore? = null
 
       /**
        * When a measure includes multiple stratifiers, there will be a stratifier group for each
@@ -1274,13 +1321,6 @@ public data class MeasureReport(
           stratifier = stratifier.map { it.build() },
         )
     }
-
-    /**
-     * A FHIR choice type — one of: [CodeableConcept] | [DateTime] | [DurationBox] | [Period] |
-     * [QuantityBox] | [Range]
-     */
-    public typealias MeasureScore =
-      FhirChoiceTypes.CodeableConceptOrDateTimeOrDurationOrPeriodOrQuantityOrRange
   }
 
   public class Builder(

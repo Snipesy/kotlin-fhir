@@ -70,7 +70,7 @@ public data class Population(
    *
    * A FHIR choice type — one of: [CodeableConcept] | [Range]
    */
-  public val age: FhirChoiceTypes.CodeableConceptOrRange? = null,
+  public val age: Age? = null,
   /** The gender of the specific population. */
   public val gender: CodeableConcept? = null,
   /** Race of the specific population. */
@@ -90,6 +90,13 @@ public data class Population(
         physiologicalCondition = this@with.physiologicalCondition?.toBuilder()
       }
     }
+
+  /** A FHIR choice type — one of: [CodeableConcept] | [Range] */
+  public sealed interface Age {
+    public typealias CodeableConcept = dev.ohs.fhir.model.r4b.CodeableConcept
+
+    public typealias Range = dev.ohs.fhir.model.r4b.Range
+  }
 
   public open class Builder() {
     /**
@@ -137,7 +144,7 @@ public data class Population(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Range]
      */
-    public open var age: FhirChoiceTypes.CodeableConceptOrRange? = null
+    public open var age: Age? = null
 
     /** The gender of the specific population. */
     public open var gender: CodeableConcept.Builder? = null

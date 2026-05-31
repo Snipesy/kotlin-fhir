@@ -275,7 +275,7 @@ public data class Contract(
    *
    * A FHIR choice type — one of: [CodeableConcept] | [Reference]
    */
-  public val topic: Contract.Topic? = null,
+  public val topic: Topic? = null,
   /**
    * A high-level category for the legal instrument, whether constructed as a Contract definition,
    * derivative, or instance in any legal state. Provides additional information about its content
@@ -347,7 +347,7 @@ public data class Contract(
    *
    * A FHIR choice type — one of: [Attachment] | [Reference]
    */
-  public val legallyBinding: Contract.LegallyBinding? = null,
+  public val legallyBinding: LegallyBinding? = null,
 ) : DomainResource() {
   override fun toBuilder(): Builder =
     with(this) {
@@ -614,7 +614,7 @@ public data class Contract(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public val topic: Term.Topic? = null,
+    public val topic: Topic? = null,
     /**
      * A legal clause or condition contained within a contract that requires one or both parties to
      * perform a particular requirement by some specified time or prevents one or both parties from
@@ -1106,7 +1106,7 @@ public data class Contract(
          * A FHIR choice type — one of: [Attachment] | [Boolean] | [Coding] | [Date] | [DateTime] |
          * [Decimal] | [Integer] | [Quantity] | [Reference] | [String] | [Time] | [Uri]
          */
-        public val `value`: Answer.Value,
+        public val `value`: Value,
       ) : BackboneElement() {
         public fun toBuilder(): Builder =
           with(this) {
@@ -1117,6 +1117,36 @@ public data class Contract(
             }
           }
 
+        /**
+         * A FHIR choice type — one of: [Attachment] | [Boolean] | [Coding] | [Date] | [DateTime] |
+         * [Decimal] | [Integer] | [Quantity] | [Reference] | [String] | [Time] | [Uri]
+         */
+        public sealed interface Value {
+          public typealias Attachment = dev.ohs.fhir.model.r5.Attachment
+
+          public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
+
+          public typealias Coding = dev.ohs.fhir.model.r5.Coding
+
+          public typealias Date = dev.ohs.fhir.model.r5.Date
+
+          public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+          public typealias Decimal = dev.ohs.fhir.model.r5.Decimal
+
+          public typealias Integer = dev.ohs.fhir.model.r5.Integer
+
+          public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+
+          public typealias Reference = dev.ohs.fhir.model.r5.Reference
+
+          public typealias String = dev.ohs.fhir.model.r5.String
+
+          public typealias Time = dev.ohs.fhir.model.r5.Time
+
+          public typealias Uri = dev.ohs.fhir.model.r5.Uri
+        }
+
         public class Builder(
           /**
            * Response to an offer clause or question text, which enables selection of values to be
@@ -1126,7 +1156,7 @@ public data class Contract(
            * A FHIR choice type — one of: [Attachment] | [Boolean] | [Coding] | [Date] | [DateTime]
            * | [Decimal] | [Integer] | [Quantity] | [Reference] | [String] | [Time] | [Uri]
            */
-          public var `value`: Answer.Value
+          public var `value`: Value
         ) {
           /**
            * Unique id for the element within a resource (for internal references). This may be any
@@ -1176,12 +1206,6 @@ public data class Contract(
               `value` = `value`,
             )
         }
-
-        /**
-         * A FHIR choice type — one of: [Attachment] | [Boolean] | [Coding] | [Date] | [DateTime] |
-         * [Decimal] | [Integer] | [Quantity] | [Reference] | [String] | [Time] | [Uri]
-         */
-        public typealias Value = FhirChoiceTypes.ContractTermOfferAnswerValueChoice
       }
 
       public class Builder() {
@@ -1593,7 +1617,7 @@ public data class Contract(
          *
          * A FHIR choice type — one of: [CodeableConcept] | [Reference]
          */
-        public val entity: ValuedItem.Entity? = null,
+        public val entity: Entity? = null,
         /** Identifies a Contract Valued Item instance. */
         public val identifier: Identifier? = null,
         /** Indicates the time during which this Contract ValuedItem information is effective. */
@@ -1664,6 +1688,13 @@ public data class Contract(
             }
           }
 
+        /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+        public sealed interface Entity {
+          public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+          public typealias Reference = dev.ohs.fhir.model.r5.Reference
+        }
+
         public class Builder() {
           /**
            * Unique id for the element within a resource (for internal references). This may be any
@@ -1710,7 +1741,7 @@ public data class Contract(
            *
            * A FHIR choice type — one of: [CodeableConcept] | [Reference]
            */
-          public var entity: ValuedItem.Entity? = null
+          public var entity: Entity? = null
 
           /** Identifies a Contract Valued Item instance. */
           public var identifier: Identifier.Builder? = null
@@ -1791,9 +1822,6 @@ public data class Contract(
               securityLabelNumber = securityLabelNumber.map { it.build() },
             )
         }
-
-        /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
-        public typealias Entity = FhirChoiceTypes.CodeableConceptOrReference
       }
 
       public class Builder() {
@@ -1991,7 +2019,7 @@ public data class Contract(
        *
        * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
        */
-      public val occurrence: Action.Occurrence? = null,
+      public val occurrence: Occurrence? = null,
       /** Who or what initiated the action and has responsibility for its activation. */
       public val requester: List<Reference> = listOf(),
       /**
@@ -2173,6 +2201,15 @@ public data class Contract(
         }
       }
 
+      /** A FHIR choice type — one of: [DateTime] | [Period] | [Timing] */
+      public sealed interface Occurrence {
+        public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
+
+        public typealias Period = dev.ohs.fhir.model.r5.Period
+
+        public typealias Timing = dev.ohs.fhir.model.r5.Timing
+      }
+
       public class Builder(
         /**
          * Activity or service obligation to be done or not done, performed or not performed,
@@ -2250,7 +2287,7 @@ public data class Contract(
          *
          * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
          */
-        public var occurrence: Action.Occurrence? = null
+        public var occurrence: Occurrence? = null
 
         /** Who or what initiated the action and has responsibility for its activation. */
         public var requester: MutableList<Reference.Builder> = mutableListOf()
@@ -2329,9 +2366,13 @@ public data class Contract(
             securityLabelNumber = securityLabelNumber.map { it.build() },
           )
       }
+    }
 
-      /** A FHIR choice type — one of: [DateTime] | [Period] | [Timing] */
-      public typealias Occurrence = FhirChoiceTypes.DateTimeOrPeriodOrTiming
+    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+    public sealed interface Topic {
+      public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+      public typealias Reference = dev.ohs.fhir.model.r5.Reference
     }
 
     public class Builder(
@@ -2392,7 +2433,7 @@ public data class Contract(
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Reference]
        */
-      public var topic: Term.Topic? = null
+      public var topic: Topic? = null
 
       /**
        * A legal clause or condition contained within a contract that requires one or both parties
@@ -2467,9 +2508,6 @@ public data class Contract(
           group = group.map { it.build() },
         )
     }
-
-    /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
-    public typealias Topic = FhirChoiceTypes.CodeableConceptOrReference
   }
 
   /**
@@ -2649,7 +2687,7 @@ public data class Contract(
      *
      * A FHIR choice type — one of: [Attachment] | [Reference]
      */
-    public val content: Friendly.Content,
+    public val content: Content,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -2660,6 +2698,13 @@ public data class Contract(
         }
       }
 
+    /** A FHIR choice type — one of: [Attachment] | [Reference] */
+    public sealed interface Content {
+      public typealias Attachment = dev.ohs.fhir.model.r5.Attachment
+
+      public typealias Reference = dev.ohs.fhir.model.r5.Reference
+    }
+
     public class Builder(
       /**
        * Human readable rendering of this Contract in a format and representation intended to
@@ -2667,7 +2712,7 @@ public data class Contract(
        *
        * A FHIR choice type — one of: [Attachment] | [Reference]
        */
-      public var content: Friendly.Content
+      public var content: Content
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -2717,9 +2762,6 @@ public data class Contract(
           content = content,
         )
     }
-
-    /** A FHIR choice type — one of: [Attachment] | [Reference] */
-    public typealias Content = FhirChoiceTypes.AttachmentOrReference
   }
 
   /** List of Legal expressions or representations of this Contract. */
@@ -2767,7 +2809,7 @@ public data class Contract(
      *
      * A FHIR choice type — one of: [Attachment] | [Reference]
      */
-    public val content: Legal.Content,
+    public val content: Content,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -2778,13 +2820,20 @@ public data class Contract(
         }
       }
 
+    /** A FHIR choice type — one of: [Attachment] | [Reference] */
+    public sealed interface Content {
+      public typealias Attachment = dev.ohs.fhir.model.r5.Attachment
+
+      public typealias Reference = dev.ohs.fhir.model.r5.Reference
+    }
+
     public class Builder(
       /**
        * Contract legal text in human renderable form.
        *
        * A FHIR choice type — one of: [Attachment] | [Reference]
        */
-      public var content: Legal.Content
+      public var content: Content
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -2834,9 +2883,6 @@ public data class Contract(
           content = content,
         )
     }
-
-    /** A FHIR choice type — one of: [Attachment] | [Reference] */
-    public typealias Content = FhirChoiceTypes.AttachmentOrReference
   }
 
   /** List of Computable Policy Rule Language Representations of this Contract. */
@@ -2884,7 +2930,7 @@ public data class Contract(
      *
      * A FHIR choice type — one of: [Attachment] | [Reference]
      */
-    public val content: Rule.Content,
+    public val content: Content,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -2895,13 +2941,20 @@ public data class Contract(
         }
       }
 
+    /** A FHIR choice type — one of: [Attachment] | [Reference] */
+    public sealed interface Content {
+      public typealias Attachment = dev.ohs.fhir.model.r5.Attachment
+
+      public typealias Reference = dev.ohs.fhir.model.r5.Reference
+    }
+
     public class Builder(
       /**
        * Computable Contract conveyed using a policy rule language (e.g. XACML, DKAL, SecPal).
        *
        * A FHIR choice type — one of: [Attachment] | [Reference]
        */
-      public var content: Rule.Content
+      public var content: Content
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -2951,9 +3004,20 @@ public data class Contract(
           content = content,
         )
     }
+  }
 
-    /** A FHIR choice type — one of: [Attachment] | [Reference] */
-    public typealias Content = FhirChoiceTypes.AttachmentOrReference
+  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+  public sealed interface Topic {
+    public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+    public typealias Reference = dev.ohs.fhir.model.r5.Reference
+  }
+
+  /** A FHIR choice type — one of: [Attachment] | [Reference] */
+  public sealed interface LegallyBinding {
+    public typealias Attachment = dev.ohs.fhir.model.r5.Attachment
+
+    public typealias Reference = dev.ohs.fhir.model.r5.Reference
   }
 
   public class Builder() : DomainResource.Builder() {
@@ -3218,7 +3282,7 @@ public data class Contract(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public var topic: Contract.Topic? = null
+    public var topic: Topic? = null
 
     /**
      * A high-level category for the legal instrument, whether constructed as a Contract definition,
@@ -3302,7 +3366,7 @@ public data class Contract(
      *
      * A FHIR choice type — one of: [Attachment] | [Reference]
      */
-    public var legallyBinding: Contract.LegallyBinding? = null
+    public var legallyBinding: LegallyBinding? = null
 
     override fun build(): Contract =
       Contract(
@@ -3465,10 +3529,4 @@ public data class Contract(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
-  public typealias Topic = FhirChoiceTypes.CodeableConceptOrReference
-
-  /** A FHIR choice type — one of: [Attachment] | [Reference] */
-  public typealias LegallyBinding = FhirChoiceTypes.AttachmentOrReference
 }

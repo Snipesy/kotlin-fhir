@@ -69,7 +69,7 @@ public data class DeviceRequest(
    * language is specified, it should it also be specified on the div element in the html (see rules
    * in HTML5 for information about the relationship between xml:lang and the html lang attribute).
    */
-  override val language: Code? = null,
+  override val language: dev.ohs.fhir.model.r4b.Code? = null,
   /**
    * A human-readable narrative that contains a summary of the resource and can be used to represent
    * the content of the resource to a human. The narrative need not encode all the structured data,
@@ -170,7 +170,7 @@ public data class DeviceRequest(
    *
    * A FHIR choice type — one of: [CodeableConcept] | [Reference]
    */
-  public val code: FhirChoiceTypes.CodeableConceptOrReference,
+  public val code: Code,
   /** Specific parameters for the ordered item. For example, the prism value for lenses. */
   public val parameter: List<Parameter> = listOf(),
   /** The patient who will use the device. */
@@ -184,7 +184,7 @@ public data class DeviceRequest(
    *
    * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
    */
-  public val occurrence: DeviceRequest.Occurrence? = null,
+  public val occurrence: Occurrence? = null,
   /** When the request transitioned to being actionable. */
   public val authoredOn: DateTime? = null,
   /** The individual who initiated the request and has responsibility for its activation. */
@@ -311,7 +311,7 @@ public data class DeviceRequest(
      *
      * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range]
      */
-    public val `value`: Parameter.Value? = null,
+    public val `value`: Value? = null,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -323,6 +323,17 @@ public data class DeviceRequest(
           `value` = this@with.`value`
         }
       }
+
+    /** A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range] */
+    public sealed interface Value {
+      public typealias Boolean = dev.ohs.fhir.model.r4b.Boolean
+
+      public typealias CodeableConcept = dev.ohs.fhir.model.r4b.CodeableConcept
+
+      public typealias Quantity = dev.ohs.fhir.model.r4b.Quantity
+
+      public typealias Range = dev.ohs.fhir.model.r4b.Range
+    }
 
     public class Builder() {
       /**
@@ -375,7 +386,7 @@ public data class DeviceRequest(
        *
        * A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range]
        */
-      public var `value`: Parameter.Value? = null
+      public var `value`: Value? = null
 
       public fun build(): Parameter =
         Parameter(
@@ -386,9 +397,22 @@ public data class DeviceRequest(
           `value` = `value`,
         )
     }
+  }
 
-    /** A FHIR choice type — one of: [Boolean] | [CodeableConcept] | [Quantity] | [Range] */
-    public typealias Value = FhirChoiceTypes.BooleanOrCodeableConceptOrQuantityOrRange
+  /** A FHIR choice type — one of: [CodeableConcept] | [Reference] */
+  public sealed interface Code {
+    public typealias CodeableConcept = dev.ohs.fhir.model.r4b.CodeableConcept
+
+    public typealias Reference = dev.ohs.fhir.model.r4b.Reference
+  }
+
+  /** A FHIR choice type — one of: [DateTime] | [Period] | [Timing] */
+  public sealed interface Occurrence {
+    public typealias DateTime = dev.ohs.fhir.model.r4b.DateTime
+
+    public typealias Period = dev.ohs.fhir.model.r4b.Period
+
+    public typealias Timing = dev.ohs.fhir.model.r4b.Timing
   }
 
   public class Builder(
@@ -399,7 +423,7 @@ public data class DeviceRequest(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Reference]
      */
-    public var code: FhirChoiceTypes.CodeableConceptOrReference,
+    public var code: Code,
     /** The patient who will use the device. */
     public var subject: Reference.Builder,
   ) : DomainResource.Builder() {
@@ -445,7 +469,7 @@ public data class DeviceRequest(
      * in the html (see rules in HTML5 for information about the relationship between xml:lang and
      * the html lang attribute).
      */
-    public var language: Code.Builder? = null
+    public var language: dev.ohs.fhir.model.r4b.Code.Builder? = null
 
     /**
      * A human-readable narrative that contains a summary of the resource and can be used to
@@ -565,7 +589,7 @@ public data class DeviceRequest(
      *
      * A FHIR choice type — one of: [DateTime] | [Period] | [Timing]
      */
-    public var occurrence: DeviceRequest.Occurrence? = null
+    public var occurrence: Occurrence? = null
 
     /** When the request transitioned to being actionable. */
     public var authoredOn: DateTime.Builder? = null
@@ -762,7 +786,4 @@ public data class DeviceRequest(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [DateTime] | [Period] | [Timing] */
-  public typealias Occurrence = FhirChoiceTypes.DateTimeOrPeriodOrTiming
 }

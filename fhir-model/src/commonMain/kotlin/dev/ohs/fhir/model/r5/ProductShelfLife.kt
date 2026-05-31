@@ -79,7 +79,7 @@ public data class ProductShelfLife(
    *
    * A FHIR choice type — one of: [Duration] | [String]
    */
-  public val period: FhirChoiceTypes.DurationOrString? = null,
+  public val period: Period? = null,
   /**
    * Special precautions for storage, if any, can be specified using an appropriate controlled
    * vocabulary The controlled term and the controlled term identifier shall be specified.
@@ -98,6 +98,13 @@ public data class ProductShelfLife(
           this@with.specialPrecautionsForStorage.map { it.toBuilder() }.toMutableList()
       }
     }
+
+  /** A FHIR choice type — one of: [Duration] | [String] */
+  public sealed interface Period {
+    public typealias Duration = dev.ohs.fhir.model.r5.Duration
+
+    public typealias String = dev.ohs.fhir.model.r5.String
+  }
 
   public open class Builder() {
     /**
@@ -157,7 +164,7 @@ public data class ProductShelfLife(
      *
      * A FHIR choice type — one of: [Duration] | [String]
      */
-    public open var period: FhirChoiceTypes.DurationOrString? = null
+    public open var period: Period? = null
 
     /**
      * Special precautions for storage, if any, can be specified using an appropriate controlled

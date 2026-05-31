@@ -217,7 +217,7 @@ public data class Procedure(
    *
    * A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String]
    */
-  public val performed: Procedure.Performed? = null,
+  public val performed: Performed? = null,
   /** Individual who recorded the record and takes responsibility for its content. */
   public val recorder: Reference? = null,
   /** Individual who is making the procedure statement. */
@@ -605,6 +605,19 @@ public data class Procedure(
     }
   }
 
+  /** A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String] */
+  public sealed interface Performed {
+    public typealias Age = dev.ohs.fhir.model.r4b.Age
+
+    public typealias DateTime = dev.ohs.fhir.model.r4b.DateTime
+
+    public typealias Period = dev.ohs.fhir.model.r4b.Period
+
+    public typealias Range = dev.ohs.fhir.model.r4b.Range
+
+    public typealias String = dev.ohs.fhir.model.r4b.String
+  }
+
   public class Builder(
     /**
      * A code specifying the state of the procedure. Generally, this will be the in-progress or
@@ -811,7 +824,7 @@ public data class Procedure(
      *
      * A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String]
      */
-    public var performed: Procedure.Performed? = null
+    public var performed: Performed? = null
 
     /** Individual who recorded the record and takes responsibility for its content. */
     public var recorder: Reference.Builder? = null
@@ -1012,7 +1025,4 @@ public data class Procedure(
         }
     }
   }
-
-  /** A FHIR choice type — one of: [Age] | [DateTime] | [Period] | [Range] | [String] */
-  public typealias Performed = FhirChoiceTypes.AgeOrDateTimeOrPeriodOrRangeOrString
 }

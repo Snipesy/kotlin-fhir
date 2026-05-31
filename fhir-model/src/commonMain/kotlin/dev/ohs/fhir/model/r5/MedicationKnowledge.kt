@@ -566,7 +566,7 @@ public data class MedicationKnowledge(
      *
      * A FHIR choice type — one of: [CodeableConcept] | [Money]
      */
-    public val cost: FhirChoiceTypes.CodeableConceptOrMoney,
+    public val cost: Cost,
   ) : BackboneElement() {
     public fun toBuilder(): Builder =
       with(this) {
@@ -578,6 +578,13 @@ public data class MedicationKnowledge(
           source = this@with.source?.toBuilder()
         }
       }
+
+    /** A FHIR choice type — one of: [CodeableConcept] | [Money] */
+    public sealed interface Cost {
+      public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+      public typealias Money = dev.ohs.fhir.model.r5.Money
+    }
 
     public class Builder(
       /**
@@ -591,7 +598,7 @@ public data class MedicationKnowledge(
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Money]
        */
-      public var cost: FhirChoiceTypes.CodeableConceptOrMoney,
+      public var cost: Cost,
     ) {
       /**
        * Unique id for the element within a resource (for internal references). This may be any
@@ -639,8 +646,8 @@ public data class MedicationKnowledge(
       /** The source or owner that assigns the price to the medication. */
       public var source: String.Builder? = null
 
-      public fun build(): Cost =
-        Cost(
+      public fun build(): MedicationKnowledge.Cost =
+        MedicationKnowledge.Cost(
           id = id,
           extension = extension.map { it.build() },
           modifierExtension = modifierExtension.map { it.build() },
@@ -1075,7 +1082,7 @@ public data class MedicationKnowledge(
          *
          * A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Range]
          */
-        public val `value`: PatientCharacteristic.Value? = null,
+        public val `value`: Value? = null,
       ) : BackboneElement() {
         public fun toBuilder(): Builder =
           with(this) {
@@ -1086,6 +1093,15 @@ public data class MedicationKnowledge(
               `value` = this@with.`value`
             }
           }
+
+        /** A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Range] */
+        public sealed interface Value {
+          public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+          public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+
+          public typealias Range = dev.ohs.fhir.model.r5.Range
+        }
 
         public class Builder(
           /**
@@ -1139,7 +1155,7 @@ public data class MedicationKnowledge(
            *
            * A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Range]
            */
-          public var `value`: PatientCharacteristic.Value? = null
+          public var `value`: Value? = null
 
           public fun build(): PatientCharacteristic =
             PatientCharacteristic(
@@ -1150,9 +1166,6 @@ public data class MedicationKnowledge(
               `value` = `value`,
             )
         }
-
-        /** A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Range] */
-        public typealias Value = FhirChoiceTypes.CodeableConceptOrQuantityOrRange
       }
 
       public class Builder() {
@@ -1342,7 +1355,7 @@ public data class MedicationKnowledge(
      *
      * A FHIR choice type — one of: [String] | [Uri]
      */
-    public val source: MedicineClassification.Source? = null,
+    public val source: Source? = null,
     /**
      * Specific category assigned to the medication (e.g. anti-infective, anti-hypertensive,
      * antibiotic, etc.).
@@ -1359,6 +1372,13 @@ public data class MedicationKnowledge(
           classification = this@with.classification.map { it.toBuilder() }.toMutableList()
         }
       }
+
+    /** A FHIR choice type — one of: [String] | [Uri] */
+    public sealed interface Source {
+      public typealias String = dev.ohs.fhir.model.r5.String
+
+      public typealias Uri = dev.ohs.fhir.model.r5.Uri
+    }
 
     public class Builder(
       /**
@@ -1412,7 +1432,7 @@ public data class MedicationKnowledge(
        *
        * A FHIR choice type — one of: [String] | [Uri]
        */
-      public var source: MedicineClassification.Source? = null
+      public var source: Source? = null
 
       /**
        * Specific category assigned to the medication (e.g. anti-infective, anti-hypertensive,
@@ -1430,9 +1450,6 @@ public data class MedicationKnowledge(
           classification = classification.map { it.build() },
         )
     }
-
-    /** A FHIR choice type — one of: [String] | [Uri] */
-    public typealias Source = FhirChoiceTypes.StringOrUri
   }
 
   /** Information that only applies to packages (not products). */
@@ -1678,7 +1695,7 @@ public data class MedicationKnowledge(
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Range]
        */
-      public val `value`: EnvironmentalSetting.Value,
+      public val `value`: Value,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -1688,6 +1705,15 @@ public data class MedicationKnowledge(
             modifierExtension = this@with.modifierExtension.map { it.toBuilder() }.toMutableList()
           }
         }
+
+      /** A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Range] */
+      public sealed interface Value {
+        public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+        public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+
+        public typealias Range = dev.ohs.fhir.model.r5.Range
+      }
 
       public class Builder(
         /**
@@ -1700,7 +1726,7 @@ public data class MedicationKnowledge(
          *
          * A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Range]
          */
-        public var `value`: EnvironmentalSetting.Value,
+        public var `value`: Value,
       ) {
         /**
          * Unique id for the element within a resource (for internal references). This may be any
@@ -1751,9 +1777,6 @@ public data class MedicationKnowledge(
             `value` = `value`,
           )
       }
-
-      /** A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Range] */
-      public typealias Value = FhirChoiceTypes.CodeableConceptOrQuantityOrRange
     }
 
     public class Builder() {
@@ -2311,7 +2334,7 @@ public data class MedicationKnowledge(
        *
        * A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Ratio]
        */
-      public val strength: Ingredient.Strength? = null,
+      public val strength: Strength? = null,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -2323,6 +2346,15 @@ public data class MedicationKnowledge(
             strength = this@with.strength
           }
         }
+
+      /** A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Ratio] */
+      public sealed interface Strength {
+        public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+        public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+
+        public typealias Ratio = dev.ohs.fhir.model.r5.Ratio
+      }
 
       public class Builder(
         /** A reference to the resource that provides information about the ingredient. */
@@ -2379,7 +2411,7 @@ public data class MedicationKnowledge(
          *
          * A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Ratio]
          */
-        public var strength: Ingredient.Strength? = null
+        public var strength: Strength? = null
 
         public fun build(): Ingredient =
           Ingredient(
@@ -2391,9 +2423,6 @@ public data class MedicationKnowledge(
             strength = strength,
           )
       }
-
-      /** A FHIR choice type — one of: [CodeableConcept] | [Quantity] | [Ratio] */
-      public typealias Strength = FhirChoiceTypes.CodeableConceptOrQuantityOrRatio
     }
 
     /** Specifies descriptive properties of the medicine, such as color, shape, imprints, etc. */
@@ -2450,7 +2479,7 @@ public data class MedicationKnowledge(
        * A FHIR choice type — one of: [Attachment] | [Base64Binary] | [CodeableConcept] | [Quantity]
        * | [String]
        */
-      public val `value`: DrugCharacteristic.Value? = null,
+      public val `value`: Value? = null,
     ) : BackboneElement() {
       public fun toBuilder(): Builder =
         with(this) {
@@ -2462,6 +2491,22 @@ public data class MedicationKnowledge(
             `value` = this@with.`value`
           }
         }
+
+      /**
+       * A FHIR choice type — one of: [Attachment] | [Base64Binary] | [CodeableConcept] | [Quantity]
+       * | [String]
+       */
+      public sealed interface Value {
+        public typealias Attachment = dev.ohs.fhir.model.r5.Attachment
+
+        public typealias Base64Binary = dev.ohs.fhir.model.r5.Base64Binary
+
+        public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
+
+        public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
+
+        public typealias String = dev.ohs.fhir.model.r5.String
+      }
 
       public class Builder() {
         /**
@@ -2519,7 +2564,7 @@ public data class MedicationKnowledge(
          * A FHIR choice type — one of: [Attachment] | [Base64Binary] | [CodeableConcept] |
          * [Quantity] | [String]
          */
-        public var `value`: DrugCharacteristic.Value? = null
+        public var `value`: Value? = null
 
         public fun build(): DrugCharacteristic =
           DrugCharacteristic(
@@ -2530,13 +2575,6 @@ public data class MedicationKnowledge(
             `value` = `value`,
           )
       }
-
-      /**
-       * A FHIR choice type — one of: [Attachment] | [Base64Binary] | [CodeableConcept] | [Quantity]
-       * | [String]
-       */
-      public typealias Value =
-        FhirChoiceTypes.AttachmentOrBase64BinaryOrCodeableConceptOrQuantityOrString
     }
 
     public class Builder() {
