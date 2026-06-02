@@ -20,7 +20,6 @@ package dev.ohs.fhir.model.r4.serializers
 
 import dev.ohs.fhir.model.r4.Boolean as R4Boolean
 import dev.ohs.fhir.model.r4.Canonical
-import dev.ohs.fhir.model.r4.CanonicalBox
 import dev.ohs.fhir.model.r4.Code
 import dev.ohs.fhir.model.r4.CodeableConcept
 import dev.ohs.fhir.model.r4.ConceptMap
@@ -37,7 +36,6 @@ import dev.ohs.fhir.model.r4.Narrative
 import dev.ohs.fhir.model.r4.Resource
 import dev.ohs.fhir.model.r4.String as R4String
 import dev.ohs.fhir.model.r4.Uri
-import dev.ohs.fhir.model.r4.UriBox
 import dev.ohs.fhir.model.r4.UsageContext
 import dev.ohs.fhir.model.r4.terminologies.ConceptMapEquivalence
 import dev.ohs.fhir.model.r4.terminologies.PublicationStatus
@@ -998,12 +996,8 @@ internal object ConceptMapSerializer : KSerializer<ConceptMap> {
       jurisdiction = jurisdiction ?: listOf(),
       purpose = Markdown.of(purpose, _purpose),
       copyright = Markdown.of(copyright, _copyright),
-      source =
-        ((Uri.of(sourceUri, _sourceUri))?.let { UriBox(it) }
-          ?: (Canonical.of(sourceCanonical, _sourceCanonical))?.let { CanonicalBox(it) }),
-      target =
-        ((Uri.of(targetUri, _targetUri))?.let { UriBox(it) }
-          ?: (Canonical.of(targetCanonical, _targetCanonical))?.let { CanonicalBox(it) }),
+      source = (Uri.of(sourceUri, _sourceUri) ?: Canonical.of(sourceCanonical, _sourceCanonical)),
+      target = (Uri.of(targetUri, _targetUri) ?: Canonical.of(targetCanonical, _targetCanonical)),
       group = group ?: listOf(),
     )
   }
@@ -1214,11 +1208,9 @@ internal object ConceptMapSerializer : KSerializer<ConceptMap> {
     }
     when (val choice = value.source) {
       null -> {}
-      is UriBox -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 36 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is Uri -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 36 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             37 + descriptorOffset,
@@ -1227,11 +1219,9 @@ internal object ConceptMapSerializer : KSerializer<ConceptMap> {
           )
         }
       }
-      is CanonicalBox -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 38 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is Canonical -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 38 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             39 + descriptorOffset,
@@ -1243,11 +1233,9 @@ internal object ConceptMapSerializer : KSerializer<ConceptMap> {
     }
     when (val choice = value.target) {
       null -> {}
-      is UriBox -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 40 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is Uri -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 40 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             41 + descriptorOffset,
@@ -1256,11 +1244,9 @@ internal object ConceptMapSerializer : KSerializer<ConceptMap> {
           )
         }
       }
-      is CanonicalBox -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 42 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is Canonical -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 42 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             43 + descriptorOffset,

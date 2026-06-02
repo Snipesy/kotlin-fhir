@@ -20,7 +20,6 @@ package dev.ohs.fhir.model.r5.serializers
 
 import dev.ohs.fhir.model.r5.Attachment
 import dev.ohs.fhir.model.r5.Canonical
-import dev.ohs.fhir.model.r5.CanonicalBox
 import dev.ohs.fhir.model.r5.Code
 import dev.ohs.fhir.model.r5.CodeableConcept
 import dev.ohs.fhir.model.r5.CodeableReference
@@ -41,7 +40,6 @@ import dev.ohs.fhir.model.r5.Reference
 import dev.ohs.fhir.model.r5.Resource
 import dev.ohs.fhir.model.r5.String as R5String
 import dev.ohs.fhir.model.r5.Uri
-import dev.ohs.fhir.model.r5.UriBox
 import dev.ohs.fhir.model.r5.terminologies.DocumentReferenceStatus
 import kotlin.Int
 import kotlin.OptIn
@@ -407,8 +405,8 @@ internal object DocumentReferenceContentProfileSerializer :
       modifierExtension = modifierExtension ?: listOf(),
       `value` =
         (valueCoding
-          ?: (Uri.of(valueUri, _valueUri))?.let { UriBox(it) }
-          ?: (Canonical.of(valueCanonical, _valueCanonical))?.let { CanonicalBox(it) })!!,
+          ?: Uri.of(valueUri, _valueUri)
+          ?: Canonical.of(valueCanonical, _valueCanonical))!!,
     )
   }
 
@@ -430,15 +428,15 @@ internal object DocumentReferenceContentProfileSerializer :
       is Coding -> {
         encoder.encodeSerializableElement(descriptor, 3, Hoisted.valueCodingSer, choice)
       }
-      is UriBox -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 4, it) }
-        (choice.value.toElement())?.let {
+      is Uri -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 4, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 5, Hoisted.valueUriSer, it)
         }
       }
-      is CanonicalBox -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 6, it) }
-        (choice.value.toElement())?.let {
+      is Canonical -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 6, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 7, Hoisted.valueUriSer, it)
         }
       }

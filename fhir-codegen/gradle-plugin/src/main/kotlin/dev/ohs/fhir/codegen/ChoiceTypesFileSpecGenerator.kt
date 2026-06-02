@@ -42,33 +42,43 @@ object ChoiceTypesFileSpecGenerator {
   fun generate(registry: ChoiceTypeRegistry): List<FileSpec> {
     val files = mutableListOf<FileSpec>()
 
-    // ChoiceBoxTypes.kt — a box type per expansion that is wrapped in at least one set.
-    val boxTypes = FileSpec.builder(registry.packageName, "ChoiceBoxTypes")
-    for (expansion in registry.wrappedExpansions) {
-      val modelType = registry.modelType(expansion)
-      boxTypes.addType(
-        TypeSpec.classBuilder(registry.wrapperClassName(expansion))
-          .addModifiers(KModifier.VALUE)
-          .addAnnotation(ClassName("kotlin.jvm", "JvmInline"))
-          .addKdoc(
-            "A box type for the FHIR `%L` choice-type expansion — an inline wrapper around a [%T].\n" +
-              "\n" +
-              "It exists so `%L` can be a distinct, non-overlapping member of the choice " +
-              "interfaces: a box is emitted only where the bare model type would be indistinguishable " +
-              "from another member by an `is`-check (a FHIR ancestor/descendant such as " +
-              "`Quantity`/`Age`, or a type the model can't implement directly). Most choice members " +
-              "are bare and need no box.",
-            expansion,
-            modelType,
-            expansion,
-          )
-          .primaryConstructor(FunSpec.constructorBuilder().addParameter("value", modelType).build())
-          .addProperty(PropertySpec.builder("value", modelType).initializer("value").build())
-          .apply { registry.setsWhereWrapped(expansion).forEach { addSuperinterface(it) } }
-          .build()
-      )
+    // ChoiceBoxTypes.kt — a box type per expansion that is wrapped in at least one set. This is a
+    // FALLBACK for choice members that can't be a distinct *bare* type: a model type outside the
+    // model package (e.g. `integer64` → `kotlin.Long`), or a FHIR ancestor/descendant of another
+    // member. Since datatype specializations are de-inherited into distinct types sharing a
+    // `<Root>Like` interface (see DatatypeSpecialization.kt), no such members exist today, so
+    // `wrappedExpansions` is empty and this file is NOT emitted. Kept for future versions/types
+    // (e.g. R5+ `integer64`) that would still need a box.
+    if (registry.wrappedExpansions.isNotEmpty()) {
+      val boxTypes = FileSpec.builder(registry.packageName, "ChoiceBoxTypes")
+      for (expansion in registry.wrappedExpansions) {
+        val modelType = registry.modelType(expansion)
+        boxTypes.addType(
+          TypeSpec.classBuilder(registry.wrapperClassName(expansion))
+            .addModifiers(KModifier.VALUE)
+            .addAnnotation(ClassName("kotlin.jvm", "JvmInline"))
+            .addKdoc(
+              "A box type for the FHIR `%L` choice-type expansion — an inline wrapper around a [%T].\n" +
+                "\n" +
+                "It exists so `%L` can be a distinct, non-overlapping member of the choice " +
+                "interfaces: a box is emitted only where the bare model type would be indistinguishable " +
+                "from another member by an `is`-check (a FHIR ancestor/descendant such as " +
+                "`Quantity`/`Age`, or a type the model can't implement directly). Most choice members " +
+                "are bare and need no box.",
+              expansion,
+              modelType,
+              expansion,
+            )
+            .primaryConstructor(
+              FunSpec.constructorBuilder().addParameter("value", modelType).build()
+            )
+            .addProperty(PropertySpec.builder("value", modelType).initializer("value").build())
+            .apply { registry.setsWhereWrapped(expansion).forEach { addSuperinterface(it) } }
+            .build()
+        )
+      }
+      files += boxTypes.build()
     }
-    files += boxTypes.build()
 
     // FhirChoiceParticipants.kt — one `<Type>Choices` aggregate per model type that is bare in ≥2
     // sets, nested under one object so the model class header lists a single supertype.

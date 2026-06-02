@@ -35,7 +35,7 @@ public open class Quantity(
    * Unique id for the element within a resource (for internal references). This may be any string
    * value that does not contain spaces.
    */
-  open override val id: kotlin.String? = null,
+  override val id: kotlin.String? = null,
   /**
    * May be used to represent additional information that is not part of the basic definition of the
    * element. To make the use of extensions safe and managable, there is a strict set of governance
@@ -48,7 +48,7 @@ public open class Quantity(
    * The use of extensions is what allows the FHIR specification to retain a core level of
    * simplicity for everyone.
    */
-  open override val extension: List<Extension> = listOf(),
+  override val extension: List<Extension> = listOf(),
   /**
    * The value of the measured amount. The value includes an implicit precision in the presentation
    * of the value.
@@ -56,25 +56,25 @@ public open class Quantity(
    * The implicit precision in the value should always be honored. Monetary values have their own
    * rules for handling precision (refer to standard accounting text books).
    */
-  public open val `value`: Decimal? = null,
+  override val `value`: Decimal? = null,
   /**
    * How the value should be understood and represented - whether the actual value is greater or
    * less than the stated value due to measurement issues; e.g. if the comparator is "<" , then the
    * real value is < stated value.
    */
-  public open val comparator: Enumeration<QuantityComparator>? = null,
+  override val comparator: Enumeration<QuantityComparator>? = null,
   /** A human-readable form of the unit. */
-  public open val unit: String? = null,
+  override val unit: String? = null,
   /** The identification of the system that provides the coded form of the unit. */
-  public open val system: Uri? = null,
+  override val system: Uri? = null,
   /**
    * A computer processable form of the unit in some unit representation system.
    *
    * The preferred system is UCUM, but SNOMED CT can also be used (for customary units) or ISO 4217
    * for currency. The context of use may additionally require a code from a particular system.
    */
-  public open val code: Code? = null,
-) : DataType(), FhirChoiceParticipants.QuantityChoices {
+  override val code: Code? = null,
+) : DataType(), FhirChoiceParticipants.QuantityChoices, QuantityLike {
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
     if (other !is Quantity) return false

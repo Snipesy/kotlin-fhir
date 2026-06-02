@@ -163,8 +163,18 @@ abstract class FhirCodegenTask : DefaultTask() {
         // require a literal `}` after the exponent and so reject all scientific notation. Strip it.
         ?.replace("}}", "}")
         ?: error("Could not find the regex for the FHIR `decimal` StructureDefinition")
+    // Spec-derived datatype family roots (Quantity/String/Uri/Integer) that get a `<Root>Like`
+    // shape interface. See DatatypeSpecialization.kt.
+    val datatypeSpecializationRoots = computeDatatypeSpecializationRoots(structureDefinitions)
+    // Each root → its base (Element in R4; DataType/PrimitiveType in R5) so de-inherited types
+    // extend
+    // the right class for the version.
+    val datatypeSpecializationRootBases =
+      computeDatatypeSpecializationRootBases(structureDefinitions, datatypeSpecializationRoots)
+
     // Consolidated choice-type ("value[x]") option-sets, shared across every resource.
-    val choiceRegistry = ChoiceTypeRegistry.build(packageName, structureDefinitions)
+    val choiceRegistry =
+      ChoiceTypeRegistry.build(packageName, structureDefinitions, datatypeSpecializationRoots)
 
     val fhirCodegen =
       FhirCodegen(
@@ -174,6 +184,8 @@ abstract class FhirCodegenTask : DefaultTask() {
         typeGraph,
         primitiveValueIsNonNull,
         choiceRegistry,
+        datatypeSpecializationRoots,
+        datatypeSpecializationRootBases,
       )
 
     structureDefinitions
@@ -181,6 +193,16 @@ abstract class FhirCodegenTask : DefaultTask() {
       .forEach { it.writeTo(outputDir) }
 
     ChoiceTypesFileSpecGenerator.generate(choiceRegistry).forEach { it.writeTo(outputDir) }
+
+    // `ElementLike` + `<Root>Like` shape interfaces shared by each datatype family and inherited by
+    // its specializations (see DatatypeLikeFileSpecGenerator).
+    DatatypeLikeFileSpecGenerator.generate(
+        structureDefinitions,
+        valueSetMap,
+        packageName,
+        datatypeSpecializationRoots,
+      )
+      .forEach { it.writeTo(outputDir) }
 
     val subclasses =
       structureDefinitions

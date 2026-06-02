@@ -17,6 +17,7 @@
 package dev.ohs.fhir.model.r5
 
 import dev.ohs.fhir.model.r5.serializers.MarkdownSerializer
+import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
 import kotlinx.serialization.Serializable
@@ -28,7 +29,7 @@ import kotlinx.serialization.Serializable
 @Serializable(with = MarkdownSerializer::class)
 public data class Markdown(
   /** unique id for the element within a resource (for internal references) */
-  override val id: kotlin.String? = null,
+  override val id: String? = null,
   /**
    * May be used to represent additional information that is not part of the basic definition of the
    * resource. To make the use of extensions safe and managable, there is a strict set of governance
@@ -43,9 +44,9 @@ public data class Markdown(
    */
   override val extension: List<Extension> = listOf(),
   /** Primitive value for markdown */
-  override val `value`: kotlin.String? = null,
-) : String(id, extension, `value`), FhirChoiceParticipants.MarkdownChoices {
-  override fun toBuilder(): Builder =
+  override val `value`: String? = null,
+) : PrimitiveType(), StringLike, FhirChoiceParticipants.MarkdownChoices {
+  public fun toBuilder(): Builder =
     with(this) {
       Builder().apply {
         id = this@with.id
@@ -54,16 +55,16 @@ public data class Markdown(
       }
     }
 
-  override fun toElement(): Element? {
+  public fun toElement(): Element? {
     if (id != null || extension.isNotEmpty()) {
       return Element(id, extension)
     }
     return null
   }
 
-  public open class Builder() : String.Builder() {
+  public open class Builder() {
     /** unique id for the element within a resource (for internal references) */
-    open override var id: kotlin.String? = null
+    public open var id: String? = null
 
     /**
      * May be used to represent additional information that is not part of the basic definition of
@@ -77,17 +78,17 @@ public data class Markdown(
      * The use of extensions is what allows the FHIR specification to retain a core level of
      * simplicity for everyone.
      */
-    open override var extension: MutableList<Extension.Builder> = mutableListOf()
+    public open var extension: MutableList<Extension.Builder> = mutableListOf()
 
     /** Primitive value for markdown */
-    open override var `value`: kotlin.String? = null
+    public open var `value`: String? = null
 
-    open override fun build(): Markdown =
+    public open fun build(): Markdown =
       Markdown(id = id, extension = extension.map { it.build() }, `value` = `value`)
   }
 
   public companion object {
-    public fun of(`value`: kotlin.String?, element: Element?): Markdown? =
+    public fun of(`value`: String?, element: Element?): Markdown? =
       if (value != null || element?.id != null || element?.extension?.isEmpty() == false) {
         Markdown(element?.id, element?.extension ?: mutableListOf(), value)
       } else {

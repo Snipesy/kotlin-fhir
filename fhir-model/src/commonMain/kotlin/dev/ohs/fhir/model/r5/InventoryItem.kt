@@ -726,8 +726,8 @@ public data class InventoryItem(
      * otherwise be coded but for which there is no code available.
      *
      * A FHIR choice type — one of: [Address] | [Annotation] | [Boolean] | [CodeableConcept] |
-     * [DateTime] | [Decimal] | [DurationBox] | [Integer] | [QuantityBox] | [Range] | [Ratio] |
-     * [String] | [Url]
+     * [DateTime] | [Decimal] | [Duration] | [Integer] | [Quantity] | [Range] | [Ratio] | [String] |
+     * [Url]
      */
     public val `value`: Value,
   ) : BackboneElement() {
@@ -742,8 +742,8 @@ public data class InventoryItem(
 
     /**
      * A FHIR choice type — one of: [Address] | [Annotation] | [Boolean] | [CodeableConcept] |
-     * [DateTime] | [Decimal] | [DurationBox] | [Integer] | [QuantityBox] | [Range] | [Ratio] |
-     * [String] | [Url]
+     * [DateTime] | [Decimal] | [Duration] | [Integer] | [Quantity] | [Range] | [Ratio] | [String] |
+     * [Url]
      */
     public sealed interface Value {
       public typealias Address = dev.ohs.fhir.model.r5.Address
@@ -758,11 +758,11 @@ public data class InventoryItem(
 
       public typealias Decimal = dev.ohs.fhir.model.r5.Decimal
 
-      public typealias Duration = DurationBox
+      public typealias Duration = dev.ohs.fhir.model.r5.Duration
 
       public typealias Integer = dev.ohs.fhir.model.r5.Integer
 
-      public typealias Quantity = QuantityBox
+      public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
 
       public typealias Range = dev.ohs.fhir.model.r5.Range
 
@@ -784,8 +784,8 @@ public data class InventoryItem(
        * otherwise be coded but for which there is no code available.
        *
        * A FHIR choice type — one of: [Address] | [Annotation] | [Boolean] | [CodeableConcept] |
-       * [DateTime] | [Decimal] | [DurationBox] | [Integer] | [QuantityBox] | [Range] | [Ratio] |
-       * [String] | [Url]
+       * [DateTime] | [Decimal] | [Duration] | [Integer] | [Quantity] | [Range] | [Ratio] | [String]
+       * | [Url]
        */
       public var `value`: Value,
     ) {

@@ -17,6 +17,7 @@
 package dev.ohs.fhir.model.r5
 
 import dev.ohs.fhir.model.r5.serializers.IdSerializer
+import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
 import kotlinx.serialization.Serializable
@@ -29,7 +30,7 @@ import kotlinx.serialization.Serializable
 @Serializable(with = IdSerializer::class)
 public data class Id(
   /** unique id for the element within a resource (for internal references) */
-  override val id: kotlin.String? = null,
+  override val id: String? = null,
   /**
    * May be used to represent additional information that is not part of the basic definition of the
    * resource. To make the use of extensions safe and managable, there is a strict set of governance
@@ -44,9 +45,9 @@ public data class Id(
    */
   override val extension: List<Extension> = listOf(),
   /** Primitive value for id */
-  override val `value`: kotlin.String? = null,
-) : String(id, extension, `value`), FhirChoiceParticipants.IdChoices {
-  override fun toBuilder(): Builder =
+  override val `value`: String? = null,
+) : PrimitiveType(), StringLike, FhirChoiceParticipants.IdChoices {
+  public fun toBuilder(): Builder =
     with(this) {
       Builder().apply {
         id = this@with.id
@@ -55,16 +56,16 @@ public data class Id(
       }
     }
 
-  override fun toElement(): Element? {
+  public fun toElement(): Element? {
     if (id != null || extension.isNotEmpty()) {
       return Element(id, extension)
     }
     return null
   }
 
-  public open class Builder() : String.Builder() {
+  public open class Builder() {
     /** unique id for the element within a resource (for internal references) */
-    open override var id: kotlin.String? = null
+    public open var id: String? = null
 
     /**
      * May be used to represent additional information that is not part of the basic definition of
@@ -78,17 +79,17 @@ public data class Id(
      * The use of extensions is what allows the FHIR specification to retain a core level of
      * simplicity for everyone.
      */
-    open override var extension: MutableList<Extension.Builder> = mutableListOf()
+    public open var extension: MutableList<Extension.Builder> = mutableListOf()
 
     /** Primitive value for id */
-    open override var `value`: kotlin.String? = null
+    public open var `value`: String? = null
 
-    open override fun build(): Id =
+    public open fun build(): Id =
       Id(id = id, extension = extension.map { it.build() }, `value` = `value`)
   }
 
   public companion object {
-    public fun of(`value`: kotlin.String?, element: Element?): Id? =
+    public fun of(`value`: String?, element: Element?): Id? =
       if (value != null || element?.id != null || element?.extension?.isEmpty() == false) {
         Id(element?.id, element?.extension ?: mutableListOf(), value)
       } else {

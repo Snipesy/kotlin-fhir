@@ -21,7 +21,6 @@ package dev.ohs.fhir.model.r5.serializers
 import dev.ohs.fhir.model.r5.Age
 import dev.ohs.fhir.model.r5.Annotation
 import dev.ohs.fhir.model.r5.Canonical
-import dev.ohs.fhir.model.r5.CanonicalBox
 import dev.ohs.fhir.model.r5.Code
 import dev.ohs.fhir.model.r5.CodeableConcept
 import dev.ohs.fhir.model.r5.CodeableReference
@@ -47,7 +46,6 @@ import dev.ohs.fhir.model.r5.Resource
 import dev.ohs.fhir.model.r5.String as R5String
 import dev.ohs.fhir.model.r5.Timing
 import dev.ohs.fhir.model.r5.Uri
-import dev.ohs.fhir.model.r5.UriBox
 import kotlin.Int
 import kotlin.OptIn
 import kotlin.String as KotlinString
@@ -433,8 +431,8 @@ internal object RequestOrchestrationActionSerializer : KSerializer<RequestOrches
         },
       resource = resource,
       definition =
-        ((Canonical.of(definitionCanonical, _definitionCanonical))?.let { CanonicalBox(it) }
-          ?: (Uri.of(definitionUri, _definitionUri))?.let { UriBox(it) }),
+        (Canonical.of(definitionCanonical, _definitionCanonical)
+          ?: Uri.of(definitionUri, _definitionUri)),
       transform = Canonical.of(transform, _transform),
       dynamicValue = dynamicValue ?: listOf(),
       action = action ?: listOf(),
@@ -567,15 +565,15 @@ internal object RequestOrchestrationActionSerializer : KSerializer<RequestOrches
     }
     when (val choice = value.definition) {
       null -> {}
-      is CanonicalBox -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 43, it) }
-        (choice.value.toElement())?.let {
+      is Canonical -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 43, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 44, Hoisted.linkIdSer, it)
         }
       }
-      is UriBox -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 45, it) }
-        (choice.value.toElement())?.let {
+      is Uri -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 45, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 46, Hoisted.linkIdSer, it)
         }
       }

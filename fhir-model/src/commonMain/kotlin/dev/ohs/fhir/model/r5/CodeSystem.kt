@@ -1102,8 +1102,8 @@ public data class CodeSystem(
       /**
        * The value of this property.
        *
-       * A FHIR choice type — one of: [Boolean] | [CodeBox] | [Coding] | [DateTime] | [Decimal] |
-       * [Integer] | [StringBox]
+       * A FHIR choice type — one of: [Boolean] | [Code] | [Coding] | [DateTime] | [Decimal] |
+       * [Integer] | [String]
        */
       public val `value`: Value,
     ) : BackboneElement() {
@@ -1117,13 +1117,13 @@ public data class CodeSystem(
         }
 
       /**
-       * A FHIR choice type — one of: [Boolean] | [CodeBox] | [Coding] | [DateTime] | [Decimal] |
-       * [Integer] | [StringBox]
+       * A FHIR choice type — one of: [Boolean] | [Code] | [Coding] | [DateTime] | [Decimal] |
+       * [Integer] | [String]
        */
       public sealed interface Value {
         public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
 
-        public typealias Code = CodeBox
+        public typealias Code = dev.ohs.fhir.model.r5.Code
 
         public typealias Coding = dev.ohs.fhir.model.r5.Coding
 
@@ -1133,7 +1133,7 @@ public data class CodeSystem(
 
         public typealias Integer = dev.ohs.fhir.model.r5.Integer
 
-        public typealias String = StringBox
+        public typealias String = dev.ohs.fhir.model.r5.String
       }
 
       public class Builder(
@@ -1142,8 +1142,8 @@ public data class CodeSystem(
         /**
          * The value of this property.
          *
-         * A FHIR choice type — one of: [Boolean] | [CodeBox] | [Coding] | [DateTime] | [Decimal] |
-         * [Integer] | [StringBox]
+         * A FHIR choice type — one of: [Boolean] | [Code] | [Coding] | [DateTime] | [Decimal] |
+         * [Integer] | [String]
          */
         public var `value`: Value,
       ) {

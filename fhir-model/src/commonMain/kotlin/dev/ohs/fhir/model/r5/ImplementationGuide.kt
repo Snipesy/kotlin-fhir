@@ -1180,7 +1180,7 @@ public data class ImplementationGuide(
        * checking input locations. String is used for XHTML content - sent as an escaped string.
        * FHIR tooling can't support 'direct' XHTML anywhere other than in narrative.
        *
-       * A FHIR choice type — one of: [MarkdownBox] | [StringBox] | [Url]
+       * A FHIR choice type — one of: [Markdown] | [String] | [Url]
        */
       public val source: Source? = null,
       /**
@@ -1215,11 +1215,11 @@ public data class ImplementationGuide(
           }
         }
 
-      /** A FHIR choice type — one of: [MarkdownBox] | [StringBox] | [Url] */
+      /** A FHIR choice type — one of: [Markdown] | [String] | [Url] */
       public sealed interface Source {
-        public typealias Markdown = MarkdownBox
+        public typealias Markdown = dev.ohs.fhir.model.r5.Markdown
 
-        public typealias String = StringBox
+        public typealias String = dev.ohs.fhir.model.r5.String
 
         public typealias Url = dev.ohs.fhir.model.r5.Url
       }
@@ -1287,7 +1287,7 @@ public data class ImplementationGuide(
          * checking input locations. String is used for XHTML content - sent as an escaped string.
          * FHIR tooling can't support 'direct' XHTML anywhere other than in narrative.
          *
-         * A FHIR choice type — one of: [MarkdownBox] | [StringBox] | [Url]
+         * A FHIR choice type — one of: [Markdown] | [String] | [Url]
          */
         public var source: Source? = null
 

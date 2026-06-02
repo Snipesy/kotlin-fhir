@@ -71,8 +71,8 @@ public data class Count(
    * for currency. The context of use may additionally require a code from a particular system.
    */
   override val code: Code? = null,
-) : Quantity() {
-  override fun toBuilder(): Builder =
+) : DataType(), QuantityLike, FhirChoiceParticipants.CountChoices {
+  public fun toBuilder(): Builder =
     with(this) {
       Builder().apply {
         id = this@with.id
@@ -85,12 +85,12 @@ public data class Count(
       }
     }
 
-  public open class Builder() : Quantity.Builder() {
+  public open class Builder() {
     /**
      * Unique id for the element within a resource (for internal references). This may be any string
      * value that does not contain spaces.
      */
-    open override var id: kotlin.String? = null
+    public open var id: kotlin.String? = null
 
     /**
      * May be used to represent additional information that is not part of the basic definition of
@@ -104,7 +104,7 @@ public data class Count(
      * The use of extensions is what allows the FHIR specification to retain a core level of
      * simplicity for everyone.
      */
-    open override var extension: MutableList<Extension.Builder> = mutableListOf()
+    public open var extension: MutableList<Extension.Builder> = mutableListOf()
 
     /**
      * The value of the measured amount. The value includes an implicit precision in the
@@ -113,20 +113,20 @@ public data class Count(
      * The implicit precision in the value should always be honored. Monetary values have their own
      * rules for handling precision (refer to standard accounting text books).
      */
-    open override var `value`: Decimal.Builder? = null
+    public open var `value`: Decimal.Builder? = null
 
     /**
      * How the value should be understood and represented - whether the actual value is greater or
      * less than the stated value due to measurement issues; e.g. if the comparator is "<" , then
      * the real value is < stated value.
      */
-    open override var comparator: Enumeration<Quantity.QuantityComparator>? = null
+    public open var comparator: Enumeration<Quantity.QuantityComparator>? = null
 
     /** A human-readable form of the unit. */
-    open override var unit: String.Builder? = null
+    public open var unit: String.Builder? = null
 
     /** The identification of the system that provides the coded form of the unit. */
-    open override var system: Uri.Builder? = null
+    public open var system: Uri.Builder? = null
 
     /**
      * A computer processable form of the unit in some unit representation system.
@@ -135,9 +135,9 @@ public data class Count(
      * 4217 for currency. The context of use may additionally require a code from a particular
      * system.
      */
-    open override var code: Code.Builder? = null
+    public open var code: Code.Builder? = null
 
-    open override fun build(): Count =
+    public open fun build(): Count =
       Count(
         id = id,
         extension = extension.map { it.build() },

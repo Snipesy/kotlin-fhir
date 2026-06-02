@@ -182,7 +182,7 @@ public data class ArtifactAssessment(
    * A reference to a resource, canonical resource, or non-FHIR resource which the comment or
    * assessment is about.
    *
-   * A FHIR choice type — one of: [CanonicalBox] | [Reference] | [UriBox]
+   * A FHIR choice type — one of: [Canonical] | [Reference] | [Uri]
    */
   public val artifact: Artifact,
   /** A component comment, classifier, or rating of the artifact. */
@@ -411,13 +411,13 @@ public data class ArtifactAssessment(
     public typealias Reference = dev.ohs.fhir.model.r5.Reference
   }
 
-  /** A FHIR choice type — one of: [CanonicalBox] | [Reference] | [UriBox] */
+  /** A FHIR choice type — one of: [Canonical] | [Reference] | [Uri] */
   public sealed interface Artifact {
-    public typealias Canonical = CanonicalBox
+    public typealias Canonical = dev.ohs.fhir.model.r5.Canonical
 
     public typealias Reference = dev.ohs.fhir.model.r5.Reference
 
-    public typealias Uri = UriBox
+    public typealias Uri = dev.ohs.fhir.model.r5.Uri
   }
 
   public class Builder(
@@ -425,7 +425,7 @@ public data class ArtifactAssessment(
      * A reference to a resource, canonical resource, or non-FHIR resource which the comment or
      * assessment is about.
      *
-     * A FHIR choice type — one of: [CanonicalBox] | [Reference] | [UriBox]
+     * A FHIR choice type — one of: [Canonical] | [Reference] | [Uri]
      */
     public var artifact: Artifact
   ) : DomainResource.Builder() {

@@ -276,7 +276,7 @@ public data class ConceptMap(
    * target value set, there is no specified context for the map (not recommended). The source value
    * set may select codes from either an explicit (standard or local) or implicit code system.
    *
-   * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
+   * A FHIR choice type — one of: [Canonical] | [Uri]
    */
   public val source: Source? = null,
   /**
@@ -287,7 +287,7 @@ public data class ConceptMap(
    * Should be a version specific reference. URIs SHOULD be absolute. If there is no source or
    * target value set, the is no specified context for the map.
    *
-   * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
+   * A FHIR choice type — one of: [Canonical] | [Uri]
    */
   public val target: Target? = null,
   /** A group of mappings that all have the same source and target system. */
@@ -1188,18 +1188,18 @@ public data class ConceptMap(
     }
   }
 
-  /** A FHIR choice type — one of: [CanonicalBox] | [UriBox] */
+  /** A FHIR choice type — one of: [Canonical] | [Uri] */
   public sealed interface Source {
-    public typealias Canonical = CanonicalBox
+    public typealias Canonical = dev.ohs.fhir.model.r4b.Canonical
 
-    public typealias Uri = UriBox
+    public typealias Uri = dev.ohs.fhir.model.r4b.Uri
   }
 
-  /** A FHIR choice type — one of: [CanonicalBox] | [UriBox] */
+  /** A FHIR choice type — one of: [Canonical] | [Uri] */
   public sealed interface Target {
-    public typealias Canonical = CanonicalBox
+    public typealias Canonical = dev.ohs.fhir.model.r4b.Canonical
 
-    public typealias Uri = UriBox
+    public typealias Uri = dev.ohs.fhir.model.r4b.Uri
   }
 
   public class Builder(
@@ -1471,7 +1471,7 @@ public data class ConceptMap(
      * value set may select codes from either an explicit (standard or local) or implicit code
      * system.
      *
-     * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
+     * A FHIR choice type — one of: [Canonical] | [Uri]
      */
     public var source: Source? = null
 
@@ -1483,7 +1483,7 @@ public data class ConceptMap(
      * Should be a version specific reference. URIs SHOULD be absolute. If there is no source or
      * target value set, the is no specified context for the map.
      *
-     * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
+     * A FHIR choice type — one of: [Canonical] | [Uri]
      */
     public var target: Target? = null
 

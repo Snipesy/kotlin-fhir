@@ -129,15 +129,14 @@ public data class Parameters(
     /**
      * If the parameter is a data type.
      *
-     * A FHIR choice type — one of: [Address] | [AgeBox] | [Annotation] | [Attachment] |
-     * [Base64Binary] | [Boolean] | [CanonicalBox] | [CodeBox] | [CodeableConcept] | [Coding] |
-     * [ContactDetail] | [ContactPoint] | [Contributor] | [CountBox] | [DataRequirement] | [Date] |
-     * [DateTime] | [Decimal] | [DistanceBox] | [Dosage] | [DurationBox] | [Expression] |
-     * [HumanName] | [IdBox] | [Identifier] | [Instant] | [IntegerBox] | [MarkdownBox] | [Meta] |
-     * [Money] | [OidBox] | [ParameterDefinition] | [Period] | [PositiveIntBox] | [QuantityBox] |
-     * [Range] | [Ratio] | [Reference] | [RelatedArtifact] | [SampledData] | [Signature] |
-     * [StringBox] | [Time] | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] |
-     * [UrlBox] | [UsageContext] | [UuidBox]
+     * A FHIR choice type — one of: [Address] | [Age] | [Annotation] | [Attachment] | [Base64Binary]
+     * | [Boolean] | [Canonical] | [Code] | [CodeableConcept] | [Coding] | [ContactDetail] |
+     * [ContactPoint] | [Contributor] | [Count] | [DataRequirement] | [Date] | [DateTime] |
+     * [Decimal] | [Distance] | [Dosage] | [Duration] | [Expression] | [HumanName] | [Id] |
+     * [Identifier] | [Instant] | [Integer] | [Markdown] | [Meta] | [Money] | [Oid] |
+     * [ParameterDefinition] | [Period] | [PositiveInt] | [Quantity] | [Range] | [Ratio] |
+     * [Reference] | [RelatedArtifact] | [SampledData] | [Signature] | [String] | [Time] | [Timing]
+     * | [TriggerDefinition] | [UnsignedInt] | [Uri] | [Url] | [UsageContext] | [Uuid]
      */
     public val `value`: Value? = null,
     /**
@@ -168,20 +167,19 @@ public data class Parameters(
       }
 
     /**
-     * A FHIR choice type — one of: [Address] | [AgeBox] | [Annotation] | [Attachment] |
-     * [Base64Binary] | [Boolean] | [CanonicalBox] | [CodeBox] | [CodeableConcept] | [Coding] |
-     * [ContactDetail] | [ContactPoint] | [Contributor] | [CountBox] | [DataRequirement] | [Date] |
-     * [DateTime] | [Decimal] | [DistanceBox] | [Dosage] | [DurationBox] | [Expression] |
-     * [HumanName] | [IdBox] | [Identifier] | [Instant] | [IntegerBox] | [MarkdownBox] | [Meta] |
-     * [Money] | [OidBox] | [ParameterDefinition] | [Period] | [PositiveIntBox] | [QuantityBox] |
-     * [Range] | [Ratio] | [Reference] | [RelatedArtifact] | [SampledData] | [Signature] |
-     * [StringBox] | [Time] | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] |
-     * [UrlBox] | [UsageContext] | [UuidBox]
+     * A FHIR choice type — one of: [Address] | [Age] | [Annotation] | [Attachment] | [Base64Binary]
+     * | [Boolean] | [Canonical] | [Code] | [CodeableConcept] | [Coding] | [ContactDetail] |
+     * [ContactPoint] | [Contributor] | [Count] | [DataRequirement] | [Date] | [DateTime] |
+     * [Decimal] | [Distance] | [Dosage] | [Duration] | [Expression] | [HumanName] | [Id] |
+     * [Identifier] | [Instant] | [Integer] | [Markdown] | [Meta] | [Money] | [Oid] |
+     * [ParameterDefinition] | [Period] | [PositiveInt] | [Quantity] | [Range] | [Ratio] |
+     * [Reference] | [RelatedArtifact] | [SampledData] | [Signature] | [String] | [Time] | [Timing]
+     * | [TriggerDefinition] | [UnsignedInt] | [Uri] | [Url] | [UsageContext] | [Uuid]
      */
     public sealed interface Value {
       public typealias Address = dev.ohs.fhir.model.r4.Address
 
-      public typealias Age = AgeBox
+      public typealias Age = dev.ohs.fhir.model.r4.Age
 
       public typealias Annotation = dev.ohs.fhir.model.r4.Annotation
 
@@ -191,9 +189,9 @@ public data class Parameters(
 
       public typealias Boolean = dev.ohs.fhir.model.r4.Boolean
 
-      public typealias Canonical = CanonicalBox
+      public typealias Canonical = dev.ohs.fhir.model.r4.Canonical
 
-      public typealias Code = CodeBox
+      public typealias Code = dev.ohs.fhir.model.r4.Code
 
       public typealias CodeableConcept = dev.ohs.fhir.model.r4.CodeableConcept
 
@@ -205,7 +203,7 @@ public data class Parameters(
 
       public typealias Contributor = dev.ohs.fhir.model.r4.Contributor
 
-      public typealias Count = CountBox
+      public typealias Count = dev.ohs.fhir.model.r4.Count
 
       public typealias DataRequirement = dev.ohs.fhir.model.r4.DataRequirement
 
@@ -215,39 +213,39 @@ public data class Parameters(
 
       public typealias Decimal = dev.ohs.fhir.model.r4.Decimal
 
-      public typealias Distance = DistanceBox
+      public typealias Distance = dev.ohs.fhir.model.r4.Distance
 
       public typealias Dosage = dev.ohs.fhir.model.r4.Dosage
 
-      public typealias Duration = DurationBox
+      public typealias Duration = dev.ohs.fhir.model.r4.Duration
 
       public typealias Expression = dev.ohs.fhir.model.r4.Expression
 
       public typealias HumanName = dev.ohs.fhir.model.r4.HumanName
 
-      public typealias Id = IdBox
+      public typealias Id = dev.ohs.fhir.model.r4.Id
 
       public typealias Identifier = dev.ohs.fhir.model.r4.Identifier
 
       public typealias Instant = dev.ohs.fhir.model.r4.Instant
 
-      public typealias Integer = IntegerBox
+      public typealias Integer = dev.ohs.fhir.model.r4.Integer
 
-      public typealias Markdown = MarkdownBox
+      public typealias Markdown = dev.ohs.fhir.model.r4.Markdown
 
       public typealias Meta = dev.ohs.fhir.model.r4.Meta
 
       public typealias Money = dev.ohs.fhir.model.r4.Money
 
-      public typealias Oid = OidBox
+      public typealias Oid = dev.ohs.fhir.model.r4.Oid
 
       public typealias ParameterDefinition = dev.ohs.fhir.model.r4.ParameterDefinition
 
       public typealias Period = dev.ohs.fhir.model.r4.Period
 
-      public typealias PositiveInt = PositiveIntBox
+      public typealias PositiveInt = dev.ohs.fhir.model.r4.PositiveInt
 
-      public typealias Quantity = QuantityBox
+      public typealias Quantity = dev.ohs.fhir.model.r4.Quantity
 
       public typealias Range = dev.ohs.fhir.model.r4.Range
 
@@ -261,7 +259,7 @@ public data class Parameters(
 
       public typealias Signature = dev.ohs.fhir.model.r4.Signature
 
-      public typealias String = StringBox
+      public typealias String = dev.ohs.fhir.model.r4.String
 
       public typealias Time = dev.ohs.fhir.model.r4.Time
 
@@ -269,15 +267,15 @@ public data class Parameters(
 
       public typealias TriggerDefinition = dev.ohs.fhir.model.r4.TriggerDefinition
 
-      public typealias UnsignedInt = UnsignedIntBox
+      public typealias UnsignedInt = dev.ohs.fhir.model.r4.UnsignedInt
 
-      public typealias Uri = UriBox
+      public typealias Uri = dev.ohs.fhir.model.r4.Uri
 
-      public typealias Url = UrlBox
+      public typealias Url = dev.ohs.fhir.model.r4.Url
 
       public typealias UsageContext = dev.ohs.fhir.model.r4.UsageContext
 
-      public typealias Uuid = UuidBox
+      public typealias Uuid = dev.ohs.fhir.model.r4.Uuid
     }
 
     public class Builder(
@@ -327,15 +325,14 @@ public data class Parameters(
       /**
        * If the parameter is a data type.
        *
-       * A FHIR choice type — one of: [Address] | [AgeBox] | [Annotation] | [Attachment] |
-       * [Base64Binary] | [Boolean] | [CanonicalBox] | [CodeBox] | [CodeableConcept] | [Coding] |
-       * [ContactDetail] | [ContactPoint] | [Contributor] | [CountBox] | [DataRequirement] | [Date]
-       * | [DateTime] | [Decimal] | [DistanceBox] | [Dosage] | [DurationBox] | [Expression] |
-       * [HumanName] | [IdBox] | [Identifier] | [Instant] | [IntegerBox] | [MarkdownBox] | [Meta] |
-       * [Money] | [OidBox] | [ParameterDefinition] | [Period] | [PositiveIntBox] | [QuantityBox] |
-       * [Range] | [Ratio] | [Reference] | [RelatedArtifact] | [SampledData] | [Signature] |
-       * [StringBox] | [Time] | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] |
-       * [UrlBox] | [UsageContext] | [UuidBox]
+       * A FHIR choice type — one of: [Address] | [Age] | [Annotation] | [Attachment] |
+       * [Base64Binary] | [Boolean] | [Canonical] | [Code] | [CodeableConcept] | [Coding] |
+       * [ContactDetail] | [ContactPoint] | [Contributor] | [Count] | [DataRequirement] | [Date] |
+       * [DateTime] | [Decimal] | [Distance] | [Dosage] | [Duration] | [Expression] | [HumanName] |
+       * [Id] | [Identifier] | [Instant] | [Integer] | [Markdown] | [Meta] | [Money] | [Oid] |
+       * [ParameterDefinition] | [Period] | [PositiveInt] | [Quantity] | [Range] | [Ratio] |
+       * [Reference] | [RelatedArtifact] | [SampledData] | [Signature] | [String] | [Time] |
+       * [Timing] | [TriggerDefinition] | [UnsignedInt] | [Uri] | [Url] | [UsageContext] | [Uuid]
        */
       public var `value`: Value? = null
 

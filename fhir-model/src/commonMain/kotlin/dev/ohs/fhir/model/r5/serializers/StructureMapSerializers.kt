@@ -34,7 +34,6 @@ import dev.ohs.fhir.model.r5.FhirDate
 import dev.ohs.fhir.model.r5.FhirDateTime
 import dev.ohs.fhir.model.r5.FhirDecimal
 import dev.ohs.fhir.model.r5.Id
-import dev.ohs.fhir.model.r5.IdBox
 import dev.ohs.fhir.model.r5.Identifier
 import dev.ohs.fhir.model.r5.Integer
 import dev.ohs.fhir.model.r5.Markdown
@@ -42,7 +41,6 @@ import dev.ohs.fhir.model.r5.Meta
 import dev.ohs.fhir.model.r5.Narrative
 import dev.ohs.fhir.model.r5.Resource
 import dev.ohs.fhir.model.r5.String as R5String
-import dev.ohs.fhir.model.r5.StringBox
 import dev.ohs.fhir.model.r5.StructureMap
 import dev.ohs.fhir.model.r5.Time
 import dev.ohs.fhir.model.r5.Uri
@@ -1249,8 +1247,8 @@ internal object StructureMapGroupRuleTargetParameterSerializer :
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
       `value` =
-        ((Id.of(valueId, _valueId))?.let { IdBox(it) }
-          ?: (R5String.of(valueString, _valueString))?.let { StringBox(it) }
+        (Id.of(valueId, _valueId)
+          ?: R5String.of(valueString, _valueString)
           ?: R5Boolean.of(valueBoolean, _valueBoolean)
           ?: Integer.of(valueInteger, _valueInteger)
           ?: Decimal.of(valueDecimal, _valueDecimal)
@@ -1275,15 +1273,15 @@ internal object StructureMapGroupRuleTargetParameterSerializer :
         value.modifierExtension,
       )
     when (val choice = value.`value`) {
-      is IdBox -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 3, it) }
-        (choice.value.toElement())?.let {
+      is Id -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 3, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 4, Hoisted.valueIdSer, it)
         }
       }
-      is StringBox -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
-        (choice.value.toElement())?.let {
+      is R5String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 6, Hoisted.valueIdSer, it)
         }
       }

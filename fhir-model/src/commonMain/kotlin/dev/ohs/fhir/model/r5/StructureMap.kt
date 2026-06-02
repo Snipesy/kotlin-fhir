@@ -1224,8 +1224,8 @@ public data class StructureMap(
           /**
            * Parameter value - variable or literal.
            *
-           * A FHIR choice type — one of: [Boolean] | [Date] | [DateTime] | [Decimal] | [IdBox] |
-           * [Integer] | [StringBox] | [Time]
+           * A FHIR choice type — one of: [Boolean] | [Date] | [DateTime] | [Decimal] | [Id] |
+           * [Integer] | [String] | [Time]
            */
           public val `value`: Value,
         ) : BackboneElement() {
@@ -1240,8 +1240,8 @@ public data class StructureMap(
             }
 
           /**
-           * A FHIR choice type — one of: [Boolean] | [Date] | [DateTime] | [Decimal] | [IdBox] |
-           * [Integer] | [StringBox] | [Time]
+           * A FHIR choice type — one of: [Boolean] | [Date] | [DateTime] | [Decimal] | [Id] |
+           * [Integer] | [String] | [Time]
            */
           public sealed interface Value {
             public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
@@ -1252,11 +1252,11 @@ public data class StructureMap(
 
             public typealias Decimal = dev.ohs.fhir.model.r5.Decimal
 
-            public typealias Id = IdBox
+            public typealias Id = dev.ohs.fhir.model.r5.Id
 
             public typealias Integer = dev.ohs.fhir.model.r5.Integer
 
-            public typealias String = StringBox
+            public typealias String = dev.ohs.fhir.model.r5.String
 
             public typealias Time = dev.ohs.fhir.model.r5.Time
           }
@@ -1265,8 +1265,8 @@ public data class StructureMap(
             /**
              * Parameter value - variable or literal.
              *
-             * A FHIR choice type — one of: [Boolean] | [Date] | [DateTime] | [Decimal] | [IdBox] |
-             * [Integer] | [StringBox] | [Time]
+             * A FHIR choice type — one of: [Boolean] | [Date] | [DateTime] | [Decimal] | [Id] |
+             * [Integer] | [String] | [Time]
              */
             public var `value`: Value
           ) {

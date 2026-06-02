@@ -21,7 +21,6 @@ package dev.ohs.fhir.model.r4.serializers
 import dev.ohs.fhir.model.r4.Age
 import dev.ohs.fhir.model.r4.Boolean as R4Boolean
 import dev.ohs.fhir.model.r4.Canonical
-import dev.ohs.fhir.model.r4.CanonicalBox
 import dev.ohs.fhir.model.r4.Code
 import dev.ohs.fhir.model.r4.CodeableConcept
 import dev.ohs.fhir.model.r4.ContactDetail
@@ -51,7 +50,6 @@ import dev.ohs.fhir.model.r4.String as R4String
 import dev.ohs.fhir.model.r4.Timing
 import dev.ohs.fhir.model.r4.TriggerDefinition
 import dev.ohs.fhir.model.r4.Uri
-import dev.ohs.fhir.model.r4.UriBox
 import dev.ohs.fhir.model.r4.UsageContext
 import dev.ohs.fhir.model.r4.terminologies.PublicationStatus
 import kotlin.Boolean as KotlinBoolean
@@ -726,8 +724,8 @@ internal object PlanDefinitionActionSerializer : KSerializer<PlanDefinition.Acti
           )
         },
       definition =
-        ((Canonical.of(definitionCanonical, _definitionCanonical))?.let { CanonicalBox(it) }
-          ?: (Uri.of(definitionUri, _definitionUri))?.let { UriBox(it) }),
+        (Canonical.of(definitionCanonical, _definitionCanonical)
+          ?: Uri.of(definitionUri, _definitionUri)),
       transform = Canonical.of(transform, _transform),
       dynamicValue = dynamicValue ?: listOf(),
       action = action ?: listOf(),
@@ -867,15 +865,15 @@ internal object PlanDefinitionActionSerializer : KSerializer<PlanDefinition.Acti
     }
     when (val choice = value.definition) {
       null -> {}
-      is CanonicalBox -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 44, it) }
-        (choice.value.toElement())?.let {
+      is Canonical -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 44, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 45, Hoisted.prefixSer, it)
         }
       }
-      is UriBox -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 46, it) }
-        (choice.value.toElement())?.let {
+      is Uri -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 46, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 47, Hoisted.prefixSer, it)
         }
       }

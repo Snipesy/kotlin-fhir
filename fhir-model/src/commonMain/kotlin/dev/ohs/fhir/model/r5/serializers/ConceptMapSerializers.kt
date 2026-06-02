@@ -20,9 +20,7 @@ package dev.ohs.fhir.model.r5.serializers
 
 import dev.ohs.fhir.model.r5.Boolean as R5Boolean
 import dev.ohs.fhir.model.r5.Canonical
-import dev.ohs.fhir.model.r5.CanonicalBox
 import dev.ohs.fhir.model.r5.Code
-import dev.ohs.fhir.model.r5.CodeBox
 import dev.ohs.fhir.model.r5.CodeableConcept
 import dev.ohs.fhir.model.r5.Coding
 import dev.ohs.fhir.model.r5.ConceptMap
@@ -46,9 +44,7 @@ import dev.ohs.fhir.model.r5.Quantity
 import dev.ohs.fhir.model.r5.RelatedArtifact
 import dev.ohs.fhir.model.r5.Resource
 import dev.ohs.fhir.model.r5.String as R5String
-import dev.ohs.fhir.model.r5.StringBox
 import dev.ohs.fhir.model.r5.Uri
-import dev.ohs.fhir.model.r5.UriBox
 import dev.ohs.fhir.model.r5.UsageContext
 import dev.ohs.fhir.model.r5.terminologies.ConceptMapRelationship
 import dev.ohs.fhir.model.r5.terminologies.PublicationStatus
@@ -890,12 +886,12 @@ internal object ConceptMapGroupElementTargetPropertySerializer :
       code = Code.of(code, _code)!!,
       `value` =
         (valueCoding
-          ?: (R5String.of(valueString, _valueString))?.let { StringBox(it) }
+          ?: R5String.of(valueString, _valueString)
           ?: Integer.of(valueInteger, _valueInteger)
           ?: R5Boolean.of(valueBoolean, _valueBoolean)
           ?: DateTime.of(FhirDateTime.fromString(valueDateTime), _valueDateTime)
           ?: Decimal.of(valueDecimal, _valueDecimal)
-          ?: (Code.of(valueCode, _valueCode))?.let { CodeBox(it) })!!,
+          ?: Code.of(valueCode, _valueCode))!!,
     )
   }
 
@@ -921,9 +917,9 @@ internal object ConceptMapGroupElementTargetPropertySerializer :
       is Coding -> {
         encoder.encodeSerializableElement(descriptor, 5, Hoisted.valueCodingSer, choice)
       }
-      is StringBox -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 6, it) }
-        (choice.value.toElement())?.let {
+      is R5String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 6, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 7, Hoisted.codeSer, it)
         }
       }
@@ -953,9 +949,9 @@ internal object ConceptMapGroupElementTargetPropertySerializer :
           encoder.encodeSerializableElement(descriptor, 15, Hoisted.codeSer, it)
         }
       }
-      is CodeBox -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 16, it) }
-        (choice.value.toElement())?.let {
+      is Code -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 16, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 17, Hoisted.codeSer, it)
         }
       }
@@ -1073,9 +1069,9 @@ internal object ConceptMapGroupElementTargetDependsOnSerializer :
       modifierExtension = modifierExtension ?: listOf(),
       attribute = Code.of(attribute, _attribute)!!,
       `value` =
-        ((Code.of(valueCode, _valueCode))?.let { CodeBox(it) }
+        (Code.of(valueCode, _valueCode)
           ?: valueCoding
-          ?: (R5String.of(valueString, _valueString))?.let { StringBox(it) }
+          ?: R5String.of(valueString, _valueString)
           ?: R5Boolean.of(valueBoolean, _valueBoolean)
           ?: valueQuantity),
       valueSet = Canonical.of(valueSet, _valueSet),
@@ -1102,18 +1098,18 @@ internal object ConceptMapGroupElementTargetDependsOnSerializer :
     }
     when (val choice = value.`value`) {
       null -> {}
-      is CodeBox -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
-        (choice.value.toElement())?.let {
+      is Code -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 6, Hoisted.attributeSer, it)
         }
       }
       is Coding -> {
         encoder.encodeSerializableElement(descriptor, 7, Hoisted.valueCodingSer, choice)
       }
-      is StringBox -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 8, it) }
-        (choice.value.toElement())?.let {
+      is R5String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 8, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 9, Hoisted.attributeSer, it)
         }
       }
@@ -1717,11 +1713,11 @@ internal object ConceptMapSerializer : KSerializer<ConceptMap> {
       `property` = `property` ?: listOf(),
       additionalAttribute = additionalAttribute ?: listOf(),
       sourceScope =
-        ((Uri.of(sourceScopeUri, _sourceScopeUri))?.let { UriBox(it) }
-          ?: (Canonical.of(sourceScopeCanonical, _sourceScopeCanonical))?.let { CanonicalBox(it) }),
+        (Uri.of(sourceScopeUri, _sourceScopeUri)
+          ?: Canonical.of(sourceScopeCanonical, _sourceScopeCanonical)),
       targetScope =
-        ((Uri.of(targetScopeUri, _targetScopeUri))?.let { UriBox(it) }
-          ?: (Canonical.of(targetScopeCanonical, _targetScopeCanonical))?.let { CanonicalBox(it) }),
+        (Uri.of(targetScopeUri, _targetScopeUri)
+          ?: Canonical.of(targetScopeCanonical, _targetScopeCanonical)),
       group = group ?: listOf(),
     )
   }
@@ -2050,11 +2046,9 @@ internal object ConceptMapSerializer : KSerializer<ConceptMap> {
       )
     when (val choice = value.sourceScope) {
       null -> {}
-      is UriBox -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 54 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is Uri -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 54 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             55 + descriptorOffset,
@@ -2063,11 +2057,9 @@ internal object ConceptMapSerializer : KSerializer<ConceptMap> {
           )
         }
       }
-      is CanonicalBox -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 56 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is Canonical -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 56 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             57 + descriptorOffset,
@@ -2079,11 +2071,9 @@ internal object ConceptMapSerializer : KSerializer<ConceptMap> {
     }
     when (val choice = value.targetScope) {
       null -> {}
-      is UriBox -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 58 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is Uri -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 58 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             59 + descriptorOffset,
@@ -2092,11 +2082,9 @@ internal object ConceptMapSerializer : KSerializer<ConceptMap> {
           )
         }
       }
-      is CanonicalBox -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 60 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is Canonical -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 60 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             61 + descriptorOffset,

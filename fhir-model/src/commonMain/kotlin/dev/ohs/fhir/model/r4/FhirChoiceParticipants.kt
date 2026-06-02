@@ -48,12 +48,21 @@ public object FhirChoiceParticipants {
     AllergyIntolerance.Onset,
     Condition.Abatement,
     Condition.Onset,
+    ElementDefinition.DefaultValue,
+    ElementDefinition.Example.Value,
+    ElementDefinition.Fixed,
+    ElementDefinition.Pattern,
+    Extension.Value,
     FamilyMemberHistory.Age,
     FamilyMemberHistory.Condition.Onset,
     FamilyMemberHistory.Deceased,
+    Parameters.Parameter.Value,
     PlanDefinition.Action.Timing,
     Procedure.Performed,
-    RequestGroup.Action.Timing
+    RequestGroup.Action.Timing,
+    StructureMap.Group.Rule.Source.DefaultValue,
+    Task.Input.Value,
+    Task.Output.Value
 
   public sealed interface AnnotationChoices :
     ElementDefinition.DefaultValue,
@@ -138,10 +147,36 @@ public object FhirChoiceParticipants {
     ValueSet.Expansion.Parameter.Value
 
   public sealed interface CanonicalChoices :
+    ConceptMap.Source,
+    ConceptMap.Target,
+    ElementDefinition.DefaultValue,
+    ElementDefinition.Example.Value,
+    ElementDefinition.Fixed,
+    ElementDefinition.Pattern,
     EvidenceVariable.Characteristic.Definition,
+    Extension.Value,
+    GuidanceResponse.Module,
     ImplementationGuide.Definition.Resource.Example,
     ImplementationGuide.Manifest.Resource.Example,
-    ResearchElementDefinition.Characteristic.Definition
+    Parameters.Parameter.Value,
+    PlanDefinition.Action.Definition,
+    ResearchElementDefinition.Characteristic.Definition,
+    StructureMap.Group.Rule.Source.DefaultValue,
+    Task.Input.Value,
+    Task.Output.Value
+
+  public sealed interface CodeChoices :
+    CodeSystem.Concept.Property.Value,
+    ElementDefinition.DefaultValue,
+    ElementDefinition.Example.Value,
+    ElementDefinition.Fixed,
+    ElementDefinition.Pattern,
+    Extension.Value,
+    Parameters.Parameter.Value,
+    StructureMap.Group.Rule.Source.DefaultValue,
+    Task.Input.Value,
+    Task.Output.Value,
+    ValueSet.Expansion.Parameter.Value
 
   public sealed interface CodeableConceptChoices :
     ActivityDefinition.Product,
@@ -260,6 +295,17 @@ public object FhirChoiceParticipants {
     Task.Output.Value
 
   public sealed interface ContributorChoices :
+    ElementDefinition.DefaultValue,
+    ElementDefinition.Example.Value,
+    ElementDefinition.Fixed,
+    ElementDefinition.Pattern,
+    Extension.Value,
+    Parameters.Parameter.Value,
+    StructureMap.Group.Rule.Source.DefaultValue,
+    Task.Input.Value,
+    Task.Output.Value
+
+  public sealed interface CountChoices :
     ElementDefinition.DefaultValue,
     ElementDefinition.Example.Value,
     ElementDefinition.Fixed,
@@ -393,6 +439,17 @@ public object FhirChoiceParticipants {
     Task.Output.Value,
     ValueSet.Expansion.Parameter.Value
 
+  public sealed interface DistanceChoices :
+    ElementDefinition.DefaultValue,
+    ElementDefinition.Example.Value,
+    ElementDefinition.Fixed,
+    ElementDefinition.Pattern,
+    Extension.Value,
+    Parameters.Parameter.Value,
+    StructureMap.Group.Rule.Source.DefaultValue,
+    Task.Input.Value,
+    Task.Output.Value
+
   public sealed interface DosageChoices :
     ElementDefinition.DefaultValue,
     ElementDefinition.Example.Value,
@@ -407,8 +464,14 @@ public object FhirChoiceParticipants {
   public sealed interface DurationChoices :
     ActivityDefinition.Timing,
     DataRequirement.DateFilter.Value,
+    ElementDefinition.DefaultValue,
+    ElementDefinition.Example.Value,
+    ElementDefinition.Fixed,
+    ElementDefinition.Pattern,
     EvidenceVariable.Characteristic.ParticipantEffective,
+    Extension.Value,
     Goal.Target.Due,
+    Parameters.Parameter.Value,
     PlanDefinition.Action.RelatedAction.Offset,
     PlanDefinition.Action.Timing,
     RequestGroup.Action.RelatedAction.Offset,
@@ -416,6 +479,9 @@ public object FhirChoiceParticipants {
     ResearchElementDefinition.Characteristic.ParticipantEffective,
     ResearchElementDefinition.Characteristic.StudyEffective,
     Specimen.Collection.FastingStatus,
+    StructureMap.Group.Rule.Source.DefaultValue,
+    Task.Input.Value,
+    Task.Output.Value,
     Timing.Repeat.Bounds
 
   public sealed interface ExpressionChoices :
@@ -439,6 +505,18 @@ public object FhirChoiceParticipants {
     Extension.Value,
     Parameters.Parameter.Value,
     StructureMap.Group.Rule.Source.DefaultValue,
+    Task.Input.Value,
+    Task.Output.Value
+
+  public sealed interface IdChoices :
+    ElementDefinition.DefaultValue,
+    ElementDefinition.Example.Value,
+    ElementDefinition.Fixed,
+    ElementDefinition.Pattern,
+    Extension.Value,
+    Parameters.Parameter.Value,
+    StructureMap.Group.Rule.Source.DefaultValue,
+    StructureMap.Group.Rule.Target.Parameter.Value,
     Task.Input.Value,
     Task.Output.Value
 
@@ -471,16 +549,38 @@ public object FhirChoiceParticipants {
   public sealed interface IntegerChoices :
     CodeSystem.Concept.Property.Value,
     Contract.Term.Offer.Answer.Value,
+    ElementDefinition.DefaultValue,
+    ElementDefinition.Example.Value,
+    ElementDefinition.Fixed,
+    ElementDefinition.MaxValue,
+    ElementDefinition.MinValue,
+    ElementDefinition.Pattern,
+    Extension.Value,
     Goal.Target.Detail,
     Observation.Component.Value,
     Observation.Value,
+    Parameters.Parameter.Value,
     Patient.MultipleBirth,
     Questionnaire.Item.AnswerOption.Value,
     Questionnaire.Item.EnableWhen.Answer,
     Questionnaire.Item.Initial.Value,
     QuestionnaireResponse.Item.Answer.Value,
+    StructureMap.Group.Rule.Source.DefaultValue,
     StructureMap.Group.Rule.Target.Parameter.Value,
+    Task.Input.Value,
+    Task.Output.Value,
     ValueSet.Expansion.Parameter.Value
+
+  public sealed interface MarkdownChoices :
+    ElementDefinition.DefaultValue,
+    ElementDefinition.Example.Value,
+    ElementDefinition.Fixed,
+    ElementDefinition.Pattern,
+    Extension.Value,
+    Parameters.Parameter.Value,
+    StructureMap.Group.Rule.Source.DefaultValue,
+    Task.Input.Value,
+    Task.Output.Value
 
   public sealed interface MetaChoices :
     ElementDefinition.DefaultValue,
@@ -503,6 +603,17 @@ public object FhirChoiceParticipants {
     ElementDefinition.Pattern,
     ExplanationOfBenefit.BenefitBalance.Financial.Allowed,
     ExplanationOfBenefit.BenefitBalance.Financial.Used,
+    Extension.Value,
+    Parameters.Parameter.Value,
+    StructureMap.Group.Rule.Source.DefaultValue,
+    Task.Input.Value,
+    Task.Output.Value
+
+  public sealed interface OidChoices :
+    ElementDefinition.DefaultValue,
+    ElementDefinition.Example.Value,
+    ElementDefinition.Fixed,
+    ElementDefinition.Pattern,
     Extension.Value,
     Parameters.Parameter.Value,
     StructureMap.Group.Rule.Source.DefaultValue,
@@ -581,12 +692,23 @@ public object FhirChoiceParticipants {
     Timing.Repeat.Bounds
 
   public sealed interface PositiveIntChoices :
+    ElementDefinition.DefaultValue,
+    ElementDefinition.Example.Value,
+    ElementDefinition.Fixed,
+    ElementDefinition.MaxValue,
+    ElementDefinition.MinValue,
+    ElementDefinition.Pattern,
+    Extension.Value,
     Immunization.ProtocolApplied.DoseNumber,
     Immunization.ProtocolApplied.SeriesDoses,
     ImmunizationEvaluation.DoseNumber,
     ImmunizationEvaluation.SeriesDoses,
     ImmunizationRecommendation.Recommendation.DoseNumber,
-    ImmunizationRecommendation.Recommendation.SeriesDoses
+    ImmunizationRecommendation.Recommendation.SeriesDoses,
+    Parameters.Parameter.Value,
+    StructureMap.Group.Rule.Source.DefaultValue,
+    Task.Input.Value,
+    Task.Output.Value
 
   public sealed interface QuantityChoices :
     Claim.SupportingInfo.Value,
@@ -595,9 +717,14 @@ public object FhirChoiceParticipants {
     DeviceRequest.Parameter.Value,
     Dosage.DoseAndRate.Dose,
     Dosage.DoseAndRate.Rate,
+    ElementDefinition.DefaultValue,
+    ElementDefinition.Example.Value,
+    ElementDefinition.Fixed,
     ElementDefinition.MaxValue,
     ElementDefinition.MinValue,
+    ElementDefinition.Pattern,
     ExplanationOfBenefit.SupportingInfo.Value,
+    Extension.Value,
     Goal.Target.Detail,
     Group.Characteristic.Value,
     MedicationAdministration.Dosage.Rate,
@@ -606,18 +733,22 @@ public object FhirChoiceParticipants {
     NutritionOrder.EnteralFormula.Administration.Rate,
     Observation.Component.Value,
     Observation.Value,
+    Parameters.Parameter.Value,
     PlanDefinition.Goal.Target.Detail,
     Questionnaire.Item.EnableWhen.Answer,
     Questionnaire.Item.Initial.Value,
     QuestionnaireResponse.Item.Answer.Value,
     ServiceRequest.Quantity,
     SpecimenDefinition.TypeTested.Container.MinimumVolume,
+    StructureMap.Group.Rule.Source.DefaultValue,
     SubstanceAmount.Amount,
     SubstanceReferenceInformation.Target.Amount,
     SubstanceSpecification.Moiety.Amount,
     SubstanceSpecification.Property.Amount,
     SubstanceSpecification.Relationship.Amount,
     SupplyRequest.Parameter.Value,
+    Task.Input.Value,
+    Task.Output.Value,
     UsageContext.Value
 
   public sealed interface RangeChoices :
@@ -802,6 +933,7 @@ public object FhirChoiceParticipants {
     AuditEvent.Entity.Detail.Value,
     CarePlan.Activity.Detail.Scheduled,
     Claim.SupportingInfo.Value,
+    CodeSystem.Concept.Property.Value,
     Communication.Payload.Content,
     CommunicationRequest.Payload.Content,
     Condition.Abatement,
@@ -810,8 +942,13 @@ public object FhirChoiceParticipants {
     CoverageEligibilityResponse.Insurance.Item.Benefit.Allowed,
     CoverageEligibilityResponse.Insurance.Item.Benefit.Used,
     DeviceDefinition.Manufacturer,
+    ElementDefinition.DefaultValue,
+    ElementDefinition.Example.Value,
+    ElementDefinition.Fixed,
+    ElementDefinition.Pattern,
     ExplanationOfBenefit.BenefitBalance.Financial.Allowed,
     ExplanationOfBenefit.SupportingInfo.Value,
+    Extension.Value,
     FamilyMemberHistory.Age,
     FamilyMemberHistory.Born,
     FamilyMemberHistory.Condition.Onset,
@@ -827,17 +964,23 @@ public object FhirChoiceParticipants {
     MedicationKnowledge.DrugCharacteristic.Value,
     Observation.Component.Value,
     Observation.Value,
+    Parameters.Parameter.Value,
     Procedure.Performed,
     Questionnaire.Item.AnswerOption.Value,
     Questionnaire.Item.EnableWhen.Answer,
     Questionnaire.Item.Initial.Value,
     QuestionnaireResponse.Item.Answer.Value,
     SpecimenDefinition.TypeTested.Container.MinimumVolume,
+    StructureMap.Group.Rule.Source.DefaultValue,
+    StructureMap.Group.Rule.Target.Parameter.Value,
     SubstanceAmount.Amount,
     SubstanceReferenceInformation.Target.Amount,
     SubstanceSpecification.Moiety.Amount,
     SubstanceSpecification.Property.Amount,
-    SubstanceSpecification.Relationship.Amount
+    SubstanceSpecification.Relationship.Amount,
+    Task.Input.Value,
+    Task.Output.Value,
+    ValueSet.Expansion.Parameter.Value
 
   public sealed interface TimeChoices :
     Contract.Term.Offer.Answer.Value,
@@ -901,18 +1044,65 @@ public object FhirChoiceParticipants {
   public sealed interface UnsignedIntChoices :
     CoverageEligibilityResponse.Insurance.Item.Benefit.Allowed,
     CoverageEligibilityResponse.Insurance.Item.Benefit.Used,
+    ElementDefinition.DefaultValue,
+    ElementDefinition.Example.Value,
+    ElementDefinition.Fixed,
+    ElementDefinition.MaxValue,
+    ElementDefinition.MinValue,
+    ElementDefinition.Pattern,
     ExplanationOfBenefit.BenefitBalance.Financial.Allowed,
-    ExplanationOfBenefit.BenefitBalance.Financial.Used
+    ExplanationOfBenefit.BenefitBalance.Financial.Used,
+    Extension.Value,
+    Parameters.Parameter.Value,
+    StructureMap.Group.Rule.Source.DefaultValue,
+    Task.Input.Value,
+    Task.Output.Value
 
   public sealed interface UriChoices :
+    ConceptMap.Source,
+    ConceptMap.Target,
     Contract.Term.Offer.Answer.Value,
+    ElementDefinition.DefaultValue,
+    ElementDefinition.Example.Value,
+    ElementDefinition.Fixed,
+    ElementDefinition.Pattern,
+    Extension.Value,
+    GuidanceResponse.Module,
     MessageDefinition.Event,
     MessageHeader.Event,
+    Parameters.Parameter.Value,
+    PlanDefinition.Action.Definition,
     Questionnaire.Item.Initial.Value,
     QuestionnaireResponse.Item.Answer.Value,
+    StructureMap.Group.Rule.Source.DefaultValue,
+    Task.Input.Value,
+    Task.Output.Value,
     ValueSet.Expansion.Parameter.Value
 
+  public sealed interface UrlChoices :
+    ElementDefinition.DefaultValue,
+    ElementDefinition.Example.Value,
+    ElementDefinition.Fixed,
+    ElementDefinition.Pattern,
+    Extension.Value,
+    ImplementationGuide.Definition.Page.Name,
+    Parameters.Parameter.Value,
+    StructureMap.Group.Rule.Source.DefaultValue,
+    Task.Input.Value,
+    Task.Output.Value
+
   public sealed interface UsageContextChoices :
+    ElementDefinition.DefaultValue,
+    ElementDefinition.Example.Value,
+    ElementDefinition.Fixed,
+    ElementDefinition.Pattern,
+    Extension.Value,
+    Parameters.Parameter.Value,
+    StructureMap.Group.Rule.Source.DefaultValue,
+    Task.Input.Value,
+    Task.Output.Value
+
+  public sealed interface UuidChoices :
     ElementDefinition.DefaultValue,
     ElementDefinition.Example.Value,
     ElementDefinition.Fixed,

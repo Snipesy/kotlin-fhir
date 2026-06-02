@@ -39,6 +39,8 @@ class FhirCodegen(
   typeGraph: TypeGraphAnalyzer,
   primitiveValueIsNonNull: Map<String, Boolean>,
   choiceRegistry: ChoiceTypeRegistry,
+  datatypeSpecializationRoots: Set<String>,
+  datatypeSpecializationRootBases: Map<String, String>,
 ) {
 
   private val codegenContext =
@@ -49,6 +51,8 @@ class FhirCodegen(
       typeGraph = typeGraph,
       primitiveValueIsNonNull = primitiveValueIsNonNull,
       choiceRegistry = choiceRegistry,
+      datatypeSpecializationRoots = datatypeSpecializationRoots,
+      datatypeSpecializationRootBases = datatypeSpecializationRootBases,
     )
 
   private val modelFileSpecGenerator = ModelFileSpecGenerator(codegenContext)

@@ -1388,8 +1388,8 @@ public data class ValueSet(
       /**
        * The value of the parameter.
        *
-       * A FHIR choice type — one of: [Boolean] | [CodeBox] | [DateTime] | [Decimal] | [Integer] |
-       * [StringBox] | [Uri]
+       * A FHIR choice type — one of: [Boolean] | [Code] | [DateTime] | [Decimal] | [Integer] |
+       * [String] | [Uri]
        */
       public val `value`: Value? = null,
     ) : BackboneElement() {
@@ -1404,13 +1404,13 @@ public data class ValueSet(
         }
 
       /**
-       * A FHIR choice type — one of: [Boolean] | [CodeBox] | [DateTime] | [Decimal] | [Integer] |
-       * [StringBox] | [Uri]
+       * A FHIR choice type — one of: [Boolean] | [Code] | [DateTime] | [Decimal] | [Integer] |
+       * [String] | [Uri]
        */
       public sealed interface Value {
         public typealias Boolean = dev.ohs.fhir.model.r4.Boolean
 
-        public typealias Code = CodeBox
+        public typealias Code = dev.ohs.fhir.model.r4.Code
 
         public typealias DateTime = dev.ohs.fhir.model.r4.DateTime
 
@@ -1418,7 +1418,7 @@ public data class ValueSet(
 
         public typealias Integer = dev.ohs.fhir.model.r4.Integer
 
-        public typealias String = StringBox
+        public typealias String = dev.ohs.fhir.model.r4.String
 
         public typealias Uri = dev.ohs.fhir.model.r4.Uri
       }
@@ -1476,8 +1476,8 @@ public data class ValueSet(
         /**
          * The value of the parameter.
          *
-         * A FHIR choice type — one of: [Boolean] | [CodeBox] | [DateTime] | [Decimal] | [Integer] |
-         * [StringBox] | [Uri]
+         * A FHIR choice type — one of: [Boolean] | [Code] | [DateTime] | [Decimal] | [Integer] |
+         * [String] | [Uri]
          */
         public var `value`: Value? = null
 

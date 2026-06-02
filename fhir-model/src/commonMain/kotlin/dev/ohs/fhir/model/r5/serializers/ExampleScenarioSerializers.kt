@@ -20,7 +20,6 @@ package dev.ohs.fhir.model.r5.serializers
 
 import dev.ohs.fhir.model.r5.Boolean as R5Boolean
 import dev.ohs.fhir.model.r5.Canonical
-import dev.ohs.fhir.model.r5.CanonicalBox
 import dev.ohs.fhir.model.r5.Code
 import dev.ohs.fhir.model.r5.CodeableConcept
 import dev.ohs.fhir.model.r5.Coding
@@ -39,7 +38,6 @@ import dev.ohs.fhir.model.r5.Reference
 import dev.ohs.fhir.model.r5.Resource
 import dev.ohs.fhir.model.r5.String as R5String
 import dev.ohs.fhir.model.r5.Uri
-import dev.ohs.fhir.model.r5.UriBox
 import dev.ohs.fhir.model.r5.UsageContext
 import dev.ohs.fhir.model.r5.terminologies.PublicationStatus
 import kotlin.Boolean as KotlinBoolean
@@ -309,9 +307,8 @@ internal object ExampleScenarioInstanceSerializer : KSerializer<ExampleScenario.
       structureType = structureType!!,
       structureVersion = R5String.of(structureVersion, _structureVersion),
       structureProfile =
-        ((Canonical.of(structureProfileCanonical, _structureProfileCanonical))?.let {
-          CanonicalBox(it)
-        } ?: (Uri.of(structureProfileUri, _structureProfileUri))?.let { UriBox(it) }),
+        (Canonical.of(structureProfileCanonical, _structureProfileCanonical)
+          ?: Uri.of(structureProfileUri, _structureProfileUri)),
       title = R5String.of(title, _title)!!,
       description = Markdown.of(description, _description),
       content = content,
@@ -342,15 +339,15 @@ internal object ExampleScenarioInstanceSerializer : KSerializer<ExampleScenario.
     }
     when (val choice = value.structureProfile) {
       null -> {}
-      is CanonicalBox -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 8, it) }
-        (choice.value.toElement())?.let {
+      is Canonical -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 8, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 9, Hoisted.keySer, it)
         }
       }
-      is UriBox -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 10, it) }
-        (choice.value.toElement())?.let {
+      is Uri -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 10, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 11, Hoisted.keySer, it)
         }
       }

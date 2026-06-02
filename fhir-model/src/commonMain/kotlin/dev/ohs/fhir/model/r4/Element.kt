@@ -31,7 +31,7 @@ public open class Element(
    * Unique id for the element within a resource (for internal references). This may be any string
    * value that does not contain spaces.
    */
-  public open val id: String? = null,
+  open override val id: String? = null,
   /**
    * May be used to represent additional information that is not part of the basic definition of the
    * element. To make the use of extensions safe and manageable, there is a strict set of governance
@@ -44,8 +44,8 @@ public open class Element(
    * The use of extensions is what allows the FHIR specification to retain a core level of
    * simplicity for everyone.
    */
-  public open val extension: List<Extension> = listOf(),
-) {
+  open override val extension: List<Extension> = listOf(),
+) : ElementLike {
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
     if (other !is Element) return false

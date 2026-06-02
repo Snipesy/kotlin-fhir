@@ -20,31 +20,25 @@ package dev.ohs.fhir.model.r4.serializers
 
 import dev.ohs.fhir.model.r4.Address
 import dev.ohs.fhir.model.r4.Age
-import dev.ohs.fhir.model.r4.AgeBox
 import dev.ohs.fhir.model.r4.Annotation
 import dev.ohs.fhir.model.r4.Attachment
 import dev.ohs.fhir.model.r4.Base64Binary
 import dev.ohs.fhir.model.r4.Boolean as R4Boolean
 import dev.ohs.fhir.model.r4.Canonical
-import dev.ohs.fhir.model.r4.CanonicalBox
 import dev.ohs.fhir.model.r4.Code
-import dev.ohs.fhir.model.r4.CodeBox
 import dev.ohs.fhir.model.r4.CodeableConcept
 import dev.ohs.fhir.model.r4.Coding
 import dev.ohs.fhir.model.r4.ContactDetail
 import dev.ohs.fhir.model.r4.ContactPoint
 import dev.ohs.fhir.model.r4.Contributor
 import dev.ohs.fhir.model.r4.Count
-import dev.ohs.fhir.model.r4.CountBox
 import dev.ohs.fhir.model.r4.DataRequirement
 import dev.ohs.fhir.model.r4.Date
 import dev.ohs.fhir.model.r4.DateTime
 import dev.ohs.fhir.model.r4.Decimal
 import dev.ohs.fhir.model.r4.Distance
-import dev.ohs.fhir.model.r4.DistanceBox
 import dev.ohs.fhir.model.r4.Dosage
 import dev.ohs.fhir.model.r4.Duration
-import dev.ohs.fhir.model.r4.DurationBox
 import dev.ohs.fhir.model.r4.Element
 import dev.ohs.fhir.model.r4.Enumeration
 import dev.ohs.fhir.model.r4.Expression
@@ -54,24 +48,18 @@ import dev.ohs.fhir.model.r4.FhirDateTime
 import dev.ohs.fhir.model.r4.FhirDecimal
 import dev.ohs.fhir.model.r4.HumanName
 import dev.ohs.fhir.model.r4.Id
-import dev.ohs.fhir.model.r4.IdBox
 import dev.ohs.fhir.model.r4.Identifier
 import dev.ohs.fhir.model.r4.Instant
 import dev.ohs.fhir.model.r4.Integer
-import dev.ohs.fhir.model.r4.IntegerBox
 import dev.ohs.fhir.model.r4.Markdown
-import dev.ohs.fhir.model.r4.MarkdownBox
 import dev.ohs.fhir.model.r4.Meta
 import dev.ohs.fhir.model.r4.Money
 import dev.ohs.fhir.model.r4.Narrative
 import dev.ohs.fhir.model.r4.Oid
-import dev.ohs.fhir.model.r4.OidBox
 import dev.ohs.fhir.model.r4.ParameterDefinition
 import dev.ohs.fhir.model.r4.Period
 import dev.ohs.fhir.model.r4.PositiveInt
-import dev.ohs.fhir.model.r4.PositiveIntBox
 import dev.ohs.fhir.model.r4.Quantity
-import dev.ohs.fhir.model.r4.QuantityBox
 import dev.ohs.fhir.model.r4.Range
 import dev.ohs.fhir.model.r4.Ratio
 import dev.ohs.fhir.model.r4.Reference
@@ -80,20 +68,15 @@ import dev.ohs.fhir.model.r4.Resource
 import dev.ohs.fhir.model.r4.SampledData
 import dev.ohs.fhir.model.r4.Signature
 import dev.ohs.fhir.model.r4.String as R4String
-import dev.ohs.fhir.model.r4.StringBox
 import dev.ohs.fhir.model.r4.StructureMap
 import dev.ohs.fhir.model.r4.Time
 import dev.ohs.fhir.model.r4.Timing
 import dev.ohs.fhir.model.r4.TriggerDefinition
 import dev.ohs.fhir.model.r4.UnsignedInt
-import dev.ohs.fhir.model.r4.UnsignedIntBox
 import dev.ohs.fhir.model.r4.Uri
-import dev.ohs.fhir.model.r4.UriBox
 import dev.ohs.fhir.model.r4.Url
-import dev.ohs.fhir.model.r4.UrlBox
 import dev.ohs.fhir.model.r4.UsageContext
 import dev.ohs.fhir.model.r4.Uuid
-import dev.ohs.fhir.model.r4.UuidBox
 import dev.ohs.fhir.model.r4.terminologies.PublicationStatus
 import kotlin.Boolean as KotlinBoolean
 import kotlin.Int
@@ -1286,42 +1269,38 @@ internal object StructureMapGroupRuleSourceSerializer :
       defaultValue =
         (Base64Binary.of(defaultValueBase64Binary, _defaultValueBase64Binary)
           ?: R4Boolean.of(defaultValueBoolean, _defaultValueBoolean)
-          ?: (Canonical.of(defaultValueCanonical, _defaultValueCanonical))?.let { CanonicalBox(it) }
-          ?: (Code.of(defaultValueCode, _defaultValueCode))?.let { CodeBox(it) }
+          ?: Canonical.of(defaultValueCanonical, _defaultValueCanonical)
+          ?: Code.of(defaultValueCode, _defaultValueCode)
           ?: Date.of(FhirDate.fromString(defaultValueDate), _defaultValueDate)
           ?: DateTime.of(FhirDateTime.fromString(defaultValueDateTime), _defaultValueDateTime)
           ?: Decimal.of(defaultValueDecimal, _defaultValueDecimal)
-          ?: (Id.of(defaultValueId, _defaultValueId))?.let { IdBox(it) }
+          ?: Id.of(defaultValueId, _defaultValueId)
           ?: Instant.of(FhirDateTime.fromString(defaultValueInstant), _defaultValueInstant)
-          ?: (Integer.of(defaultValueInteger, _defaultValueInteger))?.let { IntegerBox(it) }
-          ?: (Markdown.of(defaultValueMarkdown, _defaultValueMarkdown))?.let { MarkdownBox(it) }
-          ?: (Oid.of(defaultValueOid, _defaultValueOid))?.let { OidBox(it) }
-          ?: (PositiveInt.of(defaultValuePositiveInt, _defaultValuePositiveInt))?.let {
-            PositiveIntBox(it)
-          }
-          ?: (R4String.of(defaultValueString, _defaultValueString))?.let { StringBox(it) }
+          ?: Integer.of(defaultValueInteger, _defaultValueInteger)
+          ?: Markdown.of(defaultValueMarkdown, _defaultValueMarkdown)
+          ?: Oid.of(defaultValueOid, _defaultValueOid)
+          ?: PositiveInt.of(defaultValuePositiveInt, _defaultValuePositiveInt)
+          ?: R4String.of(defaultValueString, _defaultValueString)
           ?: Time.of(defaultValueTime, _defaultValueTime)
-          ?: (UnsignedInt.of(defaultValueUnsignedInt, _defaultValueUnsignedInt))?.let {
-            UnsignedIntBox(it)
-          }
-          ?: (Uri.of(defaultValueUri, _defaultValueUri))?.let { UriBox(it) }
-          ?: (Url.of(defaultValueUrl, _defaultValueUrl))?.let { UrlBox(it) }
-          ?: (Uuid.of(defaultValueUuid, _defaultValueUuid))?.let { UuidBox(it) }
+          ?: UnsignedInt.of(defaultValueUnsignedInt, _defaultValueUnsignedInt)
+          ?: Uri.of(defaultValueUri, _defaultValueUri)
+          ?: Url.of(defaultValueUrl, _defaultValueUrl)
+          ?: Uuid.of(defaultValueUuid, _defaultValueUuid)
           ?: defaultValueAddress
-          ?: (defaultValueAge)?.let { AgeBox(it) }
+          ?: defaultValueAge
           ?: defaultValueAnnotation
           ?: defaultValueAttachment
           ?: defaultValueCodeableConcept
           ?: defaultValueCoding
           ?: defaultValueContactPoint
-          ?: (defaultValueCount)?.let { CountBox(it) }
-          ?: (defaultValueDistance)?.let { DistanceBox(it) }
-          ?: (defaultValueDuration)?.let { DurationBox(it) }
+          ?: defaultValueCount
+          ?: defaultValueDistance
+          ?: defaultValueDuration
           ?: defaultValueHumanName
           ?: defaultValueIdentifier
           ?: defaultValueMoney
           ?: defaultValuePeriod
-          ?: (defaultValueQuantity)?.let { QuantityBox(it) }
+          ?: defaultValueQuantity
           ?: defaultValueRange
           ?: defaultValueRatio
           ?: defaultValueReference
@@ -1394,15 +1373,15 @@ internal object StructureMapGroupRuleSourceSerializer :
           encoder.encodeSerializableElement(descriptor, 14, Hoisted.contextSer, it)
         }
       }
-      is CanonicalBox -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 15, it) }
-        (choice.value.toElement())?.let {
+      is Canonical -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 15, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 16, Hoisted.contextSer, it)
         }
       }
-      is CodeBox -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 17, it) }
-        (choice.value.toElement())?.let {
+      is Code -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 17, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 18, Hoisted.contextSer, it)
         }
       }
@@ -1426,9 +1405,9 @@ internal object StructureMapGroupRuleSourceSerializer :
           encoder.encodeSerializableElement(descriptor, 24, Hoisted.contextSer, it)
         }
       }
-      is IdBox -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 25, it) }
-        (choice.value.toElement())?.let {
+      is Id -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 25, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 26, Hoisted.contextSer, it)
         }
       }
@@ -1438,33 +1417,33 @@ internal object StructureMapGroupRuleSourceSerializer :
           encoder.encodeSerializableElement(descriptor, 28, Hoisted.contextSer, it)
         }
       }
-      is IntegerBox -> {
-        ((choice.value.value))?.let { encoder.encodeIntElement(descriptor, 29, it) }
-        (choice.value.toElement())?.let {
+      is Integer -> {
+        ((choice.value))?.let { encoder.encodeIntElement(descriptor, 29, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 30, Hoisted.contextSer, it)
         }
       }
-      is MarkdownBox -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 31, it) }
-        (choice.value.toElement())?.let {
+      is Markdown -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 31, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 32, Hoisted.contextSer, it)
         }
       }
-      is OidBox -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 33, it) }
-        (choice.value.toElement())?.let {
+      is Oid -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 33, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 34, Hoisted.contextSer, it)
         }
       }
-      is PositiveIntBox -> {
-        ((choice.value.value))?.let { encoder.encodeIntElement(descriptor, 35, it) }
-        (choice.value.toElement())?.let {
+      is PositiveInt -> {
+        ((choice.value))?.let { encoder.encodeIntElement(descriptor, 35, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 36, Hoisted.contextSer, it)
         }
       }
-      is StringBox -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 37, it) }
-        (choice.value.toElement())?.let {
+      is R4String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 37, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 38, Hoisted.contextSer, it)
         }
       }
@@ -1476,35 +1455,35 @@ internal object StructureMapGroupRuleSourceSerializer :
           encoder.encodeSerializableElement(descriptor, 40, Hoisted.contextSer, it)
         }
       }
-      is UnsignedIntBox -> {
-        ((choice.value.value))?.let { encoder.encodeIntElement(descriptor, 41, it) }
-        (choice.value.toElement())?.let {
+      is UnsignedInt -> {
+        ((choice.value))?.let { encoder.encodeIntElement(descriptor, 41, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 42, Hoisted.contextSer, it)
         }
       }
-      is UriBox -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 43, it) }
-        (choice.value.toElement())?.let {
+      is Uri -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 43, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 44, Hoisted.contextSer, it)
         }
       }
-      is UrlBox -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 45, it) }
-        (choice.value.toElement())?.let {
+      is Url -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 45, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 46, Hoisted.contextSer, it)
         }
       }
-      is UuidBox -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 47, it) }
-        (choice.value.toElement())?.let {
+      is Uuid -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 47, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 48, Hoisted.contextSer, it)
         }
       }
       is Address -> {
         encoder.encodeSerializableElement(descriptor, 49, Hoisted.defaultValueAddressSer, choice)
       }
-      is AgeBox -> {
-        encoder.encodeSerializableElement(descriptor, 50, Hoisted.defaultValueAgeSer, choice.value)
+      is Age -> {
+        encoder.encodeSerializableElement(descriptor, 50, Hoisted.defaultValueAgeSer, choice)
       }
       is Annotation -> {
         encoder.encodeSerializableElement(descriptor, 51, Hoisted.defaultValueAnnotationSer, choice)
@@ -1531,29 +1510,14 @@ internal object StructureMapGroupRuleSourceSerializer :
           choice,
         )
       }
-      is CountBox -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          56,
-          Hoisted.defaultValueCountSer,
-          choice.value,
-        )
+      is Count -> {
+        encoder.encodeSerializableElement(descriptor, 56, Hoisted.defaultValueCountSer, choice)
       }
-      is DistanceBox -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          57,
-          Hoisted.defaultValueDistanceSer,
-          choice.value,
-        )
+      is Distance -> {
+        encoder.encodeSerializableElement(descriptor, 57, Hoisted.defaultValueDistanceSer, choice)
       }
-      is DurationBox -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          58,
-          Hoisted.defaultValueDurationSer,
-          choice.value,
-        )
+      is Duration -> {
+        encoder.encodeSerializableElement(descriptor, 58, Hoisted.defaultValueDurationSer, choice)
       }
       is HumanName -> {
         encoder.encodeSerializableElement(descriptor, 59, Hoisted.defaultValueHumanNameSer, choice)
@@ -1567,13 +1531,8 @@ internal object StructureMapGroupRuleSourceSerializer :
       is Period -> {
         encoder.encodeSerializableElement(descriptor, 62, Hoisted.defaultValuePeriodSer, choice)
       }
-      is QuantityBox -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          63,
-          Hoisted.defaultValueQuantitySer,
-          choice.value,
-        )
+      is Quantity -> {
+        encoder.encodeSerializableElement(descriptor, 63, Hoisted.defaultValueQuantitySer, choice)
       }
       is Range -> {
         encoder.encodeSerializableElement(descriptor, 64, Hoisted.defaultValueRangeSer, choice)
@@ -2070,8 +2029,8 @@ internal object StructureMapGroupRuleTargetParameterSerializer :
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
       `value` =
-        ((Id.of(valueId, _valueId))?.let { IdBox(it) }
-          ?: (R4String.of(valueString, _valueString))?.let { StringBox(it) }
+        (Id.of(valueId, _valueId)
+          ?: R4String.of(valueString, _valueString)
           ?: R4Boolean.of(valueBoolean, _valueBoolean)
           ?: Integer.of(valueInteger, _valueInteger)
           ?: Decimal.of(valueDecimal, _valueDecimal))!!,
@@ -2093,15 +2052,15 @@ internal object StructureMapGroupRuleTargetParameterSerializer :
         value.modifierExtension,
       )
     when (val choice = value.`value`) {
-      is IdBox -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 3, it) }
-        (choice.value.toElement())?.let {
+      is Id -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 3, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 4, Hoisted.valueIdSer, it)
         }
       }
-      is StringBox -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
-        (choice.value.toElement())?.let {
+      is R4String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 6, Hoisted.valueIdSer, it)
         }
       }

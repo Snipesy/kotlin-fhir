@@ -694,7 +694,7 @@ public data class DocumentReference(
       /**
        * Code|uri|canonical.
        *
-       * A FHIR choice type — one of: [CanonicalBox] | [Coding] | [UriBox]
+       * A FHIR choice type — one of: [Canonical] | [Coding] | [Uri]
        */
       public val `value`: Value,
     ) : BackboneElement() {
@@ -707,20 +707,20 @@ public data class DocumentReference(
           }
         }
 
-      /** A FHIR choice type — one of: [CanonicalBox] | [Coding] | [UriBox] */
+      /** A FHIR choice type — one of: [Canonical] | [Coding] | [Uri] */
       public sealed interface Value {
-        public typealias Canonical = CanonicalBox
+        public typealias Canonical = dev.ohs.fhir.model.r5.Canonical
 
         public typealias Coding = dev.ohs.fhir.model.r5.Coding
 
-        public typealias Uri = UriBox
+        public typealias Uri = dev.ohs.fhir.model.r5.Uri
       }
 
       public class Builder(
         /**
          * Code|uri|canonical.
          *
-         * A FHIR choice type — one of: [CanonicalBox] | [Coding] | [UriBox]
+         * A FHIR choice type — one of: [Canonical] | [Coding] | [Uri]
          */
         public var `value`: Value
       ) {

@@ -17,7 +17,6 @@
 package dev.ohs.fhir.model.r5
 
 import dev.ohs.fhir.model.r5.serializers.ExtensionSerializer
-import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.MutableList
 import kotlinx.serialization.Serializable
@@ -29,7 +28,7 @@ public data class Extension(
    * Unique id for the element within a resource (for internal references). This may be any string
    * value that does not contain spaces.
    */
-  override val id: String? = null,
+  override val id: kotlin.String? = null,
   /**
    * May be used to represent additional information that is not part of the basic definition of the
    * element. To make the use of extensions safe and managable, there is a strict set of governance
@@ -50,21 +49,20 @@ public data class Extension(
    * extensibility codes, or it may be a logical URI as declared in some other specification. The
    * definition SHALL be a URI for the Structure Definition defining the extension.
    */
-  public val url: String,
+  public val url: kotlin.String,
   /**
    * Value of extension - must be one of a constrained set of the data types (see
    * [Extensibility](extensibility.html) for a list).
    *
-   * A FHIR choice type — one of: [Address] | [AgeBox] | [Annotation] | [Attachment] |
-   * [Availability] | [Base64Binary] | [Boolean] | [CanonicalBox] | [CodeBox] | [CodeableConcept] |
-   * [CodeableReference] | [Coding] | [ContactDetail] | [ContactPoint] | [CountBox] |
-   * [DataRequirement] | [Date] | [DateTime] | [Decimal] | [DistanceBox] | [Dosage] | [DurationBox]
-   * | [Expression] | [ExtendedContactDetail] | [HumanName] | [IdBox] | [Identifier] | [Instant] |
-   * [IntegerBox] | [Integer64] | [MarkdownBox] | [Meta] | [Money] | [OidBox] |
-   * [ParameterDefinition] | [Period] | [PositiveIntBox] | [QuantityBox] | [Range] | [Ratio] |
-   * [RatioRange] | [Reference] | [RelatedArtifact] | [SampledData] | [Signature] | [StringBox] |
-   * [Time] | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] | [UrlBox] |
-   * [UsageContext] | [UuidBox]
+   * A FHIR choice type — one of: [Address] | [Age] | [Annotation] | [Attachment] | [Availability] |
+   * [Base64Binary] | [Boolean] | [Canonical] | [Code] | [CodeableConcept] | [CodeableReference] |
+   * [Coding] | [ContactDetail] | [ContactPoint] | [Count] | [DataRequirement] | [Date] | [DateTime]
+   * | [Decimal] | [Distance] | [Dosage] | [Duration] | [Expression] | [ExtendedContactDetail] |
+   * [HumanName] | [Id] | [Identifier] | [Instant] | [Integer] | [Integer64] | [Markdown] | [Meta] |
+   * [Money] | [Oid] | [ParameterDefinition] | [Period] | [PositiveInt] | [Quantity] | [Range] |
+   * [Ratio] | [RatioRange] | [Reference] | [RelatedArtifact] | [SampledData] | [Signature] |
+   * [String] | [Time] | [Timing] | [TriggerDefinition] | [UnsignedInt] | [Uri] | [Url] |
+   * [UsageContext] | [Uuid]
    */
   public val `value`: Value? = null,
 ) : DataType() {
@@ -78,21 +76,20 @@ public data class Extension(
     }
 
   /**
-   * A FHIR choice type — one of: [Address] | [AgeBox] | [Annotation] | [Attachment] |
-   * [Availability] | [Base64Binary] | [Boolean] | [CanonicalBox] | [CodeBox] | [CodeableConcept] |
-   * [CodeableReference] | [Coding] | [ContactDetail] | [ContactPoint] | [CountBox] |
-   * [DataRequirement] | [Date] | [DateTime] | [Decimal] | [DistanceBox] | [Dosage] | [DurationBox]
-   * | [Expression] | [ExtendedContactDetail] | [HumanName] | [IdBox] | [Identifier] | [Instant] |
-   * [IntegerBox] | [Integer64] | [MarkdownBox] | [Meta] | [Money] | [OidBox] |
-   * [ParameterDefinition] | [Period] | [PositiveIntBox] | [QuantityBox] | [Range] | [Ratio] |
-   * [RatioRange] | [Reference] | [RelatedArtifact] | [SampledData] | [Signature] | [StringBox] |
-   * [Time] | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] | [UrlBox] |
-   * [UsageContext] | [UuidBox]
+   * A FHIR choice type — one of: [Address] | [Age] | [Annotation] | [Attachment] | [Availability] |
+   * [Base64Binary] | [Boolean] | [Canonical] | [Code] | [CodeableConcept] | [CodeableReference] |
+   * [Coding] | [ContactDetail] | [ContactPoint] | [Count] | [DataRequirement] | [Date] | [DateTime]
+   * | [Decimal] | [Distance] | [Dosage] | [Duration] | [Expression] | [ExtendedContactDetail] |
+   * [HumanName] | [Id] | [Identifier] | [Instant] | [Integer] | [Integer64] | [Markdown] | [Meta] |
+   * [Money] | [Oid] | [ParameterDefinition] | [Period] | [PositiveInt] | [Quantity] | [Range] |
+   * [Ratio] | [RatioRange] | [Reference] | [RelatedArtifact] | [SampledData] | [Signature] |
+   * [String] | [Time] | [Timing] | [TriggerDefinition] | [UnsignedInt] | [Uri] | [Url] |
+   * [UsageContext] | [Uuid]
    */
   public sealed interface Value {
     public typealias Address = dev.ohs.fhir.model.r5.Address
 
-    public typealias Age = AgeBox
+    public typealias Age = dev.ohs.fhir.model.r5.Age
 
     public typealias Annotation = dev.ohs.fhir.model.r5.Annotation
 
@@ -104,9 +101,9 @@ public data class Extension(
 
     public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
 
-    public typealias Canonical = CanonicalBox
+    public typealias Canonical = dev.ohs.fhir.model.r5.Canonical
 
-    public typealias Code = CodeBox
+    public typealias Code = dev.ohs.fhir.model.r5.Code
 
     public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
 
@@ -118,7 +115,7 @@ public data class Extension(
 
     public typealias ContactPoint = dev.ohs.fhir.model.r5.ContactPoint
 
-    public typealias Count = CountBox
+    public typealias Count = dev.ohs.fhir.model.r5.Count
 
     public typealias DataRequirement = dev.ohs.fhir.model.r5.DataRequirement
 
@@ -128,11 +125,11 @@ public data class Extension(
 
     public typealias Decimal = dev.ohs.fhir.model.r5.Decimal
 
-    public typealias Distance = DistanceBox
+    public typealias Distance = dev.ohs.fhir.model.r5.Distance
 
     public typealias Dosage = dev.ohs.fhir.model.r5.Dosage
 
-    public typealias Duration = DurationBox
+    public typealias Duration = dev.ohs.fhir.model.r5.Duration
 
     public typealias Expression = dev.ohs.fhir.model.r5.Expression
 
@@ -140,31 +137,31 @@ public data class Extension(
 
     public typealias HumanName = dev.ohs.fhir.model.r5.HumanName
 
-    public typealias Id = IdBox
+    public typealias Id = dev.ohs.fhir.model.r5.Id
 
     public typealias Identifier = dev.ohs.fhir.model.r5.Identifier
 
     public typealias Instant = dev.ohs.fhir.model.r5.Instant
 
-    public typealias Integer = IntegerBox
+    public typealias Integer = dev.ohs.fhir.model.r5.Integer
 
     public typealias Integer64 = dev.ohs.fhir.model.r5.Integer64
 
-    public typealias Markdown = MarkdownBox
+    public typealias Markdown = dev.ohs.fhir.model.r5.Markdown
 
     public typealias Meta = dev.ohs.fhir.model.r5.Meta
 
     public typealias Money = dev.ohs.fhir.model.r5.Money
 
-    public typealias Oid = OidBox
+    public typealias Oid = dev.ohs.fhir.model.r5.Oid
 
     public typealias ParameterDefinition = dev.ohs.fhir.model.r5.ParameterDefinition
 
     public typealias Period = dev.ohs.fhir.model.r5.Period
 
-    public typealias PositiveInt = PositiveIntBox
+    public typealias PositiveInt = dev.ohs.fhir.model.r5.PositiveInt
 
-    public typealias Quantity = QuantityBox
+    public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
 
     public typealias Range = dev.ohs.fhir.model.r5.Range
 
@@ -180,7 +177,7 @@ public data class Extension(
 
     public typealias Signature = dev.ohs.fhir.model.r5.Signature
 
-    public typealias String = StringBox
+    public typealias String = dev.ohs.fhir.model.r5.String
 
     public typealias Time = dev.ohs.fhir.model.r5.Time
 
@@ -188,15 +185,15 @@ public data class Extension(
 
     public typealias TriggerDefinition = dev.ohs.fhir.model.r5.TriggerDefinition
 
-    public typealias UnsignedInt = UnsignedIntBox
+    public typealias UnsignedInt = dev.ohs.fhir.model.r5.UnsignedInt
 
-    public typealias Uri = UriBox
+    public typealias Uri = dev.ohs.fhir.model.r5.Uri
 
-    public typealias Url = UrlBox
+    public typealias Url = dev.ohs.fhir.model.r5.Url
 
     public typealias UsageContext = dev.ohs.fhir.model.r5.UsageContext
 
-    public typealias Uuid = UuidBox
+    public typealias Uuid = dev.ohs.fhir.model.r5.Uuid
   }
 
   public open class Builder(
@@ -207,13 +204,13 @@ public data class Extension(
      * extensibility codes, or it may be a logical URI as declared in some other specification. The
      * definition SHALL be a URI for the Structure Definition defining the extension.
      */
-    public open var url: String
+    public open var url: kotlin.String
   ) {
     /**
      * Unique id for the element within a resource (for internal references). This may be any string
      * value that does not contain spaces.
      */
-    public open var id: String? = null
+    public open var id: kotlin.String? = null
 
     /**
      * May be used to represent additional information that is not part of the basic definition of
@@ -233,16 +230,15 @@ public data class Extension(
      * Value of extension - must be one of a constrained set of the data types (see
      * [Extensibility](extensibility.html) for a list).
      *
-     * A FHIR choice type — one of: [Address] | [AgeBox] | [Annotation] | [Attachment] |
-     * [Availability] | [Base64Binary] | [Boolean] | [CanonicalBox] | [CodeBox] | [CodeableConcept]
-     * | [CodeableReference] | [Coding] | [ContactDetail] | [ContactPoint] | [CountBox] |
-     * [DataRequirement] | [Date] | [DateTime] | [Decimal] | [DistanceBox] | [Dosage] |
-     * [DurationBox] | [Expression] | [ExtendedContactDetail] | [HumanName] | [IdBox] | [Identifier]
-     * | [Instant] | [IntegerBox] | [Integer64] | [MarkdownBox] | [Meta] | [Money] | [OidBox] |
-     * [ParameterDefinition] | [Period] | [PositiveIntBox] | [QuantityBox] | [Range] | [Ratio] |
-     * [RatioRange] | [Reference] | [RelatedArtifact] | [SampledData] | [Signature] | [StringBox] |
-     * [Time] | [Timing] | [TriggerDefinition] | [UnsignedIntBox] | [UriBox] | [UrlBox] |
-     * [UsageContext] | [UuidBox]
+     * A FHIR choice type — one of: [Address] | [Age] | [Annotation] | [Attachment] | [Availability]
+     * | [Base64Binary] | [Boolean] | [Canonical] | [Code] | [CodeableConcept] | [CodeableReference]
+     * | [Coding] | [ContactDetail] | [ContactPoint] | [Count] | [DataRequirement] | [Date] |
+     * [DateTime] | [Decimal] | [Distance] | [Dosage] | [Duration] | [Expression] |
+     * [ExtendedContactDetail] | [HumanName] | [Id] | [Identifier] | [Instant] | [Integer] |
+     * [Integer64] | [Markdown] | [Meta] | [Money] | [Oid] | [ParameterDefinition] | [Period] |
+     * [PositiveInt] | [Quantity] | [Range] | [Ratio] | [RatioRange] | [Reference] |
+     * [RelatedArtifact] | [SampledData] | [Signature] | [String] | [Time] | [Timing] |
+     * [TriggerDefinition] | [UnsignedInt] | [Uri] | [Url] | [UsageContext] | [Uuid]
      */
     public open var `value`: Value? = null
 

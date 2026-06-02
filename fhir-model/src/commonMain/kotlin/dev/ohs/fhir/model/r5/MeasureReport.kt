@@ -326,8 +326,8 @@ public data class MeasureReport(
      * The measure score for this population group, calculated as appropriate for the measure type
      * and scoring method, and based on the contents of the populations defined in the group.
      *
-     * A FHIR choice type — one of: [CodeableConcept] | [DateTime] | [DurationBox] | [Period] |
-     * [QuantityBox] | [Range]
+     * A FHIR choice type — one of: [CodeableConcept] | [DateTime] | [Duration] | [Period] |
+     * [Quantity] | [Range]
      */
     public val measureScore: MeasureScore? = null,
     /**
@@ -671,8 +671,8 @@ public data class MeasureReport(
          * The measure score for this stratum, calculated as appropriate for the measure type and
          * scoring method, and based on only the members of this stratum.
          *
-         * A FHIR choice type — one of: [CodeableConcept] | [DateTime] | [DurationBox] | [Period] |
-         * [QuantityBox] | [Range]
+         * A FHIR choice type — one of: [CodeableConcept] | [DateTime] | [Duration] | [Period] |
+         * [Quantity] | [Range]
          */
         public val measureScore: MeasureScore? = null,
       ) : BackboneElement() {
@@ -1049,19 +1049,19 @@ public data class MeasureReport(
         }
 
         /**
-         * A FHIR choice type — one of: [CodeableConcept] | [DateTime] | [DurationBox] | [Period] |
-         * [QuantityBox] | [Range]
+         * A FHIR choice type — one of: [CodeableConcept] | [DateTime] | [Duration] | [Period] |
+         * [Quantity] | [Range]
          */
         public sealed interface MeasureScore {
           public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
 
           public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
 
-          public typealias Duration = DurationBox
+          public typealias Duration = dev.ohs.fhir.model.r5.Duration
 
           public typealias Period = dev.ohs.fhir.model.r5.Period
 
-          public typealias Quantity = QuantityBox
+          public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
 
           public typealias Range = dev.ohs.fhir.model.r5.Range
         }
@@ -1130,8 +1130,8 @@ public data class MeasureReport(
            * The measure score for this stratum, calculated as appropriate for the measure type and
            * scoring method, and based on only the members of this stratum.
            *
-           * A FHIR choice type — one of: [CodeableConcept] | [DateTime] | [DurationBox] | [Period]
-           * | [QuantityBox] | [Range]
+           * A FHIR choice type — one of: [CodeableConcept] | [DateTime] | [Duration] | [Period] |
+           * [Quantity] | [Range]
            */
           public var measureScore: MeasureScore? = null
 
@@ -1218,19 +1218,19 @@ public data class MeasureReport(
     }
 
     /**
-     * A FHIR choice type — one of: [CodeableConcept] | [DateTime] | [DurationBox] | [Period] |
-     * [QuantityBox] | [Range]
+     * A FHIR choice type — one of: [CodeableConcept] | [DateTime] | [Duration] | [Period] |
+     * [Quantity] | [Range]
      */
     public sealed interface MeasureScore {
       public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
 
       public typealias DateTime = dev.ohs.fhir.model.r5.DateTime
 
-      public typealias Duration = DurationBox
+      public typealias Duration = dev.ohs.fhir.model.r5.Duration
 
       public typealias Period = dev.ohs.fhir.model.r5.Period
 
-      public typealias Quantity = QuantityBox
+      public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
 
       public typealias Range = dev.ohs.fhir.model.r5.Range
     }
@@ -1297,8 +1297,8 @@ public data class MeasureReport(
        * The measure score for this population group, calculated as appropriate for the measure type
        * and scoring method, and based on the contents of the populations defined in the group.
        *
-       * A FHIR choice type — one of: [CodeableConcept] | [DateTime] | [DurationBox] | [Period] |
-       * [QuantityBox] | [Range]
+       * A FHIR choice type — one of: [CodeableConcept] | [DateTime] | [Duration] | [Period] |
+       * [Quantity] | [Range]
        */
       public var measureScore: MeasureScore? = null
 

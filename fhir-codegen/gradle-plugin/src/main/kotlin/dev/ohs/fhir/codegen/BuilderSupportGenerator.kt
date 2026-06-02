@@ -51,6 +51,7 @@ internal fun TypeSpec.Builder.addModelBuilderSupport(
   valueSetMap: Map<String, ValueSet>,
   isBaseClass: Boolean,
   choiceRegistry: ChoiceTypeRegistry,
+  datatypeSpecializationRoots: Set<String>,
 ): TypeSpec.Builder {
   BuilderSupportGenerator(
       this,
@@ -59,6 +60,7 @@ internal fun TypeSpec.Builder.addModelBuilderSupport(
       valueSetMap,
       isBaseClass,
       choiceRegistry,
+      datatypeSpecializationRoots,
     )
     .addResourceBuilderSupport()
   return this
@@ -83,6 +85,8 @@ internal fun TypeSpec.Builder.addBackboneElementBuilderSupport(
       valueSetMap,
       isBaseClass = false,
       choiceRegistry,
+      // Backbone elements are never datatype specializations.
+      datatypeSpecializationRoots = emptySet(),
     )
     .addBackboneElementBuilderSupport(elements)
   return this
@@ -95,6 +99,7 @@ private class BuilderSupportGenerator(
   val valueSetMap: Map<String, ValueSet>,
   val isBaseClass: Boolean,
   val choiceRegistry: ChoiceTypeRegistry,
+  val datatypeSpecializationRoots: Set<String>,
 ) {
   fun addResourceBuilderSupport() {
     when (structureDefinition.kind) {
@@ -131,7 +136,9 @@ private class BuilderSupportGenerator(
             structureDefinition.baseDefinition?.endsWith("Element") == true ||
               structureDefinition.baseDefinition?.endsWith("DataType") == true ||
               structureDefinition.baseDefinition?.endsWith("PrimitiveType") == true ||
-              structureDefinition.baseDefinition?.endsWith("BackboneType") == true -> {
+              structureDefinition.baseDefinition?.endsWith("BackboneType") == true ||
+              structureDefinition.structuralSpecializationRoot(datatypeSpecializationRoots) !=
+                null -> {
               // Builders for base types, namely types that directly inherit from Element (for
               // R4 and R4B) or DataType (for R5), do not have base builders.
               addBuilderClass(

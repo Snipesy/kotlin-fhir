@@ -21,7 +21,6 @@ package dev.ohs.fhir.model.r5.serializers
 import dev.ohs.fhir.model.r5.ArtifactAssessment
 import dev.ohs.fhir.model.r5.Boolean as R5Boolean
 import dev.ohs.fhir.model.r5.Canonical
-import dev.ohs.fhir.model.r5.CanonicalBox
 import dev.ohs.fhir.model.r5.Code
 import dev.ohs.fhir.model.r5.CodeableConcept
 import dev.ohs.fhir.model.r5.Date
@@ -41,7 +40,6 @@ import dev.ohs.fhir.model.r5.RelatedArtifact
 import dev.ohs.fhir.model.r5.Resource
 import dev.ohs.fhir.model.r5.String as R5String
 import dev.ohs.fhir.model.r5.Uri
-import dev.ohs.fhir.model.r5.UriBox
 import kotlin.Boolean as KotlinBoolean
 import kotlin.Int
 import kotlin.OptIn
@@ -527,8 +525,8 @@ internal object ArtifactAssessmentSerializer : KSerializer<ArtifactAssessment> {
       lastReviewDate = Date.of(FhirDate.fromString(lastReviewDate), _lastReviewDate),
       artifact =
         (artifactReference
-          ?: (Canonical.of(artifactCanonical, _artifactCanonical))?.let { CanonicalBox(it) }
-          ?: (Uri.of(artifactUri, _artifactUri))?.let { UriBox(it) })!!,
+          ?: Canonical.of(artifactCanonical, _artifactCanonical)
+          ?: Uri.of(artifactUri, _artifactUri))!!,
       content = content ?: listOf(),
       workflowStatus =
         workflowStatus?.let {
@@ -696,11 +694,9 @@ internal object ArtifactAssessmentSerializer : KSerializer<ArtifactAssessment> {
           choice,
         )
       }
-      is CanonicalBox -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 25 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is Canonical -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 25 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             26 + descriptorOffset,
@@ -709,11 +705,9 @@ internal object ArtifactAssessmentSerializer : KSerializer<ArtifactAssessment> {
           )
         }
       }
-      is UriBox -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 27 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is Uri -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 27 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             28 + descriptorOffset,

@@ -139,7 +139,7 @@ public data class GuidanceResponse(
   /**
    * An identifier, CodeableConcept or canonical reference to the guidance that was requested.
    *
-   * A FHIR choice type — one of: [CanonicalBox] | [CodeableConcept] | [UriBox]
+   * A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [Uri]
    */
   public val module: Module,
   /**
@@ -237,20 +237,20 @@ public data class GuidanceResponse(
       }
     }
 
-  /** A FHIR choice type — one of: [CanonicalBox] | [CodeableConcept] | [UriBox] */
+  /** A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [Uri] */
   public sealed interface Module {
-    public typealias Canonical = CanonicalBox
+    public typealias Canonical = dev.ohs.fhir.model.r5.Canonical
 
     public typealias CodeableConcept = dev.ohs.fhir.model.r5.CodeableConcept
 
-    public typealias Uri = UriBox
+    public typealias Uri = dev.ohs.fhir.model.r5.Uri
   }
 
   public class Builder(
     /**
      * An identifier, CodeableConcept or canonical reference to the guidance that was requested.
      *
-     * A FHIR choice type — one of: [CanonicalBox] | [CodeableConcept] | [UriBox]
+     * A FHIR choice type — one of: [Canonical] | [CodeableConcept] | [Uri]
      */
     public var module: Module,
     /**

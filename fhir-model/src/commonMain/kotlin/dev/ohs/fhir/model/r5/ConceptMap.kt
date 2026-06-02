@@ -419,7 +419,7 @@ public data class ConceptMap(
    * sourceScope value set may select codes from either an explicit (standard or local) or implicit
    * code system.
    *
-   * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
+   * A FHIR choice type — one of: [Canonical] | [Uri]
    */
   public val sourceScope: SourceScope? = null,
   /**
@@ -432,7 +432,7 @@ public data class ConceptMap(
    * targetScope value set may select codes from either an explicit (standard or local) or implicit
    * code system.
    *
-   * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
+   * A FHIR choice type — one of: [Canonical] | [Uri]
    */
   public val targetScope: TargetScope? = null,
   /** A group of mappings that all have the same source and target system. */
@@ -1114,8 +1114,8 @@ public data class ConceptMap(
            * The value of this property. If the type chosen for this element is 'code', then the
            * property SHALL be defined in a ConceptMap.property element.
            *
-           * A FHIR choice type — one of: [Boolean] | [CodeBox] | [Coding] | [DateTime] | [Decimal]
-           * | [Integer] | [StringBox]
+           * A FHIR choice type — one of: [Boolean] | [Code] | [Coding] | [DateTime] | [Decimal] |
+           * [Integer] | [String]
            */
           public val `value`: Value,
         ) : BackboneElement() {
@@ -1130,13 +1130,13 @@ public data class ConceptMap(
             }
 
           /**
-           * A FHIR choice type — one of: [Boolean] | [CodeBox] | [Coding] | [DateTime] | [Decimal]
-           * | [Integer] | [StringBox]
+           * A FHIR choice type — one of: [Boolean] | [Code] | [Coding] | [DateTime] | [Decimal] |
+           * [Integer] | [String]
            */
           public sealed interface Value {
             public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
 
-            public typealias Code = CodeBox
+            public typealias Code = dev.ohs.fhir.model.r5.Code
 
             public typealias Coding = dev.ohs.fhir.model.r5.Coding
 
@@ -1146,7 +1146,7 @@ public data class ConceptMap(
 
             public typealias Integer = dev.ohs.fhir.model.r5.Integer
 
-            public typealias String = StringBox
+            public typealias String = dev.ohs.fhir.model.r5.String
           }
 
           public class Builder(
@@ -1156,8 +1156,8 @@ public data class ConceptMap(
              * The value of this property. If the type chosen for this element is 'code', then the
              * property SHALL be defined in a ConceptMap.property element.
              *
-             * A FHIR choice type — one of: [Boolean] | [CodeBox] | [Coding] | [DateTime] |
-             * [Decimal] | [Integer] | [StringBox]
+             * A FHIR choice type — one of: [Boolean] | [Code] | [Coding] | [DateTime] | [Decimal] |
+             * [Integer] | [String]
              */
             public var `value`: Value,
           ) {
@@ -1265,8 +1265,7 @@ public data class ConceptMap(
            * If the data type is a code, then the code system is .group.source for
            * .dependsOn.valueCode and .group.target for .product.valueCode.
            *
-           * A FHIR choice type — one of: [Boolean] | [CodeBox] | [Coding] | [Quantity] |
-           * [StringBox]
+           * A FHIR choice type — one of: [Boolean] | [Code] | [Coding] | [Quantity] | [String]
            */
           public val `value`: Value? = null,
           /** This mapping applies if the data element value is a code from this value set. */
@@ -1284,20 +1283,17 @@ public data class ConceptMap(
               }
             }
 
-          /**
-           * A FHIR choice type — one of: [Boolean] | [CodeBox] | [Coding] | [Quantity] |
-           * [StringBox]
-           */
+          /** A FHIR choice type — one of: [Boolean] | [Code] | [Coding] | [Quantity] | [String] */
           public sealed interface Value {
             public typealias Boolean = dev.ohs.fhir.model.r5.Boolean
 
-            public typealias Code = CodeBox
+            public typealias Code = dev.ohs.fhir.model.r5.Code
 
             public typealias Coding = dev.ohs.fhir.model.r5.Coding
 
             public typealias Quantity = dev.ohs.fhir.model.r5.Quantity
 
-            public typealias String = StringBox
+            public typealias String = dev.ohs.fhir.model.r5.String
           }
 
           public class Builder(
@@ -1351,8 +1347,7 @@ public data class ConceptMap(
              * If the data type is a code, then the code system is .group.source for
              * .dependsOn.valueCode and .group.target for .product.valueCode.
              *
-             * A FHIR choice type — one of: [Boolean] | [CodeBox] | [Coding] | [Quantity] |
-             * [StringBox]
+             * A FHIR choice type — one of: [Boolean] | [Code] | [Coding] | [Quantity] | [String]
              */
             public var `value`: Value? = null
 
@@ -1869,18 +1864,18 @@ public data class ConceptMap(
     public typealias String = dev.ohs.fhir.model.r5.String
   }
 
-  /** A FHIR choice type — one of: [CanonicalBox] | [UriBox] */
+  /** A FHIR choice type — one of: [Canonical] | [Uri] */
   public sealed interface SourceScope {
-    public typealias Canonical = CanonicalBox
+    public typealias Canonical = dev.ohs.fhir.model.r5.Canonical
 
-    public typealias Uri = UriBox
+    public typealias Uri = dev.ohs.fhir.model.r5.Uri
   }
 
-  /** A FHIR choice type — one of: [CanonicalBox] | [UriBox] */
+  /** A FHIR choice type — one of: [Canonical] | [Uri] */
   public sealed interface TargetScope {
-    public typealias Canonical = CanonicalBox
+    public typealias Canonical = dev.ohs.fhir.model.r5.Canonical
 
-    public typealias Uri = UriBox
+    public typealias Uri = dev.ohs.fhir.model.r5.Uri
   }
 
   public class Builder(
@@ -2304,7 +2299,7 @@ public data class ConceptMap(
      * sourceScope value set may select codes from either an explicit (standard or local) or
      * implicit code system.
      *
-     * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
+     * A FHIR choice type — one of: [Canonical] | [Uri]
      */
     public var sourceScope: SourceScope? = null
 
@@ -2318,7 +2313,7 @@ public data class ConceptMap(
      * targetScope value set may select codes from either an explicit (standard or local) or
      * implicit code system.
      *
-     * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
+     * A FHIR choice type — one of: [Canonical] | [Uri]
      */
     public var targetScope: TargetScope? = null
 

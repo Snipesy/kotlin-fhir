@@ -20,7 +20,6 @@ package dev.ohs.fhir.model.r4.serializers
 
 import dev.ohs.fhir.model.r4.Annotation
 import dev.ohs.fhir.model.r4.Canonical
-import dev.ohs.fhir.model.r4.CanonicalBox
 import dev.ohs.fhir.model.r4.Code
 import dev.ohs.fhir.model.r4.CodeableConcept
 import dev.ohs.fhir.model.r4.DataRequirement
@@ -36,7 +35,6 @@ import dev.ohs.fhir.model.r4.Narrative
 import dev.ohs.fhir.model.r4.Reference
 import dev.ohs.fhir.model.r4.Resource
 import dev.ohs.fhir.model.r4.Uri
-import dev.ohs.fhir.model.r4.UriBox
 import kotlin.Int
 import kotlin.OptIn
 import kotlin.String
@@ -294,8 +292,8 @@ internal object GuidanceResponseSerializer : KSerializer<GuidanceResponse> {
       requestIdentifier = requestIdentifier,
       identifier = identifier ?: listOf(),
       module =
-        ((Uri.of(moduleUri, _moduleUri))?.let { UriBox(it) }
-          ?: (Canonical.of(moduleCanonical, _moduleCanonical))?.let { CanonicalBox(it) }
+        (Uri.of(moduleUri, _moduleUri)
+          ?: Canonical.of(moduleCanonical, _moduleCanonical)
           ?: moduleCodeableConcept)!!,
       status = Enumeration.of(GuidanceResponse.GuidanceResponseStatus.fromCode(status!!), _status),
       subject = subject,
@@ -385,11 +383,9 @@ internal object GuidanceResponseSerializer : KSerializer<GuidanceResponse> {
         value.identifier,
       )
     when (val choice = value.module) {
-      is UriBox -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 12 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is Uri -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 12 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             13 + descriptorOffset,
@@ -398,11 +394,9 @@ internal object GuidanceResponseSerializer : KSerializer<GuidanceResponse> {
           )
         }
       }
-      is CanonicalBox -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 14 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
+      is Canonical -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 14 + descriptorOffset, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(
             descriptor,
             15 + descriptorOffset,

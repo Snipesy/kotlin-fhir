@@ -27,7 +27,6 @@ import dev.ohs.fhir.model.r5.Coding
 import dev.ohs.fhir.model.r5.DateTime
 import dev.ohs.fhir.model.r5.Decimal
 import dev.ohs.fhir.model.r5.Duration
-import dev.ohs.fhir.model.r5.DurationBox
 import dev.ohs.fhir.model.r5.Element
 import dev.ohs.fhir.model.r5.Enumeration
 import dev.ohs.fhir.model.r5.Extension
@@ -39,7 +38,6 @@ import dev.ohs.fhir.model.r5.InventoryItem
 import dev.ohs.fhir.model.r5.Meta
 import dev.ohs.fhir.model.r5.Narrative
 import dev.ohs.fhir.model.r5.Quantity
-import dev.ohs.fhir.model.r5.QuantityBox
 import dev.ohs.fhir.model.r5.Range
 import dev.ohs.fhir.model.r5.Ratio
 import dev.ohs.fhir.model.r5.Reference
@@ -623,12 +621,12 @@ internal object InventoryItemCharacteristicSerializer : KSerializer<InventoryIte
           ?: R5Boolean.of(valueBoolean, _valueBoolean)
           ?: Url.of(valueUrl, _valueUrl)
           ?: DateTime.of(FhirDateTime.fromString(valueDateTime), _valueDateTime)
-          ?: (valueQuantity)?.let { QuantityBox(it) }
+          ?: valueQuantity
           ?: valueRange
           ?: valueRatio
           ?: valueAnnotation
           ?: valueAddress
-          ?: (valueDuration)?.let { DurationBox(it) }
+          ?: valueDuration
           ?: valueCodeableConcept)!!,
     )
   }
@@ -689,8 +687,8 @@ internal object InventoryItemCharacteristicSerializer : KSerializer<InventoryIte
           encoder.encodeSerializableElement(descriptor, 15, Hoisted.valueStringSer, it)
         }
       }
-      is QuantityBox -> {
-        encoder.encodeSerializableElement(descriptor, 16, Hoisted.valueQuantitySer, choice.value)
+      is Quantity -> {
+        encoder.encodeSerializableElement(descriptor, 16, Hoisted.valueQuantitySer, choice)
       }
       is Range -> {
         encoder.encodeSerializableElement(descriptor, 17, Hoisted.valueRangeSer, choice)
@@ -704,8 +702,8 @@ internal object InventoryItemCharacteristicSerializer : KSerializer<InventoryIte
       is Address -> {
         encoder.encodeSerializableElement(descriptor, 20, Hoisted.valueAddressSer, choice)
       }
-      is DurationBox -> {
-        encoder.encodeSerializableElement(descriptor, 21, Hoisted.valueDurationSer, choice.value)
+      is Duration -> {
+        encoder.encodeSerializableElement(descriptor, 21, Hoisted.valueDurationSer, choice)
       }
       is CodeableConcept -> {
         encoder.encodeSerializableElement(descriptor, 22, Hoisted.characteristicTypeSer, choice)

@@ -158,9 +158,29 @@ class ModelFileSpecGenerator(val codegenContext: CodegenContext) {
 
           addKdoc(structureDefinition.description.sanitizeKDoc())
 
-          // Set superclass if defined
-          structureDefinition.baseDefinition?.substringAfterLast('/')?.capitalized()?.also {
-            superclass(ClassName(modelClassName.packageName, it))
+          // Set superclass / shared-shape interface.
+          val specializationRoot =
+            structureDefinition.structuralSpecializationRoot(
+              codegenContext.datatypeSpecializationRoots
+            )
+          val baseSimpleName =
+            structureDefinition.baseDefinition?.substringAfterLast('/')?.capitalized()
+          if (specializationRoot != null) {
+            // De-inherited datatype specialization (e.g. Age : Quantity, Code : string): sit on the
+            // root's OWN base (Element in R4; DataType/PrimitiveType in R5) and share the root's
+            // shape via a `<Root>Like` interface — so `is Quantity`/`is Age` are distinct concrete
+            // types and choice `when`s need no `*Box`. See DatatypeSpecialization.kt.
+            superclass(
+              ClassName(
+                modelClassName.packageName,
+                codegenContext.datatypeSpecializationRootBases.getValue(specializationRoot),
+              )
+            )
+            addSuperinterface(
+              ClassName(modelClassName.packageName, likeInterfaceSimpleName(specializationRoot))
+            )
+          } else if (baseSimpleName != null) {
+            superclass(ClassName(modelClassName.packageName, baseSimpleName))
           }
 
           // This data type is a bare member of one or more shared choice-type interfaces —
@@ -172,7 +192,32 @@ class ModelFileSpecGenerator(val codegenContext: CodegenContext) {
             addSuperinterface(it)
           }
 
+          // A datatype family root (Quantity/String/Uri/Integer) implements its `<Root>Like` shape
+          // interface; its specializations inherit it via `Age : Quantity`. `Element` implements
+          // `ElementLike` so every element-shaped type exposes its id/extension through the shape
+          // interfaces. See DatatypeLikeFileSpecGenerator.
+          if (
+            isDatatypeFamilyRoot(
+              structureDefinitionName,
+              codegenContext.datatypeSpecializationRoots,
+            )
+          ) {
+            addSuperinterface(
+              ClassName(
+                modelClassName.packageName,
+                likeInterfaceSimpleName(structureDefinitionName.capitalized()),
+              )
+            )
+          }
+          if (structureDefinitionName == "Element") {
+            addSuperinterface(
+              ClassName(modelClassName.packageName, DatatypeLikeFileSpecGenerator.ELEMENT_LIKE)
+            )
+          }
+
           buildProperties(
+            codegenContext.datatypeSpecializationRoots,
+            codegenContext.datatypeSpecializationRootBases,
             modelClassName,
             structureDefinition.rootElements,
             structureDefinition,
@@ -200,6 +245,7 @@ class ModelFileSpecGenerator(val codegenContext: CodegenContext) {
             codegenContext.valueSetMap,
             isBaseClass = isBaseClass,
             choiceRegistry = codegenContext.choiceRegistry,
+            datatypeSpecializationRoots = codegenContext.datatypeSpecializationRoots,
           )
 
           addEnumClassTypeSpec(
@@ -220,7 +266,11 @@ class ModelFileSpecGenerator(val codegenContext: CodegenContext) {
               structureDefinition.baseDefinition ==
                 "http://hl7.org/fhir/StructureDefinition/Element" ||
                 structureDefinition.baseDefinition ==
-                  "http://hl7.org/fhir/StructureDefinition/PrimitiveType",
+                  "http://hl7.org/fhir/StructureDefinition/PrimitiveType" ||
+                // A de-inherited primitive now extends Element/PrimitiveType directly, like a root.
+                structureDefinition.structuralSpecializationRoot(
+                  codegenContext.datatypeSpecializationRoots
+                ) != null,
             )
             val valueType = propertySpecs.single { it.name == "value" }.type
             addType(
@@ -333,6 +383,8 @@ class ModelFileSpecGenerator(val codegenContext: CodegenContext) {
               )
             }
             .buildProperties(
+              codegenContext.datatypeSpecializationRoots,
+              codegenContext.datatypeSpecializationRootBases,
               backboneElementClassName,
               elements,
               null,
@@ -414,6 +466,8 @@ private fun customValueSerializerFor(typeName: TypeName, modelPackageName: Strin
 }
 
 private fun TypeSpec.Builder.buildProperties(
+  datatypeSpecializationRoots: Set<String>,
+  datatypeSpecializationRootBases: Map<String, String>,
   modelClassName: ClassName,
   elements: List<Element>,
   structureDefinition: StructureDefinition?, // null means backbone element
@@ -433,8 +487,14 @@ private fun TypeSpec.Builder.buildProperties(
               initializer(propertyInfo.name)
             }
 
-            if (element.path != element.base?.path) {
-              // Override properties in base classes
+            // A family root's own value-carrying properties (and Element's id/extension) implement
+            // the `<Root>Like`/`ElementLike` shape interface, so they `override` it.
+            val isLikeRoot =
+              structureDefinition != null &&
+                isDatatypeFamilyRoot(structureDefinition.name, datatypeSpecializationRoots)
+            val isElementLikeRoot = structureDefinition?.name == "Element"
+            if (element.path != element.base?.path || isLikeRoot || isElementLikeRoot) {
+              // Override inherited base-class members, and the shape-interface members above.
               addModifiers(KModifier.OVERRIDE)
             }
 
@@ -446,7 +506,9 @@ private fun TypeSpec.Builder.buildProperties(
               } else {
                 addModifiers(KModifier.ABSTRACT)
               }
-            } else if (isBaseClass) {
+            } else if (isBaseClass && !isLikeRoot) {
+              // A de-inherited family root is no longer subclassed, so its `override` properties
+              // (open by default) need no explicit `open`.
               addModifiers(KModifier.OPEN)
             }
 
@@ -490,25 +552,39 @@ private fun TypeSpec.Builder.buildProperties(
         .build()
     )
 
-    // Create superclass constructor
+    // Create superclass constructor. The "effective base" of a de-inherited primitive is its root's
+    // base (Element in R4; PrimitiveType in R5), not its own FHIR baseDefinition. When that base is
+    // `PrimitiveType` the root passes no super-ctor args (id/extension are override vals), so
+    // neither
+    // should the specialization.
+    val specializationRoot =
+      structureDefinition?.structuralSpecializationRoot(datatypeSpecializationRoots)
+    val effectiveBaseSimpleName =
+      if (specializationRoot != null) datatypeSpecializationRootBases[specializationRoot]
+      else structureDefinition?.baseDefinition?.substringAfterLast('/')?.capitalized()
     if (
       structureDefinition?.kind == StructureDefinition.Kind.PRIMITIVE_TYPE &&
-        structureDefinition.baseDefinition?.substringAfterLast('/')?.capitalized() !=
-          "PrimitiveType"
+        effectiveBaseSimpleName != "PrimitiveType"
     ) {
-      elements
-        .filter { it.path != it.base?.path }
-        .forEach {
-          addSuperclassConstructorParameter(
-            "%N",
-            PropertySpec.builder(
-                it.getElementName(),
-                String::class.asTypeName().copy(nullable = true),
-              )
-              .apply { initializer(it.id) }
-              .build(),
-          )
+      // A de-inherited primitive on Element (R4) passes only Element's own members (id/extension)
+      // up; its `value` is a plain property. A non-specialization passes its inherited members.
+      val superParams =
+        if (specializationRoot != null) {
+          elements.filter { it.base?.path?.startsWith("Element.") == true }
+        } else {
+          elements.filter { it.path != it.base?.path }
         }
+      superParams.forEach {
+        addSuperclassConstructorParameter(
+          "%N",
+          PropertySpec.builder(
+              it.getElementName(),
+              String::class.asTypeName().copy(nullable = true),
+            )
+            .apply { initializer(it.id) }
+            .build(),
+        )
+      }
     }
   }
   return this

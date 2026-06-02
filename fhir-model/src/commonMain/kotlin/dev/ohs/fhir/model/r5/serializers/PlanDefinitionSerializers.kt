@@ -21,7 +21,6 @@ package dev.ohs.fhir.model.r5.serializers
 import dev.ohs.fhir.model.r5.Age
 import dev.ohs.fhir.model.r5.Boolean as R5Boolean
 import dev.ohs.fhir.model.r5.Canonical
-import dev.ohs.fhir.model.r5.CanonicalBox
 import dev.ohs.fhir.model.r5.Code
 import dev.ohs.fhir.model.r5.CodeableConcept
 import dev.ohs.fhir.model.r5.CodeableReference
@@ -55,7 +54,6 @@ import dev.ohs.fhir.model.r5.String as R5String
 import dev.ohs.fhir.model.r5.Timing
 import dev.ohs.fhir.model.r5.TriggerDefinition
 import dev.ohs.fhir.model.r5.Uri
-import dev.ohs.fhir.model.r5.UriBox
 import dev.ohs.fhir.model.r5.UsageContext
 import dev.ohs.fhir.model.r5.terminologies.PublicationStatus
 import kotlin.Boolean as KotlinBoolean
@@ -1022,8 +1020,8 @@ internal object PlanDefinitionActionSerializer : KSerializer<PlanDefinition.Acti
           )
         },
       definition =
-        ((Canonical.of(definitionCanonical, _definitionCanonical))?.let { CanonicalBox(it) }
-          ?: (Uri.of(definitionUri, _definitionUri))?.let { UriBox(it) }),
+        (Canonical.of(definitionCanonical, _definitionCanonical)
+          ?: Uri.of(definitionUri, _definitionUri)),
       transform = Canonical.of(transform, _transform),
       dynamicValue = dynamicValue ?: listOf(),
       action = action ?: listOf(),
@@ -1164,15 +1162,15 @@ internal object PlanDefinitionActionSerializer : KSerializer<PlanDefinition.Acti
     }
     when (val choice = value.definition) {
       null -> {}
-      is CanonicalBox -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 46, it) }
-        (choice.value.toElement())?.let {
+      is Canonical -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 46, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 47, Hoisted.linkIdSer, it)
         }
       }
-      is UriBox -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 48, it) }
-        (choice.value.toElement())?.let {
+      is Uri -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 48, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 49, Hoisted.linkIdSer, it)
         }
       }

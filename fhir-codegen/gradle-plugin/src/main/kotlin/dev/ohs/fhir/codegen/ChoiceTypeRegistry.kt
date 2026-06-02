@@ -230,6 +230,7 @@ private constructor(
     fun build(
       packageName: String,
       structureDefinitions: List<StructureDefinition>,
+      datatypeSpecializationRoots: Set<String>,
     ): ChoiceTypeRegistry {
       // Package-only mapper: mapTypeToClassName depends solely on the (version) package name.
       val typeMapper =
@@ -274,7 +275,7 @@ private constructor(
         packageName,
         modelTypes,
         setsByPath,
-        ancestorClosure(structureDefinitions),
+        ancestorClosure(structureDefinitions, datatypeSpecializationRoots),
       )
     }
 
@@ -283,7 +284,8 @@ private constructor(
      * [StructureDefinition]'s `baseDefinition`. E.g. `Age → {Quantity}`, `Code → {String}`.
      */
     private fun ancestorClosure(
-      structureDefinitions: List<StructureDefinition>
+      structureDefinitions: List<StructureDefinition>,
+      datatypeSpecializationRoots: Set<String>,
     ): Map<String, Set<String>> {
       val parent: Map<String, String> =
         structureDefinitions
@@ -292,6 +294,8 @@ private constructor(
               it.kind == StructureDefinition.Kind.COMPLEX_TYPE
           }
           .mapNotNull { sd ->
+            if (sd.structuralSpecializationRoot(datatypeSpecializationRoots) != null)
+              return@mapNotNull null
             val base =
               sd.baseDefinition?.substringAfterLast('/')?.capitalized() ?: return@mapNotNull null
             sd.name.capitalized() to base

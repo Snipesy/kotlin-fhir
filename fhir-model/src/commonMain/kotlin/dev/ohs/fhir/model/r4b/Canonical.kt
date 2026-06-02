@@ -45,8 +45,8 @@ public data class Canonical(
   override val extension: List<Extension> = listOf(),
   /** Primitive value for canonical */
   override val `value`: String? = null,
-) : Uri(id, extension, `value`), FhirChoiceParticipants.CanonicalChoices {
-  override fun toBuilder(): Builder =
+) : Element(id, extension), UriLike, FhirChoiceParticipants.CanonicalChoices {
+  public fun toBuilder(): Builder =
     with(this) {
       Builder().apply {
         id = this@with.id
@@ -55,16 +55,16 @@ public data class Canonical(
       }
     }
 
-  override fun toElement(): Element? {
+  public fun toElement(): Element? {
     if (id != null || extension.isNotEmpty()) {
       return Element(id, extension)
     }
     return null
   }
 
-  public open class Builder() : Uri.Builder() {
+  public open class Builder() {
     /** unique id for the element within a resource (for internal references) */
-    open override var id: String? = null
+    public open var id: String? = null
 
     /**
      * May be used to represent additional information that is not part of the basic definition of
@@ -78,12 +78,12 @@ public data class Canonical(
      * The use of extensions is what allows the FHIR specification to retain a core level of
      * simplicity for everyone.
      */
-    open override var extension: MutableList<Extension.Builder> = mutableListOf()
+    public open var extension: MutableList<Extension.Builder> = mutableListOf()
 
     /** Primitive value for canonical */
-    open override var `value`: String? = null
+    public open var `value`: String? = null
 
-    open override fun build(): Canonical =
+    public open fun build(): Canonical =
       Canonical(id = id, extension = extension.map { it.build() }, `value` = `value`)
   }
 

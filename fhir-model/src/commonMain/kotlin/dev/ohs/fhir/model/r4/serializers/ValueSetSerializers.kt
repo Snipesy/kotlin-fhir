@@ -21,7 +21,6 @@ package dev.ohs.fhir.model.r4.serializers
 import dev.ohs.fhir.model.r4.Boolean as R4Boolean
 import dev.ohs.fhir.model.r4.Canonical
 import dev.ohs.fhir.model.r4.Code
-import dev.ohs.fhir.model.r4.CodeBox
 import dev.ohs.fhir.model.r4.CodeableConcept
 import dev.ohs.fhir.model.r4.Coding
 import dev.ohs.fhir.model.r4.ContactDetail
@@ -41,7 +40,6 @@ import dev.ohs.fhir.model.r4.Meta
 import dev.ohs.fhir.model.r4.Narrative
 import dev.ohs.fhir.model.r4.Resource
 import dev.ohs.fhir.model.r4.String as R4String
-import dev.ohs.fhir.model.r4.StringBox
 import dev.ohs.fhir.model.r4.Uri
 import dev.ohs.fhir.model.r4.UsageContext
 import dev.ohs.fhir.model.r4.ValueSet
@@ -972,12 +970,12 @@ internal object ValueSetExpansionParameterSerializer : KSerializer<ValueSet.Expa
       modifierExtension = modifierExtension ?: listOf(),
       name = R4String.of(name, _name)!!,
       `value` =
-        ((R4String.of(valueString, _valueString))?.let { StringBox(it) }
+        (R4String.of(valueString, _valueString)
           ?: R4Boolean.of(valueBoolean, _valueBoolean)
           ?: Integer.of(valueInteger, _valueInteger)
           ?: Decimal.of(valueDecimal, _valueDecimal)
           ?: Uri.of(valueUri, _valueUri)
-          ?: (Code.of(valueCode, _valueCode))?.let { CodeBox(it) }
+          ?: Code.of(valueCode, _valueCode)
           ?: DateTime.of(FhirDateTime.fromString(valueDateTime), _valueDateTime)),
     )
   }
@@ -999,9 +997,9 @@ internal object ValueSetExpansionParameterSerializer : KSerializer<ValueSet.Expa
     }
     when (val choice = value.`value`) {
       null -> {}
-      is StringBox -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
-        (choice.value.toElement())?.let {
+      is R4String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 6, Hoisted.nameSer, it)
         }
       }
@@ -1031,9 +1029,9 @@ internal object ValueSetExpansionParameterSerializer : KSerializer<ValueSet.Expa
           encoder.encodeSerializableElement(descriptor, 14, Hoisted.nameSer, it)
         }
       }
-      is CodeBox -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 15, it) }
-        (choice.value.toElement())?.let {
+      is Code -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 15, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 16, Hoisted.nameSer, it)
         }
       }

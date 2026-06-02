@@ -29,7 +29,7 @@ import kotlinx.serialization.Serializable
 @Serializable(with = UriSerializer::class)
 public open class Uri(
   /** unique id for the element within a resource (for internal references) */
-  open override val id: String? = null,
+  override val id: String? = null,
   /**
    * May be used to represent additional information that is not part of the basic definition of the
    * resource. To make the use of extensions safe and managable, there is a strict set of governance
@@ -42,10 +42,10 @@ public open class Uri(
    * The use of extensions is what allows the FHIR specification to retain a core level of
    * simplicity for everyone.
    */
-  open override val extension: List<Extension> = listOf(),
+  override val extension: List<Extension> = listOf(),
   /** The actual value */
-  public open val `value`: String? = null,
-) : PrimitiveType(), FhirChoiceParticipants.UriChoices {
+  override val `value`: String? = null,
+) : PrimitiveType(), FhirChoiceParticipants.UriChoices, UriLike {
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
     if (other !is Uri) return false

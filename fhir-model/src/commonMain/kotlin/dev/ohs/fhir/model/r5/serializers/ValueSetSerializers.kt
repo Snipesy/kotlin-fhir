@@ -21,7 +21,6 @@ package dev.ohs.fhir.model.r5.serializers
 import dev.ohs.fhir.model.r5.Boolean as R5Boolean
 import dev.ohs.fhir.model.r5.Canonical
 import dev.ohs.fhir.model.r5.Code
-import dev.ohs.fhir.model.r5.CodeBox
 import dev.ohs.fhir.model.r5.CodeableConcept
 import dev.ohs.fhir.model.r5.Coding
 import dev.ohs.fhir.model.r5.ContactDetail
@@ -43,7 +42,6 @@ import dev.ohs.fhir.model.r5.Period
 import dev.ohs.fhir.model.r5.RelatedArtifact
 import dev.ohs.fhir.model.r5.Resource
 import dev.ohs.fhir.model.r5.String as R5String
-import dev.ohs.fhir.model.r5.StringBox
 import dev.ohs.fhir.model.r5.Uri
 import dev.ohs.fhir.model.r5.UsageContext
 import dev.ohs.fhir.model.r5.ValueSet
@@ -1070,12 +1068,12 @@ internal object ValueSetExpansionParameterSerializer : KSerializer<ValueSet.Expa
       modifierExtension = modifierExtension ?: listOf(),
       name = R5String.of(name, _name)!!,
       `value` =
-        ((R5String.of(valueString, _valueString))?.let { StringBox(it) }
+        (R5String.of(valueString, _valueString)
           ?: R5Boolean.of(valueBoolean, _valueBoolean)
           ?: Integer.of(valueInteger, _valueInteger)
           ?: Decimal.of(valueDecimal, _valueDecimal)
           ?: Uri.of(valueUri, _valueUri)
-          ?: (Code.of(valueCode, _valueCode))?.let { CodeBox(it) }
+          ?: Code.of(valueCode, _valueCode)
           ?: DateTime.of(FhirDateTime.fromString(valueDateTime), _valueDateTime)),
     )
   }
@@ -1097,9 +1095,9 @@ internal object ValueSetExpansionParameterSerializer : KSerializer<ValueSet.Expa
     }
     when (val choice = value.`value`) {
       null -> {}
-      is StringBox -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
-        (choice.value.toElement())?.let {
+      is R5String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 6, Hoisted.nameSer, it)
         }
       }
@@ -1129,9 +1127,9 @@ internal object ValueSetExpansionParameterSerializer : KSerializer<ValueSet.Expa
           encoder.encodeSerializableElement(descriptor, 14, Hoisted.nameSer, it)
         }
       }
-      is CodeBox -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 15, it) }
-        (choice.value.toElement())?.let {
+      is Code -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 15, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 16, Hoisted.nameSer, it)
         }
       }
@@ -1574,9 +1572,9 @@ internal object ValueSetExpansionContainsPropertySerializer :
       modifierExtension = modifierExtension ?: listOf(),
       code = Code.of(code, _code)!!,
       `value` =
-        ((Code.of(valueCode, _valueCode))?.let { CodeBox(it) }
+        (Code.of(valueCode, _valueCode)
           ?: valueCoding
-          ?: (R5String.of(valueString, _valueString))?.let { StringBox(it) }
+          ?: R5String.of(valueString, _valueString)
           ?: Integer.of(valueInteger, _valueInteger)
           ?: R5Boolean.of(valueBoolean, _valueBoolean)
           ?: DateTime.of(FhirDateTime.fromString(valueDateTime), _valueDateTime)
@@ -1604,18 +1602,18 @@ internal object ValueSetExpansionContainsPropertySerializer :
       encoder.encodeSerializableElement(descriptor, 4, Hoisted.codeSer, it)
     }
     when (val choice = value.`value`) {
-      is CodeBox -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
-        (choice.value.toElement())?.let {
+      is Code -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 6, Hoisted.codeSer, it)
         }
       }
       is Coding -> {
         encoder.encodeSerializableElement(descriptor, 7, Hoisted.valueCodingSer, choice)
       }
-      is StringBox -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 8, it) }
-        (choice.value.toElement())?.let {
+      is R5String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 8, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 9, Hoisted.codeSer, it)
         }
       }
@@ -1781,9 +1779,9 @@ internal object ValueSetExpansionContainsPropertySubPropertySerializer :
       modifierExtension = modifierExtension ?: listOf(),
       code = Code.of(code, _code)!!,
       `value` =
-        ((Code.of(valueCode, _valueCode))?.let { CodeBox(it) }
+        (Code.of(valueCode, _valueCode)
           ?: valueCoding
-          ?: (R5String.of(valueString, _valueString))?.let { StringBox(it) }
+          ?: R5String.of(valueString, _valueString)
           ?: Integer.of(valueInteger, _valueInteger)
           ?: R5Boolean.of(valueBoolean, _valueBoolean)
           ?: DateTime.of(FhirDateTime.fromString(valueDateTime), _valueDateTime)
@@ -1810,18 +1808,18 @@ internal object ValueSetExpansionContainsPropertySubPropertySerializer :
       encoder.encodeSerializableElement(descriptor, 4, Hoisted.codeSer, it)
     }
     when (val choice = value.`value`) {
-      is CodeBox -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
-        (choice.value.toElement())?.let {
+      is Code -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 6, Hoisted.codeSer, it)
         }
       }
       is Coding -> {
         encoder.encodeSerializableElement(descriptor, 7, Hoisted.valueCodingSer, choice)
       }
-      is StringBox -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 8, it) }
-        (choice.value.toElement())?.let {
+      is R5String -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 8, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 9, Hoisted.codeSer, it)
         }
       }

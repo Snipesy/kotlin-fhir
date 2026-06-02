@@ -906,7 +906,7 @@ public data class PlanDefinition(
      * Note that the definition is optional, and if no definition is specified, a dynamicValue with
      * a root ($this) path can be used to define the entire resource dynamically.
      *
-     * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
+     * A FHIR choice type — one of: [Canonical] | [Uri]
      */
     public val definition: Definition? = null,
     /**
@@ -1544,11 +1544,11 @@ public data class PlanDefinition(
       public typealias Timing = dev.ohs.fhir.model.r4b.Timing
     }
 
-    /** A FHIR choice type — one of: [CanonicalBox] | [UriBox] */
+    /** A FHIR choice type — one of: [Canonical] | [Uri] */
     public sealed interface Definition {
-      public typealias Canonical = CanonicalBox
+      public typealias Canonical = dev.ohs.fhir.model.r4b.Canonical
 
-      public typealias Uri = UriBox
+      public typealias Uri = dev.ohs.fhir.model.r4b.Uri
     }
 
     public class Builder() {
@@ -1726,7 +1726,7 @@ public data class PlanDefinition(
        * Note that the definition is optional, and if no definition is specified, a dynamicValue
        * with a root ($this) path can be used to define the entire resource dynamically.
        *
-       * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
+       * A FHIR choice type — one of: [Canonical] | [Uri]
        */
       public var definition: Definition? = null
 

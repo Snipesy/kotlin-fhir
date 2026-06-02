@@ -19,7 +19,6 @@
 package dev.ohs.fhir.model.r5.serializers
 
 import dev.ohs.fhir.model.r5.Canonical
-import dev.ohs.fhir.model.r5.CanonicalBox
 import dev.ohs.fhir.model.r5.Code
 import dev.ohs.fhir.model.r5.DateTime
 import dev.ohs.fhir.model.r5.Decimal
@@ -36,7 +35,6 @@ import dev.ohs.fhir.model.r5.Resource
 import dev.ohs.fhir.model.r5.String as R5String
 import dev.ohs.fhir.model.r5.TestReport
 import dev.ohs.fhir.model.r5.Uri
-import dev.ohs.fhir.model.r5.UriBox
 import kotlin.Int
 import kotlin.OptIn
 import kotlin.String as KotlinString
@@ -652,9 +650,7 @@ internal object TestReportSetupActionAssertRequirementSerializer :
       id = id,
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
-      link =
-        ((Uri.of(linkUri, _linkUri))?.let { UriBox(it) }
-          ?: (Canonical.of(linkCanonical, _linkCanonical))?.let { CanonicalBox(it) }),
+      link = (Uri.of(linkUri, _linkUri) ?: Canonical.of(linkCanonical, _linkCanonical)),
     )
   }
 
@@ -674,15 +670,15 @@ internal object TestReportSetupActionAssertRequirementSerializer :
       )
     when (val choice = value.link) {
       null -> {}
-      is UriBox -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 3, it) }
-        (choice.value.toElement())?.let {
+      is Uri -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 3, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 4, Hoisted.linkUriSer, it)
         }
       }
-      is CanonicalBox -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
-        (choice.value.toElement())?.let {
+      is Canonical -> {
+        ((choice.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
+        (choice.toElement())?.let {
           encoder.encodeSerializableElement(descriptor, 6, Hoisted.linkUriSer, it)
         }
       }

@@ -24,7 +24,6 @@ import dev.ohs.fhir.model.r5.Code
 import dev.ohs.fhir.model.r5.CodeableConcept
 import dev.ohs.fhir.model.r5.DateTime
 import dev.ohs.fhir.model.r5.Duration
-import dev.ohs.fhir.model.r5.DurationBox
 import dev.ohs.fhir.model.r5.Element
 import dev.ohs.fhir.model.r5.Enumeration
 import dev.ohs.fhir.model.r5.Extension
@@ -36,7 +35,6 @@ import dev.ohs.fhir.model.r5.Meta
 import dev.ohs.fhir.model.r5.Narrative
 import dev.ohs.fhir.model.r5.Period
 import dev.ohs.fhir.model.r5.Quantity
-import dev.ohs.fhir.model.r5.QuantityBox
 import dev.ohs.fhir.model.r5.Range
 import dev.ohs.fhir.model.r5.Reference
 import dev.ohs.fhir.model.r5.Resource
@@ -207,12 +205,12 @@ internal object MeasureReportGroupSerializer : KSerializer<MeasureReport.Group> 
       subject = subject,
       population = population ?: listOf(),
       measureScore =
-        ((measureScoreQuantity)?.let { QuantityBox(it) }
+        (measureScoreQuantity
           ?: DateTime.of(FhirDateTime.fromString(measureScoreDateTime), _measureScoreDateTime)
           ?: measureScoreCodeableConcept
           ?: measureScorePeriod
           ?: measureScoreRange
-          ?: (measureScoreDuration)?.let { DurationBox(it) }),
+          ?: measureScoreDuration),
       stratifier = stratifier ?: listOf(),
     )
   }
@@ -240,13 +238,8 @@ internal object MeasureReportGroupSerializer : KSerializer<MeasureReport.Group> 
       encoder.encodeSerializableElement(descriptor, 7, Hoisted.populationSer, value.population)
     when (val choice = value.measureScore) {
       null -> {}
-      is QuantityBox -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          8,
-          Hoisted.measureScoreQuantitySer,
-          choice.value,
-        )
+      is Quantity -> {
+        encoder.encodeSerializableElement(descriptor, 8, Hoisted.measureScoreQuantitySer, choice)
       }
       is DateTime -> {
         ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 9, it) }
@@ -263,13 +256,8 @@ internal object MeasureReportGroupSerializer : KSerializer<MeasureReport.Group> 
       is Range -> {
         encoder.encodeSerializableElement(descriptor, 13, Hoisted.measureScoreRangeSer, choice)
       }
-      is DurationBox -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          14,
-          Hoisted.measureScoreDurationSer,
-          choice.value,
-        )
+      is Duration -> {
+        encoder.encodeSerializableElement(descriptor, 14, Hoisted.measureScoreDurationSer, choice)
       }
     }
     if (value.stratifier.isNotEmpty())
@@ -752,12 +740,12 @@ internal object MeasureReportGroupStratifierStratumSerializer :
       component = component ?: listOf(),
       population = population ?: listOf(),
       measureScore =
-        ((measureScoreQuantity)?.let { QuantityBox(it) }
+        (measureScoreQuantity
           ?: DateTime.of(FhirDateTime.fromString(measureScoreDateTime), _measureScoreDateTime)
           ?: measureScoreCodeableConcept
           ?: measureScorePeriod
           ?: measureScoreRange
-          ?: (measureScoreDuration)?.let { DurationBox(it) }),
+          ?: measureScoreDuration),
     )
   }
 
@@ -802,8 +790,8 @@ internal object MeasureReportGroupStratifierStratumSerializer :
       encoder.encodeSerializableElement(descriptor, 10, Hoisted.populationSer, value.population)
     when (val choice = value.measureScore) {
       null -> {}
-      is QuantityBox -> {
-        encoder.encodeSerializableElement(descriptor, 11, Hoisted.valueQuantitySer, choice.value)
+      is Quantity -> {
+        encoder.encodeSerializableElement(descriptor, 11, Hoisted.valueQuantitySer, choice)
       }
       is DateTime -> {
         ((choice.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 12, it) }
@@ -820,13 +808,8 @@ internal object MeasureReportGroupStratifierStratumSerializer :
       is Range -> {
         encoder.encodeSerializableElement(descriptor, 16, Hoisted.valueRangeSer, choice)
       }
-      is DurationBox -> {
-        encoder.encodeSerializableElement(
-          descriptor,
-          17,
-          Hoisted.measureScoreDurationSer,
-          choice.value,
-        )
+      is Duration -> {
+        encoder.encodeSerializableElement(descriptor, 17, Hoisted.measureScoreDurationSer, choice)
       }
     }
   }

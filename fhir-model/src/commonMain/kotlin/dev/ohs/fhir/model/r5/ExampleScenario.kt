@@ -532,7 +532,7 @@ public data class ExampleScenario(
     /**
      * Refers to a profile, template or other ruleset the instance adheres to.
      *
-     * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
+     * A FHIR choice type — one of: [Canonical] | [Uri]
      */
     public val structureProfile: StructureProfile? = null,
     /** A short descriptive label the instance to be used in tables or diagrams. */
@@ -840,11 +840,11 @@ public data class ExampleScenario(
       }
     }
 
-    /** A FHIR choice type — one of: [CanonicalBox] | [UriBox] */
+    /** A FHIR choice type — one of: [Canonical] | [Uri] */
     public sealed interface StructureProfile {
-      public typealias Canonical = CanonicalBox
+      public typealias Canonical = dev.ohs.fhir.model.r5.Canonical
 
-      public typealias Uri = UriBox
+      public typealias Uri = dev.ohs.fhir.model.r5.Uri
     }
 
     public class Builder(
@@ -907,7 +907,7 @@ public data class ExampleScenario(
       /**
        * Refers to a profile, template or other ruleset the instance adheres to.
        *
-       * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
+       * A FHIR choice type — one of: [Canonical] | [Uri]
        */
       public var structureProfile: StructureProfile? = null
 

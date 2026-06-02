@@ -679,7 +679,7 @@ public data class TestReport(
           /**
            * Link or reference providing traceability to the testing requirement for this test.
            *
-           * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
+           * A FHIR choice type — one of: [Canonical] | [Uri]
            */
           public val link: Link? = null,
         ) : BackboneElement() {
@@ -694,11 +694,11 @@ public data class TestReport(
               }
             }
 
-          /** A FHIR choice type — one of: [CanonicalBox] | [UriBox] */
+          /** A FHIR choice type — one of: [Canonical] | [Uri] */
           public sealed interface Link {
-            public typealias Canonical = CanonicalBox
+            public typealias Canonical = dev.ohs.fhir.model.r5.Canonical
 
-            public typealias Uri = UriBox
+            public typealias Uri = dev.ohs.fhir.model.r5.Uri
           }
 
           public class Builder() {
@@ -746,7 +746,7 @@ public data class TestReport(
             /**
              * Link or reference providing traceability to the testing requirement for this test.
              *
-             * A FHIR choice type — one of: [CanonicalBox] | [UriBox]
+             * A FHIR choice type — one of: [Canonical] | [Uri]
              */
             public var link: Link? = null
 
