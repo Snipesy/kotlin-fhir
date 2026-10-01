@@ -178,7 +178,10 @@ internal object PractitionerRoleAvailableTimeSerializer :
           Enumeration.of(
             daysOfWeek?.getOrNull(index)?.let { PractitionerRole.DaysOfWeek.fromCode(it) },
             _daysOfWeek?.getOrNull(index),
-          )!!
+          )
+            ?: throw SerializationException(
+              "An entry of 'daysOfWeek' on PractitionerRole.AvailableTime has neither a value nor an id/extension"
+            )
         }),
       allDay = R4bBoolean.of(allDay, _allDay),
       availableStartTime = Time.of(availableStartTime, _availableStartTime),

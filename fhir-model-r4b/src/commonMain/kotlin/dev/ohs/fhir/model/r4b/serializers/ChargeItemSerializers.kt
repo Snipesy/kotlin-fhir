@@ -485,7 +485,10 @@ internal object ChargeItemSerializer : KSerializer<ChargeItem> {
       definitionUri =
         (kotlin.collections.List(maxOf(definitionUri?.size ?: 0, _definitionUri?.size ?: 0)) { index
           ->
-          Uri.of(definitionUri?.getOrNull(index)?.let { it }, _definitionUri?.getOrNull(index))!!
+          Uri.of(definitionUri?.getOrNull(index)?.let { it }, _definitionUri?.getOrNull(index))
+            ?: throw SerializationException(
+              "An entry of 'definitionUri' on ChargeItem has neither a value nor an id/extension"
+            )
         }),
       definitionCanonical =
         (kotlin.collections.List(
@@ -494,7 +497,10 @@ internal object ChargeItemSerializer : KSerializer<ChargeItem> {
           Canonical.of(
             definitionCanonical?.getOrNull(index)?.let { it },
             _definitionCanonical?.getOrNull(index),
-          )!!
+          )
+            ?: throw SerializationException(
+              "An entry of 'definitionCanonical' on ChargeItem has neither a value nor an id/extension"
+            )
         }),
       status =
         Enumeration.of(status?.let { ChargeItem.ChargeItemStatus.fromCode(it) }, _status)

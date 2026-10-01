@@ -150,7 +150,10 @@ internal object SubscriptionChannelSerializer : KSerializer<Subscription.Channel
       payload = Code.of(payload, _payload),
       `header` =
         (kotlin.collections.List(maxOf(`header`?.size ?: 0, _header?.size ?: 0)) { index ->
-          R4String.of(`header`?.getOrNull(index)?.let { it }, _header?.getOrNull(index))!!
+          R4String.of(`header`?.getOrNull(index)?.let { it }, _header?.getOrNull(index))
+            ?: throw SerializationException(
+              "An entry of 'header' on Subscription.Channel has neither a value nor an id/extension"
+            )
         }),
     )
   }

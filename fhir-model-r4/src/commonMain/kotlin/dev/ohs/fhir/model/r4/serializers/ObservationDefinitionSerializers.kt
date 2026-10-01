@@ -629,7 +629,10 @@ internal object ObservationDefinitionSerializer : KSerializer<ObservationDefinit
               ObservationDefinition.ObservationDataType.fromCode(it)
             },
             _permittedDataType?.getOrNull(index),
-          )!!
+          )
+            ?: throw SerializationException(
+              "An entry of 'permittedDataType' on ObservationDefinition has neither a value nor an id/extension"
+            )
         }),
       multipleResultsAllowed = R4Boolean.of(multipleResultsAllowed, _multipleResultsAllowed),
       method = method,

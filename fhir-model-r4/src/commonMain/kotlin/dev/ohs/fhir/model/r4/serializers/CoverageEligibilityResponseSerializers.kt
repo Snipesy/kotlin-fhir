@@ -985,7 +985,10 @@ internal object CoverageEligibilityResponseSerializer : KSerializer<CoverageElig
               CoverageEligibilityResponse.EligibilityResponsePurpose.fromCode(it)
             },
             _purpose?.getOrNull(index),
-          )!!
+          )
+            ?: throw SerializationException(
+              "An entry of 'purpose' on CoverageEligibilityResponse has neither a value nor an id/extension"
+            )
         }),
       patient =
         patient

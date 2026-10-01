@@ -857,7 +857,10 @@ internal object CoverageEligibilityResponseErrorSerializer :
           ),
       expression =
         (kotlin.collections.List(maxOf(expression?.size ?: 0, _expression?.size ?: 0)) { index ->
-          R5String.of(expression?.getOrNull(index)?.let { it }, _expression?.getOrNull(index))!!
+          R5String.of(expression?.getOrNull(index)?.let { it }, _expression?.getOrNull(index))
+            ?: throw SerializationException(
+              "An entry of 'expression' on CoverageEligibilityResponse.Error has neither a value nor an id/extension"
+            )
         }),
     )
   }
@@ -1155,7 +1158,10 @@ internal object CoverageEligibilityResponseSerializer : KSerializer<CoverageElig
               CoverageEligibilityResponse.EligibilityResponsePurpose.fromCode(it)
             },
             _purpose?.getOrNull(index),
-          )!!
+          )
+            ?: throw SerializationException(
+              "An entry of 'purpose' on CoverageEligibilityResponse has neither a value nor an id/extension"
+            )
         }),
       patient =
         patient

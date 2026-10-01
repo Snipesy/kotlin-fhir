@@ -1000,7 +1000,10 @@ internal object SubstancePolymerSerializer : KSerializer<SubstancePolymer> {
       modification =
         (kotlin.collections.List(maxOf(modification?.size ?: 0, _modification?.size ?: 0)) { index
           ->
-          R4String.of(modification?.getOrNull(index)?.let { it }, _modification?.getOrNull(index))!!
+          R4String.of(modification?.getOrNull(index)?.let { it }, _modification?.getOrNull(index))
+            ?: throw SerializationException(
+              "An entry of 'modification' on SubstancePolymer has neither a value nor an id/extension"
+            )
         }),
       monomerSet = monomerSet ?: listOf(),
       repeat = repeat ?: listOf(),

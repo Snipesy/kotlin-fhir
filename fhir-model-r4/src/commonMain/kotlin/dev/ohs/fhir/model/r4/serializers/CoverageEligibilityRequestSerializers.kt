@@ -444,7 +444,10 @@ internal object CoverageEligibilityRequestItemSerializer :
           PositiveInt.of(
             supportingInfoSequence?.getOrNull(index)?.let { it },
             _supportingInfoSequence?.getOrNull(index),
-          )!!
+          )
+            ?: throw SerializationException(
+              "An entry of 'supportingInfoSequence' on CoverageEligibilityRequest.Item has neither a value nor an id/extension"
+            )
         }),
       category = category,
       productOrService = productOrService,
@@ -909,7 +912,10 @@ internal object CoverageEligibilityRequestSerializer : KSerializer<CoverageEligi
               CoverageEligibilityRequest.EligibilityRequestPurpose.fromCode(it)
             },
             _purpose?.getOrNull(index),
-          )!!
+          )
+            ?: throw SerializationException(
+              "An entry of 'purpose' on CoverageEligibilityRequest has neither a value nor an id/extension"
+            )
         }),
       patient =
         patient

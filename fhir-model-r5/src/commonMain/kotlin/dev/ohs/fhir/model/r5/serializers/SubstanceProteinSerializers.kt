@@ -397,7 +397,10 @@ internal object SubstanceProteinSerializer : KSerializer<SubstanceProtein> {
           R5String.of(
             disulfideLinkage?.getOrNull(index)?.let { it },
             _disulfideLinkage?.getOrNull(index),
-          )!!
+          )
+            ?: throw SerializationException(
+              "An entry of 'disulfideLinkage' on SubstanceProtein has neither a value nor an id/extension"
+            )
         }),
       subunit = subunit ?: listOf(),
     )

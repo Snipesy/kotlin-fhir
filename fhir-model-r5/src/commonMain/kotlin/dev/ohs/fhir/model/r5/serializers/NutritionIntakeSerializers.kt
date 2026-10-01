@@ -731,15 +731,18 @@ internal object NutritionIntakeSerializer : KSerializer<NutritionIntake> {
           Canonical.of(
             instantiatesCanonical?.getOrNull(index)?.let { it },
             _instantiatesCanonical?.getOrNull(index),
-          )!!
+          )
+            ?: throw SerializationException(
+              "An entry of 'instantiatesCanonical' on NutritionIntake has neither a value nor an id/extension"
+            )
         }),
       instantiatesUri =
         (kotlin.collections.List(maxOf(instantiatesUri?.size ?: 0, _instantiatesUri?.size ?: 0)) {
           index ->
-          Uri.of(
-            instantiatesUri?.getOrNull(index)?.let { it },
-            _instantiatesUri?.getOrNull(index),
-          )!!
+          Uri.of(instantiatesUri?.getOrNull(index)?.let { it }, _instantiatesUri?.getOrNull(index))
+            ?: throw SerializationException(
+              "An entry of 'instantiatesUri' on NutritionIntake has neither a value nor an id/extension"
+            )
         }),
       basedOn = basedOn ?: listOf(),
       partOf = partOf ?: listOf(),

@@ -49,6 +49,8 @@ class ModelConstructionHelpers(val codegenContext: CodegenContext) {
     val propertyName = element.getElementName()
     val elementPropertyName = "_$propertyName"
     val modelDisplayName = modelClassName.simpleNames.joinToString(".")
+    val emptyEntryMessage =
+      "An entry of '$propertyName' on $modelDisplayName has neither a value nor an id/extension"
     if (element.type != null && element.type.size > 1) {
       if (expandPolymorphicProperties) {
         val factoryClassName =
@@ -97,19 +99,23 @@ class ModelConstructionHelpers(val codegenContext: CodegenContext) {
           )
           if (element.isExtensibleBinding) {
             add(
-              "  %T.of<%T>(%N?.getOrNull(index), %N?.getOrNull(index))!!\n",
+              "  %T.of<%T>(%N?.getOrNull(index), %N?.getOrNull(index)) ?: throw %T(%S)\n",
               wrapperClass,
               enumClass,
               propertyName,
               elementPropertyName,
+              serializationExceptionClassName,
+              emptyEntryMessage,
             )
           } else {
             add(
-              "  %T.of(%N?.getOrNull(index)?.let·{ %T.fromCode(it) }, %N?.getOrNull(index))!!\n",
+              "  %T.of(%N?.getOrNull(index)?.let·{ %T.fromCode(it) }, %N?.getOrNull(index)) ?: throw %T(%S)\n",
               wrapperClass,
               propertyName,
               enumClass,
               elementPropertyName,
+              serializationExceptionClassName,
+              emptyEntryMessage,
             )
           }
           add("})")
@@ -125,7 +131,12 @@ class ModelConstructionHelpers(val codegenContext: CodegenContext) {
             propertyName,
           )
           fhirPathType.addCodeToDecodeWireVarToModel(this, modelClassName.packageName, "it")
-          add(" }, %N?.getOrNull(index))!!\n", elementPropertyName)
+          add(
+            " }, %N?.getOrNull(index)) ?: throw %T(%S)\n",
+            elementPropertyName,
+            serializationExceptionClassName,
+            emptyEntryMessage,
+          )
           add("})")
         }
       } else {
