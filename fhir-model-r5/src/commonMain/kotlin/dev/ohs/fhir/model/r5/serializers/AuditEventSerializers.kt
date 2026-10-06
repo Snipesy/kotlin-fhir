@@ -68,56 +68,32 @@ import kotlinx.serialization.encoding.CompositeDecoder
 import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.encoding.decodeStructure
-import kotlinx.serialization.encoding.encodeStructure
 
 internal object AuditEventOutcomeSerializer : KSerializer<AuditEvent.Outcome> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("Outcome") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("code", Coding.serializer().descriptor, isOptional = true)
-      element(
-        "detail",
-        listSerialDescriptor(CodeableConcept.serializer().descriptor),
-        isOptional = true,
-      )
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("code", CodingSerializer.descriptor)
+      optionalElement("detail", CodeableConceptSerializer.listSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<AuditEvent.Outcome>> = ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): AuditEvent.Outcome =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: AuditEvent.Outcome) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): AuditEvent.Outcome {
+  override fun deserialize(decoder: Decoder): AuditEvent.Outcome {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
     var code: Coding? = null
     var detail: List<CodeableConcept>? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -125,16 +101,23 @@ internal object AuditEventOutcomeSerializer : KSerializer<AuditEvent.Outcome> {
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
               null,
             )
-        3 -> code = decoder.decodeNullableSerializableElement(descriptor, i, CodingSerializer, null)
+        3 ->
+          code =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              CodingSerializer,
+              null,
+            )
         4 ->
           detail =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer.listSerializer,
@@ -144,6 +127,7 @@ internal object AuditEventOutcomeSerializer : KSerializer<AuditEvent.Outcome> {
         else -> throw SerializationException("Unexpected index decoding Outcome: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return AuditEvent.Outcome(
       id = id,
       extension = extension ?: listOf(),
@@ -155,89 +139,61 @@ internal object AuditEventOutcomeSerializer : KSerializer<AuditEvent.Outcome> {
     )
   }
 
-  private fun serializeInternal(encoder: CompositeEncoder, `value`: AuditEvent.Outcome) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: AuditEvent.Outcome) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    encoder.encodeSerializableElement(descriptor, 3, CodingSerializer, value.code)
+    compositeEncoder.encodeSerializableElement(descriptor, 3, CodingSerializer, value.code)
     if (value.detail.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         4,
         CodeableConceptSerializer.listSerializer,
         value.detail,
       )
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
 internal object AuditEventAgentSerializer : KSerializer<AuditEvent.Agent> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("Agent") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("type", CodeableConcept.serializer().descriptor, isOptional = true)
-      element(
-        "role",
-        listSerialDescriptor(CodeableConcept.serializer().descriptor),
-        isOptional = true,
-      )
-      element("who", Reference.serializer().descriptor, isOptional = true)
-      element("requestor", KotlinBoolean.serializer().descriptor, isOptional = true)
-      element("_requestor", Element.serializer().descriptor, isOptional = true)
-      element("location", Reference.serializer().descriptor, isOptional = true)
-      element(
-        "policy",
-        listSerialDescriptor(KotlinString.serializer().descriptor),
-        isOptional = true,
-      )
-      element("_policy", listSerialDescriptor(Element.serializer().descriptor), isOptional = true)
-      element("networkReference", Reference.serializer().descriptor, isOptional = true)
-      element("networkUri", KotlinString.serializer().descriptor, isOptional = true)
-      element("_networkUri", Element.serializer().descriptor, isOptional = true)
-      element("networkString", KotlinString.serializer().descriptor, isOptional = true)
-      element("_networkString", Element.serializer().descriptor, isOptional = true)
-      element(
-        "authorization",
-        listSerialDescriptor(CodeableConcept.serializer().descriptor),
-        isOptional = true,
-      )
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("type", CodeableConceptSerializer.descriptor)
+      optionalElement("role", CodeableConceptSerializer.listSerializer.descriptor)
+      optionalElement("who", ReferenceSerializer.descriptor)
+      optionalElement("requestor", KotlinBoolean.serializer().descriptor)
+      optionalElement("_requestor", ElementSerializer.descriptor)
+      optionalElement("location", ReferenceSerializer.descriptor)
+      optionalElement("policy", stringNullableListSerializer.descriptor)
+      optionalElement("_policy", ElementSerializer.nullableListSerializer.descriptor)
+      optionalElement("networkReference", ReferenceSerializer.descriptor)
+      optionalElement("networkUri", KotlinString.serializer().descriptor)
+      optionalElement("_networkUri", ElementSerializer.descriptor)
+      optionalElement("networkString", KotlinString.serializer().descriptor)
+      optionalElement("_networkString", ElementSerializer.descriptor)
+      optionalElement("authorization", CodeableConceptSerializer.listSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<AuditEvent.Agent>> = ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): AuditEvent.Agent =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: AuditEvent.Agent) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): AuditEvent.Agent {
+  override fun deserialize(decoder: Decoder): AuditEvent.Agent {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -256,11 +212,11 @@ internal object AuditEventAgentSerializer : KSerializer<AuditEvent.Agent> {
     var _networkString: Element? = null
     var authorization: List<CodeableConcept>? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -268,7 +224,7 @@ internal object AuditEventAgentSerializer : KSerializer<AuditEvent.Agent> {
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -276,7 +232,7 @@ internal object AuditEventAgentSerializer : KSerializer<AuditEvent.Agent> {
             )
         3 ->
           type =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer,
@@ -284,24 +240,40 @@ internal object AuditEventAgentSerializer : KSerializer<AuditEvent.Agent> {
             )
         4 ->
           role =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer.listSerializer,
               null,
             )
         5 ->
-          who = decoder.decodeNullableSerializableElement(descriptor, i, ReferenceSerializer, null)
-        6 -> requestor = decoder.decodeBooleanElement(descriptor, i)
+          who =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ReferenceSerializer,
+              null,
+            )
+        6 -> requestor = compositeDecoder.decodeBooleanElement(descriptor, i)
         7 ->
           _requestor =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         8 ->
           location =
-            decoder.decodeNullableSerializableElement(descriptor, i, ReferenceSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ReferenceSerializer,
+              null,
+            )
         9 ->
           policy =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               stringNullableListSerializer,
@@ -309,7 +281,7 @@ internal object AuditEventAgentSerializer : KSerializer<AuditEvent.Agent> {
             )
         10 ->
           _policy =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ElementSerializer.nullableListSerializer,
@@ -317,18 +289,33 @@ internal object AuditEventAgentSerializer : KSerializer<AuditEvent.Agent> {
             )
         11 ->
           networkReference =
-            decoder.decodeNullableSerializableElement(descriptor, i, ReferenceSerializer, null)
-        12 -> networkUri = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ReferenceSerializer,
+              null,
+            )
+        12 -> networkUri = compositeDecoder.decodeStringElement(descriptor, i)
         13 ->
           _networkUri =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        14 -> networkString = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        14 -> networkString = compositeDecoder.decodeStringElement(descriptor, i)
         15 ->
           _networkString =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         16 ->
           authorization =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer.listSerializer,
@@ -338,6 +325,7 @@ internal object AuditEventAgentSerializer : KSerializer<AuditEvent.Agent> {
         else -> throw SerializationException("Unexpected index decoding Agent: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return AuditEvent.Agent(
       id = id,
       extension = extension ?: listOf(),
@@ -350,7 +338,7 @@ internal object AuditEventAgentSerializer : KSerializer<AuditEvent.Agent> {
       location = location,
       policy =
         (kotlin.collections.List(maxOf(policy?.size ?: 0, _policy?.size ?: 0)) { index ->
-          Uri.of(policy?.getOrNull(index)?.let { it }, _policy?.getOrNull(index))
+          Uri.of(policy?.getOrNull(index), _policy?.getOrNull(index))
             ?: throw SerializationException(
               "An entry of 'policy' on AuditEvent.Agent has neither a value nor an id/extension"
             )
@@ -365,116 +353,94 @@ internal object AuditEventAgentSerializer : KSerializer<AuditEvent.Agent> {
     )
   }
 
-  private fun serializeInternal(encoder: CompositeEncoder, `value`: AuditEvent.Agent) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: AuditEvent.Agent) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    (value.type)?.let {
-      encoder.encodeSerializableElement(descriptor, 3, CodeableConceptSerializer, it)
-    }
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      3,
+      CodeableConceptSerializer,
+      value.type,
+    )
     if (value.role.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         4,
         CodeableConceptSerializer.listSerializer,
         value.role,
       )
-    encoder.encodeSerializableElement(descriptor, 5, ReferenceSerializer, value.who)
-    ((value.requestor?.value))?.let { encoder.encodeBooleanElement(descriptor, 6, it) }
-    (value.requestor?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 7, ElementSerializer, it)
-    }
-    (value.location)?.let {
-      encoder.encodeSerializableElement(descriptor, 8, ReferenceSerializer, it)
-    }
-    (value.policy.map { it.value }.takeUnless { it.all { it == null } })?.let {
-      encoder.encodeSerializableElement(descriptor, 9, stringNullableListSerializer, it)
-    }
-    (value.policy.map { it.toElement() }.takeUnless { it.all { it == null } })?.let {
-      encoder.encodeSerializableElement(
+    compositeEncoder.encodeSerializableElement(descriptor, 5, ReferenceSerializer, value.who)
+    compositeEncoder.encodeBooleanIfNotNull(descriptor, 6, value.requestor?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 7, value.requestor)
+    compositeEncoder.encodeSerializableIfNotNull(descriptor, 8, ReferenceSerializer, value.location)
+    if (value.policy.isNotEmpty()) {
+      compositeEncoder.encodeNullableListIfNotNull(
         descriptor,
-        10,
-        ElementSerializer.nullableListSerializer,
-        it,
+        9,
+        stringNullableListSerializer,
+        value.policy.map { it.value },
       )
+      compositeEncoder.encodePrimitiveElementList(descriptor, 10, value.policy)
     }
     when (val choice = value.network) {
       null -> {}
       is AuditEvent.Agent.Network.Reference -> {
-        encoder.encodeSerializableElement(descriptor, 11, ReferenceSerializer, choice.value)
+        compositeEncoder.encodeSerializableElement(
+          descriptor,
+          11,
+          ReferenceSerializer,
+          choice.value,
+        )
       }
       is AuditEvent.Agent.Network.Uri -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 12, it) }
-        (choice.value.toElement())?.let {
-          encoder.encodeSerializableElement(descriptor, 13, ElementSerializer, it)
-        }
+        compositeEncoder.encodeStringIfNotNull(descriptor, 12, choice.value.value)
+        compositeEncoder.encodeElementIfNotNull(descriptor, 13, choice.value)
       }
       is AuditEvent.Agent.Network.String -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 14, it) }
-        (choice.value.toElement())?.let {
-          encoder.encodeSerializableElement(descriptor, 15, ElementSerializer, it)
-        }
+        compositeEncoder.encodeStringIfNotNull(descriptor, 14, choice.value.value)
+        compositeEncoder.encodeElementIfNotNull(descriptor, 15, choice.value)
       }
     }
     if (value.authorization.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         16,
         CodeableConceptSerializer.listSerializer,
         value.authorization,
       )
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
 internal object AuditEventSourceSerializer : KSerializer<AuditEvent.Source> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("Source") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("site", Reference.serializer().descriptor, isOptional = true)
-      element("observer", Reference.serializer().descriptor, isOptional = true)
-      element(
-        "type",
-        listSerialDescriptor(CodeableConcept.serializer().descriptor),
-        isOptional = true,
-      )
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("site", ReferenceSerializer.descriptor)
+      optionalElement("observer", ReferenceSerializer.descriptor)
+      optionalElement("type", CodeableConceptSerializer.listSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<AuditEvent.Source>> = ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): AuditEvent.Source =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: AuditEvent.Source) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): AuditEvent.Source {
+  override fun deserialize(decoder: Decoder): AuditEvent.Source {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -482,11 +448,11 @@ internal object AuditEventSourceSerializer : KSerializer<AuditEvent.Source> {
     var observer: Reference? = null
     var type: List<CodeableConcept>? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -494,20 +460,31 @@ internal object AuditEventSourceSerializer : KSerializer<AuditEvent.Source> {
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
               null,
             )
         3 ->
-          site = decoder.decodeNullableSerializableElement(descriptor, i, ReferenceSerializer, null)
+          site =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ReferenceSerializer,
+              null,
+            )
         4 ->
           observer =
-            decoder.decodeNullableSerializableElement(descriptor, i, ReferenceSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ReferenceSerializer,
+              null,
+            )
         5 ->
           type =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer.listSerializer,
@@ -517,6 +494,7 @@ internal object AuditEventSourceSerializer : KSerializer<AuditEvent.Source> {
         else -> throw SerializationException("Unexpected index decoding Source: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return AuditEvent.Source(
       id = id,
       extension = extension ?: listOf(),
@@ -531,83 +509,58 @@ internal object AuditEventSourceSerializer : KSerializer<AuditEvent.Source> {
     )
   }
 
-  private fun serializeInternal(encoder: CompositeEncoder, `value`: AuditEvent.Source) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: AuditEvent.Source) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    (value.site)?.let { encoder.encodeSerializableElement(descriptor, 3, ReferenceSerializer, it) }
-    encoder.encodeSerializableElement(descriptor, 4, ReferenceSerializer, value.observer)
+    compositeEncoder.encodeSerializableIfNotNull(descriptor, 3, ReferenceSerializer, value.site)
+    compositeEncoder.encodeSerializableElement(descriptor, 4, ReferenceSerializer, value.observer)
     if (value.type.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         5,
         CodeableConceptSerializer.listSerializer,
         value.type,
       )
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
 internal object AuditEventEntitySerializer : KSerializer<AuditEvent.Entity> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("Entity") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("what", Reference.serializer().descriptor, isOptional = true)
-      element("role", CodeableConcept.serializer().descriptor, isOptional = true)
-      element(
-        "securityLabel",
-        listSerialDescriptor(CodeableConcept.serializer().descriptor),
-        isOptional = true,
-      )
-      element("query", KotlinString.serializer().descriptor, isOptional = true)
-      element("_query", Element.serializer().descriptor, isOptional = true)
-      element(
-        "detail",
-        listSerialDescriptor(lazyDescriptor { AuditEvent.Entity.Detail.serializer().descriptor }),
-        isOptional = true,
-      )
-      element(
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("what", ReferenceSerializer.descriptor)
+      optionalElement("role", CodeableConceptSerializer.descriptor)
+      optionalElement("securityLabel", CodeableConceptSerializer.listSerializer.descriptor)
+      optionalElement("query", KotlinString.serializer().descriptor)
+      optionalElement("_query", ElementSerializer.descriptor)
+      optionalElement("detail", AuditEventEntityDetailSerializer.listSerializer.descriptor)
+      optionalElement(
         "agent",
-        listSerialDescriptor(lazyDescriptor { AuditEvent.Agent.serializer().descriptor }),
-        isOptional = true,
+        listSerialDescriptor(lazyDescriptor { AuditEventAgentSerializer.descriptor }),
       )
     }
 
   internal val listSerializer: KSerializer<List<AuditEvent.Entity>> = ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): AuditEvent.Entity =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: AuditEvent.Entity) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): AuditEvent.Entity {
+  override fun deserialize(decoder: Decoder): AuditEvent.Entity {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -619,11 +572,11 @@ internal object AuditEventEntitySerializer : KSerializer<AuditEvent.Entity> {
     var detail: List<AuditEvent.Entity.Detail>? = null
     var agent: List<AuditEvent.Agent>? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -631,17 +584,23 @@ internal object AuditEventEntitySerializer : KSerializer<AuditEvent.Entity> {
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
               null,
             )
         3 ->
-          what = decoder.decodeNullableSerializableElement(descriptor, i, ReferenceSerializer, null)
+          what =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ReferenceSerializer,
+              null,
+            )
         4 ->
           role =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer,
@@ -649,18 +608,24 @@ internal object AuditEventEntitySerializer : KSerializer<AuditEvent.Entity> {
             )
         5 ->
           securityLabel =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer.listSerializer,
               null,
             )
-        6 -> query = decoder.decodeStringElement(descriptor, i)
+        6 -> query = compositeDecoder.decodeStringElement(descriptor, i)
         7 ->
-          _query = decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+          _query =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         8 ->
           detail =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               AuditEventEntityDetailSerializer.listSerializer,
@@ -668,7 +633,7 @@ internal object AuditEventEntitySerializer : KSerializer<AuditEvent.Entity> {
             )
         9 ->
           agent =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               AuditEventAgentSerializer.listSerializer,
@@ -678,6 +643,7 @@ internal object AuditEventEntitySerializer : KSerializer<AuditEvent.Entity> {
         else -> throw SerializationException("Unexpected index decoding Entity: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return AuditEvent.Entity(
       id = id,
       extension = extension ?: listOf(),
@@ -691,102 +657,87 @@ internal object AuditEventEntitySerializer : KSerializer<AuditEvent.Entity> {
     )
   }
 
-  private fun serializeInternal(encoder: CompositeEncoder, `value`: AuditEvent.Entity) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: AuditEvent.Entity) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    (value.what)?.let { encoder.encodeSerializableElement(descriptor, 3, ReferenceSerializer, it) }
-    (value.role)?.let {
-      encoder.encodeSerializableElement(descriptor, 4, CodeableConceptSerializer, it)
-    }
+    compositeEncoder.encodeSerializableIfNotNull(descriptor, 3, ReferenceSerializer, value.what)
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      4,
+      CodeableConceptSerializer,
+      value.role,
+    )
     if (value.securityLabel.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         5,
         CodeableConceptSerializer.listSerializer,
         value.securityLabel,
       )
-    ((value.query?.value))?.let { encoder.encodeStringElement(descriptor, 6, it) }
-    (value.query?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 7, ElementSerializer, it)
-    }
+    compositeEncoder.encodeStringIfNotNull(descriptor, 6, value.query?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 7, value.query)
     if (value.detail.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         8,
         AuditEventEntityDetailSerializer.listSerializer,
         value.detail,
       )
     if (value.agent.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         9,
         AuditEventAgentSerializer.listSerializer,
         value.agent,
       )
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
 internal object AuditEventEntityDetailSerializer : KSerializer<AuditEvent.Entity.Detail> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("Detail") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("type", CodeableConcept.serializer().descriptor, isOptional = true)
-      element("valueQuantity", Quantity.serializer().descriptor, isOptional = true)
-      element("valueCodeableConcept", CodeableConcept.serializer().descriptor, isOptional = true)
-      element("valueString", KotlinString.serializer().descriptor, isOptional = true)
-      element("_valueString", Element.serializer().descriptor, isOptional = true)
-      element("valueBoolean", KotlinBoolean.serializer().descriptor, isOptional = true)
-      element("_valueBoolean", Element.serializer().descriptor, isOptional = true)
-      element("valueInteger", Int.serializer().descriptor, isOptional = true)
-      element("_valueInteger", Element.serializer().descriptor, isOptional = true)
-      element("valueRange", Range.serializer().descriptor, isOptional = true)
-      element("valueRatio", Ratio.serializer().descriptor, isOptional = true)
-      element("valueTime", LocalTimeSerializer.descriptor, isOptional = true)
-      element("_valueTime", Element.serializer().descriptor, isOptional = true)
-      element("valueDateTime", KotlinString.serializer().descriptor, isOptional = true)
-      element("_valueDateTime", Element.serializer().descriptor, isOptional = true)
-      element("valuePeriod", Period.serializer().descriptor, isOptional = true)
-      element("valueBase64Binary", KotlinString.serializer().descriptor, isOptional = true)
-      element("_valueBase64Binary", Element.serializer().descriptor, isOptional = true)
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("type", CodeableConceptSerializer.descriptor)
+      optionalElement("valueQuantity", QuantitySerializer.descriptor)
+      optionalElement("valueCodeableConcept", CodeableConceptSerializer.descriptor)
+      optionalElement("valueString", KotlinString.serializer().descriptor)
+      optionalElement("_valueString", ElementSerializer.descriptor)
+      optionalElement("valueBoolean", KotlinBoolean.serializer().descriptor)
+      optionalElement("_valueBoolean", ElementSerializer.descriptor)
+      optionalElement("valueInteger", Int.serializer().descriptor)
+      optionalElement("_valueInteger", ElementSerializer.descriptor)
+      optionalElement("valueRange", RangeSerializer.descriptor)
+      optionalElement("valueRatio", RatioSerializer.descriptor)
+      optionalElement("valueTime", LocalTimeSerializer.descriptor)
+      optionalElement("_valueTime", ElementSerializer.descriptor)
+      optionalElement("valueDateTime", KotlinString.serializer().descriptor)
+      optionalElement("_valueDateTime", ElementSerializer.descriptor)
+      optionalElement("valuePeriod", PeriodSerializer.descriptor)
+      optionalElement("valueBase64Binary", KotlinString.serializer().descriptor)
+      optionalElement("_valueBase64Binary", ElementSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<AuditEvent.Entity.Detail>> = ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): AuditEvent.Entity.Detail =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: AuditEvent.Entity.Detail) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): AuditEvent.Entity.Detail {
+  override fun deserialize(decoder: Decoder): AuditEvent.Entity.Detail {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -809,11 +760,11 @@ internal object AuditEventEntityDetailSerializer : KSerializer<AuditEvent.Entity
     var valueBase64Binary: KotlinString? = null
     var _valueBase64Binary: Element? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -821,7 +772,7 @@ internal object AuditEventEntityDetailSerializer : KSerializer<AuditEvent.Entity
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -829,7 +780,7 @@ internal object AuditEventEntityDetailSerializer : KSerializer<AuditEvent.Entity
             )
         3 ->
           type =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer,
@@ -837,54 +788,100 @@ internal object AuditEventEntityDetailSerializer : KSerializer<AuditEvent.Entity
             )
         4 ->
           valueQuantity =
-            decoder.decodeNullableSerializableElement(descriptor, i, QuantitySerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              QuantitySerializer,
+              null,
+            )
         5 ->
           valueCodeableConcept =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer,
               null,
             )
-        6 -> valueString = decoder.decodeStringElement(descriptor, i)
+        6 -> valueString = compositeDecoder.decodeStringElement(descriptor, i)
         7 ->
           _valueString =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        8 -> valueBoolean = decoder.decodeBooleanElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        8 -> valueBoolean = compositeDecoder.decodeBooleanElement(descriptor, i)
         9 ->
           _valueBoolean =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        10 -> valueInteger = decoder.decodeIntElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        10 -> valueInteger = compositeDecoder.decodeIntElement(descriptor, i)
         11 ->
           _valueInteger =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         12 ->
           valueRange =
-            decoder.decodeNullableSerializableElement(descriptor, i, RangeSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(descriptor, i, RangeSerializer, null)
         13 ->
           valueRatio =
-            decoder.decodeNullableSerializableElement(descriptor, i, RatioSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(descriptor, i, RatioSerializer, null)
         14 ->
           valueTime =
-            decoder.decodeNullableSerializableElement(descriptor, i, LocalTimeSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              LocalTimeSerializer,
+              null,
+            )
         15 ->
           _valueTime =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        16 -> valueDateTime = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        16 -> valueDateTime = compositeDecoder.decodeStringElement(descriptor, i)
         17 ->
           _valueDateTime =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         18 ->
           valuePeriod =
-            decoder.decodeNullableSerializableElement(descriptor, i, PeriodSerializer, null)
-        19 -> valueBase64Binary = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              PeriodSerializer,
+              null,
+            )
+        19 -> valueBase64Binary = compositeDecoder.decodeStringElement(descriptor, i)
         20 ->
           _valueBase64Binary =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         CompositeDecoder.DECODE_DONE -> break
         else -> throw SerializationException("Unexpected index decoding Detail: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return AuditEvent.Entity.Detail(
       id = id,
       extension = extension ?: listOf(),
@@ -904,7 +901,10 @@ internal object AuditEventEntityDetailSerializer : KSerializer<AuditEvent.Entity
           valueRange,
           valueRatio,
           Time.of(valueTime, _valueTime),
-          DateTime.of(valueDateTime?.let { FhirDateTime.fromString(it) }, _valueDateTime),
+          DateTime.of(
+            if (valueDateTime != null) FhirDateTime.fromString(valueDateTime) else null,
+            _valueDateTime,
+          ),
           valuePeriod,
           Base64Binary.of(valueBase64Binary, _valueBase64Binary),
         )
@@ -914,78 +914,76 @@ internal object AuditEventEntityDetailSerializer : KSerializer<AuditEvent.Entity
     )
   }
 
-  private fun serializeInternal(encoder: CompositeEncoder, `value`: AuditEvent.Entity.Detail) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: AuditEvent.Entity.Detail) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    encoder.encodeSerializableElement(descriptor, 3, CodeableConceptSerializer, value.type)
+    compositeEncoder.encodeSerializableElement(descriptor, 3, CodeableConceptSerializer, value.type)
     when (val choice = value.`value`) {
       is AuditEvent.Entity.Detail.Value.Quantity -> {
-        encoder.encodeSerializableElement(descriptor, 4, QuantitySerializer, choice.value)
+        compositeEncoder.encodeSerializableElement(descriptor, 4, QuantitySerializer, choice.value)
       }
       is AuditEvent.Entity.Detail.Value.CodeableConcept -> {
-        encoder.encodeSerializableElement(descriptor, 5, CodeableConceptSerializer, choice.value)
+        compositeEncoder.encodeSerializableElement(
+          descriptor,
+          5,
+          CodeableConceptSerializer,
+          choice.value,
+        )
       }
       is AuditEvent.Entity.Detail.Value.String -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 6, it) }
-        (choice.value.toElement())?.let {
-          encoder.encodeSerializableElement(descriptor, 7, ElementSerializer, it)
-        }
+        compositeEncoder.encodeStringIfNotNull(descriptor, 6, choice.value.value)
+        compositeEncoder.encodeElementIfNotNull(descriptor, 7, choice.value)
       }
       is AuditEvent.Entity.Detail.Value.Boolean -> {
-        ((choice.value.value))?.let { encoder.encodeBooleanElement(descriptor, 8, it) }
-        (choice.value.toElement())?.let {
-          encoder.encodeSerializableElement(descriptor, 9, ElementSerializer, it)
-        }
+        compositeEncoder.encodeBooleanIfNotNull(descriptor, 8, choice.value.value)
+        compositeEncoder.encodeElementIfNotNull(descriptor, 9, choice.value)
       }
       is AuditEvent.Entity.Detail.Value.Integer -> {
-        ((choice.value.value))?.let { encoder.encodeIntElement(descriptor, 10, it) }
-        (choice.value.toElement())?.let {
-          encoder.encodeSerializableElement(descriptor, 11, ElementSerializer, it)
-        }
+        compositeEncoder.encodeIntIfNotNull(descriptor, 10, choice.value.value)
+        compositeEncoder.encodeElementIfNotNull(descriptor, 11, choice.value)
       }
       is AuditEvent.Entity.Detail.Value.Range -> {
-        encoder.encodeSerializableElement(descriptor, 12, RangeSerializer, choice.value)
+        compositeEncoder.encodeSerializableElement(descriptor, 12, RangeSerializer, choice.value)
       }
       is AuditEvent.Entity.Detail.Value.Ratio -> {
-        encoder.encodeSerializableElement(descriptor, 13, RatioSerializer, choice.value)
+        compositeEncoder.encodeSerializableElement(descriptor, 13, RatioSerializer, choice.value)
       }
       is AuditEvent.Entity.Detail.Value.Time -> {
-        ((choice.value.value))?.let {
-          encoder.encodeSerializableElement(descriptor, 14, LocalTimeSerializer, it)
-        }
-        (choice.value.toElement())?.let {
-          encoder.encodeSerializableElement(descriptor, 15, ElementSerializer, it)
-        }
+        compositeEncoder.encodeSerializableIfNotNull(
+          descriptor,
+          14,
+          LocalTimeSerializer,
+          choice.value.value,
+        )
+        compositeEncoder.encodeElementIfNotNull(descriptor, 15, choice.value)
       }
       is AuditEvent.Entity.Detail.Value.DateTime -> {
-        ((choice.value.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 16, it) }
-        (choice.value.toElement())?.let {
-          encoder.encodeSerializableElement(descriptor, 17, ElementSerializer, it)
-        }
+        compositeEncoder.encodeStringIfNotNull(descriptor, 16, choice.value.value?.toString())
+        compositeEncoder.encodeElementIfNotNull(descriptor, 17, choice.value)
       }
       is AuditEvent.Entity.Detail.Value.Period -> {
-        encoder.encodeSerializableElement(descriptor, 18, PeriodSerializer, choice.value)
+        compositeEncoder.encodeSerializableElement(descriptor, 18, PeriodSerializer, choice.value)
       }
       is AuditEvent.Entity.Detail.Value.Base64Binary -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 19, it) }
-        (choice.value.toElement())?.let {
-          encoder.encodeSerializableElement(descriptor, 20, ElementSerializer, it)
-        }
+        compositeEncoder.encodeStringIfNotNull(descriptor, 19, choice.value.value)
+        compositeEncoder.encodeElementIfNotNull(descriptor, 20, choice.value)
       }
     }
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
@@ -993,75 +991,42 @@ internal object AuditEventSerializer : FhirResourceSerializer<AuditEvent> {
   override val descriptor: SerialDescriptor = buildResourceDescriptor("AuditEvent")
 
   override fun buildDescriptor(b: ClassSerialDescriptorBuilder) {
-    b.element("id", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("meta", Meta.serializer().descriptor, isOptional = true)
-    b.element("implicitRules", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("_implicitRules", Element.serializer().descriptor, isOptional = true)
-    b.element("language", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("_language", Element.serializer().descriptor, isOptional = true)
-    b.element("text", Narrative.serializer().descriptor, isOptional = true)
-    b.element(
+    b.optionalElement("id", KotlinString.serializer().descriptor)
+    b.optionalElement("meta", MetaSerializer.descriptor)
+    b.optionalElement("implicitRules", KotlinString.serializer().descriptor)
+    b.optionalElement("_implicitRules", ElementSerializer.descriptor)
+    b.optionalElement("language", KotlinString.serializer().descriptor)
+    b.optionalElement("_language", ElementSerializer.descriptor)
+    b.optionalElement("text", NarrativeSerializer.descriptor)
+    b.optionalElement(
       "contained",
-      listSerialDescriptor(lazyDescriptor { Resource.serializer().descriptor }),
-      isOptional = true,
+      listSerialDescriptor(lazyDescriptor { ResourcePolymorphicSerializer.descriptor }),
     )
-    b.element(
-      "extension",
-      listSerialDescriptor(Extension.serializer().descriptor),
-      isOptional = true,
-    )
-    b.element(
-      "modifierExtension",
-      listSerialDescriptor(Extension.serializer().descriptor),
-      isOptional = true,
-    )
-    b.element(
-      "category",
-      listSerialDescriptor(CodeableConcept.serializer().descriptor),
-      isOptional = true,
-    )
-    b.element("code", CodeableConcept.serializer().descriptor, isOptional = true)
-    b.element("action", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("_action", Element.serializer().descriptor, isOptional = true)
-    b.element("severity", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("_severity", Element.serializer().descriptor, isOptional = true)
-    b.element("occurredPeriod", Period.serializer().descriptor, isOptional = true)
-    b.element("occurredDateTime", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("_occurredDateTime", Element.serializer().descriptor, isOptional = true)
-    b.element("recorded", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("_recorded", Element.serializer().descriptor, isOptional = true)
-    b.element(
-      "outcome",
-      lazyDescriptor { AuditEvent.Outcome.serializer().descriptor },
-      isOptional = true,
-    )
-    b.element(
-      "authorization",
-      listSerialDescriptor(CodeableConcept.serializer().descriptor),
-      isOptional = true,
-    )
-    b.element("basedOn", listSerialDescriptor(Reference.serializer().descriptor), isOptional = true)
-    b.element("patient", Reference.serializer().descriptor, isOptional = true)
-    b.element("encounter", Reference.serializer().descriptor, isOptional = true)
-    b.element(
-      "agent",
-      listSerialDescriptor(lazyDescriptor { AuditEvent.Agent.serializer().descriptor }),
-      isOptional = true,
-    )
-    b.element(
-      "source",
-      lazyDescriptor { AuditEvent.Source.serializer().descriptor },
-      isOptional = true,
-    )
-    b.element(
-      "entity",
-      listSerialDescriptor(lazyDescriptor { AuditEvent.Entity.serializer().descriptor }),
-      isOptional = true,
-    )
+    b.optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+    b.optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+    b.optionalElement("category", CodeableConceptSerializer.listSerializer.descriptor)
+    b.optionalElement("code", CodeableConceptSerializer.descriptor)
+    b.optionalElement("action", KotlinString.serializer().descriptor)
+    b.optionalElement("_action", ElementSerializer.descriptor)
+    b.optionalElement("severity", KotlinString.serializer().descriptor)
+    b.optionalElement("_severity", ElementSerializer.descriptor)
+    b.optionalElement("occurredPeriod", PeriodSerializer.descriptor)
+    b.optionalElement("occurredDateTime", KotlinString.serializer().descriptor)
+    b.optionalElement("_occurredDateTime", ElementSerializer.descriptor)
+    b.optionalElement("recorded", KotlinString.serializer().descriptor)
+    b.optionalElement("_recorded", ElementSerializer.descriptor)
+    b.optionalElement("outcome", AuditEventOutcomeSerializer.descriptor)
+    b.optionalElement("authorization", CodeableConceptSerializer.listSerializer.descriptor)
+    b.optionalElement("basedOn", ReferenceSerializer.listSerializer.descriptor)
+    b.optionalElement("patient", ReferenceSerializer.descriptor)
+    b.optionalElement("encounter", ReferenceSerializer.descriptor)
+    b.optionalElement("agent", AuditEventAgentSerializer.listSerializer.descriptor)
+    b.optionalElement("source", AuditEventSourceSerializer.descriptor)
+    b.optionalElement("entity", AuditEventEntitySerializer.listSerializer.descriptor)
   }
 
   override fun deserializeInternal(
-    decoder: CompositeDecoder,
+    compositeDecoder: CompositeDecoder,
     descriptor: SerialDescriptor,
     descriptorOffset: Int,
   ): AuditEvent {
@@ -1095,25 +1060,43 @@ internal object AuditEventSerializer : FhirResourceSerializer<AuditEvent> {
     var source: AuditEvent.Source? = null
     var entity: List<AuditEvent.Entity>? = null
     while (true) {
-      val i = decoder.decodeElementIndex(descriptor)
+      val i = compositeDecoder.decodeElementIndex(descriptor)
       if (i == CompositeDecoder.DECODE_DONE) break
       when (i - descriptorOffset) {
-        -1 -> decoder.decodeStringElement(descriptor, i)
-        0 -> id = decoder.decodeStringElement(descriptor, i)
-        1 -> meta = decoder.decodeNullableSerializableElement(descriptor, i, MetaSerializer, null)
-        2 -> implicitRules = decoder.decodeStringElement(descriptor, i)
+        -1 -> compositeDecoder.decodeStringElement(descriptor, i)
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
+        1 ->
+          meta =
+            compositeDecoder.decodeNullableSerializableElement(descriptor, i, MetaSerializer, null)
+        2 -> implicitRules = compositeDecoder.decodeStringElement(descriptor, i)
         3 ->
           _implicitRules =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        4 -> language = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        4 -> language = compositeDecoder.decodeStringElement(descriptor, i)
         5 ->
           _language =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         6 ->
-          text = decoder.decodeNullableSerializableElement(descriptor, i, NarrativeSerializer, null)
+          text =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              NarrativeSerializer,
+              null,
+            )
         7 ->
           contained =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ResourcePolymorphicSerializer.listSerializer,
@@ -1121,7 +1104,7 @@ internal object AuditEventSerializer : FhirResourceSerializer<AuditEvent> {
             )
         8 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -1129,7 +1112,7 @@ internal object AuditEventSerializer : FhirResourceSerializer<AuditEvent> {
             )
         9 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -1137,7 +1120,7 @@ internal object AuditEventSerializer : FhirResourceSerializer<AuditEvent> {
             )
         10 ->
           category =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer.listSerializer,
@@ -1145,34 +1128,59 @@ internal object AuditEventSerializer : FhirResourceSerializer<AuditEvent> {
             )
         11 ->
           code =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer,
               null,
             )
-        12 -> action = decoder.decodeStringElement(descriptor, i)
+        12 -> action = compositeDecoder.decodeStringElement(descriptor, i)
         13 ->
           _action =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        14 -> severity = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        14 -> severity = compositeDecoder.decodeStringElement(descriptor, i)
         15 ->
           _severity =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         16 ->
           occurredPeriod =
-            decoder.decodeNullableSerializableElement(descriptor, i, PeriodSerializer, null)
-        17 -> occurredDateTime = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              PeriodSerializer,
+              null,
+            )
+        17 -> occurredDateTime = compositeDecoder.decodeStringElement(descriptor, i)
         18 ->
           _occurredDateTime =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        19 -> recorded = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        19 -> recorded = compositeDecoder.decodeStringElement(descriptor, i)
         20 ->
           _recorded =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         21 ->
           outcome =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               AuditEventOutcomeSerializer,
@@ -1180,7 +1188,7 @@ internal object AuditEventSerializer : FhirResourceSerializer<AuditEvent> {
             )
         22 ->
           authorization =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer.listSerializer,
@@ -1188,7 +1196,7 @@ internal object AuditEventSerializer : FhirResourceSerializer<AuditEvent> {
             )
         23 ->
           basedOn =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ReferenceSerializer.listSerializer,
@@ -1196,13 +1204,23 @@ internal object AuditEventSerializer : FhirResourceSerializer<AuditEvent> {
             )
         24 ->
           patient =
-            decoder.decodeNullableSerializableElement(descriptor, i, ReferenceSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ReferenceSerializer,
+              null,
+            )
         25 ->
           encounter =
-            decoder.decodeNullableSerializableElement(descriptor, i, ReferenceSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ReferenceSerializer,
+              null,
+            )
         26 ->
           agent =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               AuditEventAgentSerializer.listSerializer,
@@ -1210,7 +1228,7 @@ internal object AuditEventSerializer : FhirResourceSerializer<AuditEvent> {
             )
         27 ->
           source =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               AuditEventSourceSerializer,
@@ -1218,7 +1236,7 @@ internal object AuditEventSerializer : FhirResourceSerializer<AuditEvent> {
             )
         28 ->
           entity =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               AuditEventEntitySerializer.listSerializer,
@@ -1238,16 +1256,26 @@ internal object AuditEventSerializer : FhirResourceSerializer<AuditEvent> {
       modifierExtension = modifierExtension ?: listOf(),
       category = category ?: listOf(),
       code = code ?: throw SerializationException("Missing required property 'code' on AuditEvent"),
-      action = Enumeration.of(action?.let { AuditEvent.AuditEventAction.fromCode(it) }, _action),
+      action =
+        Enumeration.of(
+          if (action != null) AuditEvent.AuditEventAction.fromCode(action) else null,
+          _action,
+        ),
       severity =
-        Enumeration.of(severity?.let { AuditEvent.AuditEventSeverity.fromCode(it) }, _severity),
+        Enumeration.of(
+          if (severity != null) AuditEvent.AuditEventSeverity.fromCode(severity) else null,
+          _severity,
+        ),
       occurred =
         AuditEvent.Occurred.from(
           occurredPeriod,
-          DateTime.of(occurredDateTime?.let { FhirDateTime.fromString(it) }, _occurredDateTime),
+          DateTime.of(
+            if (occurredDateTime != null) FhirDateTime.fromString(occurredDateTime) else null,
+            _occurredDateTime,
+          ),
         ),
       recorded =
-        Instant.of(recorded?.let { FhirDateTime.fromString(it) }, _recorded)
+        Instant.of(if (recorded != null) FhirDateTime.fromString(recorded) else null, _recorded)
           ?: throw SerializationException("Missing required property 'recorded' on AuditEvent"),
       outcome = outcome,
       authorization = authorization ?: listOf(),
@@ -1262,80 +1290,82 @@ internal object AuditEventSerializer : FhirResourceSerializer<AuditEvent> {
   }
 
   override fun serializeInternal(
-    encoder: CompositeEncoder,
+    compositeEncoder: CompositeEncoder,
     descriptor: SerialDescriptor,
     descriptorOffset: Int,
     `value`: AuditEvent,
   ) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0 + descriptorOffset, it) }
-    (value.meta)?.let {
-      encoder.encodeSerializableElement(descriptor, 1 + descriptorOffset, MetaSerializer, it)
-    }
-    ((value.implicitRules?.value))?.let {
-      encoder.encodeStringElement(descriptor, 2 + descriptorOffset, it)
-    }
-    (value.implicitRules?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 3 + descriptorOffset, ElementSerializer, it)
-    }
-    ((value.language?.value))?.let {
-      encoder.encodeStringElement(descriptor, 4 + descriptorOffset, it)
-    }
-    (value.language?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 5 + descriptorOffset, ElementSerializer, it)
-    }
-    (value.text)?.let {
-      encoder.encodeSerializableElement(descriptor, 6 + descriptorOffset, NarrativeSerializer, it)
-    }
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0 + descriptorOffset, value.id)
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      1 + descriptorOffset,
+      MetaSerializer,
+      value.meta,
+    )
+    compositeEncoder.encodeStringIfNotNull(
+      descriptor,
+      2 + descriptorOffset,
+      value.implicitRules?.value,
+    )
+    compositeEncoder.encodeElementIfNotNull(descriptor, 3 + descriptorOffset, value.implicitRules)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 4 + descriptorOffset, value.language?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 5 + descriptorOffset, value.language)
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      6 + descriptorOffset,
+      NarrativeSerializer,
+      value.text,
+    )
     if (value.contained.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         7 + descriptorOffset,
         ResourcePolymorphicSerializer.listSerializer,
         value.contained,
       )
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         8 + descriptorOffset,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         9 + descriptorOffset,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
     if (value.category.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         10 + descriptorOffset,
         CodeableConceptSerializer.listSerializer,
         value.category,
       )
-    encoder.encodeSerializableElement(
+    compositeEncoder.encodeSerializableElement(
       descriptor,
       11 + descriptorOffset,
       CodeableConceptSerializer,
       value.code,
     )
-    ((value.action?.value?.code))?.let {
-      encoder.encodeStringElement(descriptor, 12 + descriptorOffset, it)
-    }
-    (value.action?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 13 + descriptorOffset, ElementSerializer, it)
-    }
-    ((value.severity?.value?.code))?.let {
-      encoder.encodeStringElement(descriptor, 14 + descriptorOffset, it)
-    }
-    (value.severity?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 15 + descriptorOffset, ElementSerializer, it)
-    }
+    compositeEncoder.encodeStringIfNotNull(
+      descriptor,
+      12 + descriptorOffset,
+      value.action?.value?.code,
+    )
+    compositeEncoder.encodeElementIfNotNull(descriptor, 13 + descriptorOffset, value.action)
+    compositeEncoder.encodeStringIfNotNull(
+      descriptor,
+      14 + descriptorOffset,
+      value.severity?.value?.code,
+    )
+    compositeEncoder.encodeElementIfNotNull(descriptor, 15 + descriptorOffset, value.severity)
     when (val choice = value.occurred) {
       null -> {}
       is AuditEvent.Occurred.Period -> {
-        encoder.encodeSerializableElement(
+        compositeEncoder.encodeSerializableElement(
           descriptor,
           16 + descriptorOffset,
           PeriodSerializer,
@@ -1343,68 +1373,67 @@ internal object AuditEventSerializer : FhirResourceSerializer<AuditEvent> {
         )
       }
       is AuditEvent.Occurred.DateTime -> {
-        ((choice.value.value?.toString()))?.let {
-          encoder.encodeStringElement(descriptor, 17 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
-          encoder.encodeSerializableElement(
-            descriptor,
-            18 + descriptorOffset,
-            ElementSerializer,
-            it,
-          )
-        }
+        compositeEncoder.encodeStringIfNotNull(
+          descriptor,
+          17 + descriptorOffset,
+          choice.value.value?.toString(),
+        )
+        compositeEncoder.encodeElementIfNotNull(descriptor, 18 + descriptorOffset, choice.value)
       }
     }
-    ((value.recorded.value?.toString()))?.let {
-      encoder.encodeStringElement(descriptor, 19 + descriptorOffset, it)
-    }
-    (value.recorded.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 20 + descriptorOffset, ElementSerializer, it)
-    }
-    (value.outcome)?.let {
-      encoder.encodeSerializableElement(
-        descriptor,
-        21 + descriptorOffset,
-        AuditEventOutcomeSerializer,
-        it,
-      )
-    }
+    compositeEncoder.encodeStringIfNotNull(
+      descriptor,
+      19 + descriptorOffset,
+      value.recorded.value?.toString(),
+    )
+    compositeEncoder.encodeElementIfNotNull(descriptor, 20 + descriptorOffset, value.recorded)
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      21 + descriptorOffset,
+      AuditEventOutcomeSerializer,
+      value.outcome,
+    )
     if (value.authorization.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         22 + descriptorOffset,
         CodeableConceptSerializer.listSerializer,
         value.authorization,
       )
     if (value.basedOn.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         23 + descriptorOffset,
         ReferenceSerializer.listSerializer,
         value.basedOn,
       )
-    (value.patient)?.let {
-      encoder.encodeSerializableElement(descriptor, 24 + descriptorOffset, ReferenceSerializer, it)
-    }
-    (value.encounter)?.let {
-      encoder.encodeSerializableElement(descriptor, 25 + descriptorOffset, ReferenceSerializer, it)
-    }
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      24 + descriptorOffset,
+      ReferenceSerializer,
+      value.patient,
+    )
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      25 + descriptorOffset,
+      ReferenceSerializer,
+      value.encounter,
+    )
     if (value.agent.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         26 + descriptorOffset,
         AuditEventAgentSerializer.listSerializer,
         value.agent,
       )
-    encoder.encodeSerializableElement(
+    compositeEncoder.encodeSerializableElement(
       descriptor,
       27 + descriptorOffset,
       AuditEventSourceSerializer,
       value.source,
     )
     if (value.entity.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         28 + descriptorOffset,
         AuditEventEntitySerializer.listSerializer,

@@ -38,62 +38,61 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.descriptors.listSerialDescriptor
 import kotlinx.serialization.encoding.CompositeDecoder
-import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.encoding.decodeStructure
-import kotlinx.serialization.encoding.encodeStructure
 
 internal object RangeSerializer : KSerializer<Range> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("Range") {
-      element("id", String.serializer().descriptor, isOptional = true)
-      element(
+      optionalElement("id", String.serializer().descriptor)
+      optionalElement(
         "extension",
-        listSerialDescriptor(lazyDescriptor { Extension.serializer().descriptor }),
-        isOptional = true,
+        listSerialDescriptor(lazyDescriptor { ExtensionSerializer.descriptor }),
       )
-      element("low", lazyDescriptor { Quantity.serializer().descriptor }, isOptional = true)
-      element("high", lazyDescriptor { Quantity.serializer().descriptor }, isOptional = true)
+      optionalElement("low", lazyDescriptor { QuantitySerializer.descriptor })
+      optionalElement("high", lazyDescriptor { QuantitySerializer.descriptor })
     }
 
   internal val listSerializer: KSerializer<List<Range>> = ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): Range =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: Range) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): Range {
+  override fun deserialize(decoder: Decoder): Range {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: String? = null
     var extension: List<Extension>? = null
     var low: Quantity? = null
     var high: Quantity? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
               null,
             )
         2 ->
-          low = decoder.decodeNullableSerializableElement(descriptor, i, QuantitySerializer, null)
+          low =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              QuantitySerializer,
+              null,
+            )
         3 ->
-          high = decoder.decodeNullableSerializableElement(descriptor, i, QuantitySerializer, null)
+          high =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              QuantitySerializer,
+              null,
+            )
         CompositeDecoder.DECODE_DONE -> break
         else -> throw SerializationException("Unexpected index decoding Range: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return Range(
       id = id,
       extension = extension ?: listOf(),
@@ -102,16 +101,18 @@ internal object RangeSerializer : KSerializer<Range> {
     )
   }
 
-  private fun serializeInternal(encoder: CompositeEncoder, `value`: Range) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: Range) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
-    (value.low)?.let { encoder.encodeSerializableElement(descriptor, 2, QuantitySerializer, it) }
-    (value.high)?.let { encoder.encodeSerializableElement(descriptor, 3, QuantitySerializer, it) }
+    compositeEncoder.encodeSerializableIfNotNull(descriptor, 2, QuantitySerializer, value.low)
+    compositeEncoder.encodeSerializableIfNotNull(descriptor, 3, QuantitySerializer, value.high)
+    compositeEncoder.endStructure(descriptor)
   }
 }

@@ -72,42 +72,22 @@ import kotlinx.serialization.encoding.CompositeDecoder
 import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.encoding.decodeStructure
-import kotlinx.serialization.encoding.encodeStructure
 
 internal object CitationSummarySerializer : KSerializer<Citation.Summary> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("Summary") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("style", CodeableConcept.serializer().descriptor, isOptional = true)
-      element("text", KotlinString.serializer().descriptor, isOptional = true)
-      element("_text", Element.serializer().descriptor, isOptional = true)
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("style", CodeableConceptSerializer.descriptor)
+      optionalElement("text", KotlinString.serializer().descriptor)
+      optionalElement("_text", ElementSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<Citation.Summary>> = ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): Citation.Summary =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: Citation.Summary) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): Citation.Summary {
+  override fun deserialize(decoder: Decoder): Citation.Summary {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -115,11 +95,11 @@ internal object CitationSummarySerializer : KSerializer<Citation.Summary> {
     var text: KotlinString? = null
     var _text: Element? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -127,7 +107,7 @@ internal object CitationSummarySerializer : KSerializer<Citation.Summary> {
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -135,19 +115,26 @@ internal object CitationSummarySerializer : KSerializer<Citation.Summary> {
             )
         3 ->
           style =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer,
               null,
             )
-        4 -> text = decoder.decodeStringElement(descriptor, i)
+        4 -> text = compositeDecoder.decodeStringElement(descriptor, i)
         5 ->
-          _text = decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+          _text =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         CompositeDecoder.DECODE_DONE -> break
         else -> throw SerializationException("Unexpected index decoding Summary: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return Citation.Summary(
       id = id,
       extension = extension ?: listOf(),
@@ -159,79 +146,60 @@ internal object CitationSummarySerializer : KSerializer<Citation.Summary> {
     )
   }
 
-  private fun serializeInternal(encoder: CompositeEncoder, `value`: Citation.Summary) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: Citation.Summary) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    (value.style)?.let {
-      encoder.encodeSerializableElement(descriptor, 3, CodeableConceptSerializer, it)
-    }
-    ((value.text.value))?.let { encoder.encodeStringElement(descriptor, 4, it) }
-    (value.text.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 5, ElementSerializer, it)
-    }
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      3,
+      CodeableConceptSerializer,
+      value.style,
+    )
+    compositeEncoder.encodeStringIfNotNull(descriptor, 4, value.text.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 5, value.text)
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
 internal object CitationClassificationSerializer : KSerializer<Citation.Classification> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("Classification") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("type", CodeableConcept.serializer().descriptor, isOptional = true)
-      element(
-        "classifier",
-        listSerialDescriptor(CodeableConcept.serializer().descriptor),
-        isOptional = true,
-      )
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("type", CodeableConceptSerializer.descriptor)
+      optionalElement("classifier", CodeableConceptSerializer.listSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<Citation.Classification>> = ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): Citation.Classification =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: Citation.Classification) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): Citation.Classification {
+  override fun deserialize(decoder: Decoder): Citation.Classification {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
     var type: CodeableConcept? = null
     var classifier: List<CodeableConcept>? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -239,7 +207,7 @@ internal object CitationClassificationSerializer : KSerializer<Citation.Classifi
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -247,7 +215,7 @@ internal object CitationClassificationSerializer : KSerializer<Citation.Classifi
             )
         3 ->
           type =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer,
@@ -255,7 +223,7 @@ internal object CitationClassificationSerializer : KSerializer<Citation.Classifi
             )
         4 ->
           classifier =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer.listSerializer,
@@ -265,6 +233,7 @@ internal object CitationClassificationSerializer : KSerializer<Citation.Classifi
         else -> throw SerializationException("Unexpected index decoding Classification: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return Citation.Classification(
       id = id,
       extension = extension ?: listOf(),
@@ -274,69 +243,56 @@ internal object CitationClassificationSerializer : KSerializer<Citation.Classifi
     )
   }
 
-  private fun serializeInternal(encoder: CompositeEncoder, `value`: Citation.Classification) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: Citation.Classification) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    (value.type)?.let {
-      encoder.encodeSerializableElement(descriptor, 3, CodeableConceptSerializer, it)
-    }
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      3,
+      CodeableConceptSerializer,
+      value.type,
+    )
     if (value.classifier.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         4,
         CodeableConceptSerializer.listSerializer,
         value.classifier,
       )
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
 internal object CitationStatusDateSerializer : KSerializer<Citation.StatusDate> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("StatusDate") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("activity", CodeableConcept.serializer().descriptor, isOptional = true)
-      element("actual", KotlinBoolean.serializer().descriptor, isOptional = true)
-      element("_actual", Element.serializer().descriptor, isOptional = true)
-      element("period", Period.serializer().descriptor, isOptional = true)
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("activity", CodeableConceptSerializer.descriptor)
+      optionalElement("actual", KotlinBoolean.serializer().descriptor)
+      optionalElement("_actual", ElementSerializer.descriptor)
+      optionalElement("period", PeriodSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<Citation.StatusDate>> = ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): Citation.StatusDate =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: Citation.StatusDate) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): Citation.StatusDate {
+  override fun deserialize(decoder: Decoder): Citation.StatusDate {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -345,11 +301,11 @@ internal object CitationStatusDateSerializer : KSerializer<Citation.StatusDate> 
     var _actual: Element? = null
     var period: Period? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -357,7 +313,7 @@ internal object CitationStatusDateSerializer : KSerializer<Citation.StatusDate> 
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -365,22 +321,34 @@ internal object CitationStatusDateSerializer : KSerializer<Citation.StatusDate> 
             )
         3 ->
           activity =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer,
               null,
             )
-        4 -> `actual` = decoder.decodeBooleanElement(descriptor, i)
+        4 -> `actual` = compositeDecoder.decodeBooleanElement(descriptor, i)
         5 ->
           _actual =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         6 ->
-          period = decoder.decodeNullableSerializableElement(descriptor, i, PeriodSerializer, null)
+          period =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              PeriodSerializer,
+              null,
+            )
         CompositeDecoder.DECODE_DONE -> break
         else -> throw SerializationException("Unexpected index decoding StatusDate: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return Citation.StatusDate(
       id = id,
       extension = extension ?: listOf(),
@@ -399,143 +367,79 @@ internal object CitationStatusDateSerializer : KSerializer<Citation.StatusDate> 
     )
   }
 
-  private fun serializeInternal(encoder: CompositeEncoder, `value`: Citation.StatusDate) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: Citation.StatusDate) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    encoder.encodeSerializableElement(descriptor, 3, CodeableConceptSerializer, value.activity)
-    ((value.`actual`?.value))?.let { encoder.encodeBooleanElement(descriptor, 4, it) }
-    (value.`actual`?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 5, ElementSerializer, it)
-    }
-    encoder.encodeSerializableElement(descriptor, 6, PeriodSerializer, value.period)
+    compositeEncoder.encodeSerializableElement(
+      descriptor,
+      3,
+      CodeableConceptSerializer,
+      value.activity,
+    )
+    compositeEncoder.encodeBooleanIfNotNull(descriptor, 4, value.`actual`?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 5, value.`actual`)
+    compositeEncoder.encodeSerializableElement(descriptor, 6, PeriodSerializer, value.period)
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
 internal object CitationCitedArtifactSerializer : KSerializer<Citation.CitedArtifact> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("CitedArtifact") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "identifier",
-        listSerialDescriptor(Identifier.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "relatedIdentifier",
-        listSerialDescriptor(Identifier.serializer().descriptor),
-        isOptional = true,
-      )
-      element("dateAccessed", KotlinString.serializer().descriptor, isOptional = true)
-      element("_dateAccessed", Element.serializer().descriptor, isOptional = true)
-      element(
-        "version",
-        lazyDescriptor { Citation.CitedArtifact.Version.serializer().descriptor },
-        isOptional = true,
-      )
-      element(
-        "currentState",
-        listSerialDescriptor(CodeableConcept.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("identifier", IdentifierSerializer.listSerializer.descriptor)
+      optionalElement("relatedIdentifier", IdentifierSerializer.listSerializer.descriptor)
+      optionalElement("dateAccessed", KotlinString.serializer().descriptor)
+      optionalElement("_dateAccessed", ElementSerializer.descriptor)
+      optionalElement("version", CitationCitedArtifactVersionSerializer.descriptor)
+      optionalElement("currentState", CodeableConceptSerializer.listSerializer.descriptor)
+      optionalElement(
         "statusDate",
-        listSerialDescriptor(
-          lazyDescriptor { Citation.CitedArtifact.StatusDate.serializer().descriptor }
-        ),
-        isOptional = true,
+        CitationCitedArtifactStatusDateSerializer.listSerializer.descriptor,
       )
-      element(
-        "title",
-        listSerialDescriptor(
-          lazyDescriptor { Citation.CitedArtifact.Title.serializer().descriptor }
-        ),
-        isOptional = true,
-      )
-      element(
-        "abstract",
-        listSerialDescriptor(
-          lazyDescriptor { Citation.CitedArtifact.Abstract.serializer().descriptor }
-        ),
-        isOptional = true,
-      )
-      element(
-        "part",
-        lazyDescriptor { Citation.CitedArtifact.Part.serializer().descriptor },
-        isOptional = true,
-      )
-      element(
+      optionalElement("title", CitationCitedArtifactTitleSerializer.listSerializer.descriptor)
+      optionalElement("abstract", CitationCitedArtifactAbstractSerializer.listSerializer.descriptor)
+      optionalElement("part", CitationCitedArtifactPartSerializer.descriptor)
+      optionalElement(
         "relatesTo",
-        listSerialDescriptor(
-          lazyDescriptor { Citation.CitedArtifact.RelatesTo.serializer().descriptor }
-        ),
-        isOptional = true,
+        CitationCitedArtifactRelatesToSerializer.listSerializer.descriptor,
       )
-      element(
+      optionalElement(
         "publicationForm",
-        listSerialDescriptor(
-          lazyDescriptor { Citation.CitedArtifact.PublicationForm.serializer().descriptor }
-        ),
-        isOptional = true,
+        CitationCitedArtifactPublicationFormSerializer.listSerializer.descriptor,
       )
-      element(
+      optionalElement(
         "webLocation",
-        listSerialDescriptor(
-          lazyDescriptor { Citation.CitedArtifact.WebLocation.serializer().descriptor }
-        ),
-        isOptional = true,
+        CitationCitedArtifactWebLocationSerializer.listSerializer.descriptor,
       )
-      element(
+      optionalElement(
         "classification",
-        listSerialDescriptor(
-          lazyDescriptor { Citation.CitedArtifact.Classification.serializer().descriptor }
-        ),
-        isOptional = true,
+        CitationCitedArtifactClassificationSerializer.listSerializer.descriptor,
       )
-      element(
-        "contributorship",
-        lazyDescriptor { Citation.CitedArtifact.Contributorship.serializer().descriptor },
-        isOptional = true,
-      )
-      element("note", listSerialDescriptor(Annotation.serializer().descriptor), isOptional = true)
+      optionalElement("contributorship", CitationCitedArtifactContributorshipSerializer.descriptor)
+      optionalElement("note", AnnotationSerializer.listSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<Citation.CitedArtifact>> = ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): Citation.CitedArtifact =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: Citation.CitedArtifact) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): Citation.CitedArtifact {
+  override fun deserialize(decoder: Decoder): Citation.CitedArtifact {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -556,11 +460,11 @@ internal object CitationCitedArtifactSerializer : KSerializer<Citation.CitedArti
     var contributorship: Citation.CitedArtifact.Contributorship? = null
     var note: List<Annotation>? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -568,7 +472,7 @@ internal object CitationCitedArtifactSerializer : KSerializer<Citation.CitedArti
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -576,7 +480,7 @@ internal object CitationCitedArtifactSerializer : KSerializer<Citation.CitedArti
             )
         3 ->
           identifier =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               IdentifierSerializer.listSerializer,
@@ -584,19 +488,24 @@ internal object CitationCitedArtifactSerializer : KSerializer<Citation.CitedArti
             )
         4 ->
           relatedIdentifier =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               IdentifierSerializer.listSerializer,
               null,
             )
-        5 -> dateAccessed = decoder.decodeStringElement(descriptor, i)
+        5 -> dateAccessed = compositeDecoder.decodeStringElement(descriptor, i)
         6 ->
           _dateAccessed =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         7 ->
           version =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CitationCitedArtifactVersionSerializer,
@@ -604,7 +513,7 @@ internal object CitationCitedArtifactSerializer : KSerializer<Citation.CitedArti
             )
         8 ->
           currentState =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer.listSerializer,
@@ -612,7 +521,7 @@ internal object CitationCitedArtifactSerializer : KSerializer<Citation.CitedArti
             )
         9 ->
           statusDate =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CitationCitedArtifactStatusDateSerializer.listSerializer,
@@ -620,7 +529,7 @@ internal object CitationCitedArtifactSerializer : KSerializer<Citation.CitedArti
             )
         10 ->
           title =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CitationCitedArtifactTitleSerializer.listSerializer,
@@ -628,7 +537,7 @@ internal object CitationCitedArtifactSerializer : KSerializer<Citation.CitedArti
             )
         11 ->
           `abstract` =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CitationCitedArtifactAbstractSerializer.listSerializer,
@@ -636,7 +545,7 @@ internal object CitationCitedArtifactSerializer : KSerializer<Citation.CitedArti
             )
         12 ->
           part =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CitationCitedArtifactPartSerializer,
@@ -644,7 +553,7 @@ internal object CitationCitedArtifactSerializer : KSerializer<Citation.CitedArti
             )
         13 ->
           relatesTo =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CitationCitedArtifactRelatesToSerializer.listSerializer,
@@ -652,7 +561,7 @@ internal object CitationCitedArtifactSerializer : KSerializer<Citation.CitedArti
             )
         14 ->
           publicationForm =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CitationCitedArtifactPublicationFormSerializer.listSerializer,
@@ -660,7 +569,7 @@ internal object CitationCitedArtifactSerializer : KSerializer<Citation.CitedArti
             )
         15 ->
           webLocation =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CitationCitedArtifactWebLocationSerializer.listSerializer,
@@ -668,7 +577,7 @@ internal object CitationCitedArtifactSerializer : KSerializer<Citation.CitedArti
             )
         16 ->
           classification =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CitationCitedArtifactClassificationSerializer.listSerializer,
@@ -676,7 +585,7 @@ internal object CitationCitedArtifactSerializer : KSerializer<Citation.CitedArti
             )
         17 ->
           contributorship =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CitationCitedArtifactContributorshipSerializer,
@@ -684,7 +593,7 @@ internal object CitationCitedArtifactSerializer : KSerializer<Citation.CitedArti
             )
         18 ->
           note =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               AnnotationSerializer.listSerializer,
@@ -694,13 +603,18 @@ internal object CitationCitedArtifactSerializer : KSerializer<Citation.CitedArti
         else -> throw SerializationException("Unexpected index decoding CitedArtifact: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return Citation.CitedArtifact(
       id = id,
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
       identifier = identifier ?: listOf(),
       relatedIdentifier = relatedIdentifier ?: listOf(),
-      dateAccessed = DateTime.of(dateAccessed?.let { FhirDateTime.fromString(it) }, _dateAccessed),
+      dateAccessed =
+        DateTime.of(
+          if (dateAccessed != null) FhirDateTime.fromString(dateAccessed) else null,
+          _dateAccessed,
+        ),
       version = version,
       currentState = currentState ?: listOf(),
       statusDate = statusDate ?: listOf(),
@@ -716,119 +630,121 @@ internal object CitationCitedArtifactSerializer : KSerializer<Citation.CitedArti
     )
   }
 
-  private fun serializeInternal(encoder: CompositeEncoder, `value`: Citation.CitedArtifact) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: Citation.CitedArtifact) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
     if (value.identifier.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         3,
         IdentifierSerializer.listSerializer,
         value.identifier,
       )
     if (value.relatedIdentifier.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         4,
         IdentifierSerializer.listSerializer,
         value.relatedIdentifier,
       )
-    ((value.dateAccessed?.value?.toString()))?.let {
-      encoder.encodeStringElement(descriptor, 5, it)
-    }
-    (value.dateAccessed?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 6, ElementSerializer, it)
-    }
-    (value.version)?.let {
-      encoder.encodeSerializableElement(descriptor, 7, CitationCitedArtifactVersionSerializer, it)
-    }
+    compositeEncoder.encodeStringIfNotNull(descriptor, 5, value.dateAccessed?.value?.toString())
+    compositeEncoder.encodeElementIfNotNull(descriptor, 6, value.dateAccessed)
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      7,
+      CitationCitedArtifactVersionSerializer,
+      value.version,
+    )
     if (value.currentState.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         8,
         CodeableConceptSerializer.listSerializer,
         value.currentState,
       )
     if (value.statusDate.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         9,
         CitationCitedArtifactStatusDateSerializer.listSerializer,
         value.statusDate,
       )
     if (value.title.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         10,
         CitationCitedArtifactTitleSerializer.listSerializer,
         value.title,
       )
     if (value.`abstract`.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         11,
         CitationCitedArtifactAbstractSerializer.listSerializer,
         value.`abstract`,
       )
-    (value.part)?.let {
-      encoder.encodeSerializableElement(descriptor, 12, CitationCitedArtifactPartSerializer, it)
-    }
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      12,
+      CitationCitedArtifactPartSerializer,
+      value.part,
+    )
     if (value.relatesTo.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         13,
         CitationCitedArtifactRelatesToSerializer.listSerializer,
         value.relatesTo,
       )
     if (value.publicationForm.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         14,
         CitationCitedArtifactPublicationFormSerializer.listSerializer,
         value.publicationForm,
       )
     if (value.webLocation.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         15,
         CitationCitedArtifactWebLocationSerializer.listSerializer,
         value.webLocation,
       )
     if (value.classification.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         16,
         CitationCitedArtifactClassificationSerializer.listSerializer,
         value.classification,
       )
-    (value.contributorship)?.let {
-      encoder.encodeSerializableElement(
-        descriptor,
-        17,
-        CitationCitedArtifactContributorshipSerializer,
-        it,
-      )
-    }
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      17,
+      CitationCitedArtifactContributorshipSerializer,
+      value.contributorship,
+    )
     if (value.note.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         18,
         AnnotationSerializer.listSerializer,
         value.note,
       )
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
@@ -836,37 +752,19 @@ internal object CitationCitedArtifactVersionSerializer :
   KSerializer<Citation.CitedArtifact.Version> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("Version") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("value", KotlinString.serializer().descriptor, isOptional = true)
-      element("_value", Element.serializer().descriptor, isOptional = true)
-      element("baseCitation", Reference.serializer().descriptor, isOptional = true)
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("value", KotlinString.serializer().descriptor)
+      optionalElement("_value", ElementSerializer.descriptor)
+      optionalElement("baseCitation", ReferenceSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<Citation.CitedArtifact.Version>> =
     ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): Citation.CitedArtifact.Version =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: Citation.CitedArtifact.Version) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): Citation.CitedArtifact.Version {
+  override fun deserialize(decoder: Decoder): Citation.CitedArtifact.Version {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -874,11 +772,11 @@ internal object CitationCitedArtifactVersionSerializer :
     var _value: Element? = null
     var baseCitation: Reference? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -886,22 +784,34 @@ internal object CitationCitedArtifactVersionSerializer :
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
               null,
             )
-        3 -> `value` = decoder.decodeStringElement(descriptor, i)
+        3 -> `value` = compositeDecoder.decodeStringElement(descriptor, i)
         4 ->
-          _value = decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+          _value =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         5 ->
           baseCitation =
-            decoder.decodeNullableSerializableElement(descriptor, i, ReferenceSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ReferenceSerializer,
+              null,
+            )
         CompositeDecoder.DECODE_DONE -> break
         else -> throw SerializationException("Unexpected index decoding Version: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return Citation.CitedArtifact.Version(
       id = id,
       extension = extension ?: listOf(),
@@ -915,32 +825,32 @@ internal object CitationCitedArtifactVersionSerializer :
     )
   }
 
-  private fun serializeInternal(
-    encoder: CompositeEncoder,
-    `value`: Citation.CitedArtifact.Version,
-  ) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: Citation.CitedArtifact.Version) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    ((value.`value`.value))?.let { encoder.encodeStringElement(descriptor, 3, it) }
-    (value.`value`.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 4, ElementSerializer, it)
-    }
-    (value.baseCitation)?.let {
-      encoder.encodeSerializableElement(descriptor, 5, ReferenceSerializer, it)
-    }
+    compositeEncoder.encodeStringIfNotNull(descriptor, 3, value.`value`.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 4, value.`value`)
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      5,
+      ReferenceSerializer,
+      value.baseCitation,
+    )
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
@@ -948,38 +858,20 @@ internal object CitationCitedArtifactStatusDateSerializer :
   KSerializer<Citation.CitedArtifact.StatusDate> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("StatusDate") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("activity", CodeableConcept.serializer().descriptor, isOptional = true)
-      element("actual", KotlinBoolean.serializer().descriptor, isOptional = true)
-      element("_actual", Element.serializer().descriptor, isOptional = true)
-      element("period", Period.serializer().descriptor, isOptional = true)
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("activity", CodeableConceptSerializer.descriptor)
+      optionalElement("actual", KotlinBoolean.serializer().descriptor)
+      optionalElement("_actual", ElementSerializer.descriptor)
+      optionalElement("period", PeriodSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<Citation.CitedArtifact.StatusDate>> =
     ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): Citation.CitedArtifact.StatusDate =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: Citation.CitedArtifact.StatusDate) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): Citation.CitedArtifact.StatusDate {
+  override fun deserialize(decoder: Decoder): Citation.CitedArtifact.StatusDate {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -988,11 +880,11 @@ internal object CitationCitedArtifactStatusDateSerializer :
     var _actual: Element? = null
     var period: Period? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -1000,7 +892,7 @@ internal object CitationCitedArtifactStatusDateSerializer :
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -1008,22 +900,34 @@ internal object CitationCitedArtifactStatusDateSerializer :
             )
         3 ->
           activity =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer,
               null,
             )
-        4 -> `actual` = decoder.decodeBooleanElement(descriptor, i)
+        4 -> `actual` = compositeDecoder.decodeBooleanElement(descriptor, i)
         5 ->
           _actual =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         6 ->
-          period = decoder.decodeNullableSerializableElement(descriptor, i, PeriodSerializer, null)
+          period =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              PeriodSerializer,
+              null,
+            )
         CompositeDecoder.DECODE_DONE -> break
         else -> throw SerializationException("Unexpected index decoding StatusDate: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return Citation.CitedArtifact.StatusDate(
       id = id,
       extension = extension ?: listOf(),
@@ -1042,73 +946,53 @@ internal object CitationCitedArtifactStatusDateSerializer :
     )
   }
 
-  private fun serializeInternal(
-    encoder: CompositeEncoder,
-    `value`: Citation.CitedArtifact.StatusDate,
-  ) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: Citation.CitedArtifact.StatusDate) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    encoder.encodeSerializableElement(descriptor, 3, CodeableConceptSerializer, value.activity)
-    ((value.`actual`?.value))?.let { encoder.encodeBooleanElement(descriptor, 4, it) }
-    (value.`actual`?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 5, ElementSerializer, it)
-    }
-    encoder.encodeSerializableElement(descriptor, 6, PeriodSerializer, value.period)
+    compositeEncoder.encodeSerializableElement(
+      descriptor,
+      3,
+      CodeableConceptSerializer,
+      value.activity,
+    )
+    compositeEncoder.encodeBooleanIfNotNull(descriptor, 4, value.`actual`?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 5, value.`actual`)
+    compositeEncoder.encodeSerializableElement(descriptor, 6, PeriodSerializer, value.period)
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
 internal object CitationCitedArtifactTitleSerializer : KSerializer<Citation.CitedArtifact.Title> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("Title") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "type",
-        listSerialDescriptor(CodeableConcept.serializer().descriptor),
-        isOptional = true,
-      )
-      element("language", CodeableConcept.serializer().descriptor, isOptional = true)
-      element("text", KotlinString.serializer().descriptor, isOptional = true)
-      element("_text", Element.serializer().descriptor, isOptional = true)
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("type", CodeableConceptSerializer.listSerializer.descriptor)
+      optionalElement("language", CodeableConceptSerializer.descriptor)
+      optionalElement("text", KotlinString.serializer().descriptor)
+      optionalElement("_text", ElementSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<Citation.CitedArtifact.Title>> =
     ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): Citation.CitedArtifact.Title =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: Citation.CitedArtifact.Title) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): Citation.CitedArtifact.Title {
+  override fun deserialize(decoder: Decoder): Citation.CitedArtifact.Title {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -1117,11 +1001,11 @@ internal object CitationCitedArtifactTitleSerializer : KSerializer<Citation.Cite
     var text: KotlinString? = null
     var _text: Element? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -1129,7 +1013,7 @@ internal object CitationCitedArtifactTitleSerializer : KSerializer<Citation.Cite
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -1137,7 +1021,7 @@ internal object CitationCitedArtifactTitleSerializer : KSerializer<Citation.Cite
             )
         3 ->
           type =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer.listSerializer,
@@ -1145,19 +1029,26 @@ internal object CitationCitedArtifactTitleSerializer : KSerializer<Citation.Cite
             )
         4 ->
           language =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer,
               null,
             )
-        5 -> text = decoder.decodeStringElement(descriptor, i)
+        5 -> text = compositeDecoder.decodeStringElement(descriptor, i)
         6 ->
-          _text = decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+          _text =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         CompositeDecoder.DECODE_DONE -> break
         else -> throw SerializationException("Unexpected index decoding Title: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return Citation.CitedArtifact.Title(
       id = id,
       extension = extension ?: listOf(),
@@ -1172,36 +1063,39 @@ internal object CitationCitedArtifactTitleSerializer : KSerializer<Citation.Cite
     )
   }
 
-  private fun serializeInternal(encoder: CompositeEncoder, `value`: Citation.CitedArtifact.Title) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: Citation.CitedArtifact.Title) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
     if (value.type.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         3,
         CodeableConceptSerializer.listSerializer,
         value.type,
       )
-    (value.language)?.let {
-      encoder.encodeSerializableElement(descriptor, 4, CodeableConceptSerializer, it)
-    }
-    ((value.text.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
-    (value.text.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 6, ElementSerializer, it)
-    }
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      4,
+      CodeableConceptSerializer,
+      value.language,
+    )
+    compositeEncoder.encodeStringIfNotNull(descriptor, 5, value.text.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 6, value.text)
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
@@ -1209,40 +1103,22 @@ internal object CitationCitedArtifactAbstractSerializer :
   KSerializer<Citation.CitedArtifact.Abstract> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("Abstract") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("type", CodeableConcept.serializer().descriptor, isOptional = true)
-      element("language", CodeableConcept.serializer().descriptor, isOptional = true)
-      element("text", KotlinString.serializer().descriptor, isOptional = true)
-      element("_text", Element.serializer().descriptor, isOptional = true)
-      element("copyright", KotlinString.serializer().descriptor, isOptional = true)
-      element("_copyright", Element.serializer().descriptor, isOptional = true)
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("type", CodeableConceptSerializer.descriptor)
+      optionalElement("language", CodeableConceptSerializer.descriptor)
+      optionalElement("text", KotlinString.serializer().descriptor)
+      optionalElement("_text", ElementSerializer.descriptor)
+      optionalElement("copyright", KotlinString.serializer().descriptor)
+      optionalElement("_copyright", ElementSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<Citation.CitedArtifact.Abstract>> =
     ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): Citation.CitedArtifact.Abstract =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: Citation.CitedArtifact.Abstract) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): Citation.CitedArtifact.Abstract {
+  override fun deserialize(decoder: Decoder): Citation.CitedArtifact.Abstract {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -1253,11 +1129,11 @@ internal object CitationCitedArtifactAbstractSerializer :
     var copyright: KotlinString? = null
     var _copyright: Element? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -1265,7 +1141,7 @@ internal object CitationCitedArtifactAbstractSerializer :
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -1273,7 +1149,7 @@ internal object CitationCitedArtifactAbstractSerializer :
             )
         3 ->
           type =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer,
@@ -1281,23 +1157,35 @@ internal object CitationCitedArtifactAbstractSerializer :
             )
         4 ->
           language =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer,
               null,
             )
-        5 -> text = decoder.decodeStringElement(descriptor, i)
+        5 -> text = compositeDecoder.decodeStringElement(descriptor, i)
         6 ->
-          _text = decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        7 -> copyright = decoder.decodeStringElement(descriptor, i)
+          _text =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        7 -> copyright = compositeDecoder.decodeStringElement(descriptor, i)
         8 ->
           _copyright =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         CompositeDecoder.DECODE_DONE -> break
         else -> throw SerializationException("Unexpected index decoding Abstract: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return Citation.CitedArtifact.Abstract(
       id = id,
       extension = extension ?: listOf(),
@@ -1313,76 +1201,59 @@ internal object CitationCitedArtifactAbstractSerializer :
     )
   }
 
-  private fun serializeInternal(
-    encoder: CompositeEncoder,
-    `value`: Citation.CitedArtifact.Abstract,
-  ) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: Citation.CitedArtifact.Abstract) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    (value.type)?.let {
-      encoder.encodeSerializableElement(descriptor, 3, CodeableConceptSerializer, it)
-    }
-    (value.language)?.let {
-      encoder.encodeSerializableElement(descriptor, 4, CodeableConceptSerializer, it)
-    }
-    ((value.text.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
-    (value.text.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 6, ElementSerializer, it)
-    }
-    ((value.copyright?.value))?.let { encoder.encodeStringElement(descriptor, 7, it) }
-    (value.copyright?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 8, ElementSerializer, it)
-    }
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      3,
+      CodeableConceptSerializer,
+      value.type,
+    )
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      4,
+      CodeableConceptSerializer,
+      value.language,
+    )
+    compositeEncoder.encodeStringIfNotNull(descriptor, 5, value.text.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 6, value.text)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 7, value.copyright?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 8, value.copyright)
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
 internal object CitationCitedArtifactPartSerializer : KSerializer<Citation.CitedArtifact.Part> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("Part") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("type", CodeableConcept.serializer().descriptor, isOptional = true)
-      element("value", KotlinString.serializer().descriptor, isOptional = true)
-      element("_value", Element.serializer().descriptor, isOptional = true)
-      element("baseCitation", Reference.serializer().descriptor, isOptional = true)
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("type", CodeableConceptSerializer.descriptor)
+      optionalElement("value", KotlinString.serializer().descriptor)
+      optionalElement("_value", ElementSerializer.descriptor)
+      optionalElement("baseCitation", ReferenceSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<Citation.CitedArtifact.Part>> = ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): Citation.CitedArtifact.Part =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: Citation.CitedArtifact.Part) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): Citation.CitedArtifact.Part {
+  override fun deserialize(decoder: Decoder): Citation.CitedArtifact.Part {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -1391,11 +1262,11 @@ internal object CitationCitedArtifactPartSerializer : KSerializer<Citation.Cited
     var _value: Element? = null
     var baseCitation: Reference? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -1403,7 +1274,7 @@ internal object CitationCitedArtifactPartSerializer : KSerializer<Citation.Cited
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -1411,22 +1282,34 @@ internal object CitationCitedArtifactPartSerializer : KSerializer<Citation.Cited
             )
         3 ->
           type =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer,
               null,
             )
-        4 -> `value` = decoder.decodeStringElement(descriptor, i)
+        4 -> `value` = compositeDecoder.decodeStringElement(descriptor, i)
         5 ->
-          _value = decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+          _value =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         6 ->
           baseCitation =
-            decoder.decodeNullableSerializableElement(descriptor, i, ReferenceSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ReferenceSerializer,
+              null,
+            )
         CompositeDecoder.DECODE_DONE -> break
         else -> throw SerializationException("Unexpected index decoding Part: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return Citation.CitedArtifact.Part(
       id = id,
       extension = extension ?: listOf(),
@@ -1437,32 +1320,38 @@ internal object CitationCitedArtifactPartSerializer : KSerializer<Citation.Cited
     )
   }
 
-  private fun serializeInternal(encoder: CompositeEncoder, `value`: Citation.CitedArtifact.Part) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: Citation.CitedArtifact.Part) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    (value.type)?.let {
-      encoder.encodeSerializableElement(descriptor, 3, CodeableConceptSerializer, it)
-    }
-    ((value.`value`?.value))?.let { encoder.encodeStringElement(descriptor, 4, it) }
-    (value.`value`?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 5, ElementSerializer, it)
-    }
-    (value.baseCitation)?.let {
-      encoder.encodeSerializableElement(descriptor, 6, ReferenceSerializer, it)
-    }
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      3,
+      CodeableConceptSerializer,
+      value.type,
+    )
+    compositeEncoder.encodeStringIfNotNull(descriptor, 4, value.`value`?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 5, value.`value`)
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      6,
+      ReferenceSerializer,
+      value.baseCitation,
+    )
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
@@ -1470,51 +1359,29 @@ internal object CitationCitedArtifactRelatesToSerializer :
   KSerializer<Citation.CitedArtifact.RelatesTo> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("RelatesTo") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("type", KotlinString.serializer().descriptor, isOptional = true)
-      element("_type", Element.serializer().descriptor, isOptional = true)
-      element(
-        "classifier",
-        listSerialDescriptor(CodeableConcept.serializer().descriptor),
-        isOptional = true,
-      )
-      element("label", KotlinString.serializer().descriptor, isOptional = true)
-      element("_label", Element.serializer().descriptor, isOptional = true)
-      element("display", KotlinString.serializer().descriptor, isOptional = true)
-      element("_display", Element.serializer().descriptor, isOptional = true)
-      element("citation", KotlinString.serializer().descriptor, isOptional = true)
-      element("_citation", Element.serializer().descriptor, isOptional = true)
-      element("document", Attachment.serializer().descriptor, isOptional = true)
-      element("resource", KotlinString.serializer().descriptor, isOptional = true)
-      element("_resource", Element.serializer().descriptor, isOptional = true)
-      element("resourceReference", Reference.serializer().descriptor, isOptional = true)
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("type", KotlinString.serializer().descriptor)
+      optionalElement("_type", ElementSerializer.descriptor)
+      optionalElement("classifier", CodeableConceptSerializer.listSerializer.descriptor)
+      optionalElement("label", KotlinString.serializer().descriptor)
+      optionalElement("_label", ElementSerializer.descriptor)
+      optionalElement("display", KotlinString.serializer().descriptor)
+      optionalElement("_display", ElementSerializer.descriptor)
+      optionalElement("citation", KotlinString.serializer().descriptor)
+      optionalElement("_citation", ElementSerializer.descriptor)
+      optionalElement("document", AttachmentSerializer.descriptor)
+      optionalElement("resource", KotlinString.serializer().descriptor)
+      optionalElement("_resource", ElementSerializer.descriptor)
+      optionalElement("resourceReference", ReferenceSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<Citation.CitedArtifact.RelatesTo>> =
     ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): Citation.CitedArtifact.RelatesTo =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: Citation.CitedArtifact.RelatesTo) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): Citation.CitedArtifact.RelatesTo {
+  override fun deserialize(decoder: Decoder): Citation.CitedArtifact.RelatesTo {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -1532,11 +1399,11 @@ internal object CitationCitedArtifactRelatesToSerializer :
     var _resource: Element? = null
     var resourceReference: Reference? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -1544,54 +1411,95 @@ internal object CitationCitedArtifactRelatesToSerializer :
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
               null,
             )
-        3 -> type = decoder.decodeStringElement(descriptor, i)
+        3 -> type = compositeDecoder.decodeStringElement(descriptor, i)
         4 ->
-          _type = decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+          _type =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         5 ->
           classifier =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer.listSerializer,
               null,
             )
-        6 -> label = decoder.decodeStringElement(descriptor, i)
+        6 -> label = compositeDecoder.decodeStringElement(descriptor, i)
         7 ->
-          _label = decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        8 -> display = decoder.decodeStringElement(descriptor, i)
+          _label =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        8 -> display = compositeDecoder.decodeStringElement(descriptor, i)
         9 ->
           _display =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        10 -> citation = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        10 -> citation = compositeDecoder.decodeStringElement(descriptor, i)
         11 ->
           _citation =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         12 ->
           document =
-            decoder.decodeNullableSerializableElement(descriptor, i, AttachmentSerializer, null)
-        13 -> resource = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              AttachmentSerializer,
+              null,
+            )
+        13 -> resource = compositeDecoder.decodeStringElement(descriptor, i)
         14 ->
           _resource =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         15 ->
           resourceReference =
-            decoder.decodeNullableSerializableElement(descriptor, i, ReferenceSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ReferenceSerializer,
+              null,
+            )
         CompositeDecoder.DECODE_DONE -> break
         else -> throw SerializationException("Unexpected index decoding RelatesTo: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return Citation.CitedArtifact.RelatesTo(
       id = id,
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
       type =
-        Enumeration.of(type?.let { Citation.RelatedArtifactTypeExpanded.fromCode(it) }, _type)
+        Enumeration.of(
+          if (type != null) Citation.RelatedArtifactTypeExpanded.fromCode(type) else null,
+          _type,
+        )
           ?: throw SerializationException(
             "Missing required property 'type' on Citation.CitedArtifact.RelatesTo"
           ),
@@ -1605,58 +1513,53 @@ internal object CitationCitedArtifactRelatesToSerializer :
     )
   }
 
-  private fun serializeInternal(
-    encoder: CompositeEncoder,
-    `value`: Citation.CitedArtifact.RelatesTo,
-  ) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: Citation.CitedArtifact.RelatesTo) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    ((value.type.value?.code))?.let { encoder.encodeStringElement(descriptor, 3, it) }
-    (value.type.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 4, ElementSerializer, it)
-    }
+    compositeEncoder.encodeStringIfNotNull(descriptor, 3, value.type.value?.code)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 4, value.type)
     if (value.classifier.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         5,
         CodeableConceptSerializer.listSerializer,
         value.classifier,
       )
-    ((value.label?.value))?.let { encoder.encodeStringElement(descriptor, 6, it) }
-    (value.label?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 7, ElementSerializer, it)
-    }
-    ((value.display?.value))?.let { encoder.encodeStringElement(descriptor, 8, it) }
-    (value.display?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 9, ElementSerializer, it)
-    }
-    ((value.citation?.value))?.let { encoder.encodeStringElement(descriptor, 10, it) }
-    (value.citation?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 11, ElementSerializer, it)
-    }
-    (value.document)?.let {
-      encoder.encodeSerializableElement(descriptor, 12, AttachmentSerializer, it)
-    }
-    ((value.resource?.value))?.let { encoder.encodeStringElement(descriptor, 13, it) }
-    (value.resource?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 14, ElementSerializer, it)
-    }
-    (value.resourceReference)?.let {
-      encoder.encodeSerializableElement(descriptor, 15, ReferenceSerializer, it)
-    }
+    compositeEncoder.encodeStringIfNotNull(descriptor, 6, value.label?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 7, value.label)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 8, value.display?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 9, value.display)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 10, value.citation?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 11, value.citation)
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      12,
+      AttachmentSerializer,
+      value.document,
+    )
+    compositeEncoder.encodeStringIfNotNull(descriptor, 13, value.resource?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 14, value.resource)
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      15,
+      ReferenceSerializer,
+      value.resourceReference,
+    )
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
@@ -1664,73 +1567,46 @@ internal object CitationCitedArtifactPublicationFormSerializer :
   KSerializer<Citation.CitedArtifact.PublicationForm> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("PublicationForm") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement(
         "publishedIn",
-        lazyDescriptor {
-          Citation.CitedArtifact.PublicationForm.PublishedIn.serializer().descriptor
-        },
-        isOptional = true,
+        CitationCitedArtifactPublicationFormPublishedInSerializer.descriptor,
       )
-      element("citedMedium", CodeableConcept.serializer().descriptor, isOptional = true)
-      element("volume", KotlinString.serializer().descriptor, isOptional = true)
-      element("_volume", Element.serializer().descriptor, isOptional = true)
-      element("issue", KotlinString.serializer().descriptor, isOptional = true)
-      element("_issue", Element.serializer().descriptor, isOptional = true)
-      element("articleDate", KotlinString.serializer().descriptor, isOptional = true)
-      element("_articleDate", Element.serializer().descriptor, isOptional = true)
-      element("publicationDateText", KotlinString.serializer().descriptor, isOptional = true)
-      element("_publicationDateText", Element.serializer().descriptor, isOptional = true)
-      element("publicationDateSeason", KotlinString.serializer().descriptor, isOptional = true)
-      element("_publicationDateSeason", Element.serializer().descriptor, isOptional = true)
-      element("lastRevisionDate", KotlinString.serializer().descriptor, isOptional = true)
-      element("_lastRevisionDate", Element.serializer().descriptor, isOptional = true)
-      element(
-        "language",
-        listSerialDescriptor(CodeableConcept.serializer().descriptor),
-        isOptional = true,
-      )
-      element("accessionNumber", KotlinString.serializer().descriptor, isOptional = true)
-      element("_accessionNumber", Element.serializer().descriptor, isOptional = true)
-      element("pageString", KotlinString.serializer().descriptor, isOptional = true)
-      element("_pageString", Element.serializer().descriptor, isOptional = true)
-      element("firstPage", KotlinString.serializer().descriptor, isOptional = true)
-      element("_firstPage", Element.serializer().descriptor, isOptional = true)
-      element("lastPage", KotlinString.serializer().descriptor, isOptional = true)
-      element("_lastPage", Element.serializer().descriptor, isOptional = true)
-      element("pageCount", KotlinString.serializer().descriptor, isOptional = true)
-      element("_pageCount", Element.serializer().descriptor, isOptional = true)
-      element("copyright", KotlinString.serializer().descriptor, isOptional = true)
-      element("_copyright", Element.serializer().descriptor, isOptional = true)
+      optionalElement("citedMedium", CodeableConceptSerializer.descriptor)
+      optionalElement("volume", KotlinString.serializer().descriptor)
+      optionalElement("_volume", ElementSerializer.descriptor)
+      optionalElement("issue", KotlinString.serializer().descriptor)
+      optionalElement("_issue", ElementSerializer.descriptor)
+      optionalElement("articleDate", KotlinString.serializer().descriptor)
+      optionalElement("_articleDate", ElementSerializer.descriptor)
+      optionalElement("publicationDateText", KotlinString.serializer().descriptor)
+      optionalElement("_publicationDateText", ElementSerializer.descriptor)
+      optionalElement("publicationDateSeason", KotlinString.serializer().descriptor)
+      optionalElement("_publicationDateSeason", ElementSerializer.descriptor)
+      optionalElement("lastRevisionDate", KotlinString.serializer().descriptor)
+      optionalElement("_lastRevisionDate", ElementSerializer.descriptor)
+      optionalElement("language", CodeableConceptSerializer.listSerializer.descriptor)
+      optionalElement("accessionNumber", KotlinString.serializer().descriptor)
+      optionalElement("_accessionNumber", ElementSerializer.descriptor)
+      optionalElement("pageString", KotlinString.serializer().descriptor)
+      optionalElement("_pageString", ElementSerializer.descriptor)
+      optionalElement("firstPage", KotlinString.serializer().descriptor)
+      optionalElement("_firstPage", ElementSerializer.descriptor)
+      optionalElement("lastPage", KotlinString.serializer().descriptor)
+      optionalElement("_lastPage", ElementSerializer.descriptor)
+      optionalElement("pageCount", KotlinString.serializer().descriptor)
+      optionalElement("_pageCount", ElementSerializer.descriptor)
+      optionalElement("copyright", KotlinString.serializer().descriptor)
+      optionalElement("_copyright", ElementSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<Citation.CitedArtifact.PublicationForm>> =
     ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): Citation.CitedArtifact.PublicationForm =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: Citation.CitedArtifact.PublicationForm) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(
-    decoder: CompositeDecoder
-  ): Citation.CitedArtifact.PublicationForm {
+  override fun deserialize(decoder: Decoder): Citation.CitedArtifact.PublicationForm {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -1762,11 +1638,11 @@ internal object CitationCitedArtifactPublicationFormSerializer :
     var copyright: KotlinString? = null
     var _copyright: Element? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -1774,7 +1650,7 @@ internal object CitationCitedArtifactPublicationFormSerializer :
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -1782,7 +1658,7 @@ internal object CitationCitedArtifactPublicationFormSerializer :
             )
         3 ->
           publishedIn =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CitationCitedArtifactPublicationFormPublishedInSerializer,
@@ -1790,71 +1666,133 @@ internal object CitationCitedArtifactPublicationFormSerializer :
             )
         4 ->
           citedMedium =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer,
               null,
             )
-        5 -> volume = decoder.decodeStringElement(descriptor, i)
+        5 -> volume = compositeDecoder.decodeStringElement(descriptor, i)
         6 ->
           _volume =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        7 -> issue = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        7 -> issue = compositeDecoder.decodeStringElement(descriptor, i)
         8 ->
-          _issue = decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        9 -> articleDate = decoder.decodeStringElement(descriptor, i)
+          _issue =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        9 -> articleDate = compositeDecoder.decodeStringElement(descriptor, i)
         10 ->
           _articleDate =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        11 -> publicationDateText = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        11 -> publicationDateText = compositeDecoder.decodeStringElement(descriptor, i)
         12 ->
           _publicationDateText =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        13 -> publicationDateSeason = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        13 -> publicationDateSeason = compositeDecoder.decodeStringElement(descriptor, i)
         14 ->
           _publicationDateSeason =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        15 -> lastRevisionDate = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        15 -> lastRevisionDate = compositeDecoder.decodeStringElement(descriptor, i)
         16 ->
           _lastRevisionDate =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         17 ->
           language =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer.listSerializer,
               null,
             )
-        18 -> accessionNumber = decoder.decodeStringElement(descriptor, i)
+        18 -> accessionNumber = compositeDecoder.decodeStringElement(descriptor, i)
         19 ->
           _accessionNumber =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        20 -> pageString = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        20 -> pageString = compositeDecoder.decodeStringElement(descriptor, i)
         21 ->
           _pageString =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        22 -> firstPage = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        22 -> firstPage = compositeDecoder.decodeStringElement(descriptor, i)
         23 ->
           _firstPage =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        24 -> lastPage = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        24 -> lastPage = compositeDecoder.decodeStringElement(descriptor, i)
         25 ->
           _lastPage =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        26 -> pageCount = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        26 -> pageCount = compositeDecoder.decodeStringElement(descriptor, i)
         27 ->
           _pageCount =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        28 -> copyright = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        28 -> copyright = compositeDecoder.decodeStringElement(descriptor, i)
         29 ->
           _copyright =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         CompositeDecoder.DECODE_DONE -> break
         else -> throw SerializationException("Unexpected index decoding PublicationForm: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return Citation.CitedArtifact.PublicationForm(
       id = id,
       extension = extension ?: listOf(),
@@ -1863,11 +1801,18 @@ internal object CitationCitedArtifactPublicationFormSerializer :
       citedMedium = citedMedium,
       volume = R5String.of(volume, _volume),
       issue = R5String.of(issue, _issue),
-      articleDate = DateTime.of(articleDate?.let { FhirDateTime.fromString(it) }, _articleDate),
+      articleDate =
+        DateTime.of(
+          if (articleDate != null) FhirDateTime.fromString(articleDate) else null,
+          _articleDate,
+        ),
       publicationDateText = R5String.of(publicationDateText, _publicationDateText),
       publicationDateSeason = R5String.of(publicationDateSeason, _publicationDateSeason),
       lastRevisionDate =
-        DateTime.of(lastRevisionDate?.let { FhirDateTime.fromString(it) }, _lastRevisionDate),
+        DateTime.of(
+          if (lastRevisionDate != null) FhirDateTime.fromString(lastRevisionDate) else null,
+          _lastRevisionDate,
+        ),
       language = language ?: listOf(),
       accessionNumber = R5String.of(accessionNumber, _accessionNumber),
       pageString = R5String.of(pageString, _pageString),
@@ -1878,93 +1823,71 @@ internal object CitationCitedArtifactPublicationFormSerializer :
     )
   }
 
-  private fun serializeInternal(
-    encoder: CompositeEncoder,
-    `value`: Citation.CitedArtifact.PublicationForm,
-  ) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: Citation.CitedArtifact.PublicationForm) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    (value.publishedIn)?.let {
-      encoder.encodeSerializableElement(
-        descriptor,
-        3,
-        CitationCitedArtifactPublicationFormPublishedInSerializer,
-        it,
-      )
-    }
-    (value.citedMedium)?.let {
-      encoder.encodeSerializableElement(descriptor, 4, CodeableConceptSerializer, it)
-    }
-    ((value.volume?.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
-    (value.volume?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 6, ElementSerializer, it)
-    }
-    ((value.issue?.value))?.let { encoder.encodeStringElement(descriptor, 7, it) }
-    (value.issue?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 8, ElementSerializer, it)
-    }
-    ((value.articleDate?.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 9, it) }
-    (value.articleDate?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 10, ElementSerializer, it)
-    }
-    ((value.publicationDateText?.value))?.let { encoder.encodeStringElement(descriptor, 11, it) }
-    (value.publicationDateText?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 12, ElementSerializer, it)
-    }
-    ((value.publicationDateSeason?.value))?.let { encoder.encodeStringElement(descriptor, 13, it) }
-    (value.publicationDateSeason?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 14, ElementSerializer, it)
-    }
-    ((value.lastRevisionDate?.value?.toString()))?.let {
-      encoder.encodeStringElement(descriptor, 15, it)
-    }
-    (value.lastRevisionDate?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 16, ElementSerializer, it)
-    }
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      3,
+      CitationCitedArtifactPublicationFormPublishedInSerializer,
+      value.publishedIn,
+    )
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      4,
+      CodeableConceptSerializer,
+      value.citedMedium,
+    )
+    compositeEncoder.encodeStringIfNotNull(descriptor, 5, value.volume?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 6, value.volume)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 7, value.issue?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 8, value.issue)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 9, value.articleDate?.value?.toString())
+    compositeEncoder.encodeElementIfNotNull(descriptor, 10, value.articleDate)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 11, value.publicationDateText?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 12, value.publicationDateText)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 13, value.publicationDateSeason?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 14, value.publicationDateSeason)
+    compositeEncoder.encodeStringIfNotNull(
+      descriptor,
+      15,
+      value.lastRevisionDate?.value?.toString(),
+    )
+    compositeEncoder.encodeElementIfNotNull(descriptor, 16, value.lastRevisionDate)
     if (value.language.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         17,
         CodeableConceptSerializer.listSerializer,
         value.language,
       )
-    ((value.accessionNumber?.value))?.let { encoder.encodeStringElement(descriptor, 18, it) }
-    (value.accessionNumber?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 19, ElementSerializer, it)
-    }
-    ((value.pageString?.value))?.let { encoder.encodeStringElement(descriptor, 20, it) }
-    (value.pageString?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 21, ElementSerializer, it)
-    }
-    ((value.firstPage?.value))?.let { encoder.encodeStringElement(descriptor, 22, it) }
-    (value.firstPage?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 23, ElementSerializer, it)
-    }
-    ((value.lastPage?.value))?.let { encoder.encodeStringElement(descriptor, 24, it) }
-    (value.lastPage?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 25, ElementSerializer, it)
-    }
-    ((value.pageCount?.value))?.let { encoder.encodeStringElement(descriptor, 26, it) }
-    (value.pageCount?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 27, ElementSerializer, it)
-    }
-    ((value.copyright?.value))?.let { encoder.encodeStringElement(descriptor, 28, it) }
-    (value.copyright?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 29, ElementSerializer, it)
-    }
+    compositeEncoder.encodeStringIfNotNull(descriptor, 18, value.accessionNumber?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 19, value.accessionNumber)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 20, value.pageString?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 21, value.pageString)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 22, value.firstPage?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 23, value.firstPage)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 24, value.lastPage?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 25, value.lastPage)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 26, value.pageCount?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 27, value.pageCount)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 28, value.copyright?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 29, value.copyright)
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
@@ -1972,51 +1895,24 @@ internal object CitationCitedArtifactPublicationFormPublishedInSerializer :
   KSerializer<Citation.CitedArtifact.PublicationForm.PublishedIn> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("PublishedIn") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("type", CodeableConcept.serializer().descriptor, isOptional = true)
-      element(
-        "identifier",
-        listSerialDescriptor(Identifier.serializer().descriptor),
-        isOptional = true,
-      )
-      element("title", KotlinString.serializer().descriptor, isOptional = true)
-      element("_title", Element.serializer().descriptor, isOptional = true)
-      element("publisher", Reference.serializer().descriptor, isOptional = true)
-      element("publisherLocation", KotlinString.serializer().descriptor, isOptional = true)
-      element("_publisherLocation", Element.serializer().descriptor, isOptional = true)
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("type", CodeableConceptSerializer.descriptor)
+      optionalElement("identifier", IdentifierSerializer.listSerializer.descriptor)
+      optionalElement("title", KotlinString.serializer().descriptor)
+      optionalElement("_title", ElementSerializer.descriptor)
+      optionalElement("publisher", ReferenceSerializer.descriptor)
+      optionalElement("publisherLocation", KotlinString.serializer().descriptor)
+      optionalElement("_publisherLocation", ElementSerializer.descriptor)
     }
 
   internal val listSerializer:
     KSerializer<List<Citation.CitedArtifact.PublicationForm.PublishedIn>> =
     ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): Citation.CitedArtifact.PublicationForm.PublishedIn =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(
-    encoder: Encoder,
-    `value`: Citation.CitedArtifact.PublicationForm.PublishedIn,
-  ) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(
-    decoder: CompositeDecoder
-  ): Citation.CitedArtifact.PublicationForm.PublishedIn {
+  override fun deserialize(decoder: Decoder): Citation.CitedArtifact.PublicationForm.PublishedIn {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -2028,11 +1924,11 @@ internal object CitationCitedArtifactPublicationFormPublishedInSerializer :
     var publisherLocation: KotlinString? = null
     var _publisherLocation: Element? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -2040,7 +1936,7 @@ internal object CitationCitedArtifactPublicationFormPublishedInSerializer :
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -2048,7 +1944,7 @@ internal object CitationCitedArtifactPublicationFormPublishedInSerializer :
             )
         3 ->
           type =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer,
@@ -2056,26 +1952,43 @@ internal object CitationCitedArtifactPublicationFormPublishedInSerializer :
             )
         4 ->
           identifier =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               IdentifierSerializer.listSerializer,
               null,
             )
-        5 -> title = decoder.decodeStringElement(descriptor, i)
+        5 -> title = compositeDecoder.decodeStringElement(descriptor, i)
         6 ->
-          _title = decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+          _title =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         7 ->
           publisher =
-            decoder.decodeNullableSerializableElement(descriptor, i, ReferenceSerializer, null)
-        8 -> publisherLocation = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ReferenceSerializer,
+              null,
+            )
+        8 -> publisherLocation = compositeDecoder.decodeStringElement(descriptor, i)
         9 ->
           _publisherLocation =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         CompositeDecoder.DECODE_DONE -> break
         else -> throw SerializationException("Unexpected index decoding PublishedIn: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return Citation.CitedArtifact.PublicationForm.PublishedIn(
       id = id,
       extension = extension ?: listOf(),
@@ -2088,46 +2001,50 @@ internal object CitationCitedArtifactPublicationFormPublishedInSerializer :
     )
   }
 
-  private fun serializeInternal(
-    encoder: CompositeEncoder,
+  override fun serialize(
+    encoder: Encoder,
     `value`: Citation.CitedArtifact.PublicationForm.PublishedIn,
   ) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    (value.type)?.let {
-      encoder.encodeSerializableElement(descriptor, 3, CodeableConceptSerializer, it)
-    }
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      3,
+      CodeableConceptSerializer,
+      value.type,
+    )
     if (value.identifier.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         4,
         IdentifierSerializer.listSerializer,
         value.identifier,
       )
-    ((value.title?.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
-    (value.title?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 6, ElementSerializer, it)
-    }
-    (value.publisher)?.let {
-      encoder.encodeSerializableElement(descriptor, 7, ReferenceSerializer, it)
-    }
-    ((value.publisherLocation?.value))?.let { encoder.encodeStringElement(descriptor, 8, it) }
-    (value.publisherLocation?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 9, ElementSerializer, it)
-    }
+    compositeEncoder.encodeStringIfNotNull(descriptor, 5, value.title?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 6, value.title)
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      7,
+      ReferenceSerializer,
+      value.publisher,
+    )
+    compositeEncoder.encodeStringIfNotNull(descriptor, 8, value.publisherLocation?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 9, value.publisherLocation)
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
@@ -2135,41 +2052,19 @@ internal object CitationCitedArtifactWebLocationSerializer :
   KSerializer<Citation.CitedArtifact.WebLocation> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("WebLocation") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "classifier",
-        listSerialDescriptor(CodeableConcept.serializer().descriptor),
-        isOptional = true,
-      )
-      element("url", KotlinString.serializer().descriptor, isOptional = true)
-      element("_url", Element.serializer().descriptor, isOptional = true)
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("classifier", CodeableConceptSerializer.listSerializer.descriptor)
+      optionalElement("url", KotlinString.serializer().descriptor)
+      optionalElement("_url", ElementSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<Citation.CitedArtifact.WebLocation>> =
     ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): Citation.CitedArtifact.WebLocation =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: Citation.CitedArtifact.WebLocation) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): Citation.CitedArtifact.WebLocation {
+  override fun deserialize(decoder: Decoder): Citation.CitedArtifact.WebLocation {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -2177,11 +2072,11 @@ internal object CitationCitedArtifactWebLocationSerializer :
     var url: KotlinString? = null
     var _url: Element? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -2189,7 +2084,7 @@ internal object CitationCitedArtifactWebLocationSerializer :
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -2197,19 +2092,26 @@ internal object CitationCitedArtifactWebLocationSerializer :
             )
         3 ->
           classifier =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer.listSerializer,
               null,
             )
-        4 -> url = decoder.decodeStringElement(descriptor, i)
+        4 -> url = compositeDecoder.decodeStringElement(descriptor, i)
         5 ->
-          _url = decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+          _url =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         CompositeDecoder.DECODE_DONE -> break
         else -> throw SerializationException("Unexpected index decoding WebLocation: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return Citation.CitedArtifact.WebLocation(
       id = id,
       extension = extension ?: listOf(),
@@ -2219,36 +2121,33 @@ internal object CitationCitedArtifactWebLocationSerializer :
     )
   }
 
-  private fun serializeInternal(
-    encoder: CompositeEncoder,
-    `value`: Citation.CitedArtifact.WebLocation,
-  ) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: Citation.CitedArtifact.WebLocation) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
     if (value.classifier.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         3,
         CodeableConceptSerializer.listSerializer,
         value.classifier,
       )
-    ((value.url?.value))?.let { encoder.encodeStringElement(descriptor, 4, it) }
-    (value.url?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 5, ElementSerializer, it)
-    }
+    compositeEncoder.encodeStringIfNotNull(descriptor, 4, value.url?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 5, value.url)
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
@@ -2256,47 +2155,19 @@ internal object CitationCitedArtifactClassificationSerializer :
   KSerializer<Citation.CitedArtifact.Classification> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("Classification") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("type", CodeableConcept.serializer().descriptor, isOptional = true)
-      element(
-        "classifier",
-        listSerialDescriptor(CodeableConcept.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "artifactAssessment",
-        listSerialDescriptor(Reference.serializer().descriptor),
-        isOptional = true,
-      )
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("type", CodeableConceptSerializer.descriptor)
+      optionalElement("classifier", CodeableConceptSerializer.listSerializer.descriptor)
+      optionalElement("artifactAssessment", ReferenceSerializer.listSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<Citation.CitedArtifact.Classification>> =
     ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): Citation.CitedArtifact.Classification =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: Citation.CitedArtifact.Classification) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(
-    decoder: CompositeDecoder
-  ): Citation.CitedArtifact.Classification {
+  override fun deserialize(decoder: Decoder): Citation.CitedArtifact.Classification {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -2304,11 +2175,11 @@ internal object CitationCitedArtifactClassificationSerializer :
     var classifier: List<CodeableConcept>? = null
     var artifactAssessment: List<Reference>? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -2316,7 +2187,7 @@ internal object CitationCitedArtifactClassificationSerializer :
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -2324,7 +2195,7 @@ internal object CitationCitedArtifactClassificationSerializer :
             )
         3 ->
           type =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer,
@@ -2332,7 +2203,7 @@ internal object CitationCitedArtifactClassificationSerializer :
             )
         4 ->
           classifier =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer.listSerializer,
@@ -2340,7 +2211,7 @@ internal object CitationCitedArtifactClassificationSerializer :
             )
         5 ->
           artifactAssessment =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ReferenceSerializer.listSerializer,
@@ -2350,6 +2221,7 @@ internal object CitationCitedArtifactClassificationSerializer :
         else -> throw SerializationException("Unexpected index decoding Classification: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return Citation.CitedArtifact.Classification(
       id = id,
       extension = extension ?: listOf(),
@@ -2360,42 +2232,44 @@ internal object CitationCitedArtifactClassificationSerializer :
     )
   }
 
-  private fun serializeInternal(
-    encoder: CompositeEncoder,
-    `value`: Citation.CitedArtifact.Classification,
-  ) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: Citation.CitedArtifact.Classification) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    (value.type)?.let {
-      encoder.encodeSerializableElement(descriptor, 3, CodeableConceptSerializer, it)
-    }
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      3,
+      CodeableConceptSerializer,
+      value.type,
+    )
     if (value.classifier.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         4,
         CodeableConceptSerializer.listSerializer,
         value.classifier,
       )
     if (value.artifactAssessment.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         5,
         ReferenceSerializer.listSerializer,
         value.artifactAssessment,
       )
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
@@ -2403,52 +2277,26 @@ internal object CitationCitedArtifactContributorshipSerializer :
   KSerializer<Citation.CitedArtifact.Contributorship> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("Contributorship") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("complete", KotlinBoolean.serializer().descriptor, isOptional = true)
-      element("_complete", Element.serializer().descriptor, isOptional = true)
-      element(
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("complete", KotlinBoolean.serializer().descriptor)
+      optionalElement("_complete", ElementSerializer.descriptor)
+      optionalElement(
         "entry",
-        listSerialDescriptor(
-          lazyDescriptor { Citation.CitedArtifact.Contributorship.Entry.serializer().descriptor }
-        ),
-        isOptional = true,
+        CitationCitedArtifactContributorshipEntrySerializer.listSerializer.descriptor,
       )
-      element(
+      optionalElement(
         "summary",
-        listSerialDescriptor(
-          lazyDescriptor { Citation.CitedArtifact.Contributorship.Summary.serializer().descriptor }
-        ),
-        isOptional = true,
+        CitationCitedArtifactContributorshipSummarySerializer.listSerializer.descriptor,
       )
     }
 
   internal val listSerializer: KSerializer<List<Citation.CitedArtifact.Contributorship>> =
     ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): Citation.CitedArtifact.Contributorship =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: Citation.CitedArtifact.Contributorship) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(
-    decoder: CompositeDecoder
-  ): Citation.CitedArtifact.Contributorship {
+  override fun deserialize(decoder: Decoder): Citation.CitedArtifact.Contributorship {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -2457,11 +2305,11 @@ internal object CitationCitedArtifactContributorshipSerializer :
     var entry: List<Citation.CitedArtifact.Contributorship.Entry>? = null
     var summary: List<Citation.CitedArtifact.Contributorship.Summary>? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -2469,19 +2317,24 @@ internal object CitationCitedArtifactContributorshipSerializer :
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
               null,
             )
-        3 -> complete = decoder.decodeBooleanElement(descriptor, i)
+        3 -> complete = compositeDecoder.decodeBooleanElement(descriptor, i)
         4 ->
           _complete =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         5 ->
           entry =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CitationCitedArtifactContributorshipEntrySerializer.listSerializer,
@@ -2489,7 +2342,7 @@ internal object CitationCitedArtifactContributorshipSerializer :
             )
         6 ->
           summary =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CitationCitedArtifactContributorshipSummarySerializer.listSerializer,
@@ -2499,6 +2352,7 @@ internal object CitationCitedArtifactContributorshipSerializer :
         else -> throw SerializationException("Unexpected index decoding Contributorship: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return Citation.CitedArtifact.Contributorship(
       id = id,
       extension = extension ?: listOf(),
@@ -2509,43 +2363,40 @@ internal object CitationCitedArtifactContributorshipSerializer :
     )
   }
 
-  private fun serializeInternal(
-    encoder: CompositeEncoder,
-    `value`: Citation.CitedArtifact.Contributorship,
-  ) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: Citation.CitedArtifact.Contributorship) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    ((value.complete?.value))?.let { encoder.encodeBooleanElement(descriptor, 3, it) }
-    (value.complete?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 4, ElementSerializer, it)
-    }
+    compositeEncoder.encodeBooleanIfNotNull(descriptor, 3, value.complete?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 4, value.complete)
     if (value.entry.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         5,
         CitationCitedArtifactContributorshipEntrySerializer.listSerializer,
         value.entry,
       )
     if (value.summary.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         6,
         CitationCitedArtifactContributorshipSummarySerializer.listSerializer,
         value.summary,
       )
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
@@ -2553,64 +2404,31 @@ internal object CitationCitedArtifactContributorshipEntrySerializer :
   KSerializer<Citation.CitedArtifact.Contributorship.Entry> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("Entry") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("contributor", Reference.serializer().descriptor, isOptional = true)
-      element("forenameInitials", KotlinString.serializer().descriptor, isOptional = true)
-      element("_forenameInitials", Element.serializer().descriptor, isOptional = true)
-      element(
-        "affiliation",
-        listSerialDescriptor(Reference.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "contributionType",
-        listSerialDescriptor(CodeableConcept.serializer().descriptor),
-        isOptional = true,
-      )
-      element("role", CodeableConcept.serializer().descriptor, isOptional = true)
-      element(
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("contributor", ReferenceSerializer.descriptor)
+      optionalElement("forenameInitials", KotlinString.serializer().descriptor)
+      optionalElement("_forenameInitials", ElementSerializer.descriptor)
+      optionalElement("affiliation", ReferenceSerializer.listSerializer.descriptor)
+      optionalElement("contributionType", CodeableConceptSerializer.listSerializer.descriptor)
+      optionalElement("role", CodeableConceptSerializer.descriptor)
+      optionalElement(
         "contributionInstance",
-        listSerialDescriptor(
-          lazyDescriptor {
-            Citation.CitedArtifact.Contributorship.Entry.ContributionInstance.serializer()
-              .descriptor
-          }
-        ),
-        isOptional = true,
+        CitationCitedArtifactContributorshipEntryContributionInstanceSerializer.listSerializer
+          .descriptor,
       )
-      element("correspondingContact", KotlinBoolean.serializer().descriptor, isOptional = true)
-      element("_correspondingContact", Element.serializer().descriptor, isOptional = true)
-      element("rankingOrder", Int.serializer().descriptor, isOptional = true)
-      element("_rankingOrder", Element.serializer().descriptor, isOptional = true)
+      optionalElement("correspondingContact", KotlinBoolean.serializer().descriptor)
+      optionalElement("_correspondingContact", ElementSerializer.descriptor)
+      optionalElement("rankingOrder", Int.serializer().descriptor)
+      optionalElement("_rankingOrder", ElementSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<Citation.CitedArtifact.Contributorship.Entry>> =
     ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): Citation.CitedArtifact.Contributorship.Entry =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: Citation.CitedArtifact.Contributorship.Entry) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(
-    decoder: CompositeDecoder
-  ): Citation.CitedArtifact.Contributorship.Entry {
+  override fun deserialize(decoder: Decoder): Citation.CitedArtifact.Contributorship.Entry {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -2628,11 +2446,11 @@ internal object CitationCitedArtifactContributorshipEntrySerializer :
     var rankingOrder: Int? = null
     var _rankingOrder: Element? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -2640,7 +2458,7 @@ internal object CitationCitedArtifactContributorshipEntrySerializer :
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -2648,14 +2466,24 @@ internal object CitationCitedArtifactContributorshipEntrySerializer :
             )
         3 ->
           contributor =
-            decoder.decodeNullableSerializableElement(descriptor, i, ReferenceSerializer, null)
-        4 -> forenameInitials = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ReferenceSerializer,
+              null,
+            )
+        4 -> forenameInitials = compositeDecoder.decodeStringElement(descriptor, i)
         5 ->
           _forenameInitials =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         6 ->
           affiliation =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ReferenceSerializer.listSerializer,
@@ -2663,7 +2491,7 @@ internal object CitationCitedArtifactContributorshipEntrySerializer :
             )
         7 ->
           contributionType =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer.listSerializer,
@@ -2671,7 +2499,7 @@ internal object CitationCitedArtifactContributorshipEntrySerializer :
             )
         8 ->
           role =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer,
@@ -2679,25 +2507,36 @@ internal object CitationCitedArtifactContributorshipEntrySerializer :
             )
         9 ->
           contributionInstance =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CitationCitedArtifactContributorshipEntryContributionInstanceSerializer
                 .listSerializer,
               null,
             )
-        10 -> correspondingContact = decoder.decodeBooleanElement(descriptor, i)
+        10 -> correspondingContact = compositeDecoder.decodeBooleanElement(descriptor, i)
         11 ->
           _correspondingContact =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        12 -> rankingOrder = decoder.decodeIntElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        12 -> rankingOrder = compositeDecoder.decodeIntElement(descriptor, i)
         13 ->
           _rankingOrder =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         CompositeDecoder.DECODE_DONE -> break
         else -> throw SerializationException("Unexpected index decoding Entry: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return Citation.CitedArtifact.Contributorship.Entry(
       id = id,
       extension = extension ?: listOf(),
@@ -2717,62 +2556,63 @@ internal object CitationCitedArtifactContributorshipEntrySerializer :
     )
   }
 
-  private fun serializeInternal(
-    encoder: CompositeEncoder,
-    `value`: Citation.CitedArtifact.Contributorship.Entry,
-  ) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: Citation.CitedArtifact.Contributorship.Entry) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    encoder.encodeSerializableElement(descriptor, 3, ReferenceSerializer, value.contributor)
-    ((value.forenameInitials?.value))?.let { encoder.encodeStringElement(descriptor, 4, it) }
-    (value.forenameInitials?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 5, ElementSerializer, it)
-    }
+    compositeEncoder.encodeSerializableElement(
+      descriptor,
+      3,
+      ReferenceSerializer,
+      value.contributor,
+    )
+    compositeEncoder.encodeStringIfNotNull(descriptor, 4, value.forenameInitials?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 5, value.forenameInitials)
     if (value.affiliation.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         6,
         ReferenceSerializer.listSerializer,
         value.affiliation,
       )
     if (value.contributionType.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         7,
         CodeableConceptSerializer.listSerializer,
         value.contributionType,
       )
-    (value.role)?.let {
-      encoder.encodeSerializableElement(descriptor, 8, CodeableConceptSerializer, it)
-    }
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      8,
+      CodeableConceptSerializer,
+      value.role,
+    )
     if (value.contributionInstance.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         9,
         CitationCitedArtifactContributorshipEntryContributionInstanceSerializer.listSerializer,
         value.contributionInstance,
       )
-    ((value.correspondingContact?.value))?.let { encoder.encodeBooleanElement(descriptor, 10, it) }
-    (value.correspondingContact?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 11, ElementSerializer, it)
-    }
-    ((value.rankingOrder?.value))?.let { encoder.encodeIntElement(descriptor, 12, it) }
-    (value.rankingOrder?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 13, ElementSerializer, it)
-    }
+    compositeEncoder.encodeBooleanIfNotNull(descriptor, 10, value.correspondingContact?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 11, value.correspondingContact)
+    compositeEncoder.encodeIntIfNotNull(descriptor, 12, value.rankingOrder?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 13, value.rankingOrder)
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
@@ -2780,20 +2620,12 @@ internal object CitationCitedArtifactContributorshipEntryContributionInstanceSer
   KSerializer<Citation.CitedArtifact.Contributorship.Entry.ContributionInstance> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("ContributionInstance") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("type", CodeableConcept.serializer().descriptor, isOptional = true)
-      element("time", KotlinString.serializer().descriptor, isOptional = true)
-      element("_time", Element.serializer().descriptor, isOptional = true)
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("type", CodeableConceptSerializer.descriptor)
+      optionalElement("time", KotlinString.serializer().descriptor)
+      optionalElement("_time", ElementSerializer.descriptor)
     }
 
   internal val listSerializer:
@@ -2802,23 +2634,8 @@ internal object CitationCitedArtifactContributorshipEntryContributionInstanceSer
 
   override fun deserialize(
     decoder: Decoder
-  ): Citation.CitedArtifact.Contributorship.Entry.ContributionInstance =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(
-    encoder: Encoder,
-    `value`: Citation.CitedArtifact.Contributorship.Entry.ContributionInstance,
-  ) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(
-    decoder: CompositeDecoder
   ): Citation.CitedArtifact.Contributorship.Entry.ContributionInstance {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -2826,11 +2643,11 @@ internal object CitationCitedArtifactContributorshipEntryContributionInstanceSer
     var time: KotlinString? = null
     var _time: Element? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -2838,7 +2655,7 @@ internal object CitationCitedArtifactContributorshipEntryContributionInstanceSer
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -2846,19 +2663,26 @@ internal object CitationCitedArtifactContributorshipEntryContributionInstanceSer
             )
         3 ->
           type =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer,
               null,
             )
-        4 -> time = decoder.decodeStringElement(descriptor, i)
+        4 -> time = compositeDecoder.decodeStringElement(descriptor, i)
         5 ->
-          _time = decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+          _time =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         CompositeDecoder.DECODE_DONE -> break
         else -> throw SerializationException("Unexpected index decoding ContributionInstance: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return Citation.CitedArtifact.Contributorship.Entry.ContributionInstance(
       id = id,
       extension = extension ?: listOf(),
@@ -2868,34 +2692,34 @@ internal object CitationCitedArtifactContributorshipEntryContributionInstanceSer
           ?: throw SerializationException(
             "Missing required property 'type' on Citation.CitedArtifact.Contributorship.Entry.ContributionInstance"
           ),
-      time = DateTime.of(time?.let { FhirDateTime.fromString(it) }, _time),
+      time = DateTime.of(if (time != null) FhirDateTime.fromString(time) else null, _time),
     )
   }
 
-  private fun serializeInternal(
-    encoder: CompositeEncoder,
+  override fun serialize(
+    encoder: Encoder,
     `value`: Citation.CitedArtifact.Contributorship.Entry.ContributionInstance,
   ) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    encoder.encodeSerializableElement(descriptor, 3, CodeableConceptSerializer, value.type)
-    ((value.time?.value?.toString()))?.let { encoder.encodeStringElement(descriptor, 4, it) }
-    (value.time?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 5, ElementSerializer, it)
-    }
+    compositeEncoder.encodeSerializableElement(descriptor, 3, CodeableConceptSerializer, value.type)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 4, value.time?.value?.toString())
+    compositeEncoder.encodeElementIfNotNull(descriptor, 5, value.time)
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
@@ -2903,44 +2727,21 @@ internal object CitationCitedArtifactContributorshipSummarySerializer :
   KSerializer<Citation.CitedArtifact.Contributorship.Summary> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("Summary") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("type", CodeableConcept.serializer().descriptor, isOptional = true)
-      element("style", CodeableConcept.serializer().descriptor, isOptional = true)
-      element("source", CodeableConcept.serializer().descriptor, isOptional = true)
-      element("value", KotlinString.serializer().descriptor, isOptional = true)
-      element("_value", Element.serializer().descriptor, isOptional = true)
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("type", CodeableConceptSerializer.descriptor)
+      optionalElement("style", CodeableConceptSerializer.descriptor)
+      optionalElement("source", CodeableConceptSerializer.descriptor)
+      optionalElement("value", KotlinString.serializer().descriptor)
+      optionalElement("_value", ElementSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<Citation.CitedArtifact.Contributorship.Summary>> =
     ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): Citation.CitedArtifact.Contributorship.Summary =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(
-    encoder: Encoder,
-    `value`: Citation.CitedArtifact.Contributorship.Summary,
-  ) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(
-    decoder: CompositeDecoder
-  ): Citation.CitedArtifact.Contributorship.Summary {
+  override fun deserialize(decoder: Decoder): Citation.CitedArtifact.Contributorship.Summary {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -2950,11 +2751,11 @@ internal object CitationCitedArtifactContributorshipSummarySerializer :
     var `value`: KotlinString? = null
     var _value: Element? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -2962,7 +2763,7 @@ internal object CitationCitedArtifactContributorshipSummarySerializer :
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -2970,7 +2771,7 @@ internal object CitationCitedArtifactContributorshipSummarySerializer :
             )
         3 ->
           type =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer,
@@ -2978,7 +2779,7 @@ internal object CitationCitedArtifactContributorshipSummarySerializer :
             )
         4 ->
           style =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer,
@@ -2986,19 +2787,26 @@ internal object CitationCitedArtifactContributorshipSummarySerializer :
             )
         5 ->
           source =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer,
               null,
             )
-        6 -> `value` = decoder.decodeStringElement(descriptor, i)
+        6 -> `value` = compositeDecoder.decodeStringElement(descriptor, i)
         7 ->
-          _value = decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+          _value =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         CompositeDecoder.DECODE_DONE -> break
         else -> throw SerializationException("Unexpected index decoding Summary: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return Citation.CitedArtifact.Contributorship.Summary(
       id = id,
       extension = extension ?: listOf(),
@@ -3014,38 +2822,47 @@ internal object CitationCitedArtifactContributorshipSummarySerializer :
     )
   }
 
-  private fun serializeInternal(
-    encoder: CompositeEncoder,
+  override fun serialize(
+    encoder: Encoder,
     `value`: Citation.CitedArtifact.Contributorship.Summary,
   ) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    (value.type)?.let {
-      encoder.encodeSerializableElement(descriptor, 3, CodeableConceptSerializer, it)
-    }
-    (value.style)?.let {
-      encoder.encodeSerializableElement(descriptor, 4, CodeableConceptSerializer, it)
-    }
-    (value.source)?.let {
-      encoder.encodeSerializableElement(descriptor, 5, CodeableConceptSerializer, it)
-    }
-    ((value.`value`.value))?.let { encoder.encodeStringElement(descriptor, 6, it) }
-    (value.`value`.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 7, ElementSerializer, it)
-    }
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      3,
+      CodeableConceptSerializer,
+      value.type,
+    )
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      4,
+      CodeableConceptSerializer,
+      value.style,
+    )
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      5,
+      CodeableConceptSerializer,
+      value.source,
+    )
+    compositeEncoder.encodeStringIfNotNull(descriptor, 6, value.`value`.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 7, value.`value`)
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
@@ -3053,135 +2870,70 @@ internal object CitationSerializer : FhirResourceSerializer<Citation> {
   override val descriptor: SerialDescriptor = buildResourceDescriptor("Citation")
 
   override fun buildDescriptor(b: ClassSerialDescriptorBuilder) {
-    b.element("id", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("meta", Meta.serializer().descriptor, isOptional = true)
-    b.element("implicitRules", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("_implicitRules", Element.serializer().descriptor, isOptional = true)
-    b.element("language", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("_language", Element.serializer().descriptor, isOptional = true)
-    b.element("text", Narrative.serializer().descriptor, isOptional = true)
-    b.element(
+    b.optionalElement("id", KotlinString.serializer().descriptor)
+    b.optionalElement("meta", MetaSerializer.descriptor)
+    b.optionalElement("implicitRules", KotlinString.serializer().descriptor)
+    b.optionalElement("_implicitRules", ElementSerializer.descriptor)
+    b.optionalElement("language", KotlinString.serializer().descriptor)
+    b.optionalElement("_language", ElementSerializer.descriptor)
+    b.optionalElement("text", NarrativeSerializer.descriptor)
+    b.optionalElement(
       "contained",
-      listSerialDescriptor(lazyDescriptor { Resource.serializer().descriptor }),
-      isOptional = true,
+      listSerialDescriptor(lazyDescriptor { ResourcePolymorphicSerializer.descriptor }),
     )
-    b.element(
-      "extension",
-      listSerialDescriptor(Extension.serializer().descriptor),
-      isOptional = true,
-    )
-    b.element(
-      "modifierExtension",
-      listSerialDescriptor(Extension.serializer().descriptor),
-      isOptional = true,
-    )
-    b.element("url", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("_url", Element.serializer().descriptor, isOptional = true)
-    b.element(
-      "identifier",
-      listSerialDescriptor(Identifier.serializer().descriptor),
-      isOptional = true,
-    )
-    b.element("version", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("_version", Element.serializer().descriptor, isOptional = true)
-    b.element("versionAlgorithmString", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("_versionAlgorithmString", Element.serializer().descriptor, isOptional = true)
-    b.element("versionAlgorithmCoding", Coding.serializer().descriptor, isOptional = true)
-    b.element("name", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("_name", Element.serializer().descriptor, isOptional = true)
-    b.element("title", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("_title", Element.serializer().descriptor, isOptional = true)
-    b.element("status", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("_status", Element.serializer().descriptor, isOptional = true)
-    b.element("experimental", KotlinBoolean.serializer().descriptor, isOptional = true)
-    b.element("_experimental", Element.serializer().descriptor, isOptional = true)
-    b.element("date", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("_date", Element.serializer().descriptor, isOptional = true)
-    b.element("publisher", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("_publisher", Element.serializer().descriptor, isOptional = true)
-    b.element(
-      "contact",
-      listSerialDescriptor(ContactDetail.serializer().descriptor),
-      isOptional = true,
-    )
-    b.element("description", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("_description", Element.serializer().descriptor, isOptional = true)
-    b.element(
-      "useContext",
-      listSerialDescriptor(UsageContext.serializer().descriptor),
-      isOptional = true,
-    )
-    b.element(
-      "jurisdiction",
-      listSerialDescriptor(CodeableConcept.serializer().descriptor),
-      isOptional = true,
-    )
-    b.element("purpose", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("_purpose", Element.serializer().descriptor, isOptional = true)
-    b.element("copyright", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("_copyright", Element.serializer().descriptor, isOptional = true)
-    b.element("copyrightLabel", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("_copyrightLabel", Element.serializer().descriptor, isOptional = true)
-    b.element("approvalDate", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("_approvalDate", Element.serializer().descriptor, isOptional = true)
-    b.element("lastReviewDate", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("_lastReviewDate", Element.serializer().descriptor, isOptional = true)
-    b.element("effectivePeriod", Period.serializer().descriptor, isOptional = true)
-    b.element(
-      "author",
-      listSerialDescriptor(ContactDetail.serializer().descriptor),
-      isOptional = true,
-    )
-    b.element(
-      "editor",
-      listSerialDescriptor(ContactDetail.serializer().descriptor),
-      isOptional = true,
-    )
-    b.element(
-      "reviewer",
-      listSerialDescriptor(ContactDetail.serializer().descriptor),
-      isOptional = true,
-    )
-    b.element(
-      "endorser",
-      listSerialDescriptor(ContactDetail.serializer().descriptor),
-      isOptional = true,
-    )
-    b.element(
-      "summary",
-      listSerialDescriptor(lazyDescriptor { Citation.Summary.serializer().descriptor }),
-      isOptional = true,
-    )
-    b.element(
-      "classification",
-      listSerialDescriptor(lazyDescriptor { Citation.Classification.serializer().descriptor }),
-      isOptional = true,
-    )
-    b.element("note", listSerialDescriptor(Annotation.serializer().descriptor), isOptional = true)
-    b.element(
-      "currentState",
-      listSerialDescriptor(CodeableConcept.serializer().descriptor),
-      isOptional = true,
-    )
-    b.element(
-      "statusDate",
-      listSerialDescriptor(lazyDescriptor { Citation.StatusDate.serializer().descriptor }),
-      isOptional = true,
-    )
-    b.element(
-      "relatedArtifact",
-      listSerialDescriptor(RelatedArtifact.serializer().descriptor),
-      isOptional = true,
-    )
-    b.element(
-      "citedArtifact",
-      lazyDescriptor { Citation.CitedArtifact.serializer().descriptor },
-      isOptional = true,
-    )
+    b.optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+    b.optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+    b.optionalElement("url", KotlinString.serializer().descriptor)
+    b.optionalElement("_url", ElementSerializer.descriptor)
+    b.optionalElement("identifier", IdentifierSerializer.listSerializer.descriptor)
+    b.optionalElement("version", KotlinString.serializer().descriptor)
+    b.optionalElement("_version", ElementSerializer.descriptor)
+    b.optionalElement("versionAlgorithmString", KotlinString.serializer().descriptor)
+    b.optionalElement("_versionAlgorithmString", ElementSerializer.descriptor)
+    b.optionalElement("versionAlgorithmCoding", CodingSerializer.descriptor)
+    b.optionalElement("name", KotlinString.serializer().descriptor)
+    b.optionalElement("_name", ElementSerializer.descriptor)
+    b.optionalElement("title", KotlinString.serializer().descriptor)
+    b.optionalElement("_title", ElementSerializer.descriptor)
+    b.optionalElement("status", KotlinString.serializer().descriptor)
+    b.optionalElement("_status", ElementSerializer.descriptor)
+    b.optionalElement("experimental", KotlinBoolean.serializer().descriptor)
+    b.optionalElement("_experimental", ElementSerializer.descriptor)
+    b.optionalElement("date", KotlinString.serializer().descriptor)
+    b.optionalElement("_date", ElementSerializer.descriptor)
+    b.optionalElement("publisher", KotlinString.serializer().descriptor)
+    b.optionalElement("_publisher", ElementSerializer.descriptor)
+    b.optionalElement("contact", ContactDetailSerializer.listSerializer.descriptor)
+    b.optionalElement("description", KotlinString.serializer().descriptor)
+    b.optionalElement("_description", ElementSerializer.descriptor)
+    b.optionalElement("useContext", UsageContextSerializer.listSerializer.descriptor)
+    b.optionalElement("jurisdiction", CodeableConceptSerializer.listSerializer.descriptor)
+    b.optionalElement("purpose", KotlinString.serializer().descriptor)
+    b.optionalElement("_purpose", ElementSerializer.descriptor)
+    b.optionalElement("copyright", KotlinString.serializer().descriptor)
+    b.optionalElement("_copyright", ElementSerializer.descriptor)
+    b.optionalElement("copyrightLabel", KotlinString.serializer().descriptor)
+    b.optionalElement("_copyrightLabel", ElementSerializer.descriptor)
+    b.optionalElement("approvalDate", KotlinString.serializer().descriptor)
+    b.optionalElement("_approvalDate", ElementSerializer.descriptor)
+    b.optionalElement("lastReviewDate", KotlinString.serializer().descriptor)
+    b.optionalElement("_lastReviewDate", ElementSerializer.descriptor)
+    b.optionalElement("effectivePeriod", PeriodSerializer.descriptor)
+    b.optionalElement("author", ContactDetailSerializer.listSerializer.descriptor)
+    b.optionalElement("editor", ContactDetailSerializer.listSerializer.descriptor)
+    b.optionalElement("reviewer", ContactDetailSerializer.listSerializer.descriptor)
+    b.optionalElement("endorser", ContactDetailSerializer.listSerializer.descriptor)
+    b.optionalElement("summary", CitationSummarySerializer.listSerializer.descriptor)
+    b.optionalElement("classification", CitationClassificationSerializer.listSerializer.descriptor)
+    b.optionalElement("note", AnnotationSerializer.listSerializer.descriptor)
+    b.optionalElement("currentState", CodeableConceptSerializer.listSerializer.descriptor)
+    b.optionalElement("statusDate", CitationStatusDateSerializer.listSerializer.descriptor)
+    b.optionalElement("relatedArtifact", RelatedArtifactSerializer.listSerializer.descriptor)
+    b.optionalElement("citedArtifact", CitationCitedArtifactSerializer.descriptor)
   }
 
   override fun deserializeInternal(
-    decoder: CompositeDecoder,
+    compositeDecoder: CompositeDecoder,
     descriptor: SerialDescriptor,
     descriptorOffset: Int,
   ): Citation {
@@ -3243,25 +2995,43 @@ internal object CitationSerializer : FhirResourceSerializer<Citation> {
     var relatedArtifact: List<RelatedArtifact>? = null
     var citedArtifact: Citation.CitedArtifact? = null
     while (true) {
-      val i = decoder.decodeElementIndex(descriptor)
+      val i = compositeDecoder.decodeElementIndex(descriptor)
       if (i == CompositeDecoder.DECODE_DONE) break
       when (i - descriptorOffset) {
-        -1 -> decoder.decodeStringElement(descriptor, i)
-        0 -> id = decoder.decodeStringElement(descriptor, i)
-        1 -> meta = decoder.decodeNullableSerializableElement(descriptor, i, MetaSerializer, null)
-        2 -> implicitRules = decoder.decodeStringElement(descriptor, i)
+        -1 -> compositeDecoder.decodeStringElement(descriptor, i)
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
+        1 ->
+          meta =
+            compositeDecoder.decodeNullableSerializableElement(descriptor, i, MetaSerializer, null)
+        2 -> implicitRules = compositeDecoder.decodeStringElement(descriptor, i)
         3 ->
           _implicitRules =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        4 -> language = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        4 -> language = compositeDecoder.decodeStringElement(descriptor, i)
         5 ->
           _language =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         6 ->
-          text = decoder.decodeNullableSerializableElement(descriptor, i, NarrativeSerializer, null)
+          text =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              NarrativeSerializer,
+              null,
+            )
         7 ->
           contained =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ResourcePolymorphicSerializer.listSerializer,
@@ -3269,7 +3039,7 @@ internal object CitationSerializer : FhirResourceSerializer<Citation> {
             )
         8 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -3277,70 +3047,129 @@ internal object CitationSerializer : FhirResourceSerializer<Citation> {
             )
         9 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
               null,
             )
-        10 -> url = decoder.decodeStringElement(descriptor, i)
+        10 -> url = compositeDecoder.decodeStringElement(descriptor, i)
         11 ->
-          _url = decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+          _url =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         12 ->
           identifier =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               IdentifierSerializer.listSerializer,
               null,
             )
-        13 -> version = decoder.decodeStringElement(descriptor, i)
+        13 -> version = compositeDecoder.decodeStringElement(descriptor, i)
         14 ->
           _version =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        15 -> versionAlgorithmString = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        15 -> versionAlgorithmString = compositeDecoder.decodeStringElement(descriptor, i)
         16 ->
           _versionAlgorithmString =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         17 ->
           versionAlgorithmCoding =
-            decoder.decodeNullableSerializableElement(descriptor, i, CodingSerializer, null)
-        18 -> name = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              CodingSerializer,
+              null,
+            )
+        18 -> name = compositeDecoder.decodeStringElement(descriptor, i)
         19 ->
-          _name = decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        20 -> title = decoder.decodeStringElement(descriptor, i)
+          _name =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        20 -> title = compositeDecoder.decodeStringElement(descriptor, i)
         21 ->
-          _title = decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        22 -> status = decoder.decodeStringElement(descriptor, i)
+          _title =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        22 -> status = compositeDecoder.decodeStringElement(descriptor, i)
         23 ->
           _status =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        24 -> experimental = decoder.decodeBooleanElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        24 -> experimental = compositeDecoder.decodeBooleanElement(descriptor, i)
         25 ->
           _experimental =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        26 -> date = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        26 -> date = compositeDecoder.decodeStringElement(descriptor, i)
         27 ->
-          _date = decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        28 -> publisher = decoder.decodeStringElement(descriptor, i)
+          _date =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        28 -> publisher = compositeDecoder.decodeStringElement(descriptor, i)
         29 ->
           _publisher =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         30 ->
           contact =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ContactDetailSerializer.listSerializer,
               null,
             )
-        31 -> description = decoder.decodeStringElement(descriptor, i)
+        31 -> description = compositeDecoder.decodeStringElement(descriptor, i)
         32 ->
           _description =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         33 ->
           useContext =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               UsageContextSerializer.listSerializer,
@@ -3348,38 +3177,68 @@ internal object CitationSerializer : FhirResourceSerializer<Citation> {
             )
         34 ->
           jurisdiction =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer.listSerializer,
               null,
             )
-        35 -> purpose = decoder.decodeStringElement(descriptor, i)
+        35 -> purpose = compositeDecoder.decodeStringElement(descriptor, i)
         36 ->
           _purpose =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        37 -> copyright = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        37 -> copyright = compositeDecoder.decodeStringElement(descriptor, i)
         38 ->
           _copyright =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        39 -> copyrightLabel = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        39 -> copyrightLabel = compositeDecoder.decodeStringElement(descriptor, i)
         40 ->
           _copyrightLabel =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        41 -> approvalDate = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        41 -> approvalDate = compositeDecoder.decodeStringElement(descriptor, i)
         42 ->
           _approvalDate =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        43 -> lastReviewDate = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        43 -> lastReviewDate = compositeDecoder.decodeStringElement(descriptor, i)
         44 ->
           _lastReviewDate =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         45 ->
           effectivePeriod =
-            decoder.decodeNullableSerializableElement(descriptor, i, PeriodSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              PeriodSerializer,
+              null,
+            )
         46 ->
           author =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ContactDetailSerializer.listSerializer,
@@ -3387,7 +3246,7 @@ internal object CitationSerializer : FhirResourceSerializer<Citation> {
             )
         47 ->
           editor =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ContactDetailSerializer.listSerializer,
@@ -3395,7 +3254,7 @@ internal object CitationSerializer : FhirResourceSerializer<Citation> {
             )
         48 ->
           reviewer =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ContactDetailSerializer.listSerializer,
@@ -3403,7 +3262,7 @@ internal object CitationSerializer : FhirResourceSerializer<Citation> {
             )
         49 ->
           endorser =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ContactDetailSerializer.listSerializer,
@@ -3411,7 +3270,7 @@ internal object CitationSerializer : FhirResourceSerializer<Citation> {
             )
         50 ->
           summary =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CitationSummarySerializer.listSerializer,
@@ -3419,7 +3278,7 @@ internal object CitationSerializer : FhirResourceSerializer<Citation> {
             )
         51 ->
           classification =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CitationClassificationSerializer.listSerializer,
@@ -3427,7 +3286,7 @@ internal object CitationSerializer : FhirResourceSerializer<Citation> {
             )
         52 ->
           note =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               AnnotationSerializer.listSerializer,
@@ -3435,7 +3294,7 @@ internal object CitationSerializer : FhirResourceSerializer<Citation> {
             )
         53 ->
           currentState =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer.listSerializer,
@@ -3443,7 +3302,7 @@ internal object CitationSerializer : FhirResourceSerializer<Citation> {
             )
         54 ->
           statusDate =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CitationStatusDateSerializer.listSerializer,
@@ -3451,7 +3310,7 @@ internal object CitationSerializer : FhirResourceSerializer<Citation> {
             )
         55 ->
           relatedArtifact =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               RelatedArtifactSerializer.listSerializer,
@@ -3459,7 +3318,7 @@ internal object CitationSerializer : FhirResourceSerializer<Citation> {
             )
         56 ->
           citedArtifact =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CitationCitedArtifactSerializer,
@@ -3488,10 +3347,10 @@ internal object CitationSerializer : FhirResourceSerializer<Citation> {
       name = R5String.of(name, _name),
       title = R5String.of(title, _title),
       status =
-        Enumeration.of(status?.let { PublicationStatus.fromCode(it) }, _status)
+        Enumeration.of(if (status != null) PublicationStatus.fromCode(status) else null, _status)
           ?: throw SerializationException("Missing required property 'status' on Citation"),
       experimental = R5Boolean.of(experimental, _experimental),
-      date = DateTime.of(date?.let { FhirDateTime.fromString(it) }, _date),
+      date = DateTime.of(if (date != null) FhirDateTime.fromString(date) else null, _date),
       publisher = R5String.of(publisher, _publisher),
       contact = contact ?: listOf(),
       description = Markdown.of(description, _description),
@@ -3500,8 +3359,16 @@ internal object CitationSerializer : FhirResourceSerializer<Citation> {
       purpose = Markdown.of(purpose, _purpose),
       copyright = Markdown.of(copyright, _copyright),
       copyrightLabel = R5String.of(copyrightLabel, _copyrightLabel),
-      approvalDate = Date.of(approvalDate?.let { FhirDate.fromString(it) }, _approvalDate),
-      lastReviewDate = Date.of(lastReviewDate?.let { FhirDate.fromString(it) }, _lastReviewDate),
+      approvalDate =
+        Date.of(
+          if (approvalDate != null) FhirDate.fromString(approvalDate) else null,
+          _approvalDate,
+        ),
+      lastReviewDate =
+        Date.of(
+          if (lastReviewDate != null) FhirDate.fromString(lastReviewDate) else null,
+          _lastReviewDate,
+        ),
       effectivePeriod = effectivePeriod,
       author = author ?: listOf(),
       editor = editor ?: listOf(),
@@ -3518,85 +3385,76 @@ internal object CitationSerializer : FhirResourceSerializer<Citation> {
   }
 
   override fun serializeInternal(
-    encoder: CompositeEncoder,
+    compositeEncoder: CompositeEncoder,
     descriptor: SerialDescriptor,
     descriptorOffset: Int,
     `value`: Citation,
   ) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0 + descriptorOffset, it) }
-    (value.meta)?.let {
-      encoder.encodeSerializableElement(descriptor, 1 + descriptorOffset, MetaSerializer, it)
-    }
-    ((value.implicitRules?.value))?.let {
-      encoder.encodeStringElement(descriptor, 2 + descriptorOffset, it)
-    }
-    (value.implicitRules?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 3 + descriptorOffset, ElementSerializer, it)
-    }
-    ((value.language?.value))?.let {
-      encoder.encodeStringElement(descriptor, 4 + descriptorOffset, it)
-    }
-    (value.language?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 5 + descriptorOffset, ElementSerializer, it)
-    }
-    (value.text)?.let {
-      encoder.encodeSerializableElement(descriptor, 6 + descriptorOffset, NarrativeSerializer, it)
-    }
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0 + descriptorOffset, value.id)
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      1 + descriptorOffset,
+      MetaSerializer,
+      value.meta,
+    )
+    compositeEncoder.encodeStringIfNotNull(
+      descriptor,
+      2 + descriptorOffset,
+      value.implicitRules?.value,
+    )
+    compositeEncoder.encodeElementIfNotNull(descriptor, 3 + descriptorOffset, value.implicitRules)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 4 + descriptorOffset, value.language?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 5 + descriptorOffset, value.language)
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      6 + descriptorOffset,
+      NarrativeSerializer,
+      value.text,
+    )
     if (value.contained.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         7 + descriptorOffset,
         ResourcePolymorphicSerializer.listSerializer,
         value.contained,
       )
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         8 + descriptorOffset,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         9 + descriptorOffset,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    ((value.url?.value))?.let { encoder.encodeStringElement(descriptor, 10 + descriptorOffset, it) }
-    (value.url?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 11 + descriptorOffset, ElementSerializer, it)
-    }
+    compositeEncoder.encodeStringIfNotNull(descriptor, 10 + descriptorOffset, value.url?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 11 + descriptorOffset, value.url)
     if (value.identifier.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         12 + descriptorOffset,
         IdentifierSerializer.listSerializer,
         value.identifier,
       )
-    ((value.version?.value))?.let {
-      encoder.encodeStringElement(descriptor, 13 + descriptorOffset, it)
-    }
-    (value.version?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 14 + descriptorOffset, ElementSerializer, it)
-    }
+    compositeEncoder.encodeStringIfNotNull(descriptor, 13 + descriptorOffset, value.version?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 14 + descriptorOffset, value.version)
     when (val choice = value.versionAlgorithm) {
       null -> {}
       is Citation.VersionAlgorithm.String -> {
-        ((choice.value.value))?.let {
-          encoder.encodeStringElement(descriptor, 15 + descriptorOffset, it)
-        }
-        (choice.value.toElement())?.let {
-          encoder.encodeSerializableElement(
-            descriptor,
-            16 + descriptorOffset,
-            ElementSerializer,
-            it,
-          )
-        }
+        compositeEncoder.encodeStringIfNotNull(
+          descriptor,
+          15 + descriptorOffset,
+          choice.value.value,
+        )
+        compositeEncoder.encodeElementIfNotNull(descriptor, 16 + descriptorOffset, choice.value)
       }
       is Citation.VersionAlgorithm.Coding -> {
-        encoder.encodeSerializableElement(
+        compositeEncoder.encodeSerializableElement(
           descriptor,
           17 + descriptorOffset,
           CodingSerializer,
@@ -3604,179 +3462,168 @@ internal object CitationSerializer : FhirResourceSerializer<Citation> {
         )
       }
     }
-    ((value.name?.value))?.let {
-      encoder.encodeStringElement(descriptor, 18 + descriptorOffset, it)
-    }
-    (value.name?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 19 + descriptorOffset, ElementSerializer, it)
-    }
-    ((value.title?.value))?.let {
-      encoder.encodeStringElement(descriptor, 20 + descriptorOffset, it)
-    }
-    (value.title?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 21 + descriptorOffset, ElementSerializer, it)
-    }
-    ((value.status.value?.code))?.let {
-      encoder.encodeStringElement(descriptor, 22 + descriptorOffset, it)
-    }
-    (value.status.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 23 + descriptorOffset, ElementSerializer, it)
-    }
-    ((value.experimental?.value))?.let {
-      encoder.encodeBooleanElement(descriptor, 24 + descriptorOffset, it)
-    }
-    (value.experimental?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 25 + descriptorOffset, ElementSerializer, it)
-    }
-    ((value.date?.value?.toString()))?.let {
-      encoder.encodeStringElement(descriptor, 26 + descriptorOffset, it)
-    }
-    (value.date?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 27 + descriptorOffset, ElementSerializer, it)
-    }
-    ((value.publisher?.value))?.let {
-      encoder.encodeStringElement(descriptor, 28 + descriptorOffset, it)
-    }
-    (value.publisher?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 29 + descriptorOffset, ElementSerializer, it)
-    }
+    compositeEncoder.encodeStringIfNotNull(descriptor, 18 + descriptorOffset, value.name?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 19 + descriptorOffset, value.name)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 20 + descriptorOffset, value.title?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 21 + descriptorOffset, value.title)
+    compositeEncoder.encodeStringIfNotNull(
+      descriptor,
+      22 + descriptorOffset,
+      value.status.value?.code,
+    )
+    compositeEncoder.encodeElementIfNotNull(descriptor, 23 + descriptorOffset, value.status)
+    compositeEncoder.encodeBooleanIfNotNull(
+      descriptor,
+      24 + descriptorOffset,
+      value.experimental?.value,
+    )
+    compositeEncoder.encodeElementIfNotNull(descriptor, 25 + descriptorOffset, value.experimental)
+    compositeEncoder.encodeStringIfNotNull(
+      descriptor,
+      26 + descriptorOffset,
+      value.date?.value?.toString(),
+    )
+    compositeEncoder.encodeElementIfNotNull(descriptor, 27 + descriptorOffset, value.date)
+    compositeEncoder.encodeStringIfNotNull(
+      descriptor,
+      28 + descriptorOffset,
+      value.publisher?.value,
+    )
+    compositeEncoder.encodeElementIfNotNull(descriptor, 29 + descriptorOffset, value.publisher)
     if (value.contact.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         30 + descriptorOffset,
         ContactDetailSerializer.listSerializer,
         value.contact,
       )
-    ((value.description?.value))?.let {
-      encoder.encodeStringElement(descriptor, 31 + descriptorOffset, it)
-    }
-    (value.description?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 32 + descriptorOffset, ElementSerializer, it)
-    }
+    compositeEncoder.encodeStringIfNotNull(
+      descriptor,
+      31 + descriptorOffset,
+      value.description?.value,
+    )
+    compositeEncoder.encodeElementIfNotNull(descriptor, 32 + descriptorOffset, value.description)
     if (value.useContext.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         33 + descriptorOffset,
         UsageContextSerializer.listSerializer,
         value.useContext,
       )
     if (value.jurisdiction.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         34 + descriptorOffset,
         CodeableConceptSerializer.listSerializer,
         value.jurisdiction,
       )
-    ((value.purpose?.value))?.let {
-      encoder.encodeStringElement(descriptor, 35 + descriptorOffset, it)
-    }
-    (value.purpose?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 36 + descriptorOffset, ElementSerializer, it)
-    }
-    ((value.copyright?.value))?.let {
-      encoder.encodeStringElement(descriptor, 37 + descriptorOffset, it)
-    }
-    (value.copyright?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 38 + descriptorOffset, ElementSerializer, it)
-    }
-    ((value.copyrightLabel?.value))?.let {
-      encoder.encodeStringElement(descriptor, 39 + descriptorOffset, it)
-    }
-    (value.copyrightLabel?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 40 + descriptorOffset, ElementSerializer, it)
-    }
-    ((value.approvalDate?.value?.toString()))?.let {
-      encoder.encodeStringElement(descriptor, 41 + descriptorOffset, it)
-    }
-    (value.approvalDate?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 42 + descriptorOffset, ElementSerializer, it)
-    }
-    ((value.lastReviewDate?.value?.toString()))?.let {
-      encoder.encodeStringElement(descriptor, 43 + descriptorOffset, it)
-    }
-    (value.lastReviewDate?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 44 + descriptorOffset, ElementSerializer, it)
-    }
-    (value.effectivePeriod)?.let {
-      encoder.encodeSerializableElement(descriptor, 45 + descriptorOffset, PeriodSerializer, it)
-    }
+    compositeEncoder.encodeStringIfNotNull(descriptor, 35 + descriptorOffset, value.purpose?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 36 + descriptorOffset, value.purpose)
+    compositeEncoder.encodeStringIfNotNull(
+      descriptor,
+      37 + descriptorOffset,
+      value.copyright?.value,
+    )
+    compositeEncoder.encodeElementIfNotNull(descriptor, 38 + descriptorOffset, value.copyright)
+    compositeEncoder.encodeStringIfNotNull(
+      descriptor,
+      39 + descriptorOffset,
+      value.copyrightLabel?.value,
+    )
+    compositeEncoder.encodeElementIfNotNull(descriptor, 40 + descriptorOffset, value.copyrightLabel)
+    compositeEncoder.encodeStringIfNotNull(
+      descriptor,
+      41 + descriptorOffset,
+      value.approvalDate?.value?.toString(),
+    )
+    compositeEncoder.encodeElementIfNotNull(descriptor, 42 + descriptorOffset, value.approvalDate)
+    compositeEncoder.encodeStringIfNotNull(
+      descriptor,
+      43 + descriptorOffset,
+      value.lastReviewDate?.value?.toString(),
+    )
+    compositeEncoder.encodeElementIfNotNull(descriptor, 44 + descriptorOffset, value.lastReviewDate)
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      45 + descriptorOffset,
+      PeriodSerializer,
+      value.effectivePeriod,
+    )
     if (value.author.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         46 + descriptorOffset,
         ContactDetailSerializer.listSerializer,
         value.author,
       )
     if (value.editor.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         47 + descriptorOffset,
         ContactDetailSerializer.listSerializer,
         value.editor,
       )
     if (value.reviewer.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         48 + descriptorOffset,
         ContactDetailSerializer.listSerializer,
         value.reviewer,
       )
     if (value.endorser.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         49 + descriptorOffset,
         ContactDetailSerializer.listSerializer,
         value.endorser,
       )
     if (value.summary.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         50 + descriptorOffset,
         CitationSummarySerializer.listSerializer,
         value.summary,
       )
     if (value.classification.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         51 + descriptorOffset,
         CitationClassificationSerializer.listSerializer,
         value.classification,
       )
     if (value.note.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         52 + descriptorOffset,
         AnnotationSerializer.listSerializer,
         value.note,
       )
     if (value.currentState.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         53 + descriptorOffset,
         CodeableConceptSerializer.listSerializer,
         value.currentState,
       )
     if (value.statusDate.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         54 + descriptorOffset,
         CitationStatusDateSerializer.listSerializer,
         value.statusDate,
       )
     if (value.relatedArtifact.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         55 + descriptorOffset,
         RelatedArtifactSerializer.listSerializer,
         value.relatedArtifact,
       )
-    (value.citedArtifact)?.let {
-      encoder.encodeSerializableElement(
-        descriptor,
-        56 + descriptorOffset,
-        CitationCitedArtifactSerializer,
-        it,
-      )
-    }
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      56 + descriptorOffset,
+      CitationCitedArtifactSerializer,
+      value.citedArtifact,
+    )
   }
 }

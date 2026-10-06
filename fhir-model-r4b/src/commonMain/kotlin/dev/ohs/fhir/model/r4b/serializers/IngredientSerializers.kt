@@ -61,42 +61,22 @@ import kotlinx.serialization.encoding.CompositeDecoder
 import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.encoding.decodeStructure
-import kotlinx.serialization.encoding.encodeStructure
 
 internal object IngredientManufacturerSerializer : KSerializer<Ingredient.Manufacturer> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("Manufacturer") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("role", KotlinString.serializer().descriptor, isOptional = true)
-      element("_role", Element.serializer().descriptor, isOptional = true)
-      element("manufacturer", Reference.serializer().descriptor, isOptional = true)
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("role", KotlinString.serializer().descriptor)
+      optionalElement("_role", ElementSerializer.descriptor)
+      optionalElement("manufacturer", ReferenceSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<Ingredient.Manufacturer>> = ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): Ingredient.Manufacturer =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: Ingredient.Manufacturer) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): Ingredient.Manufacturer {
+  override fun deserialize(decoder: Decoder): Ingredient.Manufacturer {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -104,11 +84,11 @@ internal object IngredientManufacturerSerializer : KSerializer<Ingredient.Manufa
     var _role: Element? = null
     var manufacturer: Reference? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -116,28 +96,43 @@ internal object IngredientManufacturerSerializer : KSerializer<Ingredient.Manufa
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
               null,
             )
-        3 -> role = decoder.decodeStringElement(descriptor, i)
+        3 -> role = compositeDecoder.decodeStringElement(descriptor, i)
         4 ->
-          _role = decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+          _role =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         5 ->
           manufacturer =
-            decoder.decodeNullableSerializableElement(descriptor, i, ReferenceSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ReferenceSerializer,
+              null,
+            )
         CompositeDecoder.DECODE_DONE -> break
         else -> throw SerializationException("Unexpected index decoding Manufacturer: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return Ingredient.Manufacturer(
       id = id,
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
       role =
-        Enumeration.of(role?.let { Ingredient.IngredientManufacturerRole.fromCode(it) }, _role),
+        Enumeration.of(
+          if (role != null) Ingredient.IngredientManufacturerRole.fromCode(role) else null,
+          _role,
+        ),
       manufacturer =
         manufacturer
           ?: throw SerializationException(
@@ -146,79 +141,60 @@ internal object IngredientManufacturerSerializer : KSerializer<Ingredient.Manufa
     )
   }
 
-  private fun serializeInternal(encoder: CompositeEncoder, `value`: Ingredient.Manufacturer) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: Ingredient.Manufacturer) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    ((value.role?.value?.code))?.let { encoder.encodeStringElement(descriptor, 3, it) }
-    (value.role?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 4, ElementSerializer, it)
-    }
-    encoder.encodeSerializableElement(descriptor, 5, ReferenceSerializer, value.manufacturer)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 3, value.role?.value?.code)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 4, value.role)
+    compositeEncoder.encodeSerializableElement(
+      descriptor,
+      5,
+      ReferenceSerializer,
+      value.manufacturer,
+    )
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
 internal object IngredientSubstanceSerializer : KSerializer<Ingredient.Substance> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("Substance") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("code", CodeableReference.serializer().descriptor, isOptional = true)
-      element(
-        "strength",
-        listSerialDescriptor(
-          lazyDescriptor { Ingredient.Substance.Strength.serializer().descriptor }
-        ),
-        isOptional = true,
-      )
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("code", CodeableReferenceSerializer.descriptor)
+      optionalElement("strength", IngredientSubstanceStrengthSerializer.listSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<Ingredient.Substance>> = ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): Ingredient.Substance =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: Ingredient.Substance) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): Ingredient.Substance {
+  override fun deserialize(decoder: Decoder): Ingredient.Substance {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
     var code: CodeableReference? = null
     var strength: List<Ingredient.Substance.Strength>? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -226,7 +202,7 @@ internal object IngredientSubstanceSerializer : KSerializer<Ingredient.Substance
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -234,7 +210,7 @@ internal object IngredientSubstanceSerializer : KSerializer<Ingredient.Substance
             )
         3 ->
           code =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableReferenceSerializer,
@@ -242,7 +218,7 @@ internal object IngredientSubstanceSerializer : KSerializer<Ingredient.Substance
             )
         4 ->
           strength =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               IngredientSubstanceStrengthSerializer.listSerializer,
@@ -252,6 +228,7 @@ internal object IngredientSubstanceSerializer : KSerializer<Ingredient.Substance
         else -> throw SerializationException("Unexpected index decoding Substance: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return Ingredient.Substance(
       id = id,
       extension = extension ?: listOf(),
@@ -265,86 +242,68 @@ internal object IngredientSubstanceSerializer : KSerializer<Ingredient.Substance
     )
   }
 
-  private fun serializeInternal(encoder: CompositeEncoder, `value`: Ingredient.Substance) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: Ingredient.Substance) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    encoder.encodeSerializableElement(descriptor, 3, CodeableReferenceSerializer, value.code)
+    compositeEncoder.encodeSerializableElement(
+      descriptor,
+      3,
+      CodeableReferenceSerializer,
+      value.code,
+    )
     if (value.strength.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         4,
         IngredientSubstanceStrengthSerializer.listSerializer,
         value.strength,
       )
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
 internal object IngredientSubstanceStrengthSerializer : KSerializer<Ingredient.Substance.Strength> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("Strength") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("presentationRatio", Ratio.serializer().descriptor, isOptional = true)
-      element("presentationRatioRange", RatioRange.serializer().descriptor, isOptional = true)
-      element("textPresentation", KotlinString.serializer().descriptor, isOptional = true)
-      element("_textPresentation", Element.serializer().descriptor, isOptional = true)
-      element("concentrationRatio", Ratio.serializer().descriptor, isOptional = true)
-      element("concentrationRatioRange", RatioRange.serializer().descriptor, isOptional = true)
-      element("textConcentration", KotlinString.serializer().descriptor, isOptional = true)
-      element("_textConcentration", Element.serializer().descriptor, isOptional = true)
-      element("measurementPoint", KotlinString.serializer().descriptor, isOptional = true)
-      element("_measurementPoint", Element.serializer().descriptor, isOptional = true)
-      element(
-        "country",
-        listSerialDescriptor(CodeableConcept.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("presentationRatio", RatioSerializer.descriptor)
+      optionalElement("presentationRatioRange", RatioRangeSerializer.descriptor)
+      optionalElement("textPresentation", KotlinString.serializer().descriptor)
+      optionalElement("_textPresentation", ElementSerializer.descriptor)
+      optionalElement("concentrationRatio", RatioSerializer.descriptor)
+      optionalElement("concentrationRatioRange", RatioRangeSerializer.descriptor)
+      optionalElement("textConcentration", KotlinString.serializer().descriptor)
+      optionalElement("_textConcentration", ElementSerializer.descriptor)
+      optionalElement("measurementPoint", KotlinString.serializer().descriptor)
+      optionalElement("_measurementPoint", ElementSerializer.descriptor)
+      optionalElement("country", CodeableConceptSerializer.listSerializer.descriptor)
+      optionalElement(
         "referenceStrength",
-        listSerialDescriptor(
-          lazyDescriptor { Ingredient.Substance.Strength.ReferenceStrength.serializer().descriptor }
-        ),
-        isOptional = true,
+        IngredientSubstanceStrengthReferenceStrengthSerializer.listSerializer.descriptor,
       )
     }
 
   internal val listSerializer: KSerializer<List<Ingredient.Substance.Strength>> =
     ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): Ingredient.Substance.Strength =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: Ingredient.Substance.Strength) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): Ingredient.Substance.Strength {
+  override fun deserialize(decoder: Decoder): Ingredient.Substance.Strength {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -361,11 +320,11 @@ internal object IngredientSubstanceStrengthSerializer : KSerializer<Ingredient.S
     var country: List<CodeableConcept>? = null
     var referenceStrength: List<Ingredient.Substance.Strength.ReferenceStrength>? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -373,7 +332,7 @@ internal object IngredientSubstanceStrengthSerializer : KSerializer<Ingredient.S
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -381,31 +340,56 @@ internal object IngredientSubstanceStrengthSerializer : KSerializer<Ingredient.S
             )
         3 ->
           presentationRatio =
-            decoder.decodeNullableSerializableElement(descriptor, i, RatioSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(descriptor, i, RatioSerializer, null)
         4 ->
           presentationRatioRange =
-            decoder.decodeNullableSerializableElement(descriptor, i, RatioRangeSerializer, null)
-        5 -> textPresentation = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              RatioRangeSerializer,
+              null,
+            )
+        5 -> textPresentation = compositeDecoder.decodeStringElement(descriptor, i)
         6 ->
           _textPresentation =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         7 ->
           concentrationRatio =
-            decoder.decodeNullableSerializableElement(descriptor, i, RatioSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(descriptor, i, RatioSerializer, null)
         8 ->
           concentrationRatioRange =
-            decoder.decodeNullableSerializableElement(descriptor, i, RatioRangeSerializer, null)
-        9 -> textConcentration = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              RatioRangeSerializer,
+              null,
+            )
+        9 -> textConcentration = compositeDecoder.decodeStringElement(descriptor, i)
         10 ->
           _textConcentration =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        11 -> measurementPoint = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        11 -> measurementPoint = compositeDecoder.decodeStringElement(descriptor, i)
         12 ->
           _measurementPoint =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         13 ->
           country =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer.listSerializer,
@@ -413,7 +397,7 @@ internal object IngredientSubstanceStrengthSerializer : KSerializer<Ingredient.S
             )
         14 ->
           referenceStrength =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               IngredientSubstanceStrengthReferenceStrengthSerializer.listSerializer,
@@ -423,6 +407,7 @@ internal object IngredientSubstanceStrengthSerializer : KSerializer<Ingredient.S
         else -> throw SerializationException("Unexpected index decoding Strength: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return Ingredient.Substance.Strength(
       id = id,
       extension = extension ?: listOf(),
@@ -442,17 +427,18 @@ internal object IngredientSubstanceStrengthSerializer : KSerializer<Ingredient.S
     )
   }
 
-  private fun serializeInternal(encoder: CompositeEncoder, `value`: Ingredient.Substance.Strength) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: Ingredient.Substance.Strength) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
@@ -461,47 +447,52 @@ internal object IngredientSubstanceStrengthSerializer : KSerializer<Ingredient.S
     when (val choice = value.presentation) {
       null -> {}
       is Ingredient.Substance.Strength.Presentation.Ratio -> {
-        encoder.encodeSerializableElement(descriptor, 3, RatioSerializer, choice.value)
+        compositeEncoder.encodeSerializableElement(descriptor, 3, RatioSerializer, choice.value)
       }
       is Ingredient.Substance.Strength.Presentation.RatioRange -> {
-        encoder.encodeSerializableElement(descriptor, 4, RatioRangeSerializer, choice.value)
+        compositeEncoder.encodeSerializableElement(
+          descriptor,
+          4,
+          RatioRangeSerializer,
+          choice.value,
+        )
       }
     }
-    ((value.textPresentation?.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
-    (value.textPresentation?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 6, ElementSerializer, it)
-    }
+    compositeEncoder.encodeStringIfNotNull(descriptor, 5, value.textPresentation?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 6, value.textPresentation)
     when (val choice = value.concentration) {
       null -> {}
       is Ingredient.Substance.Strength.Concentration.Ratio -> {
-        encoder.encodeSerializableElement(descriptor, 7, RatioSerializer, choice.value)
+        compositeEncoder.encodeSerializableElement(descriptor, 7, RatioSerializer, choice.value)
       }
       is Ingredient.Substance.Strength.Concentration.RatioRange -> {
-        encoder.encodeSerializableElement(descriptor, 8, RatioRangeSerializer, choice.value)
+        compositeEncoder.encodeSerializableElement(
+          descriptor,
+          8,
+          RatioRangeSerializer,
+          choice.value,
+        )
       }
     }
-    ((value.textConcentration?.value))?.let { encoder.encodeStringElement(descriptor, 9, it) }
-    (value.textConcentration?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 10, ElementSerializer, it)
-    }
-    ((value.measurementPoint?.value))?.let { encoder.encodeStringElement(descriptor, 11, it) }
-    (value.measurementPoint?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 12, ElementSerializer, it)
-    }
+    compositeEncoder.encodeStringIfNotNull(descriptor, 9, value.textConcentration?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 10, value.textConcentration)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 11, value.measurementPoint?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 12, value.measurementPoint)
     if (value.country.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         13,
         CodeableConceptSerializer.listSerializer,
         value.country,
       )
     if (value.referenceStrength.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         14,
         IngredientSubstanceStrengthReferenceStrengthSerializer.listSerializer,
         value.referenceStrength,
       )
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
@@ -509,49 +500,22 @@ internal object IngredientSubstanceStrengthReferenceStrengthSerializer :
   KSerializer<Ingredient.Substance.Strength.ReferenceStrength> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("ReferenceStrength") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("substance", CodeableReference.serializer().descriptor, isOptional = true)
-      element("strengthRatio", Ratio.serializer().descriptor, isOptional = true)
-      element("strengthRatioRange", RatioRange.serializer().descriptor, isOptional = true)
-      element("measurementPoint", KotlinString.serializer().descriptor, isOptional = true)
-      element("_measurementPoint", Element.serializer().descriptor, isOptional = true)
-      element(
-        "country",
-        listSerialDescriptor(CodeableConcept.serializer().descriptor),
-        isOptional = true,
-      )
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("substance", CodeableReferenceSerializer.descriptor)
+      optionalElement("strengthRatio", RatioSerializer.descriptor)
+      optionalElement("strengthRatioRange", RatioRangeSerializer.descriptor)
+      optionalElement("measurementPoint", KotlinString.serializer().descriptor)
+      optionalElement("_measurementPoint", ElementSerializer.descriptor)
+      optionalElement("country", CodeableConceptSerializer.listSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<Ingredient.Substance.Strength.ReferenceStrength>> =
     ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): Ingredient.Substance.Strength.ReferenceStrength =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(
-    encoder: Encoder,
-    `value`: Ingredient.Substance.Strength.ReferenceStrength,
-  ) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(
-    decoder: CompositeDecoder
-  ): Ingredient.Substance.Strength.ReferenceStrength {
+  override fun deserialize(decoder: Decoder): Ingredient.Substance.Strength.ReferenceStrength {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -562,11 +526,11 @@ internal object IngredientSubstanceStrengthReferenceStrengthSerializer :
     var _measurementPoint: Element? = null
     var country: List<CodeableConcept>? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -574,7 +538,7 @@ internal object IngredientSubstanceStrengthReferenceStrengthSerializer :
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -582,7 +546,7 @@ internal object IngredientSubstanceStrengthReferenceStrengthSerializer :
             )
         3 ->
           substance =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableReferenceSerializer,
@@ -590,17 +554,27 @@ internal object IngredientSubstanceStrengthReferenceStrengthSerializer :
             )
         4 ->
           strengthRatio =
-            decoder.decodeNullableSerializableElement(descriptor, i, RatioSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(descriptor, i, RatioSerializer, null)
         5 ->
           strengthRatioRange =
-            decoder.decodeNullableSerializableElement(descriptor, i, RatioRangeSerializer, null)
-        6 -> measurementPoint = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              RatioRangeSerializer,
+              null,
+            )
+        6 -> measurementPoint = compositeDecoder.decodeStringElement(descriptor, i)
         7 ->
           _measurementPoint =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         8 ->
           country =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer.listSerializer,
@@ -610,6 +584,7 @@ internal object IngredientSubstanceStrengthReferenceStrengthSerializer :
         else -> throw SerializationException("Unexpected index decoding ReferenceStrength: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return Ingredient.Substance.Strength.ReferenceStrength(
       id = id,
       extension = extension ?: listOf(),
@@ -628,47 +603,55 @@ internal object IngredientSubstanceStrengthReferenceStrengthSerializer :
     )
   }
 
-  private fun serializeInternal(
-    encoder: CompositeEncoder,
+  override fun serialize(
+    encoder: Encoder,
     `value`: Ingredient.Substance.Strength.ReferenceStrength,
   ) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    (value.substance)?.let {
-      encoder.encodeSerializableElement(descriptor, 3, CodeableReferenceSerializer, it)
-    }
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      3,
+      CodeableReferenceSerializer,
+      value.substance,
+    )
     when (val choice = value.strength) {
       is Ingredient.Substance.Strength.ReferenceStrength.Strength.Ratio -> {
-        encoder.encodeSerializableElement(descriptor, 4, RatioSerializer, choice.value)
+        compositeEncoder.encodeSerializableElement(descriptor, 4, RatioSerializer, choice.value)
       }
       is Ingredient.Substance.Strength.ReferenceStrength.Strength.RatioRange -> {
-        encoder.encodeSerializableElement(descriptor, 5, RatioRangeSerializer, choice.value)
+        compositeEncoder.encodeSerializableElement(
+          descriptor,
+          5,
+          RatioRangeSerializer,
+          choice.value,
+        )
       }
     }
-    ((value.measurementPoint?.value))?.let { encoder.encodeStringElement(descriptor, 6, it) }
-    (value.measurementPoint?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 7, ElementSerializer, it)
-    }
+    compositeEncoder.encodeStringIfNotNull(descriptor, 6, value.measurementPoint?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 7, value.measurementPoint)
     if (value.country.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         8,
         CodeableConceptSerializer.listSerializer,
         value.country,
       )
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
@@ -676,54 +659,33 @@ internal object IngredientSerializer : FhirResourceSerializer<Ingredient> {
   override val descriptor: SerialDescriptor = buildResourceDescriptor("Ingredient")
 
   override fun buildDescriptor(b: ClassSerialDescriptorBuilder) {
-    b.element("id", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("meta", Meta.serializer().descriptor, isOptional = true)
-    b.element("implicitRules", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("_implicitRules", Element.serializer().descriptor, isOptional = true)
-    b.element("language", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("_language", Element.serializer().descriptor, isOptional = true)
-    b.element("text", Narrative.serializer().descriptor, isOptional = true)
-    b.element(
+    b.optionalElement("id", KotlinString.serializer().descriptor)
+    b.optionalElement("meta", MetaSerializer.descriptor)
+    b.optionalElement("implicitRules", KotlinString.serializer().descriptor)
+    b.optionalElement("_implicitRules", ElementSerializer.descriptor)
+    b.optionalElement("language", KotlinString.serializer().descriptor)
+    b.optionalElement("_language", ElementSerializer.descriptor)
+    b.optionalElement("text", NarrativeSerializer.descriptor)
+    b.optionalElement(
       "contained",
-      listSerialDescriptor(lazyDescriptor { Resource.serializer().descriptor }),
-      isOptional = true,
+      listSerialDescriptor(lazyDescriptor { ResourcePolymorphicSerializer.descriptor }),
     )
-    b.element(
-      "extension",
-      listSerialDescriptor(Extension.serializer().descriptor),
-      isOptional = true,
-    )
-    b.element(
-      "modifierExtension",
-      listSerialDescriptor(Extension.serializer().descriptor),
-      isOptional = true,
-    )
-    b.element("identifier", Identifier.serializer().descriptor, isOptional = true)
-    b.element("status", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("_status", Element.serializer().descriptor, isOptional = true)
-    b.element("for", listSerialDescriptor(Reference.serializer().descriptor), isOptional = true)
-    b.element("role", CodeableConcept.serializer().descriptor, isOptional = true)
-    b.element(
-      "function",
-      listSerialDescriptor(CodeableConcept.serializer().descriptor),
-      isOptional = true,
-    )
-    b.element("allergenicIndicator", KotlinBoolean.serializer().descriptor, isOptional = true)
-    b.element("_allergenicIndicator", Element.serializer().descriptor, isOptional = true)
-    b.element(
-      "manufacturer",
-      listSerialDescriptor(lazyDescriptor { Ingredient.Manufacturer.serializer().descriptor }),
-      isOptional = true,
-    )
-    b.element(
-      "substance",
-      lazyDescriptor { Ingredient.Substance.serializer().descriptor },
-      isOptional = true,
-    )
+    b.optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+    b.optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+    b.optionalElement("identifier", IdentifierSerializer.descriptor)
+    b.optionalElement("status", KotlinString.serializer().descriptor)
+    b.optionalElement("_status", ElementSerializer.descriptor)
+    b.optionalElement("for", ReferenceSerializer.listSerializer.descriptor)
+    b.optionalElement("role", CodeableConceptSerializer.descriptor)
+    b.optionalElement("function", CodeableConceptSerializer.listSerializer.descriptor)
+    b.optionalElement("allergenicIndicator", KotlinBoolean.serializer().descriptor)
+    b.optionalElement("_allergenicIndicator", ElementSerializer.descriptor)
+    b.optionalElement("manufacturer", IngredientManufacturerSerializer.listSerializer.descriptor)
+    b.optionalElement("substance", IngredientSubstanceSerializer.descriptor)
   }
 
   override fun deserializeInternal(
-    decoder: CompositeDecoder,
+    compositeDecoder: CompositeDecoder,
     descriptor: SerialDescriptor,
     descriptorOffset: Int,
   ): Ingredient {
@@ -748,25 +710,43 @@ internal object IngredientSerializer : FhirResourceSerializer<Ingredient> {
     var manufacturer: List<Ingredient.Manufacturer>? = null
     var substance: Ingredient.Substance? = null
     while (true) {
-      val i = decoder.decodeElementIndex(descriptor)
+      val i = compositeDecoder.decodeElementIndex(descriptor)
       if (i == CompositeDecoder.DECODE_DONE) break
       when (i - descriptorOffset) {
-        -1 -> decoder.decodeStringElement(descriptor, i)
-        0 -> id = decoder.decodeStringElement(descriptor, i)
-        1 -> meta = decoder.decodeNullableSerializableElement(descriptor, i, MetaSerializer, null)
-        2 -> implicitRules = decoder.decodeStringElement(descriptor, i)
+        -1 -> compositeDecoder.decodeStringElement(descriptor, i)
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
+        1 ->
+          meta =
+            compositeDecoder.decodeNullableSerializableElement(descriptor, i, MetaSerializer, null)
+        2 -> implicitRules = compositeDecoder.decodeStringElement(descriptor, i)
         3 ->
           _implicitRules =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        4 -> language = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        4 -> language = compositeDecoder.decodeStringElement(descriptor, i)
         5 ->
           _language =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         6 ->
-          text = decoder.decodeNullableSerializableElement(descriptor, i, NarrativeSerializer, null)
+          text =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              NarrativeSerializer,
+              null,
+            )
         7 ->
           contained =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ResourcePolymorphicSerializer.listSerializer,
@@ -774,7 +754,7 @@ internal object IngredientSerializer : FhirResourceSerializer<Ingredient> {
             )
         8 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -782,7 +762,7 @@ internal object IngredientSerializer : FhirResourceSerializer<Ingredient> {
             )
         9 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -790,14 +770,24 @@ internal object IngredientSerializer : FhirResourceSerializer<Ingredient> {
             )
         10 ->
           identifier =
-            decoder.decodeNullableSerializableElement(descriptor, i, IdentifierSerializer, null)
-        11 -> status = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              IdentifierSerializer,
+              null,
+            )
+        11 -> status = compositeDecoder.decodeStringElement(descriptor, i)
         12 ->
           _status =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         13 ->
           `for` =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ReferenceSerializer.listSerializer,
@@ -805,7 +795,7 @@ internal object IngredientSerializer : FhirResourceSerializer<Ingredient> {
             )
         14 ->
           role =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer,
@@ -813,19 +803,24 @@ internal object IngredientSerializer : FhirResourceSerializer<Ingredient> {
             )
         15 ->
           function =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer.listSerializer,
               null,
             )
-        16 -> allergenicIndicator = decoder.decodeBooleanElement(descriptor, i)
+        16 -> allergenicIndicator = compositeDecoder.decodeBooleanElement(descriptor, i)
         17 ->
           _allergenicIndicator =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         18 ->
           manufacturer =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               IngredientManufacturerSerializer.listSerializer,
@@ -833,7 +828,7 @@ internal object IngredientSerializer : FhirResourceSerializer<Ingredient> {
             )
         19 ->
           substance =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               IngredientSubstanceSerializer,
@@ -853,7 +848,7 @@ internal object IngredientSerializer : FhirResourceSerializer<Ingredient> {
       modifierExtension = modifierExtension ?: listOf(),
       identifier = identifier,
       status =
-        Enumeration.of(status?.let { PublicationStatus.fromCode(it) }, _status)
+        Enumeration.of(if (status != null) PublicationStatus.fromCode(status) else null, _status)
           ?: throw SerializationException("Missing required property 'status' on Ingredient"),
       `for` = `for` ?: listOf(),
       role = role ?: throw SerializationException("Missing required property 'role' on Ingredient"),
@@ -867,94 +862,103 @@ internal object IngredientSerializer : FhirResourceSerializer<Ingredient> {
   }
 
   override fun serializeInternal(
-    encoder: CompositeEncoder,
+    compositeEncoder: CompositeEncoder,
     descriptor: SerialDescriptor,
     descriptorOffset: Int,
     `value`: Ingredient,
   ) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0 + descriptorOffset, it) }
-    (value.meta)?.let {
-      encoder.encodeSerializableElement(descriptor, 1 + descriptorOffset, MetaSerializer, it)
-    }
-    ((value.implicitRules?.value))?.let {
-      encoder.encodeStringElement(descriptor, 2 + descriptorOffset, it)
-    }
-    (value.implicitRules?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 3 + descriptorOffset, ElementSerializer, it)
-    }
-    ((value.language?.value))?.let {
-      encoder.encodeStringElement(descriptor, 4 + descriptorOffset, it)
-    }
-    (value.language?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 5 + descriptorOffset, ElementSerializer, it)
-    }
-    (value.text)?.let {
-      encoder.encodeSerializableElement(descriptor, 6 + descriptorOffset, NarrativeSerializer, it)
-    }
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0 + descriptorOffset, value.id)
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      1 + descriptorOffset,
+      MetaSerializer,
+      value.meta,
+    )
+    compositeEncoder.encodeStringIfNotNull(
+      descriptor,
+      2 + descriptorOffset,
+      value.implicitRules?.value,
+    )
+    compositeEncoder.encodeElementIfNotNull(descriptor, 3 + descriptorOffset, value.implicitRules)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 4 + descriptorOffset, value.language?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 5 + descriptorOffset, value.language)
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      6 + descriptorOffset,
+      NarrativeSerializer,
+      value.text,
+    )
     if (value.contained.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         7 + descriptorOffset,
         ResourcePolymorphicSerializer.listSerializer,
         value.contained,
       )
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         8 + descriptorOffset,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         9 + descriptorOffset,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    (value.identifier)?.let {
-      encoder.encodeSerializableElement(descriptor, 10 + descriptorOffset, IdentifierSerializer, it)
-    }
-    ((value.status.value?.code))?.let {
-      encoder.encodeStringElement(descriptor, 11 + descriptorOffset, it)
-    }
-    (value.status.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 12 + descriptorOffset, ElementSerializer, it)
-    }
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      10 + descriptorOffset,
+      IdentifierSerializer,
+      value.identifier,
+    )
+    compositeEncoder.encodeStringIfNotNull(
+      descriptor,
+      11 + descriptorOffset,
+      value.status.value?.code,
+    )
+    compositeEncoder.encodeElementIfNotNull(descriptor, 12 + descriptorOffset, value.status)
     if (value.`for`.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         13 + descriptorOffset,
         ReferenceSerializer.listSerializer,
         value.`for`,
       )
-    encoder.encodeSerializableElement(
+    compositeEncoder.encodeSerializableElement(
       descriptor,
       14 + descriptorOffset,
       CodeableConceptSerializer,
       value.role,
     )
     if (value.function.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         15 + descriptorOffset,
         CodeableConceptSerializer.listSerializer,
         value.function,
       )
-    ((value.allergenicIndicator?.value))?.let {
-      encoder.encodeBooleanElement(descriptor, 16 + descriptorOffset, it)
-    }
-    (value.allergenicIndicator?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 17 + descriptorOffset, ElementSerializer, it)
-    }
+    compositeEncoder.encodeBooleanIfNotNull(
+      descriptor,
+      16 + descriptorOffset,
+      value.allergenicIndicator?.value,
+    )
+    compositeEncoder.encodeElementIfNotNull(
+      descriptor,
+      17 + descriptorOffset,
+      value.allergenicIndicator,
+    )
     if (value.manufacturer.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         18 + descriptorOffset,
         IngredientManufacturerSerializer.listSerializer,
         value.manufacturer,
       )
-    encoder.encodeSerializableElement(
+    compositeEncoder.encodeSerializableElement(
       descriptor,
       19 + descriptorOffset,
       IngredientSubstanceSerializer,

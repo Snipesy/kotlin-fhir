@@ -58,43 +58,23 @@ import kotlinx.serialization.encoding.CompositeDecoder
 import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.encoding.decodeStructure
-import kotlinx.serialization.encoding.encodeStructure
 
 internal object BundleLinkSerializer : KSerializer<Bundle.Link> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("Link") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("relation", KotlinString.serializer().descriptor, isOptional = true)
-      element("_relation", Element.serializer().descriptor, isOptional = true)
-      element("url", KotlinString.serializer().descriptor, isOptional = true)
-      element("_url", Element.serializer().descriptor, isOptional = true)
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("relation", KotlinString.serializer().descriptor)
+      optionalElement("_relation", ElementSerializer.descriptor)
+      optionalElement("url", KotlinString.serializer().descriptor)
+      optionalElement("_url", ElementSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<Bundle.Link>> = ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): Bundle.Link =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: Bundle.Link) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): Bundle.Link {
+  override fun deserialize(decoder: Decoder): Bundle.Link {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -103,11 +83,11 @@ internal object BundleLinkSerializer : KSerializer<Bundle.Link> {
     var url: KotlinString? = null
     var _url: Element? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -115,23 +95,35 @@ internal object BundleLinkSerializer : KSerializer<Bundle.Link> {
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
               null,
             )
-        3 -> relation = decoder.decodeStringElement(descriptor, i)
+        3 -> relation = compositeDecoder.decodeStringElement(descriptor, i)
         4 ->
           _relation =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        5 -> url = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        5 -> url = compositeDecoder.decodeStringElement(descriptor, i)
         6 ->
-          _url = decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+          _url =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         CompositeDecoder.DECODE_DONE -> break
         else -> throw SerializationException("Unexpected index decoding Link: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return Bundle.Link(
       id = id,
       extension = extension ?: listOf(),
@@ -145,86 +137,53 @@ internal object BundleLinkSerializer : KSerializer<Bundle.Link> {
     )
   }
 
-  private fun serializeInternal(encoder: CompositeEncoder, `value`: Bundle.Link) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: Bundle.Link) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    ((value.relation.value))?.let { encoder.encodeStringElement(descriptor, 3, it) }
-    (value.relation.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 4, ElementSerializer, it)
-    }
-    ((value.url.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
-    (value.url.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 6, ElementSerializer, it)
-    }
+    compositeEncoder.encodeStringIfNotNull(descriptor, 3, value.relation.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 4, value.relation)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 5, value.url.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 6, value.url)
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
 internal object BundleEntrySerializer : KSerializer<Bundle.Entry> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("Entry") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement(
         "link",
-        listSerialDescriptor(lazyDescriptor { Bundle.Link.serializer().descriptor }),
-        isOptional = true,
+        listSerialDescriptor(lazyDescriptor { BundleLinkSerializer.descriptor }),
       )
-      element("fullUrl", KotlinString.serializer().descriptor, isOptional = true)
-      element("_fullUrl", Element.serializer().descriptor, isOptional = true)
-      element("resource", lazyDescriptor { Resource.serializer().descriptor }, isOptional = true)
-      element(
-        "search",
-        lazyDescriptor { Bundle.Entry.Search.serializer().descriptor },
-        isOptional = true,
-      )
-      element(
-        "request",
-        lazyDescriptor { Bundle.Entry.Request.serializer().descriptor },
-        isOptional = true,
-      )
-      element(
-        "response",
-        lazyDescriptor { Bundle.Entry.Response.serializer().descriptor },
-        isOptional = true,
-      )
+      optionalElement("fullUrl", KotlinString.serializer().descriptor)
+      optionalElement("_fullUrl", ElementSerializer.descriptor)
+      optionalElement("resource", lazyDescriptor { ResourcePolymorphicSerializer.descriptor })
+      optionalElement("search", BundleEntrySearchSerializer.descriptor)
+      optionalElement("request", BundleEntryRequestSerializer.descriptor)
+      optionalElement("response", BundleEntryResponseSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<Bundle.Entry>> = ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): Bundle.Entry =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: Bundle.Entry) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): Bundle.Entry {
+  override fun deserialize(decoder: Decoder): Bundle.Entry {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -236,11 +195,11 @@ internal object BundleEntrySerializer : KSerializer<Bundle.Entry> {
     var request: Bundle.Entry.Request? = null
     var response: Bundle.Entry.Response? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -248,7 +207,7 @@ internal object BundleEntrySerializer : KSerializer<Bundle.Entry> {
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -256,19 +215,24 @@ internal object BundleEntrySerializer : KSerializer<Bundle.Entry> {
             )
         3 ->
           link =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               BundleLinkSerializer.listSerializer,
               null,
             )
-        4 -> fullUrl = decoder.decodeStringElement(descriptor, i)
+        4 -> fullUrl = compositeDecoder.decodeStringElement(descriptor, i)
         5 ->
           _fullUrl =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         6 ->
           resource =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ResourcePolymorphicSerializer,
@@ -276,7 +240,7 @@ internal object BundleEntrySerializer : KSerializer<Bundle.Entry> {
             )
         7 ->
           search =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               BundleEntrySearchSerializer,
@@ -284,7 +248,7 @@ internal object BundleEntrySerializer : KSerializer<Bundle.Entry> {
             )
         8 ->
           request =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               BundleEntryRequestSerializer,
@@ -292,7 +256,7 @@ internal object BundleEntrySerializer : KSerializer<Bundle.Entry> {
             )
         9 ->
           response =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               BundleEntryResponseSerializer,
@@ -302,6 +266,7 @@ internal object BundleEntrySerializer : KSerializer<Bundle.Entry> {
         else -> throw SerializationException("Unexpected index decoding Entry: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return Bundle.Entry(
       id = id,
       extension = extension ?: listOf(),
@@ -315,82 +280,76 @@ internal object BundleEntrySerializer : KSerializer<Bundle.Entry> {
     )
   }
 
-  private fun serializeInternal(encoder: CompositeEncoder, `value`: Bundle.Entry) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: Bundle.Entry) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
     if (value.link.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         3,
         BundleLinkSerializer.listSerializer,
         value.link,
       )
-    ((value.fullUrl?.value))?.let { encoder.encodeStringElement(descriptor, 4, it) }
-    (value.fullUrl?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 5, ElementSerializer, it)
-    }
-    (value.resource)?.let {
-      encoder.encodeSerializableElement(descriptor, 6, ResourcePolymorphicSerializer, it)
-    }
-    (value.search)?.let {
-      encoder.encodeSerializableElement(descriptor, 7, BundleEntrySearchSerializer, it)
-    }
-    (value.request)?.let {
-      encoder.encodeSerializableElement(descriptor, 8, BundleEntryRequestSerializer, it)
-    }
-    (value.response)?.let {
-      encoder.encodeSerializableElement(descriptor, 9, BundleEntryResponseSerializer, it)
-    }
+    compositeEncoder.encodeStringIfNotNull(descriptor, 4, value.fullUrl?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 5, value.fullUrl)
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      6,
+      ResourcePolymorphicSerializer,
+      value.resource,
+    )
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      7,
+      BundleEntrySearchSerializer,
+      value.search,
+    )
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      8,
+      BundleEntryRequestSerializer,
+      value.request,
+    )
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      9,
+      BundleEntryResponseSerializer,
+      value.response,
+    )
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
 internal object BundleEntrySearchSerializer : KSerializer<Bundle.Entry.Search> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("Search") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("mode", KotlinString.serializer().descriptor, isOptional = true)
-      element("_mode", Element.serializer().descriptor, isOptional = true)
-      element("score", FhirDecimalSerializer.descriptor, isOptional = true)
-      element("_score", Element.serializer().descriptor, isOptional = true)
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("mode", KotlinString.serializer().descriptor)
+      optionalElement("_mode", ElementSerializer.descriptor)
+      optionalElement("score", FhirDecimalSerializer.descriptor)
+      optionalElement("_score", ElementSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<Bundle.Entry.Search>> = ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): Bundle.Entry.Search =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: Bundle.Entry.Search) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): Bundle.Entry.Search {
+  override fun deserialize(decoder: Decoder): Bundle.Entry.Search {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -399,11 +358,11 @@ internal object BundleEntrySearchSerializer : KSerializer<Bundle.Entry.Search> {
     var score: FhirDecimal? = null
     var _score: Element? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -411,104 +370,106 @@ internal object BundleEntrySearchSerializer : KSerializer<Bundle.Entry.Search> {
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
               null,
             )
-        3 -> mode = decoder.decodeStringElement(descriptor, i)
+        3 -> mode = compositeDecoder.decodeStringElement(descriptor, i)
         4 ->
-          _mode = decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+          _mode =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         5 ->
           score =
-            decoder.decodeNullableSerializableElement(descriptor, i, FhirDecimalSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              FhirDecimalSerializer,
+              null,
+            )
         6 ->
-          _score = decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+          _score =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         CompositeDecoder.DECODE_DONE -> break
         else -> throw SerializationException("Unexpected index decoding Search: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return Bundle.Entry.Search(
       id = id,
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
-      mode = Enumeration.of(mode?.let { Bundle.SearchEntryMode.fromCode(it) }, _mode),
+      mode =
+        Enumeration.of(if (mode != null) Bundle.SearchEntryMode.fromCode(mode) else null, _mode),
       score = Decimal.of(score, _score),
     )
   }
 
-  private fun serializeInternal(encoder: CompositeEncoder, `value`: Bundle.Entry.Search) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: Bundle.Entry.Search) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    ((value.mode?.value?.code))?.let { encoder.encodeStringElement(descriptor, 3, it) }
-    (value.mode?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 4, ElementSerializer, it)
-    }
-    ((value.score?.value))?.let {
-      encoder.encodeSerializableElement(descriptor, 5, FhirDecimalSerializer, it)
-    }
-    (value.score?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 6, ElementSerializer, it)
-    }
+    compositeEncoder.encodeStringIfNotNull(descriptor, 3, value.mode?.value?.code)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 4, value.mode)
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      5,
+      FhirDecimalSerializer,
+      value.score?.value,
+    )
+    compositeEncoder.encodeElementIfNotNull(descriptor, 6, value.score)
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
 internal object BundleEntryRequestSerializer : KSerializer<Bundle.Entry.Request> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("Request") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("method", KotlinString.serializer().descriptor, isOptional = true)
-      element("_method", Element.serializer().descriptor, isOptional = true)
-      element("url", KotlinString.serializer().descriptor, isOptional = true)
-      element("_url", Element.serializer().descriptor, isOptional = true)
-      element("ifNoneMatch", KotlinString.serializer().descriptor, isOptional = true)
-      element("_ifNoneMatch", Element.serializer().descriptor, isOptional = true)
-      element("ifModifiedSince", KotlinString.serializer().descriptor, isOptional = true)
-      element("_ifModifiedSince", Element.serializer().descriptor, isOptional = true)
-      element("ifMatch", KotlinString.serializer().descriptor, isOptional = true)
-      element("_ifMatch", Element.serializer().descriptor, isOptional = true)
-      element("ifNoneExist", KotlinString.serializer().descriptor, isOptional = true)
-      element("_ifNoneExist", Element.serializer().descriptor, isOptional = true)
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("method", KotlinString.serializer().descriptor)
+      optionalElement("_method", ElementSerializer.descriptor)
+      optionalElement("url", KotlinString.serializer().descriptor)
+      optionalElement("_url", ElementSerializer.descriptor)
+      optionalElement("ifNoneMatch", KotlinString.serializer().descriptor)
+      optionalElement("_ifNoneMatch", ElementSerializer.descriptor)
+      optionalElement("ifModifiedSince", KotlinString.serializer().descriptor)
+      optionalElement("_ifModifiedSince", ElementSerializer.descriptor)
+      optionalElement("ifMatch", KotlinString.serializer().descriptor)
+      optionalElement("_ifMatch", ElementSerializer.descriptor)
+      optionalElement("ifNoneExist", KotlinString.serializer().descriptor)
+      optionalElement("_ifNoneExist", ElementSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<Bundle.Entry.Request>> = ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): Bundle.Entry.Request =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: Bundle.Entry.Request) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): Bundle.Entry.Request {
+  override fun deserialize(decoder: Decoder): Bundle.Entry.Request {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -525,11 +486,11 @@ internal object BundleEntryRequestSerializer : KSerializer<Bundle.Entry.Request>
     var ifNoneExist: KotlinString? = null
     var _ifNoneExist: Element? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -537,45 +498,77 @@ internal object BundleEntryRequestSerializer : KSerializer<Bundle.Entry.Request>
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
               null,
             )
-        3 -> method = decoder.decodeStringElement(descriptor, i)
+        3 -> method = compositeDecoder.decodeStringElement(descriptor, i)
         4 ->
           _method =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        5 -> url = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        5 -> url = compositeDecoder.decodeStringElement(descriptor, i)
         6 ->
-          _url = decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        7 -> ifNoneMatch = decoder.decodeStringElement(descriptor, i)
+          _url =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        7 -> ifNoneMatch = compositeDecoder.decodeStringElement(descriptor, i)
         8 ->
           _ifNoneMatch =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        9 -> ifModifiedSince = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        9 -> ifModifiedSince = compositeDecoder.decodeStringElement(descriptor, i)
         10 ->
           _ifModifiedSince =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        11 -> ifMatch = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        11 -> ifMatch = compositeDecoder.decodeStringElement(descriptor, i)
         12 ->
           _ifMatch =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        13 -> ifNoneExist = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        13 -> ifNoneExist = compositeDecoder.decodeStringElement(descriptor, i)
         14 ->
           _ifNoneExist =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         CompositeDecoder.DECODE_DONE -> break
         else -> throw SerializationException("Unexpected index decoding Request: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return Bundle.Entry.Request(
       id = id,
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
       method =
-        Enumeration.of(method?.let { Bundle.HTTPVerb.fromCode(it) }, _method)
+        Enumeration.of(if (method != null) Bundle.HTTPVerb.fromCode(method) else null, _method)
           ?: throw SerializationException(
             "Missing required property 'method' on Bundle.Entry.Request"
           ),
@@ -586,96 +579,69 @@ internal object BundleEntryRequestSerializer : KSerializer<Bundle.Entry.Request>
           ),
       ifNoneMatch = R4String.of(ifNoneMatch, _ifNoneMatch),
       ifModifiedSince =
-        Instant.of(ifModifiedSince?.let { FhirDateTime.fromString(it) }, _ifModifiedSince),
+        Instant.of(
+          if (ifModifiedSince != null) FhirDateTime.fromString(ifModifiedSince) else null,
+          _ifModifiedSince,
+        ),
       ifMatch = R4String.of(ifMatch, _ifMatch),
       ifNoneExist = R4String.of(ifNoneExist, _ifNoneExist),
     )
   }
 
-  private fun serializeInternal(encoder: CompositeEncoder, `value`: Bundle.Entry.Request) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: Bundle.Entry.Request) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    ((value.method.value?.code))?.let { encoder.encodeStringElement(descriptor, 3, it) }
-    (value.method.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 4, ElementSerializer, it)
-    }
-    ((value.url.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
-    (value.url.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 6, ElementSerializer, it)
-    }
-    ((value.ifNoneMatch?.value))?.let { encoder.encodeStringElement(descriptor, 7, it) }
-    (value.ifNoneMatch?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 8, ElementSerializer, it)
-    }
-    ((value.ifModifiedSince?.value?.toString()))?.let {
-      encoder.encodeStringElement(descriptor, 9, it)
-    }
-    (value.ifModifiedSince?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 10, ElementSerializer, it)
-    }
-    ((value.ifMatch?.value))?.let { encoder.encodeStringElement(descriptor, 11, it) }
-    (value.ifMatch?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 12, ElementSerializer, it)
-    }
-    ((value.ifNoneExist?.value))?.let { encoder.encodeStringElement(descriptor, 13, it) }
-    (value.ifNoneExist?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 14, ElementSerializer, it)
-    }
+    compositeEncoder.encodeStringIfNotNull(descriptor, 3, value.method.value?.code)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 4, value.method)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 5, value.url.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 6, value.url)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 7, value.ifNoneMatch?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 8, value.ifNoneMatch)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 9, value.ifModifiedSince?.value?.toString())
+    compositeEncoder.encodeElementIfNotNull(descriptor, 10, value.ifModifiedSince)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 11, value.ifMatch?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 12, value.ifMatch)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 13, value.ifNoneExist?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 14, value.ifNoneExist)
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
 internal object BundleEntryResponseSerializer : KSerializer<Bundle.Entry.Response> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("Response") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("status", KotlinString.serializer().descriptor, isOptional = true)
-      element("_status", Element.serializer().descriptor, isOptional = true)
-      element("location", KotlinString.serializer().descriptor, isOptional = true)
-      element("_location", Element.serializer().descriptor, isOptional = true)
-      element("etag", KotlinString.serializer().descriptor, isOptional = true)
-      element("_etag", Element.serializer().descriptor, isOptional = true)
-      element("lastModified", KotlinString.serializer().descriptor, isOptional = true)
-      element("_lastModified", Element.serializer().descriptor, isOptional = true)
-      element("outcome", lazyDescriptor { Resource.serializer().descriptor }, isOptional = true)
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("status", KotlinString.serializer().descriptor)
+      optionalElement("_status", ElementSerializer.descriptor)
+      optionalElement("location", KotlinString.serializer().descriptor)
+      optionalElement("_location", ElementSerializer.descriptor)
+      optionalElement("etag", KotlinString.serializer().descriptor)
+      optionalElement("_etag", ElementSerializer.descriptor)
+      optionalElement("lastModified", KotlinString.serializer().descriptor)
+      optionalElement("_lastModified", ElementSerializer.descriptor)
+      optionalElement("outcome", lazyDescriptor { ResourcePolymorphicSerializer.descriptor })
     }
 
   internal val listSerializer: KSerializer<List<Bundle.Entry.Response>> = ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): Bundle.Entry.Response =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: Bundle.Entry.Response) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): Bundle.Entry.Response {
+  override fun deserialize(decoder: Decoder): Bundle.Entry.Response {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -689,11 +655,11 @@ internal object BundleEntryResponseSerializer : KSerializer<Bundle.Entry.Respons
     var _lastModified: Element? = null
     var outcome: Resource? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -701,30 +667,51 @@ internal object BundleEntryResponseSerializer : KSerializer<Bundle.Entry.Respons
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
               null,
             )
-        3 -> status = decoder.decodeStringElement(descriptor, i)
+        3 -> status = compositeDecoder.decodeStringElement(descriptor, i)
         4 ->
           _status =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        5 -> location = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        5 -> location = compositeDecoder.decodeStringElement(descriptor, i)
         6 ->
           _location =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        7 -> etag = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        7 -> etag = compositeDecoder.decodeStringElement(descriptor, i)
         8 ->
-          _etag = decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        9 -> lastModified = decoder.decodeStringElement(descriptor, i)
+          _etag =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        9 -> lastModified = compositeDecoder.decodeStringElement(descriptor, i)
         10 ->
           _lastModified =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         11 ->
           outcome =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ResourcePolymorphicSerializer,
@@ -734,6 +721,7 @@ internal object BundleEntryResponseSerializer : KSerializer<Bundle.Entry.Respons
         else -> throw SerializationException("Unexpected index decoding Response: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return Bundle.Entry.Response(
       id = id,
       extension = extension ?: listOf(),
@@ -745,48 +733,47 @@ internal object BundleEntryResponseSerializer : KSerializer<Bundle.Entry.Respons
           ),
       location = Uri.of(location, _location),
       etag = R4String.of(etag, _etag),
-      lastModified = Instant.of(lastModified?.let { FhirDateTime.fromString(it) }, _lastModified),
+      lastModified =
+        Instant.of(
+          if (lastModified != null) FhirDateTime.fromString(lastModified) else null,
+          _lastModified,
+        ),
       outcome = outcome,
     )
   }
 
-  private fun serializeInternal(encoder: CompositeEncoder, `value`: Bundle.Entry.Response) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: Bundle.Entry.Response) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    ((value.status.value))?.let { encoder.encodeStringElement(descriptor, 3, it) }
-    (value.status.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 4, ElementSerializer, it)
-    }
-    ((value.location?.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
-    (value.location?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 6, ElementSerializer, it)
-    }
-    ((value.etag?.value))?.let { encoder.encodeStringElement(descriptor, 7, it) }
-    (value.etag?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 8, ElementSerializer, it)
-    }
-    ((value.lastModified?.value?.toString()))?.let {
-      encoder.encodeStringElement(descriptor, 9, it)
-    }
-    (value.lastModified?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 10, ElementSerializer, it)
-    }
-    (value.outcome)?.let {
-      encoder.encodeSerializableElement(descriptor, 11, ResourcePolymorphicSerializer, it)
-    }
+    compositeEncoder.encodeStringIfNotNull(descriptor, 3, value.status.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 4, value.status)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 5, value.location?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 6, value.location)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 7, value.etag?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 8, value.etag)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 9, value.lastModified?.value?.toString())
+    compositeEncoder.encodeElementIfNotNull(descriptor, 10, value.lastModified)
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      11,
+      ResourcePolymorphicSerializer,
+      value.outcome,
+    )
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
@@ -794,34 +781,26 @@ internal object BundleSerializer : FhirResourceSerializer<Bundle> {
   override val descriptor: SerialDescriptor = buildResourceDescriptor("Bundle")
 
   override fun buildDescriptor(b: ClassSerialDescriptorBuilder) {
-    b.element("id", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("meta", Meta.serializer().descriptor, isOptional = true)
-    b.element("implicitRules", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("_implicitRules", Element.serializer().descriptor, isOptional = true)
-    b.element("language", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("_language", Element.serializer().descriptor, isOptional = true)
-    b.element("identifier", Identifier.serializer().descriptor, isOptional = true)
-    b.element("type", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("_type", Element.serializer().descriptor, isOptional = true)
-    b.element("timestamp", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("_timestamp", Element.serializer().descriptor, isOptional = true)
-    b.element("total", Int.serializer().descriptor, isOptional = true)
-    b.element("_total", Element.serializer().descriptor, isOptional = true)
-    b.element(
-      "link",
-      listSerialDescriptor(lazyDescriptor { Bundle.Link.serializer().descriptor }),
-      isOptional = true,
-    )
-    b.element(
-      "entry",
-      listSerialDescriptor(lazyDescriptor { Bundle.Entry.serializer().descriptor }),
-      isOptional = true,
-    )
-    b.element("signature", Signature.serializer().descriptor, isOptional = true)
+    b.optionalElement("id", KotlinString.serializer().descriptor)
+    b.optionalElement("meta", MetaSerializer.descriptor)
+    b.optionalElement("implicitRules", KotlinString.serializer().descriptor)
+    b.optionalElement("_implicitRules", ElementSerializer.descriptor)
+    b.optionalElement("language", KotlinString.serializer().descriptor)
+    b.optionalElement("_language", ElementSerializer.descriptor)
+    b.optionalElement("identifier", IdentifierSerializer.descriptor)
+    b.optionalElement("type", KotlinString.serializer().descriptor)
+    b.optionalElement("_type", ElementSerializer.descriptor)
+    b.optionalElement("timestamp", KotlinString.serializer().descriptor)
+    b.optionalElement("_timestamp", ElementSerializer.descriptor)
+    b.optionalElement("total", Int.serializer().descriptor)
+    b.optionalElement("_total", ElementSerializer.descriptor)
+    b.optionalElement("link", BundleLinkSerializer.listSerializer.descriptor)
+    b.optionalElement("entry", BundleEntrySerializer.listSerializer.descriptor)
+    b.optionalElement("signature", SignatureSerializer.descriptor)
   }
 
   override fun deserializeInternal(
-    decoder: CompositeDecoder,
+    compositeDecoder: CompositeDecoder,
     descriptor: SerialDescriptor,
     descriptorOffset: Int,
   ): Bundle {
@@ -842,36 +821,70 @@ internal object BundleSerializer : FhirResourceSerializer<Bundle> {
     var entry: List<Bundle.Entry>? = null
     var signature: Signature? = null
     while (true) {
-      val i = decoder.decodeElementIndex(descriptor)
+      val i = compositeDecoder.decodeElementIndex(descriptor)
       if (i == CompositeDecoder.DECODE_DONE) break
       when (i - descriptorOffset) {
-        -1 -> decoder.decodeStringElement(descriptor, i)
-        0 -> id = decoder.decodeStringElement(descriptor, i)
-        1 -> meta = decoder.decodeNullableSerializableElement(descriptor, i, MetaSerializer, null)
-        2 -> implicitRules = decoder.decodeStringElement(descriptor, i)
+        -1 -> compositeDecoder.decodeStringElement(descriptor, i)
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
+        1 ->
+          meta =
+            compositeDecoder.decodeNullableSerializableElement(descriptor, i, MetaSerializer, null)
+        2 -> implicitRules = compositeDecoder.decodeStringElement(descriptor, i)
         3 ->
           _implicitRules =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        4 -> language = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        4 -> language = compositeDecoder.decodeStringElement(descriptor, i)
         5 ->
           _language =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         6 ->
           identifier =
-            decoder.decodeNullableSerializableElement(descriptor, i, IdentifierSerializer, null)
-        7 -> type = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              IdentifierSerializer,
+              null,
+            )
+        7 -> type = compositeDecoder.decodeStringElement(descriptor, i)
         8 ->
-          _type = decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        9 -> timestamp = decoder.decodeStringElement(descriptor, i)
+          _type =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        9 -> timestamp = compositeDecoder.decodeStringElement(descriptor, i)
         10 ->
           _timestamp =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        11 -> total = decoder.decodeIntElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        11 -> total = compositeDecoder.decodeIntElement(descriptor, i)
         12 ->
-          _total = decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+          _total =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         13 ->
           link =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               BundleLinkSerializer.listSerializer,
@@ -879,7 +892,7 @@ internal object BundleSerializer : FhirResourceSerializer<Bundle> {
             )
         14 ->
           entry =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               BundleEntrySerializer.listSerializer,
@@ -887,7 +900,12 @@ internal object BundleSerializer : FhirResourceSerializer<Bundle> {
             )
         15 ->
           signature =
-            decoder.decodeNullableSerializableElement(descriptor, i, SignatureSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              SignatureSerializer,
+              null,
+            )
         else -> throw SerializationException("Unexpected index decoding Bundle: " + i)
       }
     }
@@ -898,9 +916,10 @@ internal object BundleSerializer : FhirResourceSerializer<Bundle> {
       language = Code.of(language, _language),
       identifier = identifier,
       type =
-        Enumeration.of(type?.let { Bundle.BundleType.fromCode(it) }, _type)
+        Enumeration.of(if (type != null) Bundle.BundleType.fromCode(type) else null, _type)
           ?: throw SerializationException("Missing required property 'type' on Bundle"),
-      timestamp = Instant.of(timestamp?.let { FhirDateTime.fromString(it) }, _timestamp),
+      timestamp =
+        Instant.of(if (timestamp != null) FhirDateTime.fromString(timestamp) else null, _timestamp),
       total = UnsignedInt.of(total, _total),
       link = link ?: listOf(),
       entry = entry ?: listOf(),
@@ -909,62 +928,61 @@ internal object BundleSerializer : FhirResourceSerializer<Bundle> {
   }
 
   override fun serializeInternal(
-    encoder: CompositeEncoder,
+    compositeEncoder: CompositeEncoder,
     descriptor: SerialDescriptor,
     descriptorOffset: Int,
     `value`: Bundle,
   ) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0 + descriptorOffset, it) }
-    (value.meta)?.let {
-      encoder.encodeSerializableElement(descriptor, 1 + descriptorOffset, MetaSerializer, it)
-    }
-    ((value.implicitRules?.value))?.let {
-      encoder.encodeStringElement(descriptor, 2 + descriptorOffset, it)
-    }
-    (value.implicitRules?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 3 + descriptorOffset, ElementSerializer, it)
-    }
-    ((value.language?.value))?.let {
-      encoder.encodeStringElement(descriptor, 4 + descriptorOffset, it)
-    }
-    (value.language?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 5 + descriptorOffset, ElementSerializer, it)
-    }
-    (value.identifier)?.let {
-      encoder.encodeSerializableElement(descriptor, 6 + descriptorOffset, IdentifierSerializer, it)
-    }
-    ((value.type.value?.code))?.let {
-      encoder.encodeStringElement(descriptor, 7 + descriptorOffset, it)
-    }
-    (value.type.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 8 + descriptorOffset, ElementSerializer, it)
-    }
-    ((value.timestamp?.value?.toString()))?.let {
-      encoder.encodeStringElement(descriptor, 9 + descriptorOffset, it)
-    }
-    (value.timestamp?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 10 + descriptorOffset, ElementSerializer, it)
-    }
-    ((value.total?.value))?.let { encoder.encodeIntElement(descriptor, 11 + descriptorOffset, it) }
-    (value.total?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 12 + descriptorOffset, ElementSerializer, it)
-    }
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0 + descriptorOffset, value.id)
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      1 + descriptorOffset,
+      MetaSerializer,
+      value.meta,
+    )
+    compositeEncoder.encodeStringIfNotNull(
+      descriptor,
+      2 + descriptorOffset,
+      value.implicitRules?.value,
+    )
+    compositeEncoder.encodeElementIfNotNull(descriptor, 3 + descriptorOffset, value.implicitRules)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 4 + descriptorOffset, value.language?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 5 + descriptorOffset, value.language)
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      6 + descriptorOffset,
+      IdentifierSerializer,
+      value.identifier,
+    )
+    compositeEncoder.encodeStringIfNotNull(descriptor, 7 + descriptorOffset, value.type.value?.code)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 8 + descriptorOffset, value.type)
+    compositeEncoder.encodeStringIfNotNull(
+      descriptor,
+      9 + descriptorOffset,
+      value.timestamp?.value?.toString(),
+    )
+    compositeEncoder.encodeElementIfNotNull(descriptor, 10 + descriptorOffset, value.timestamp)
+    compositeEncoder.encodeIntIfNotNull(descriptor, 11 + descriptorOffset, value.total?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 12 + descriptorOffset, value.total)
     if (value.link.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         13 + descriptorOffset,
         BundleLinkSerializer.listSerializer,
         value.link,
       )
     if (value.entry.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         14 + descriptorOffset,
         BundleEntrySerializer.listSerializer,
         value.entry,
       )
-    (value.signature)?.let {
-      encoder.encodeSerializableElement(descriptor, 15 + descriptorOffset, SignatureSerializer, it)
-    }
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      15 + descriptorOffset,
+      SignatureSerializer,
+      value.signature,
+    )
   }
 }

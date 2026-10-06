@@ -70,56 +70,31 @@ import kotlinx.serialization.encoding.CompositeDecoder
 import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.encoding.decodeStructure
-import kotlinx.serialization.encoding.encodeStructure
 
 internal object DeviceDefinitionUdiDeviceIdentifierSerializer :
   KSerializer<DeviceDefinition.UdiDeviceIdentifier> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("UdiDeviceIdentifier") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("deviceIdentifier", KotlinString.serializer().descriptor, isOptional = true)
-      element("_deviceIdentifier", Element.serializer().descriptor, isOptional = true)
-      element("issuer", KotlinString.serializer().descriptor, isOptional = true)
-      element("_issuer", Element.serializer().descriptor, isOptional = true)
-      element("jurisdiction", KotlinString.serializer().descriptor, isOptional = true)
-      element("_jurisdiction", Element.serializer().descriptor, isOptional = true)
-      element(
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("deviceIdentifier", KotlinString.serializer().descriptor)
+      optionalElement("_deviceIdentifier", ElementSerializer.descriptor)
+      optionalElement("issuer", KotlinString.serializer().descriptor)
+      optionalElement("_issuer", ElementSerializer.descriptor)
+      optionalElement("jurisdiction", KotlinString.serializer().descriptor)
+      optionalElement("_jurisdiction", ElementSerializer.descriptor)
+      optionalElement(
         "marketDistribution",
-        listSerialDescriptor(
-          lazyDescriptor {
-            DeviceDefinition.UdiDeviceIdentifier.MarketDistribution.serializer().descriptor
-          }
-        ),
-        isOptional = true,
+        DeviceDefinitionUdiDeviceIdentifierMarketDistributionSerializer.listSerializer.descriptor,
       )
     }
 
   internal val listSerializer: KSerializer<List<DeviceDefinition.UdiDeviceIdentifier>> =
     ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): DeviceDefinition.UdiDeviceIdentifier =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: DeviceDefinition.UdiDeviceIdentifier) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): DeviceDefinition.UdiDeviceIdentifier {
+  override fun deserialize(decoder: Decoder): DeviceDefinition.UdiDeviceIdentifier {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -131,11 +106,11 @@ internal object DeviceDefinitionUdiDeviceIdentifierSerializer :
     var _jurisdiction: Element? = null
     var marketDistribution: List<DeviceDefinition.UdiDeviceIdentifier.MarketDistribution>? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -143,27 +118,42 @@ internal object DeviceDefinitionUdiDeviceIdentifierSerializer :
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
               null,
             )
-        3 -> deviceIdentifier = decoder.decodeStringElement(descriptor, i)
+        3 -> deviceIdentifier = compositeDecoder.decodeStringElement(descriptor, i)
         4 ->
           _deviceIdentifier =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        5 -> issuer = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        5 -> issuer = compositeDecoder.decodeStringElement(descriptor, i)
         6 ->
           _issuer =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        7 -> jurisdiction = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        7 -> jurisdiction = compositeDecoder.decodeStringElement(descriptor, i)
         8 ->
           _jurisdiction =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         9 ->
           marketDistribution =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               DeviceDefinitionUdiDeviceIdentifierMarketDistributionSerializer.listSerializer,
@@ -173,6 +163,7 @@ internal object DeviceDefinitionUdiDeviceIdentifierSerializer :
         else -> throw SerializationException("Unexpected index decoding UdiDeviceIdentifier: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return DeviceDefinition.UdiDeviceIdentifier(
       id = id,
       extension = extension ?: listOf(),
@@ -196,44 +187,37 @@ internal object DeviceDefinitionUdiDeviceIdentifierSerializer :
     )
   }
 
-  private fun serializeInternal(
-    encoder: CompositeEncoder,
-    `value`: DeviceDefinition.UdiDeviceIdentifier,
-  ) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: DeviceDefinition.UdiDeviceIdentifier) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    ((value.deviceIdentifier.value))?.let { encoder.encodeStringElement(descriptor, 3, it) }
-    (value.deviceIdentifier.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 4, ElementSerializer, it)
-    }
-    ((value.issuer.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
-    (value.issuer.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 6, ElementSerializer, it)
-    }
-    ((value.jurisdiction.value))?.let { encoder.encodeStringElement(descriptor, 7, it) }
-    (value.jurisdiction.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 8, ElementSerializer, it)
-    }
+    compositeEncoder.encodeStringIfNotNull(descriptor, 3, value.deviceIdentifier.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 4, value.deviceIdentifier)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 5, value.issuer.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 6, value.issuer)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 7, value.jurisdiction.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 8, value.jurisdiction)
     if (value.marketDistribution.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         9,
         DeviceDefinitionUdiDeviceIdentifierMarketDistributionSerializer.listSerializer,
         value.marketDistribution,
       )
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
@@ -241,20 +225,12 @@ internal object DeviceDefinitionUdiDeviceIdentifierMarketDistributionSerializer 
   KSerializer<DeviceDefinition.UdiDeviceIdentifier.MarketDistribution> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("MarketDistribution") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("marketPeriod", Period.serializer().descriptor, isOptional = true)
-      element("subJurisdiction", KotlinString.serializer().descriptor, isOptional = true)
-      element("_subJurisdiction", Element.serializer().descriptor, isOptional = true)
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("marketPeriod", PeriodSerializer.descriptor)
+      optionalElement("subJurisdiction", KotlinString.serializer().descriptor)
+      optionalElement("_subJurisdiction", ElementSerializer.descriptor)
     }
 
   internal val listSerializer:
@@ -263,23 +239,8 @@ internal object DeviceDefinitionUdiDeviceIdentifierMarketDistributionSerializer 
 
   override fun deserialize(
     decoder: Decoder
-  ): DeviceDefinition.UdiDeviceIdentifier.MarketDistribution =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(
-    encoder: Encoder,
-    `value`: DeviceDefinition.UdiDeviceIdentifier.MarketDistribution,
-  ) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(
-    decoder: CompositeDecoder
   ): DeviceDefinition.UdiDeviceIdentifier.MarketDistribution {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -287,11 +248,11 @@ internal object DeviceDefinitionUdiDeviceIdentifierMarketDistributionSerializer 
     var subJurisdiction: KotlinString? = null
     var _subJurisdiction: Element? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -299,7 +260,7 @@ internal object DeviceDefinitionUdiDeviceIdentifierMarketDistributionSerializer 
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -307,15 +268,26 @@ internal object DeviceDefinitionUdiDeviceIdentifierMarketDistributionSerializer 
             )
         3 ->
           marketPeriod =
-            decoder.decodeNullableSerializableElement(descriptor, i, PeriodSerializer, null)
-        4 -> subJurisdiction = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              PeriodSerializer,
+              null,
+            )
+        4 -> subJurisdiction = compositeDecoder.decodeStringElement(descriptor, i)
         5 ->
           _subJurisdiction =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         CompositeDecoder.DECODE_DONE -> break
         else -> throw SerializationException("Unexpected index decoding MarketDistribution: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return DeviceDefinition.UdiDeviceIdentifier.MarketDistribution(
       id = id,
       extension = extension ?: listOf(),
@@ -333,30 +305,30 @@ internal object DeviceDefinitionUdiDeviceIdentifierMarketDistributionSerializer 
     )
   }
 
-  private fun serializeInternal(
-    encoder: CompositeEncoder,
+  override fun serialize(
+    encoder: Encoder,
     `value`: DeviceDefinition.UdiDeviceIdentifier.MarketDistribution,
   ) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    encoder.encodeSerializableElement(descriptor, 3, PeriodSerializer, value.marketPeriod)
-    ((value.subJurisdiction.value))?.let { encoder.encodeStringElement(descriptor, 4, it) }
-    (value.subJurisdiction.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 5, ElementSerializer, it)
-    }
+    compositeEncoder.encodeSerializableElement(descriptor, 3, PeriodSerializer, value.marketPeriod)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 4, value.subJurisdiction.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 5, value.subJurisdiction)
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
@@ -364,44 +336,24 @@ internal object DeviceDefinitionRegulatoryIdentifierSerializer :
   KSerializer<DeviceDefinition.RegulatoryIdentifier> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("RegulatoryIdentifier") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("type", KotlinString.serializer().descriptor, isOptional = true)
-      element("_type", Element.serializer().descriptor, isOptional = true)
-      element("deviceIdentifier", KotlinString.serializer().descriptor, isOptional = true)
-      element("_deviceIdentifier", Element.serializer().descriptor, isOptional = true)
-      element("issuer", KotlinString.serializer().descriptor, isOptional = true)
-      element("_issuer", Element.serializer().descriptor, isOptional = true)
-      element("jurisdiction", KotlinString.serializer().descriptor, isOptional = true)
-      element("_jurisdiction", Element.serializer().descriptor, isOptional = true)
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("type", KotlinString.serializer().descriptor)
+      optionalElement("_type", ElementSerializer.descriptor)
+      optionalElement("deviceIdentifier", KotlinString.serializer().descriptor)
+      optionalElement("_deviceIdentifier", ElementSerializer.descriptor)
+      optionalElement("issuer", KotlinString.serializer().descriptor)
+      optionalElement("_issuer", ElementSerializer.descriptor)
+      optionalElement("jurisdiction", KotlinString.serializer().descriptor)
+      optionalElement("_jurisdiction", ElementSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<DeviceDefinition.RegulatoryIdentifier>> =
     ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): DeviceDefinition.RegulatoryIdentifier =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: DeviceDefinition.RegulatoryIdentifier) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(
-    decoder: CompositeDecoder
-  ): DeviceDefinition.RegulatoryIdentifier {
+  override fun deserialize(decoder: Decoder): DeviceDefinition.RegulatoryIdentifier {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -414,11 +366,11 @@ internal object DeviceDefinitionRegulatoryIdentifierSerializer :
     var jurisdiction: KotlinString? = null
     var _jurisdiction: Element? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -426,38 +378,61 @@ internal object DeviceDefinitionRegulatoryIdentifierSerializer :
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
               null,
             )
-        3 -> type = decoder.decodeStringElement(descriptor, i)
+        3 -> type = compositeDecoder.decodeStringElement(descriptor, i)
         4 ->
-          _type = decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        5 -> deviceIdentifier = decoder.decodeStringElement(descriptor, i)
+          _type =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        5 -> deviceIdentifier = compositeDecoder.decodeStringElement(descriptor, i)
         6 ->
           _deviceIdentifier =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        7 -> issuer = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        7 -> issuer = compositeDecoder.decodeStringElement(descriptor, i)
         8 ->
           _issuer =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        9 -> jurisdiction = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        9 -> jurisdiction = compositeDecoder.decodeStringElement(descriptor, i)
         10 ->
           _jurisdiction =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         CompositeDecoder.DECODE_DONE -> break
         else -> throw SerializationException("Unexpected index decoding RegulatoryIdentifier: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return DeviceDefinition.RegulatoryIdentifier(
       id = id,
       extension = extension ?: listOf(),
       modifierExtension = modifierExtension ?: listOf(),
       type =
         Enumeration.of(
-          type?.let { DeviceDefinition.DeviceDefinitionRegulatoryIdentifierType.fromCode(it) },
+          if (type != null) DeviceDefinition.DeviceDefinitionRegulatoryIdentifierType.fromCode(type)
+          else null,
           _type,
         )
           ?: throw SerializationException(
@@ -481,78 +456,51 @@ internal object DeviceDefinitionRegulatoryIdentifierSerializer :
     )
   }
 
-  private fun serializeInternal(
-    encoder: CompositeEncoder,
-    `value`: DeviceDefinition.RegulatoryIdentifier,
-  ) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: DeviceDefinition.RegulatoryIdentifier) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    ((value.type.value?.code))?.let { encoder.encodeStringElement(descriptor, 3, it) }
-    (value.type.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 4, ElementSerializer, it)
-    }
-    ((value.deviceIdentifier.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
-    (value.deviceIdentifier.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 6, ElementSerializer, it)
-    }
-    ((value.issuer.value))?.let { encoder.encodeStringElement(descriptor, 7, it) }
-    (value.issuer.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 8, ElementSerializer, it)
-    }
-    ((value.jurisdiction.value))?.let { encoder.encodeStringElement(descriptor, 9, it) }
-    (value.jurisdiction.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 10, ElementSerializer, it)
-    }
+    compositeEncoder.encodeStringIfNotNull(descriptor, 3, value.type.value?.code)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 4, value.type)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 5, value.deviceIdentifier.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 6, value.deviceIdentifier)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 7, value.issuer.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 8, value.issuer)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 9, value.jurisdiction.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 10, value.jurisdiction)
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
 internal object DeviceDefinitionDeviceNameSerializer : KSerializer<DeviceDefinition.DeviceName> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("DeviceName") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("name", KotlinString.serializer().descriptor, isOptional = true)
-      element("_name", Element.serializer().descriptor, isOptional = true)
-      element("type", KotlinString.serializer().descriptor, isOptional = true)
-      element("_type", Element.serializer().descriptor, isOptional = true)
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("name", KotlinString.serializer().descriptor)
+      optionalElement("_name", ElementSerializer.descriptor)
+      optionalElement("type", KotlinString.serializer().descriptor)
+      optionalElement("_type", ElementSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<DeviceDefinition.DeviceName>> = ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): DeviceDefinition.DeviceName =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: DeviceDefinition.DeviceName) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): DeviceDefinition.DeviceName {
+  override fun deserialize(decoder: Decoder): DeviceDefinition.DeviceName {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -561,11 +509,11 @@ internal object DeviceDefinitionDeviceNameSerializer : KSerializer<DeviceDefinit
     var type: KotlinString? = null
     var _type: Element? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -573,22 +521,35 @@ internal object DeviceDefinitionDeviceNameSerializer : KSerializer<DeviceDefinit
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
               null,
             )
-        3 -> name = decoder.decodeStringElement(descriptor, i)
+        3 -> name = compositeDecoder.decodeStringElement(descriptor, i)
         4 ->
-          _name = decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        5 -> type = decoder.decodeStringElement(descriptor, i)
+          _name =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        5 -> type = compositeDecoder.decodeStringElement(descriptor, i)
         6 ->
-          _type = decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+          _type =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         CompositeDecoder.DECODE_DONE -> break
         else -> throw SerializationException("Unexpected index decoding DeviceName: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return DeviceDefinition.DeviceName(
       id = id,
       extension = extension ?: listOf(),
@@ -599,37 +560,38 @@ internal object DeviceDefinitionDeviceNameSerializer : KSerializer<DeviceDefinit
             "Missing required property 'name' on DeviceDefinition.DeviceName"
           ),
       type =
-        Enumeration.of(type?.let { DeviceDefinition.DeviceNameType.fromCode(it) }, _type)
+        Enumeration.of(
+          if (type != null) DeviceDefinition.DeviceNameType.fromCode(type) else null,
+          _type,
+        )
           ?: throw SerializationException(
             "Missing required property 'type' on DeviceDefinition.DeviceName"
           ),
     )
   }
 
-  private fun serializeInternal(encoder: CompositeEncoder, `value`: DeviceDefinition.DeviceName) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: DeviceDefinition.DeviceName) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    ((value.name.value))?.let { encoder.encodeStringElement(descriptor, 3, it) }
-    (value.name.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 4, ElementSerializer, it)
-    }
-    ((value.type.value?.code))?.let { encoder.encodeStringElement(descriptor, 5, it) }
-    (value.type.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 6, ElementSerializer, it)
-    }
+    compositeEncoder.encodeStringIfNotNull(descriptor, 3, value.name.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 4, value.name)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 5, value.type.value?.code)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 6, value.type)
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
@@ -637,51 +599,29 @@ internal object DeviceDefinitionClassificationSerializer :
   KSerializer<DeviceDefinition.Classification> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("Classification") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("type", CodeableConcept.serializer().descriptor, isOptional = true)
-      element(
-        "justification",
-        listSerialDescriptor(RelatedArtifact.serializer().descriptor),
-        isOptional = true,
-      )
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("type", CodeableConceptSerializer.descriptor)
+      optionalElement("justification", RelatedArtifactSerializer.listSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<DeviceDefinition.Classification>> =
     ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): DeviceDefinition.Classification =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: DeviceDefinition.Classification) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): DeviceDefinition.Classification {
+  override fun deserialize(decoder: Decoder): DeviceDefinition.Classification {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
     var type: CodeableConcept? = null
     var justification: List<RelatedArtifact>? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -689,7 +629,7 @@ internal object DeviceDefinitionClassificationSerializer :
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -697,7 +637,7 @@ internal object DeviceDefinitionClassificationSerializer :
             )
         3 ->
           type =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer,
@@ -705,7 +645,7 @@ internal object DeviceDefinitionClassificationSerializer :
             )
         4 ->
           justification =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               RelatedArtifactSerializer.listSerializer,
@@ -715,6 +655,7 @@ internal object DeviceDefinitionClassificationSerializer :
         else -> throw SerializationException("Unexpected index decoding Classification: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return DeviceDefinition.Classification(
       id = id,
       extension = extension ?: listOf(),
@@ -728,79 +669,52 @@ internal object DeviceDefinitionClassificationSerializer :
     )
   }
 
-  private fun serializeInternal(
-    encoder: CompositeEncoder,
-    `value`: DeviceDefinition.Classification,
-  ) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: DeviceDefinition.Classification) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    encoder.encodeSerializableElement(descriptor, 3, CodeableConceptSerializer, value.type)
+    compositeEncoder.encodeSerializableElement(descriptor, 3, CodeableConceptSerializer, value.type)
     if (value.justification.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         4,
         RelatedArtifactSerializer.listSerializer,
         value.justification,
       )
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
 internal object DeviceDefinitionConformsToSerializer : KSerializer<DeviceDefinition.ConformsTo> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("ConformsTo") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("category", CodeableConcept.serializer().descriptor, isOptional = true)
-      element("specification", CodeableConcept.serializer().descriptor, isOptional = true)
-      element(
-        "version",
-        listSerialDescriptor(KotlinString.serializer().descriptor),
-        isOptional = true,
-      )
-      element("_version", listSerialDescriptor(Element.serializer().descriptor), isOptional = true)
-      element(
-        "source",
-        listSerialDescriptor(RelatedArtifact.serializer().descriptor),
-        isOptional = true,
-      )
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("category", CodeableConceptSerializer.descriptor)
+      optionalElement("specification", CodeableConceptSerializer.descriptor)
+      optionalElement("version", stringNullableListSerializer.descriptor)
+      optionalElement("_version", ElementSerializer.nullableListSerializer.descriptor)
+      optionalElement("source", RelatedArtifactSerializer.listSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<DeviceDefinition.ConformsTo>> = ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): DeviceDefinition.ConformsTo =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: DeviceDefinition.ConformsTo) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): DeviceDefinition.ConformsTo {
+  override fun deserialize(decoder: Decoder): DeviceDefinition.ConformsTo {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -810,11 +724,11 @@ internal object DeviceDefinitionConformsToSerializer : KSerializer<DeviceDefinit
     var _version: List<Element?>? = null
     var source: List<RelatedArtifact>? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -822,7 +736,7 @@ internal object DeviceDefinitionConformsToSerializer : KSerializer<DeviceDefinit
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -830,7 +744,7 @@ internal object DeviceDefinitionConformsToSerializer : KSerializer<DeviceDefinit
             )
         3 ->
           category =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer,
@@ -838,7 +752,7 @@ internal object DeviceDefinitionConformsToSerializer : KSerializer<DeviceDefinit
             )
         4 ->
           specification =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer,
@@ -846,7 +760,7 @@ internal object DeviceDefinitionConformsToSerializer : KSerializer<DeviceDefinit
             )
         5 ->
           version =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               stringNullableListSerializer,
@@ -854,7 +768,7 @@ internal object DeviceDefinitionConformsToSerializer : KSerializer<DeviceDefinit
             )
         6 ->
           _version =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ElementSerializer.nullableListSerializer,
@@ -862,7 +776,7 @@ internal object DeviceDefinitionConformsToSerializer : KSerializer<DeviceDefinit
             )
         7 ->
           source =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               RelatedArtifactSerializer.listSerializer,
@@ -872,6 +786,7 @@ internal object DeviceDefinitionConformsToSerializer : KSerializer<DeviceDefinit
         else -> throw SerializationException("Unexpected index decoding ConformsTo: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return DeviceDefinition.ConformsTo(
       id = id,
       extension = extension ?: listOf(),
@@ -884,7 +799,7 @@ internal object DeviceDefinitionConformsToSerializer : KSerializer<DeviceDefinit
           ),
       version =
         (kotlin.collections.List(maxOf(version?.size ?: 0, _version?.size ?: 0)) { index ->
-          R5String.of(version?.getOrNull(index)?.let { it }, _version?.getOrNull(index))
+          R5String.of(version?.getOrNull(index), _version?.getOrNull(index))
             ?: throw SerializationException(
               "An entry of 'version' on DeviceDefinition.ConformsTo has neither a value nor an id/extension"
             )
@@ -893,75 +808,70 @@ internal object DeviceDefinitionConformsToSerializer : KSerializer<DeviceDefinit
     )
   }
 
-  private fun serializeInternal(encoder: CompositeEncoder, `value`: DeviceDefinition.ConformsTo) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: DeviceDefinition.ConformsTo) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    (value.category)?.let {
-      encoder.encodeSerializableElement(descriptor, 3, CodeableConceptSerializer, it)
-    }
-    encoder.encodeSerializableElement(descriptor, 4, CodeableConceptSerializer, value.specification)
-    (value.version.map { it.value }.takeUnless { it.all { it == null } })?.let {
-      encoder.encodeSerializableElement(descriptor, 5, stringNullableListSerializer, it)
-    }
-    (value.version.map { it.toElement() }.takeUnless { it.all { it == null } })?.let {
-      encoder.encodeSerializableElement(descriptor, 6, ElementSerializer.nullableListSerializer, it)
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      3,
+      CodeableConceptSerializer,
+      value.category,
+    )
+    compositeEncoder.encodeSerializableElement(
+      descriptor,
+      4,
+      CodeableConceptSerializer,
+      value.specification,
+    )
+    if (value.version.isNotEmpty()) {
+      compositeEncoder.encodeNullableListIfNotNull(
+        descriptor,
+        5,
+        stringNullableListSerializer,
+        value.version.map { it.value },
+      )
+      compositeEncoder.encodePrimitiveElementList(descriptor, 6, value.version)
     }
     if (value.source.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         7,
         RelatedArtifactSerializer.listSerializer,
         value.source,
       )
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
 internal object DeviceDefinitionHasPartSerializer : KSerializer<DeviceDefinition.HasPart> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("HasPart") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("reference", Reference.serializer().descriptor, isOptional = true)
-      element("count", Int.serializer().descriptor, isOptional = true)
-      element("_count", Element.serializer().descriptor, isOptional = true)
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("reference", ReferenceSerializer.descriptor)
+      optionalElement("count", Int.serializer().descriptor)
+      optionalElement("_count", ElementSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<DeviceDefinition.HasPart>> = ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): DeviceDefinition.HasPart =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: DeviceDefinition.HasPart) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): DeviceDefinition.HasPart {
+  override fun deserialize(decoder: Decoder): DeviceDefinition.HasPart {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -969,11 +879,11 @@ internal object DeviceDefinitionHasPartSerializer : KSerializer<DeviceDefinition
     var count: Int? = null
     var _count: Element? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -981,7 +891,7 @@ internal object DeviceDefinitionHasPartSerializer : KSerializer<DeviceDefinition
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -989,14 +899,26 @@ internal object DeviceDefinitionHasPartSerializer : KSerializer<DeviceDefinition
             )
         3 ->
           reference =
-            decoder.decodeNullableSerializableElement(descriptor, i, ReferenceSerializer, null)
-        4 -> count = decoder.decodeIntElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ReferenceSerializer,
+              null,
+            )
+        4 -> count = compositeDecoder.decodeIntElement(descriptor, i)
         5 ->
-          _count = decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+          _count =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         CompositeDecoder.DECODE_DONE -> break
         else -> throw SerializationException("Unexpected index decoding HasPart: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return DeviceDefinition.HasPart(
       id = id,
       extension = extension ?: listOf(),
@@ -1010,83 +932,60 @@ internal object DeviceDefinitionHasPartSerializer : KSerializer<DeviceDefinition
     )
   }
 
-  private fun serializeInternal(encoder: CompositeEncoder, `value`: DeviceDefinition.HasPart) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: DeviceDefinition.HasPart) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    encoder.encodeSerializableElement(descriptor, 3, ReferenceSerializer, value.reference)
-    ((value.count?.value))?.let { encoder.encodeIntElement(descriptor, 4, it) }
-    (value.count?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 5, ElementSerializer, it)
-    }
+    compositeEncoder.encodeSerializableElement(descriptor, 3, ReferenceSerializer, value.reference)
+    compositeEncoder.encodeIntIfNotNull(descriptor, 4, value.count?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 5, value.count)
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
 internal object DeviceDefinitionPackagingSerializer : KSerializer<DeviceDefinition.Packaging> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("Packaging") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("identifier", Identifier.serializer().descriptor, isOptional = true)
-      element("type", CodeableConcept.serializer().descriptor, isOptional = true)
-      element("count", Int.serializer().descriptor, isOptional = true)
-      element("_count", Element.serializer().descriptor, isOptional = true)
-      element(
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("identifier", IdentifierSerializer.descriptor)
+      optionalElement("type", CodeableConceptSerializer.descriptor)
+      optionalElement("count", Int.serializer().descriptor)
+      optionalElement("_count", ElementSerializer.descriptor)
+      optionalElement(
         "distributor",
-        listSerialDescriptor(
-          lazyDescriptor { DeviceDefinition.Packaging.Distributor.serializer().descriptor }
-        ),
-        isOptional = true,
+        DeviceDefinitionPackagingDistributorSerializer.listSerializer.descriptor,
       )
-      element(
+      optionalElement(
         "udiDeviceIdentifier",
         listSerialDescriptor(
-          lazyDescriptor { DeviceDefinition.UdiDeviceIdentifier.serializer().descriptor }
+          lazyDescriptor { DeviceDefinitionUdiDeviceIdentifierSerializer.descriptor }
         ),
-        isOptional = true,
       )
-      element(
+      optionalElement(
         "packaging",
-        listSerialDescriptor(lazyDescriptor { DeviceDefinition.Packaging.serializer().descriptor }),
-        isOptional = true,
+        listSerialDescriptor(lazyDescriptor { DeviceDefinitionPackagingSerializer.descriptor }),
       )
     }
 
   internal val listSerializer: KSerializer<List<DeviceDefinition.Packaging>> = ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): DeviceDefinition.Packaging =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: DeviceDefinition.Packaging) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): DeviceDefinition.Packaging {
+  override fun deserialize(decoder: Decoder): DeviceDefinition.Packaging {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -1098,11 +997,11 @@ internal object DeviceDefinitionPackagingSerializer : KSerializer<DeviceDefiniti
     var udiDeviceIdentifier: List<DeviceDefinition.UdiDeviceIdentifier>? = null
     var packaging: List<DeviceDefinition.Packaging>? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -1110,7 +1009,7 @@ internal object DeviceDefinitionPackagingSerializer : KSerializer<DeviceDefiniti
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -1118,21 +1017,32 @@ internal object DeviceDefinitionPackagingSerializer : KSerializer<DeviceDefiniti
             )
         3 ->
           identifier =
-            decoder.decodeNullableSerializableElement(descriptor, i, IdentifierSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              IdentifierSerializer,
+              null,
+            )
         4 ->
           type =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer,
               null,
             )
-        5 -> count = decoder.decodeIntElement(descriptor, i)
+        5 -> count = compositeDecoder.decodeIntElement(descriptor, i)
         6 ->
-          _count = decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+          _count =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         7 ->
           distributor =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               DeviceDefinitionPackagingDistributorSerializer.listSerializer,
@@ -1140,7 +1050,7 @@ internal object DeviceDefinitionPackagingSerializer : KSerializer<DeviceDefiniti
             )
         8 ->
           udiDeviceIdentifier =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               DeviceDefinitionUdiDeviceIdentifierSerializer.listSerializer,
@@ -1148,7 +1058,7 @@ internal object DeviceDefinitionPackagingSerializer : KSerializer<DeviceDefiniti
             )
         9 ->
           packaging =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               DeviceDefinitionPackagingSerializer.listSerializer,
@@ -1158,6 +1068,7 @@ internal object DeviceDefinitionPackagingSerializer : KSerializer<DeviceDefiniti
         else -> throw SerializationException("Unexpected index decoding Packaging: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return DeviceDefinition.Packaging(
       id = id,
       extension = extension ?: listOf(),
@@ -1171,53 +1082,59 @@ internal object DeviceDefinitionPackagingSerializer : KSerializer<DeviceDefiniti
     )
   }
 
-  private fun serializeInternal(encoder: CompositeEncoder, `value`: DeviceDefinition.Packaging) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: DeviceDefinition.Packaging) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    (value.identifier)?.let {
-      encoder.encodeSerializableElement(descriptor, 3, IdentifierSerializer, it)
-    }
-    (value.type)?.let {
-      encoder.encodeSerializableElement(descriptor, 4, CodeableConceptSerializer, it)
-    }
-    ((value.count?.value))?.let { encoder.encodeIntElement(descriptor, 5, it) }
-    (value.count?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 6, ElementSerializer, it)
-    }
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      3,
+      IdentifierSerializer,
+      value.identifier,
+    )
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      4,
+      CodeableConceptSerializer,
+      value.type,
+    )
+    compositeEncoder.encodeIntIfNotNull(descriptor, 5, value.count?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 6, value.count)
     if (value.distributor.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         7,
         DeviceDefinitionPackagingDistributorSerializer.listSerializer,
         value.distributor,
       )
     if (value.udiDeviceIdentifier.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         8,
         DeviceDefinitionUdiDeviceIdentifierSerializer.listSerializer,
         value.udiDeviceIdentifier,
       )
     if (value.packaging.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         9,
         DeviceDefinitionPackagingSerializer.listSerializer,
         value.packaging,
       )
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
@@ -1225,43 +1142,19 @@ internal object DeviceDefinitionPackagingDistributorSerializer :
   KSerializer<DeviceDefinition.Packaging.Distributor> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("Distributor") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("name", KotlinString.serializer().descriptor, isOptional = true)
-      element("_name", Element.serializer().descriptor, isOptional = true)
-      element(
-        "organizationReference",
-        listSerialDescriptor(Reference.serializer().descriptor),
-        isOptional = true,
-      )
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("name", KotlinString.serializer().descriptor)
+      optionalElement("_name", ElementSerializer.descriptor)
+      optionalElement("organizationReference", ReferenceSerializer.listSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<DeviceDefinition.Packaging.Distributor>> =
     ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): DeviceDefinition.Packaging.Distributor =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: DeviceDefinition.Packaging.Distributor) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(
-    decoder: CompositeDecoder
-  ): DeviceDefinition.Packaging.Distributor {
+  override fun deserialize(decoder: Decoder): DeviceDefinition.Packaging.Distributor {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -1269,11 +1162,11 @@ internal object DeviceDefinitionPackagingDistributorSerializer :
     var _name: Element? = null
     var organizationReference: List<Reference>? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -1281,18 +1174,24 @@ internal object DeviceDefinitionPackagingDistributorSerializer :
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
               null,
             )
-        3 -> name = decoder.decodeStringElement(descriptor, i)
+        3 -> name = compositeDecoder.decodeStringElement(descriptor, i)
         4 ->
-          _name = decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+          _name =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         5 ->
           organizationReference =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ReferenceSerializer.listSerializer,
@@ -1302,6 +1201,7 @@ internal object DeviceDefinitionPackagingDistributorSerializer :
         else -> throw SerializationException("Unexpected index decoding Distributor: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return DeviceDefinition.Packaging.Distributor(
       id = id,
       extension = extension ?: listOf(),
@@ -1311,73 +1211,52 @@ internal object DeviceDefinitionPackagingDistributorSerializer :
     )
   }
 
-  private fun serializeInternal(
-    encoder: CompositeEncoder,
-    `value`: DeviceDefinition.Packaging.Distributor,
-  ) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: DeviceDefinition.Packaging.Distributor) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    ((value.name?.value))?.let { encoder.encodeStringElement(descriptor, 3, it) }
-    (value.name?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 4, ElementSerializer, it)
-    }
+    compositeEncoder.encodeStringIfNotNull(descriptor, 3, value.name?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 4, value.name)
     if (value.organizationReference.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         5,
         ReferenceSerializer.listSerializer,
         value.organizationReference,
       )
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
 internal object DeviceDefinitionVersionSerializer : KSerializer<DeviceDefinition.Version> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("Version") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("type", CodeableConcept.serializer().descriptor, isOptional = true)
-      element("component", Identifier.serializer().descriptor, isOptional = true)
-      element("value", KotlinString.serializer().descriptor, isOptional = true)
-      element("_value", Element.serializer().descriptor, isOptional = true)
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("type", CodeableConceptSerializer.descriptor)
+      optionalElement("component", IdentifierSerializer.descriptor)
+      optionalElement("value", KotlinString.serializer().descriptor)
+      optionalElement("_value", ElementSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<DeviceDefinition.Version>> = ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): DeviceDefinition.Version =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: DeviceDefinition.Version) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): DeviceDefinition.Version {
+  override fun deserialize(decoder: Decoder): DeviceDefinition.Version {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -1386,11 +1265,11 @@ internal object DeviceDefinitionVersionSerializer : KSerializer<DeviceDefinition
     var `value`: KotlinString? = null
     var _value: Element? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -1398,7 +1277,7 @@ internal object DeviceDefinitionVersionSerializer : KSerializer<DeviceDefinition
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -1406,7 +1285,7 @@ internal object DeviceDefinitionVersionSerializer : KSerializer<DeviceDefinition
             )
         3 ->
           type =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer,
@@ -1414,14 +1293,26 @@ internal object DeviceDefinitionVersionSerializer : KSerializer<DeviceDefinition
             )
         4 ->
           component =
-            decoder.decodeNullableSerializableElement(descriptor, i, IdentifierSerializer, null)
-        5 -> `value` = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              IdentifierSerializer,
+              null,
+            )
+        5 -> `value` = compositeDecoder.decodeStringElement(descriptor, i)
         6 ->
-          _value = decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+          _value =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         CompositeDecoder.DECODE_DONE -> break
         else -> throw SerializationException("Unexpected index decoding Version: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return DeviceDefinition.Version(
       id = id,
       extension = extension ?: listOf(),
@@ -1436,76 +1327,64 @@ internal object DeviceDefinitionVersionSerializer : KSerializer<DeviceDefinition
     )
   }
 
-  private fun serializeInternal(encoder: CompositeEncoder, `value`: DeviceDefinition.Version) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: DeviceDefinition.Version) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    (value.type)?.let {
-      encoder.encodeSerializableElement(descriptor, 3, CodeableConceptSerializer, it)
-    }
-    (value.component)?.let {
-      encoder.encodeSerializableElement(descriptor, 4, IdentifierSerializer, it)
-    }
-    ((value.`value`.value))?.let { encoder.encodeStringElement(descriptor, 5, it) }
-    (value.`value`.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 6, ElementSerializer, it)
-    }
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      3,
+      CodeableConceptSerializer,
+      value.type,
+    )
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      4,
+      IdentifierSerializer,
+      value.component,
+    )
+    compositeEncoder.encodeStringIfNotNull(descriptor, 5, value.`value`.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 6, value.`value`)
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
 internal object DeviceDefinitionPropertySerializer : KSerializer<DeviceDefinition.Property> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("Property") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("type", CodeableConcept.serializer().descriptor, isOptional = true)
-      element("valueQuantity", Quantity.serializer().descriptor, isOptional = true)
-      element("valueCodeableConcept", CodeableConcept.serializer().descriptor, isOptional = true)
-      element("valueString", KotlinString.serializer().descriptor, isOptional = true)
-      element("_valueString", Element.serializer().descriptor, isOptional = true)
-      element("valueBoolean", KotlinBoolean.serializer().descriptor, isOptional = true)
-      element("_valueBoolean", Element.serializer().descriptor, isOptional = true)
-      element("valueInteger", Int.serializer().descriptor, isOptional = true)
-      element("_valueInteger", Element.serializer().descriptor, isOptional = true)
-      element("valueRange", Range.serializer().descriptor, isOptional = true)
-      element("valueAttachment", Attachment.serializer().descriptor, isOptional = true)
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("type", CodeableConceptSerializer.descriptor)
+      optionalElement("valueQuantity", QuantitySerializer.descriptor)
+      optionalElement("valueCodeableConcept", CodeableConceptSerializer.descriptor)
+      optionalElement("valueString", KotlinString.serializer().descriptor)
+      optionalElement("_valueString", ElementSerializer.descriptor)
+      optionalElement("valueBoolean", KotlinBoolean.serializer().descriptor)
+      optionalElement("_valueBoolean", ElementSerializer.descriptor)
+      optionalElement("valueInteger", Int.serializer().descriptor)
+      optionalElement("_valueInteger", ElementSerializer.descriptor)
+      optionalElement("valueRange", RangeSerializer.descriptor)
+      optionalElement("valueAttachment", AttachmentSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<DeviceDefinition.Property>> = ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): DeviceDefinition.Property =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: DeviceDefinition.Property) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): DeviceDefinition.Property {
+  override fun deserialize(decoder: Decoder): DeviceDefinition.Property {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -1521,11 +1400,11 @@ internal object DeviceDefinitionPropertySerializer : KSerializer<DeviceDefinitio
     var valueRange: Range? = null
     var valueAttachment: Attachment? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -1533,7 +1412,7 @@ internal object DeviceDefinitionPropertySerializer : KSerializer<DeviceDefinitio
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -1541,7 +1420,7 @@ internal object DeviceDefinitionPropertySerializer : KSerializer<DeviceDefinitio
             )
         3 ->
           type =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer,
@@ -1549,37 +1428,63 @@ internal object DeviceDefinitionPropertySerializer : KSerializer<DeviceDefinitio
             )
         4 ->
           valueQuantity =
-            decoder.decodeNullableSerializableElement(descriptor, i, QuantitySerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              QuantitySerializer,
+              null,
+            )
         5 ->
           valueCodeableConcept =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer,
               null,
             )
-        6 -> valueString = decoder.decodeStringElement(descriptor, i)
+        6 -> valueString = compositeDecoder.decodeStringElement(descriptor, i)
         7 ->
           _valueString =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        8 -> valueBoolean = decoder.decodeBooleanElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        8 -> valueBoolean = compositeDecoder.decodeBooleanElement(descriptor, i)
         9 ->
           _valueBoolean =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        10 -> valueInteger = decoder.decodeIntElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        10 -> valueInteger = compositeDecoder.decodeIntElement(descriptor, i)
         11 ->
           _valueInteger =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         12 ->
           valueRange =
-            decoder.decodeNullableSerializableElement(descriptor, i, RangeSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(descriptor, i, RangeSerializer, null)
         13 ->
           valueAttachment =
-            decoder.decodeNullableSerializableElement(descriptor, i, AttachmentSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              AttachmentSerializer,
+              null,
+            )
         CompositeDecoder.DECODE_DONE -> break
         else -> throw SerializationException("Unexpected index decoding Property: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return DeviceDefinition.Property(
       id = id,
       extension = extension ?: listOf(),
@@ -1605,101 +1510,89 @@ internal object DeviceDefinitionPropertySerializer : KSerializer<DeviceDefinitio
     )
   }
 
-  private fun serializeInternal(encoder: CompositeEncoder, `value`: DeviceDefinition.Property) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: DeviceDefinition.Property) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    encoder.encodeSerializableElement(descriptor, 3, CodeableConceptSerializer, value.type)
+    compositeEncoder.encodeSerializableElement(descriptor, 3, CodeableConceptSerializer, value.type)
     when (val choice = value.`value`) {
       is DeviceDefinition.Property.Value.Quantity -> {
-        encoder.encodeSerializableElement(descriptor, 4, QuantitySerializer, choice.value)
+        compositeEncoder.encodeSerializableElement(descriptor, 4, QuantitySerializer, choice.value)
       }
       is DeviceDefinition.Property.Value.CodeableConcept -> {
-        encoder.encodeSerializableElement(descriptor, 5, CodeableConceptSerializer, choice.value)
+        compositeEncoder.encodeSerializableElement(
+          descriptor,
+          5,
+          CodeableConceptSerializer,
+          choice.value,
+        )
       }
       is DeviceDefinition.Property.Value.String -> {
-        ((choice.value.value))?.let { encoder.encodeStringElement(descriptor, 6, it) }
-        (choice.value.toElement())?.let {
-          encoder.encodeSerializableElement(descriptor, 7, ElementSerializer, it)
-        }
+        compositeEncoder.encodeStringIfNotNull(descriptor, 6, choice.value.value)
+        compositeEncoder.encodeElementIfNotNull(descriptor, 7, choice.value)
       }
       is DeviceDefinition.Property.Value.Boolean -> {
-        ((choice.value.value))?.let { encoder.encodeBooleanElement(descriptor, 8, it) }
-        (choice.value.toElement())?.let {
-          encoder.encodeSerializableElement(descriptor, 9, ElementSerializer, it)
-        }
+        compositeEncoder.encodeBooleanIfNotNull(descriptor, 8, choice.value.value)
+        compositeEncoder.encodeElementIfNotNull(descriptor, 9, choice.value)
       }
       is DeviceDefinition.Property.Value.Integer -> {
-        ((choice.value.value))?.let { encoder.encodeIntElement(descriptor, 10, it) }
-        (choice.value.toElement())?.let {
-          encoder.encodeSerializableElement(descriptor, 11, ElementSerializer, it)
-        }
+        compositeEncoder.encodeIntIfNotNull(descriptor, 10, choice.value.value)
+        compositeEncoder.encodeElementIfNotNull(descriptor, 11, choice.value)
       }
       is DeviceDefinition.Property.Value.Range -> {
-        encoder.encodeSerializableElement(descriptor, 12, RangeSerializer, choice.value)
+        compositeEncoder.encodeSerializableElement(descriptor, 12, RangeSerializer, choice.value)
       }
       is DeviceDefinition.Property.Value.Attachment -> {
-        encoder.encodeSerializableElement(descriptor, 13, AttachmentSerializer, choice.value)
+        compositeEncoder.encodeSerializableElement(
+          descriptor,
+          13,
+          AttachmentSerializer,
+          choice.value,
+        )
       }
     }
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
 internal object DeviceDefinitionLinkSerializer : KSerializer<DeviceDefinition.Link> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("Link") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("relation", Coding.serializer().descriptor, isOptional = true)
-      element("relatedDevice", CodeableReference.serializer().descriptor, isOptional = true)
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("relation", CodingSerializer.descriptor)
+      optionalElement("relatedDevice", CodeableReferenceSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<DeviceDefinition.Link>> = ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): DeviceDefinition.Link =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: DeviceDefinition.Link) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): DeviceDefinition.Link {
+  override fun deserialize(decoder: Decoder): DeviceDefinition.Link {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
     var relation: Coding? = null
     var relatedDevice: CodeableReference? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -1707,7 +1600,7 @@ internal object DeviceDefinitionLinkSerializer : KSerializer<DeviceDefinition.Li
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -1715,10 +1608,15 @@ internal object DeviceDefinitionLinkSerializer : KSerializer<DeviceDefinition.Li
             )
         3 ->
           relation =
-            decoder.decodeNullableSerializableElement(descriptor, i, CodingSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              CodingSerializer,
+              null,
+            )
         4 ->
           relatedDevice =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableReferenceSerializer,
@@ -1728,6 +1626,7 @@ internal object DeviceDefinitionLinkSerializer : KSerializer<DeviceDefinition.Li
         else -> throw SerializationException("Unexpected index decoding Link: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return DeviceDefinition.Link(
       id = id,
       extension = extension ?: listOf(),
@@ -1745,67 +1644,51 @@ internal object DeviceDefinitionLinkSerializer : KSerializer<DeviceDefinition.Li
     )
   }
 
-  private fun serializeInternal(encoder: CompositeEncoder, `value`: DeviceDefinition.Link) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: DeviceDefinition.Link) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    encoder.encodeSerializableElement(descriptor, 3, CodingSerializer, value.relation)
-    encoder.encodeSerializableElement(
+    compositeEncoder.encodeSerializableElement(descriptor, 3, CodingSerializer, value.relation)
+    compositeEncoder.encodeSerializableElement(
       descriptor,
       4,
       CodeableReferenceSerializer,
       value.relatedDevice,
     )
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
 internal object DeviceDefinitionMaterialSerializer : KSerializer<DeviceDefinition.Material> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("Material") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("substance", CodeableConcept.serializer().descriptor, isOptional = true)
-      element("alternate", KotlinBoolean.serializer().descriptor, isOptional = true)
-      element("_alternate", Element.serializer().descriptor, isOptional = true)
-      element("allergenicIndicator", KotlinBoolean.serializer().descriptor, isOptional = true)
-      element("_allergenicIndicator", Element.serializer().descriptor, isOptional = true)
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("substance", CodeableConceptSerializer.descriptor)
+      optionalElement("alternate", KotlinBoolean.serializer().descriptor)
+      optionalElement("_alternate", ElementSerializer.descriptor)
+      optionalElement("allergenicIndicator", KotlinBoolean.serializer().descriptor)
+      optionalElement("_allergenicIndicator", ElementSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<DeviceDefinition.Material>> = ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): DeviceDefinition.Material =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: DeviceDefinition.Material) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): DeviceDefinition.Material {
+  override fun deserialize(decoder: Decoder): DeviceDefinition.Material {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -1815,11 +1698,11 @@ internal object DeviceDefinitionMaterialSerializer : KSerializer<DeviceDefinitio
     var allergenicIndicator: KotlinBoolean? = null
     var _allergenicIndicator: Element? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -1827,7 +1710,7 @@ internal object DeviceDefinitionMaterialSerializer : KSerializer<DeviceDefinitio
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -1835,24 +1718,35 @@ internal object DeviceDefinitionMaterialSerializer : KSerializer<DeviceDefinitio
             )
         3 ->
           substance =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer,
               null,
             )
-        4 -> alternate = decoder.decodeBooleanElement(descriptor, i)
+        4 -> alternate = compositeDecoder.decodeBooleanElement(descriptor, i)
         5 ->
           _alternate =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        6 -> allergenicIndicator = decoder.decodeBooleanElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        6 -> allergenicIndicator = compositeDecoder.decodeBooleanElement(descriptor, i)
         7 ->
           _allergenicIndicator =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         CompositeDecoder.DECODE_DONE -> break
         else -> throw SerializationException("Unexpected index decoding Material: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return DeviceDefinition.Material(
       id = id,
       extension = extension ?: listOf(),
@@ -1867,93 +1761,58 @@ internal object DeviceDefinitionMaterialSerializer : KSerializer<DeviceDefinitio
     )
   }
 
-  private fun serializeInternal(encoder: CompositeEncoder, `value`: DeviceDefinition.Material) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: DeviceDefinition.Material) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    encoder.encodeSerializableElement(descriptor, 3, CodeableConceptSerializer, value.substance)
-    ((value.alternate?.value))?.let { encoder.encodeBooleanElement(descriptor, 4, it) }
-    (value.alternate?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 5, ElementSerializer, it)
-    }
-    ((value.allergenicIndicator?.value))?.let { encoder.encodeBooleanElement(descriptor, 6, it) }
-    (value.allergenicIndicator?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 7, ElementSerializer, it)
-    }
+    compositeEncoder.encodeSerializableElement(
+      descriptor,
+      3,
+      CodeableConceptSerializer,
+      value.substance,
+    )
+    compositeEncoder.encodeBooleanIfNotNull(descriptor, 4, value.alternate?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 5, value.alternate)
+    compositeEncoder.encodeBooleanIfNotNull(descriptor, 6, value.allergenicIndicator?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 7, value.allergenicIndicator)
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
 internal object DeviceDefinitionGuidelineSerializer : KSerializer<DeviceDefinition.Guideline> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("Guideline") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "useContext",
-        listSerialDescriptor(UsageContext.serializer().descriptor),
-        isOptional = true,
-      )
-      element("usageInstruction", KotlinString.serializer().descriptor, isOptional = true)
-      element("_usageInstruction", Element.serializer().descriptor, isOptional = true)
-      element(
-        "relatedArtifact",
-        listSerialDescriptor(RelatedArtifact.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "indication",
-        listSerialDescriptor(CodeableConcept.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "contraindication",
-        listSerialDescriptor(CodeableConcept.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "warning",
-        listSerialDescriptor(CodeableConcept.serializer().descriptor),
-        isOptional = true,
-      )
-      element("intendedUse", KotlinString.serializer().descriptor, isOptional = true)
-      element("_intendedUse", Element.serializer().descriptor, isOptional = true)
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("useContext", UsageContextSerializer.listSerializer.descriptor)
+      optionalElement("usageInstruction", KotlinString.serializer().descriptor)
+      optionalElement("_usageInstruction", ElementSerializer.descriptor)
+      optionalElement("relatedArtifact", RelatedArtifactSerializer.listSerializer.descriptor)
+      optionalElement("indication", CodeableConceptSerializer.listSerializer.descriptor)
+      optionalElement("contraindication", CodeableConceptSerializer.listSerializer.descriptor)
+      optionalElement("warning", CodeableConceptSerializer.listSerializer.descriptor)
+      optionalElement("intendedUse", KotlinString.serializer().descriptor)
+      optionalElement("_intendedUse", ElementSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<DeviceDefinition.Guideline>> = ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): DeviceDefinition.Guideline =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: DeviceDefinition.Guideline) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): DeviceDefinition.Guideline {
+  override fun deserialize(decoder: Decoder): DeviceDefinition.Guideline {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -1967,11 +1826,11 @@ internal object DeviceDefinitionGuidelineSerializer : KSerializer<DeviceDefiniti
     var intendedUse: KotlinString? = null
     var _intendedUse: Element? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -1979,7 +1838,7 @@ internal object DeviceDefinitionGuidelineSerializer : KSerializer<DeviceDefiniti
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -1987,19 +1846,24 @@ internal object DeviceDefinitionGuidelineSerializer : KSerializer<DeviceDefiniti
             )
         3 ->
           useContext =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               UsageContextSerializer.listSerializer,
               null,
             )
-        4 -> usageInstruction = decoder.decodeStringElement(descriptor, i)
+        4 -> usageInstruction = compositeDecoder.decodeStringElement(descriptor, i)
         5 ->
           _usageInstruction =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         6 ->
           relatedArtifact =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               RelatedArtifactSerializer.listSerializer,
@@ -2007,7 +1871,7 @@ internal object DeviceDefinitionGuidelineSerializer : KSerializer<DeviceDefiniti
             )
         7 ->
           indication =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer.listSerializer,
@@ -2015,7 +1879,7 @@ internal object DeviceDefinitionGuidelineSerializer : KSerializer<DeviceDefiniti
             )
         8 ->
           contraindication =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer.listSerializer,
@@ -2023,20 +1887,26 @@ internal object DeviceDefinitionGuidelineSerializer : KSerializer<DeviceDefiniti
             )
         9 ->
           warning =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer.listSerializer,
               null,
             )
-        10 -> intendedUse = decoder.decodeStringElement(descriptor, i)
+        10 -> intendedUse = compositeDecoder.decodeStringElement(descriptor, i)
         11 ->
           _intendedUse =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         CompositeDecoder.DECODE_DONE -> break
         else -> throw SerializationException("Unexpected index decoding Guideline: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return DeviceDefinition.Guideline(
       id = id,
       extension = extension ?: listOf(),
@@ -2051,65 +1921,63 @@ internal object DeviceDefinitionGuidelineSerializer : KSerializer<DeviceDefiniti
     )
   }
 
-  private fun serializeInternal(encoder: CompositeEncoder, `value`: DeviceDefinition.Guideline) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: DeviceDefinition.Guideline) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
     if (value.useContext.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         3,
         UsageContextSerializer.listSerializer,
         value.useContext,
       )
-    ((value.usageInstruction?.value))?.let { encoder.encodeStringElement(descriptor, 4, it) }
-    (value.usageInstruction?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 5, ElementSerializer, it)
-    }
+    compositeEncoder.encodeStringIfNotNull(descriptor, 4, value.usageInstruction?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 5, value.usageInstruction)
     if (value.relatedArtifact.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         6,
         RelatedArtifactSerializer.listSerializer,
         value.relatedArtifact,
       )
     if (value.indication.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         7,
         CodeableConceptSerializer.listSerializer,
         value.indication,
       )
     if (value.contraindication.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         8,
         CodeableConceptSerializer.listSerializer,
         value.contraindication,
       )
     if (value.warning.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         9,
         CodeableConceptSerializer.listSerializer,
         value.warning,
       )
-    ((value.intendedUse?.value))?.let { encoder.encodeStringElement(descriptor, 10, it) }
-    (value.intendedUse?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 11, ElementSerializer, it)
-    }
+    compositeEncoder.encodeStringIfNotNull(descriptor, 10, value.intendedUse?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 11, value.intendedUse)
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
@@ -2117,39 +1985,21 @@ internal object DeviceDefinitionCorrectiveActionSerializer :
   KSerializer<DeviceDefinition.CorrectiveAction> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("CorrectiveAction") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("recall", KotlinBoolean.serializer().descriptor, isOptional = true)
-      element("_recall", Element.serializer().descriptor, isOptional = true)
-      element("scope", KotlinString.serializer().descriptor, isOptional = true)
-      element("_scope", Element.serializer().descriptor, isOptional = true)
-      element("period", Period.serializer().descriptor, isOptional = true)
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("recall", KotlinBoolean.serializer().descriptor)
+      optionalElement("_recall", ElementSerializer.descriptor)
+      optionalElement("scope", KotlinString.serializer().descriptor)
+      optionalElement("_scope", ElementSerializer.descriptor)
+      optionalElement("period", PeriodSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<DeviceDefinition.CorrectiveAction>> =
     ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): DeviceDefinition.CorrectiveAction =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: DeviceDefinition.CorrectiveAction) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): DeviceDefinition.CorrectiveAction {
+  override fun deserialize(decoder: Decoder): DeviceDefinition.CorrectiveAction {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -2159,11 +2009,11 @@ internal object DeviceDefinitionCorrectiveActionSerializer :
     var _scope: Element? = null
     var period: Period? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -2171,25 +2021,43 @@ internal object DeviceDefinitionCorrectiveActionSerializer :
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
               null,
             )
-        3 -> recall = decoder.decodeBooleanElement(descriptor, i)
+        3 -> recall = compositeDecoder.decodeBooleanElement(descriptor, i)
         4 ->
           _recall =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        5 -> scope = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        5 -> scope = compositeDecoder.decodeStringElement(descriptor, i)
         6 ->
-          _scope = decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+          _scope =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         7 ->
-          period = decoder.decodeNullableSerializableElement(descriptor, i, PeriodSerializer, null)
+          period =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              PeriodSerializer,
+              null,
+            )
         CompositeDecoder.DECODE_DONE -> break
         else -> throw SerializationException("Unexpected index decoding CorrectiveAction: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return DeviceDefinition.CorrectiveAction(
       id = id,
       extension = extension ?: listOf(),
@@ -2201,7 +2069,7 @@ internal object DeviceDefinitionCorrectiveActionSerializer :
           ),
       scope =
         Enumeration.of(
-          scope?.let { DeviceDefinition.DeviceCorrectiveActionScope.fromCode(it) },
+          if (scope != null) DeviceDefinition.DeviceCorrectiveActionScope.fromCode(scope) else null,
           _scope,
         ),
       period =
@@ -2212,75 +2080,48 @@ internal object DeviceDefinitionCorrectiveActionSerializer :
     )
   }
 
-  private fun serializeInternal(
-    encoder: CompositeEncoder,
-    `value`: DeviceDefinition.CorrectiveAction,
-  ) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: DeviceDefinition.CorrectiveAction) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    ((value.recall.value))?.let { encoder.encodeBooleanElement(descriptor, 3, it) }
-    (value.recall.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 4, ElementSerializer, it)
-    }
-    ((value.scope?.value?.code))?.let { encoder.encodeStringElement(descriptor, 5, it) }
-    (value.scope?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 6, ElementSerializer, it)
-    }
-    encoder.encodeSerializableElement(descriptor, 7, PeriodSerializer, value.period)
+    compositeEncoder.encodeBooleanIfNotNull(descriptor, 3, value.recall.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 4, value.recall)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 5, value.scope?.value?.code)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 6, value.scope)
+    compositeEncoder.encodeSerializableElement(descriptor, 7, PeriodSerializer, value.period)
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
 internal object DeviceDefinitionChargeItemSerializer : KSerializer<DeviceDefinition.ChargeItem> {
   override val descriptor: SerialDescriptor =
     buildClassSerialDescriptor("ChargeItem") {
-      element("id", KotlinString.serializer().descriptor, isOptional = true)
-      element(
-        "extension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element(
-        "modifierExtension",
-        listSerialDescriptor(Extension.serializer().descriptor),
-        isOptional = true,
-      )
-      element("chargeItemCode", CodeableReference.serializer().descriptor, isOptional = true)
-      element("count", Quantity.serializer().descriptor, isOptional = true)
-      element("effectivePeriod", Period.serializer().descriptor, isOptional = true)
-      element(
-        "useContext",
-        listSerialDescriptor(UsageContext.serializer().descriptor),
-        isOptional = true,
-      )
+      optionalElement("id", KotlinString.serializer().descriptor)
+      optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+      optionalElement("chargeItemCode", CodeableReferenceSerializer.descriptor)
+      optionalElement("count", QuantitySerializer.descriptor)
+      optionalElement("effectivePeriod", PeriodSerializer.descriptor)
+      optionalElement("useContext", UsageContextSerializer.listSerializer.descriptor)
     }
 
   internal val listSerializer: KSerializer<List<DeviceDefinition.ChargeItem>> = ListSerializer(this)
 
-  override fun deserialize(decoder: Decoder): DeviceDefinition.ChargeItem =
-    decoder.decodeStructure(descriptor) {
-      deserializeInternal(this)
-    }
-
-  override fun serialize(encoder: Encoder, `value`: DeviceDefinition.ChargeItem) {
-    encoder.encodeStructure(descriptor) {
-      serializeInternal(this, value)
-    }
-  }
-
-  private fun deserializeInternal(decoder: CompositeDecoder): DeviceDefinition.ChargeItem {
+  override fun deserialize(decoder: Decoder): DeviceDefinition.ChargeItem {
+    val compositeDecoder = decoder.beginStructure(descriptor)
     var id: KotlinString? = null
     var extension: List<Extension>? = null
     var modifierExtension: List<Extension>? = null
@@ -2289,11 +2130,11 @@ internal object DeviceDefinitionChargeItemSerializer : KSerializer<DeviceDefinit
     var effectivePeriod: Period? = null
     var useContext: List<UsageContext>? = null
     while (true) {
-      when (val i = decoder.decodeElementIndex(descriptor)) {
-        0 -> id = decoder.decodeStringElement(descriptor, i)
+      when (val i = compositeDecoder.decodeElementIndex(descriptor)) {
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
         1 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -2301,7 +2142,7 @@ internal object DeviceDefinitionChargeItemSerializer : KSerializer<DeviceDefinit
             )
         2 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -2309,20 +2150,31 @@ internal object DeviceDefinitionChargeItemSerializer : KSerializer<DeviceDefinit
             )
         3 ->
           chargeItemCode =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableReferenceSerializer,
               null,
             )
         4 ->
-          count = decoder.decodeNullableSerializableElement(descriptor, i, QuantitySerializer, null)
+          count =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              QuantitySerializer,
+              null,
+            )
         5 ->
           effectivePeriod =
-            decoder.decodeNullableSerializableElement(descriptor, i, PeriodSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              PeriodSerializer,
+              null,
+            )
         6 ->
           useContext =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               UsageContextSerializer.listSerializer,
@@ -2332,6 +2184,7 @@ internal object DeviceDefinitionChargeItemSerializer : KSerializer<DeviceDefinit
         else -> throw SerializationException("Unexpected index decoding ChargeItem: " + i)
       }
     }
+    compositeDecoder.endStructure(descriptor)
     return DeviceDefinition.ChargeItem(
       id = id,
       extension = extension ?: listOf(),
@@ -2351,39 +2204,44 @@ internal object DeviceDefinitionChargeItemSerializer : KSerializer<DeviceDefinit
     )
   }
 
-  private fun serializeInternal(encoder: CompositeEncoder, `value`: DeviceDefinition.ChargeItem) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0, it) }
+  override fun serialize(encoder: Encoder, `value`: DeviceDefinition.ChargeItem) {
+    val compositeEncoder = encoder.beginStructure(descriptor)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0, value.id)
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         1,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         2,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    encoder.encodeSerializableElement(
+    compositeEncoder.encodeSerializableElement(
       descriptor,
       3,
       CodeableReferenceSerializer,
       value.chargeItemCode,
     )
-    encoder.encodeSerializableElement(descriptor, 4, QuantitySerializer, value.count)
-    (value.effectivePeriod)?.let {
-      encoder.encodeSerializableElement(descriptor, 5, PeriodSerializer, it)
-    }
+    compositeEncoder.encodeSerializableElement(descriptor, 4, QuantitySerializer, value.count)
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      5,
+      PeriodSerializer,
+      value.effectivePeriod,
+    )
     if (value.useContext.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         6,
         UsageContextSerializer.listSerializer,
         value.useContext,
       )
+    compositeEncoder.endStructure(descriptor)
   }
 }
 
@@ -2391,152 +2249,65 @@ internal object DeviceDefinitionSerializer : FhirResourceSerializer<DeviceDefini
   override val descriptor: SerialDescriptor = buildResourceDescriptor("DeviceDefinition")
 
   override fun buildDescriptor(b: ClassSerialDescriptorBuilder) {
-    b.element("id", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("meta", Meta.serializer().descriptor, isOptional = true)
-    b.element("implicitRules", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("_implicitRules", Element.serializer().descriptor, isOptional = true)
-    b.element("language", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("_language", Element.serializer().descriptor, isOptional = true)
-    b.element("text", Narrative.serializer().descriptor, isOptional = true)
-    b.element(
+    b.optionalElement("id", KotlinString.serializer().descriptor)
+    b.optionalElement("meta", MetaSerializer.descriptor)
+    b.optionalElement("implicitRules", KotlinString.serializer().descriptor)
+    b.optionalElement("_implicitRules", ElementSerializer.descriptor)
+    b.optionalElement("language", KotlinString.serializer().descriptor)
+    b.optionalElement("_language", ElementSerializer.descriptor)
+    b.optionalElement("text", NarrativeSerializer.descriptor)
+    b.optionalElement(
       "contained",
-      listSerialDescriptor(lazyDescriptor { Resource.serializer().descriptor }),
-      isOptional = true,
+      listSerialDescriptor(lazyDescriptor { ResourcePolymorphicSerializer.descriptor }),
     )
-    b.element(
-      "extension",
-      listSerialDescriptor(Extension.serializer().descriptor),
-      isOptional = true,
-    )
-    b.element(
-      "modifierExtension",
-      listSerialDescriptor(Extension.serializer().descriptor),
-      isOptional = true,
-    )
-    b.element("description", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("_description", Element.serializer().descriptor, isOptional = true)
-    b.element(
-      "identifier",
-      listSerialDescriptor(Identifier.serializer().descriptor),
-      isOptional = true,
-    )
-    b.element(
+    b.optionalElement("extension", ExtensionSerializer.listSerializer.descriptor)
+    b.optionalElement("modifierExtension", ExtensionSerializer.listSerializer.descriptor)
+    b.optionalElement("description", KotlinString.serializer().descriptor)
+    b.optionalElement("_description", ElementSerializer.descriptor)
+    b.optionalElement("identifier", IdentifierSerializer.listSerializer.descriptor)
+    b.optionalElement(
       "udiDeviceIdentifier",
-      listSerialDescriptor(
-        lazyDescriptor { DeviceDefinition.UdiDeviceIdentifier.serializer().descriptor }
-      ),
-      isOptional = true,
+      DeviceDefinitionUdiDeviceIdentifierSerializer.listSerializer.descriptor,
     )
-    b.element(
+    b.optionalElement(
       "regulatoryIdentifier",
-      listSerialDescriptor(
-        lazyDescriptor { DeviceDefinition.RegulatoryIdentifier.serializer().descriptor }
-      ),
-      isOptional = true,
+      DeviceDefinitionRegulatoryIdentifierSerializer.listSerializer.descriptor,
     )
-    b.element("partNumber", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("_partNumber", Element.serializer().descriptor, isOptional = true)
-    b.element("manufacturer", Reference.serializer().descriptor, isOptional = true)
-    b.element(
-      "deviceName",
-      listSerialDescriptor(lazyDescriptor { DeviceDefinition.DeviceName.serializer().descriptor }),
-      isOptional = true,
-    )
-    b.element("modelNumber", KotlinString.serializer().descriptor, isOptional = true)
-    b.element("_modelNumber", Element.serializer().descriptor, isOptional = true)
-    b.element(
+    b.optionalElement("partNumber", KotlinString.serializer().descriptor)
+    b.optionalElement("_partNumber", ElementSerializer.descriptor)
+    b.optionalElement("manufacturer", ReferenceSerializer.descriptor)
+    b.optionalElement("deviceName", DeviceDefinitionDeviceNameSerializer.listSerializer.descriptor)
+    b.optionalElement("modelNumber", KotlinString.serializer().descriptor)
+    b.optionalElement("_modelNumber", ElementSerializer.descriptor)
+    b.optionalElement(
       "classification",
-      listSerialDescriptor(
-        lazyDescriptor { DeviceDefinition.Classification.serializer().descriptor }
-      ),
-      isOptional = true,
+      DeviceDefinitionClassificationSerializer.listSerializer.descriptor,
     )
-    b.element(
-      "conformsTo",
-      listSerialDescriptor(lazyDescriptor { DeviceDefinition.ConformsTo.serializer().descriptor }),
-      isOptional = true,
-    )
-    b.element(
-      "hasPart",
-      listSerialDescriptor(lazyDescriptor { DeviceDefinition.HasPart.serializer().descriptor }),
-      isOptional = true,
-    )
-    b.element(
-      "packaging",
-      listSerialDescriptor(lazyDescriptor { DeviceDefinition.Packaging.serializer().descriptor }),
-      isOptional = true,
-    )
-    b.element(
-      "version",
-      listSerialDescriptor(lazyDescriptor { DeviceDefinition.Version.serializer().descriptor }),
-      isOptional = true,
-    )
-    b.element(
-      "safety",
-      listSerialDescriptor(CodeableConcept.serializer().descriptor),
-      isOptional = true,
-    )
-    b.element(
-      "shelfLifeStorage",
-      listSerialDescriptor(ProductShelfLife.serializer().descriptor),
-      isOptional = true,
-    )
-    b.element(
-      "languageCode",
-      listSerialDescriptor(CodeableConcept.serializer().descriptor),
-      isOptional = true,
-    )
-    b.element(
-      "property",
-      listSerialDescriptor(lazyDescriptor { DeviceDefinition.Property.serializer().descriptor }),
-      isOptional = true,
-    )
-    b.element("owner", Reference.serializer().descriptor, isOptional = true)
-    b.element(
-      "contact",
-      listSerialDescriptor(ContactPoint.serializer().descriptor),
-      isOptional = true,
-    )
-    b.element(
-      "link",
-      listSerialDescriptor(lazyDescriptor { DeviceDefinition.Link.serializer().descriptor }),
-      isOptional = true,
-    )
-    b.element("note", listSerialDescriptor(Annotation.serializer().descriptor), isOptional = true)
-    b.element(
-      "material",
-      listSerialDescriptor(lazyDescriptor { DeviceDefinition.Material.serializer().descriptor }),
-      isOptional = true,
-    )
-    b.element(
-      "productionIdentifierInUDI",
-      listSerialDescriptor(KotlinString.serializer().descriptor),
-      isOptional = true,
-    )
-    b.element(
+    b.optionalElement("conformsTo", DeviceDefinitionConformsToSerializer.listSerializer.descriptor)
+    b.optionalElement("hasPart", DeviceDefinitionHasPartSerializer.listSerializer.descriptor)
+    b.optionalElement("packaging", DeviceDefinitionPackagingSerializer.listSerializer.descriptor)
+    b.optionalElement("version", DeviceDefinitionVersionSerializer.listSerializer.descriptor)
+    b.optionalElement("safety", CodeableConceptSerializer.listSerializer.descriptor)
+    b.optionalElement("shelfLifeStorage", ProductShelfLifeSerializer.listSerializer.descriptor)
+    b.optionalElement("languageCode", CodeableConceptSerializer.listSerializer.descriptor)
+    b.optionalElement("property", DeviceDefinitionPropertySerializer.listSerializer.descriptor)
+    b.optionalElement("owner", ReferenceSerializer.descriptor)
+    b.optionalElement("contact", ContactPointSerializer.listSerializer.descriptor)
+    b.optionalElement("link", DeviceDefinitionLinkSerializer.listSerializer.descriptor)
+    b.optionalElement("note", AnnotationSerializer.listSerializer.descriptor)
+    b.optionalElement("material", DeviceDefinitionMaterialSerializer.listSerializer.descriptor)
+    b.optionalElement("productionIdentifierInUDI", stringNullableListSerializer.descriptor)
+    b.optionalElement(
       "_productionIdentifierInUDI",
-      listSerialDescriptor(Element.serializer().descriptor),
-      isOptional = true,
+      ElementSerializer.nullableListSerializer.descriptor,
     )
-    b.element(
-      "guideline",
-      lazyDescriptor { DeviceDefinition.Guideline.serializer().descriptor },
-      isOptional = true,
-    )
-    b.element(
-      "correctiveAction",
-      lazyDescriptor { DeviceDefinition.CorrectiveAction.serializer().descriptor },
-      isOptional = true,
-    )
-    b.element(
-      "chargeItem",
-      listSerialDescriptor(lazyDescriptor { DeviceDefinition.ChargeItem.serializer().descriptor }),
-      isOptional = true,
-    )
+    b.optionalElement("guideline", DeviceDefinitionGuidelineSerializer.descriptor)
+    b.optionalElement("correctiveAction", DeviceDefinitionCorrectiveActionSerializer.descriptor)
+    b.optionalElement("chargeItem", DeviceDefinitionChargeItemSerializer.listSerializer.descriptor)
   }
 
   override fun deserializeInternal(
-    decoder: CompositeDecoder,
+    compositeDecoder: CompositeDecoder,
     descriptor: SerialDescriptor,
     descriptorOffset: Int,
   ): DeviceDefinition {
@@ -2581,25 +2352,43 @@ internal object DeviceDefinitionSerializer : FhirResourceSerializer<DeviceDefini
     var correctiveAction: DeviceDefinition.CorrectiveAction? = null
     var chargeItem: List<DeviceDefinition.ChargeItem>? = null
     while (true) {
-      val i = decoder.decodeElementIndex(descriptor)
+      val i = compositeDecoder.decodeElementIndex(descriptor)
       if (i == CompositeDecoder.DECODE_DONE) break
       when (i - descriptorOffset) {
-        -1 -> decoder.decodeStringElement(descriptor, i)
-        0 -> id = decoder.decodeStringElement(descriptor, i)
-        1 -> meta = decoder.decodeNullableSerializableElement(descriptor, i, MetaSerializer, null)
-        2 -> implicitRules = decoder.decodeStringElement(descriptor, i)
+        -1 -> compositeDecoder.decodeStringElement(descriptor, i)
+        0 -> id = compositeDecoder.decodeStringElement(descriptor, i)
+        1 ->
+          meta =
+            compositeDecoder.decodeNullableSerializableElement(descriptor, i, MetaSerializer, null)
+        2 -> implicitRules = compositeDecoder.decodeStringElement(descriptor, i)
         3 ->
           _implicitRules =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
-        4 -> language = decoder.decodeStringElement(descriptor, i)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
+        4 -> language = compositeDecoder.decodeStringElement(descriptor, i)
         5 ->
           _language =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         6 ->
-          text = decoder.decodeNullableSerializableElement(descriptor, i, NarrativeSerializer, null)
+          text =
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              NarrativeSerializer,
+              null,
+            )
         7 ->
           contained =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ResourcePolymorphicSerializer.listSerializer,
@@ -2607,7 +2396,7 @@ internal object DeviceDefinitionSerializer : FhirResourceSerializer<DeviceDefini
             )
         8 ->
           extension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
@@ -2615,19 +2404,24 @@ internal object DeviceDefinitionSerializer : FhirResourceSerializer<DeviceDefini
             )
         9 ->
           modifierExtension =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ExtensionSerializer.listSerializer,
               null,
             )
-        10 -> description = decoder.decodeStringElement(descriptor, i)
+        10 -> description = compositeDecoder.decodeStringElement(descriptor, i)
         11 ->
           _description =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         12 ->
           identifier =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               IdentifierSerializer.listSerializer,
@@ -2635,7 +2429,7 @@ internal object DeviceDefinitionSerializer : FhirResourceSerializer<DeviceDefini
             )
         13 ->
           udiDeviceIdentifier =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               DeviceDefinitionUdiDeviceIdentifierSerializer.listSerializer,
@@ -2643,34 +2437,49 @@ internal object DeviceDefinitionSerializer : FhirResourceSerializer<DeviceDefini
             )
         14 ->
           regulatoryIdentifier =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               DeviceDefinitionRegulatoryIdentifierSerializer.listSerializer,
               null,
             )
-        15 -> partNumber = decoder.decodeStringElement(descriptor, i)
+        15 -> partNumber = compositeDecoder.decodeStringElement(descriptor, i)
         16 ->
           _partNumber =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         17 ->
           manufacturer =
-            decoder.decodeNullableSerializableElement(descriptor, i, ReferenceSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ReferenceSerializer,
+              null,
+            )
         18 ->
           deviceName =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               DeviceDefinitionDeviceNameSerializer.listSerializer,
               null,
             )
-        19 -> modelNumber = decoder.decodeStringElement(descriptor, i)
+        19 -> modelNumber = compositeDecoder.decodeStringElement(descriptor, i)
         20 ->
           _modelNumber =
-            decoder.decodeNullableSerializableElement(descriptor, i, ElementSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ElementSerializer,
+              null,
+            )
         21 ->
           classification =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               DeviceDefinitionClassificationSerializer.listSerializer,
@@ -2678,7 +2487,7 @@ internal object DeviceDefinitionSerializer : FhirResourceSerializer<DeviceDefini
             )
         22 ->
           conformsTo =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               DeviceDefinitionConformsToSerializer.listSerializer,
@@ -2686,7 +2495,7 @@ internal object DeviceDefinitionSerializer : FhirResourceSerializer<DeviceDefini
             )
         23 ->
           hasPart =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               DeviceDefinitionHasPartSerializer.listSerializer,
@@ -2694,7 +2503,7 @@ internal object DeviceDefinitionSerializer : FhirResourceSerializer<DeviceDefini
             )
         24 ->
           packaging =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               DeviceDefinitionPackagingSerializer.listSerializer,
@@ -2702,7 +2511,7 @@ internal object DeviceDefinitionSerializer : FhirResourceSerializer<DeviceDefini
             )
         25 ->
           version =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               DeviceDefinitionVersionSerializer.listSerializer,
@@ -2710,7 +2519,7 @@ internal object DeviceDefinitionSerializer : FhirResourceSerializer<DeviceDefini
             )
         26 ->
           safety =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer.listSerializer,
@@ -2718,7 +2527,7 @@ internal object DeviceDefinitionSerializer : FhirResourceSerializer<DeviceDefini
             )
         27 ->
           shelfLifeStorage =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ProductShelfLifeSerializer.listSerializer,
@@ -2726,7 +2535,7 @@ internal object DeviceDefinitionSerializer : FhirResourceSerializer<DeviceDefini
             )
         28 ->
           languageCode =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               CodeableConceptSerializer.listSerializer,
@@ -2734,7 +2543,7 @@ internal object DeviceDefinitionSerializer : FhirResourceSerializer<DeviceDefini
             )
         29 ->
           `property` =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               DeviceDefinitionPropertySerializer.listSerializer,
@@ -2742,10 +2551,15 @@ internal object DeviceDefinitionSerializer : FhirResourceSerializer<DeviceDefini
             )
         30 ->
           owner =
-            decoder.decodeNullableSerializableElement(descriptor, i, ReferenceSerializer, null)
+            compositeDecoder.decodeNullableSerializableElement(
+              descriptor,
+              i,
+              ReferenceSerializer,
+              null,
+            )
         31 ->
           contact =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ContactPointSerializer.listSerializer,
@@ -2753,7 +2567,7 @@ internal object DeviceDefinitionSerializer : FhirResourceSerializer<DeviceDefini
             )
         32 ->
           link =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               DeviceDefinitionLinkSerializer.listSerializer,
@@ -2761,7 +2575,7 @@ internal object DeviceDefinitionSerializer : FhirResourceSerializer<DeviceDefini
             )
         33 ->
           note =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               AnnotationSerializer.listSerializer,
@@ -2769,7 +2583,7 @@ internal object DeviceDefinitionSerializer : FhirResourceSerializer<DeviceDefini
             )
         34 ->
           material =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               DeviceDefinitionMaterialSerializer.listSerializer,
@@ -2777,7 +2591,7 @@ internal object DeviceDefinitionSerializer : FhirResourceSerializer<DeviceDefini
             )
         35 ->
           productionIdentifierInUDI =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               stringNullableListSerializer,
@@ -2785,7 +2599,7 @@ internal object DeviceDefinitionSerializer : FhirResourceSerializer<DeviceDefini
             )
         36 ->
           _productionIdentifierInUDI =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               ElementSerializer.nullableListSerializer,
@@ -2793,7 +2607,7 @@ internal object DeviceDefinitionSerializer : FhirResourceSerializer<DeviceDefini
             )
         37 ->
           guideline =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               DeviceDefinitionGuidelineSerializer,
@@ -2801,7 +2615,7 @@ internal object DeviceDefinitionSerializer : FhirResourceSerializer<DeviceDefini
             )
         38 ->
           correctiveAction =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               DeviceDefinitionCorrectiveActionSerializer,
@@ -2809,7 +2623,7 @@ internal object DeviceDefinitionSerializer : FhirResourceSerializer<DeviceDefini
             )
         39 ->
           chargeItem =
-            decoder.decodeNullableSerializableElement(
+            compositeDecoder.decodeNullableSerializableElement(
               descriptor,
               i,
               DeviceDefinitionChargeItemSerializer.listSerializer,
@@ -2870,230 +2684,229 @@ internal object DeviceDefinitionSerializer : FhirResourceSerializer<DeviceDefini
   }
 
   override fun serializeInternal(
-    encoder: CompositeEncoder,
+    compositeEncoder: CompositeEncoder,
     descriptor: SerialDescriptor,
     descriptorOffset: Int,
     `value`: DeviceDefinition,
   ) {
-    (value.id)?.let { encoder.encodeStringElement(descriptor, 0 + descriptorOffset, it) }
-    (value.meta)?.let {
-      encoder.encodeSerializableElement(descriptor, 1 + descriptorOffset, MetaSerializer, it)
-    }
-    ((value.implicitRules?.value))?.let {
-      encoder.encodeStringElement(descriptor, 2 + descriptorOffset, it)
-    }
-    (value.implicitRules?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 3 + descriptorOffset, ElementSerializer, it)
-    }
-    ((value.language?.value))?.let {
-      encoder.encodeStringElement(descriptor, 4 + descriptorOffset, it)
-    }
-    (value.language?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 5 + descriptorOffset, ElementSerializer, it)
-    }
-    (value.text)?.let {
-      encoder.encodeSerializableElement(descriptor, 6 + descriptorOffset, NarrativeSerializer, it)
-    }
+    compositeEncoder.encodeStringIfNotNull(descriptor, 0 + descriptorOffset, value.id)
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      1 + descriptorOffset,
+      MetaSerializer,
+      value.meta,
+    )
+    compositeEncoder.encodeStringIfNotNull(
+      descriptor,
+      2 + descriptorOffset,
+      value.implicitRules?.value,
+    )
+    compositeEncoder.encodeElementIfNotNull(descriptor, 3 + descriptorOffset, value.implicitRules)
+    compositeEncoder.encodeStringIfNotNull(descriptor, 4 + descriptorOffset, value.language?.value)
+    compositeEncoder.encodeElementIfNotNull(descriptor, 5 + descriptorOffset, value.language)
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      6 + descriptorOffset,
+      NarrativeSerializer,
+      value.text,
+    )
     if (value.contained.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         7 + descriptorOffset,
         ResourcePolymorphicSerializer.listSerializer,
         value.contained,
       )
     if (value.extension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         8 + descriptorOffset,
         ExtensionSerializer.listSerializer,
         value.extension,
       )
     if (value.modifierExtension.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         9 + descriptorOffset,
         ExtensionSerializer.listSerializer,
         value.modifierExtension,
       )
-    ((value.description?.value))?.let {
-      encoder.encodeStringElement(descriptor, 10 + descriptorOffset, it)
-    }
-    (value.description?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 11 + descriptorOffset, ElementSerializer, it)
-    }
+    compositeEncoder.encodeStringIfNotNull(
+      descriptor,
+      10 + descriptorOffset,
+      value.description?.value,
+    )
+    compositeEncoder.encodeElementIfNotNull(descriptor, 11 + descriptorOffset, value.description)
     if (value.identifier.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         12 + descriptorOffset,
         IdentifierSerializer.listSerializer,
         value.identifier,
       )
     if (value.udiDeviceIdentifier.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         13 + descriptorOffset,
         DeviceDefinitionUdiDeviceIdentifierSerializer.listSerializer,
         value.udiDeviceIdentifier,
       )
     if (value.regulatoryIdentifier.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         14 + descriptorOffset,
         DeviceDefinitionRegulatoryIdentifierSerializer.listSerializer,
         value.regulatoryIdentifier,
       )
-    ((value.partNumber?.value))?.let {
-      encoder.encodeStringElement(descriptor, 15 + descriptorOffset, it)
-    }
-    (value.partNumber?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 16 + descriptorOffset, ElementSerializer, it)
-    }
-    (value.manufacturer)?.let {
-      encoder.encodeSerializableElement(descriptor, 17 + descriptorOffset, ReferenceSerializer, it)
-    }
+    compositeEncoder.encodeStringIfNotNull(
+      descriptor,
+      15 + descriptorOffset,
+      value.partNumber?.value,
+    )
+    compositeEncoder.encodeElementIfNotNull(descriptor, 16 + descriptorOffset, value.partNumber)
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      17 + descriptorOffset,
+      ReferenceSerializer,
+      value.manufacturer,
+    )
     if (value.deviceName.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         18 + descriptorOffset,
         DeviceDefinitionDeviceNameSerializer.listSerializer,
         value.deviceName,
       )
-    ((value.modelNumber?.value))?.let {
-      encoder.encodeStringElement(descriptor, 19 + descriptorOffset, it)
-    }
-    (value.modelNumber?.toElement())?.let {
-      encoder.encodeSerializableElement(descriptor, 20 + descriptorOffset, ElementSerializer, it)
-    }
+    compositeEncoder.encodeStringIfNotNull(
+      descriptor,
+      19 + descriptorOffset,
+      value.modelNumber?.value,
+    )
+    compositeEncoder.encodeElementIfNotNull(descriptor, 20 + descriptorOffset, value.modelNumber)
     if (value.classification.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         21 + descriptorOffset,
         DeviceDefinitionClassificationSerializer.listSerializer,
         value.classification,
       )
     if (value.conformsTo.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         22 + descriptorOffset,
         DeviceDefinitionConformsToSerializer.listSerializer,
         value.conformsTo,
       )
     if (value.hasPart.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         23 + descriptorOffset,
         DeviceDefinitionHasPartSerializer.listSerializer,
         value.hasPart,
       )
     if (value.packaging.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         24 + descriptorOffset,
         DeviceDefinitionPackagingSerializer.listSerializer,
         value.packaging,
       )
     if (value.version.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         25 + descriptorOffset,
         DeviceDefinitionVersionSerializer.listSerializer,
         value.version,
       )
     if (value.safety.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         26 + descriptorOffset,
         CodeableConceptSerializer.listSerializer,
         value.safety,
       )
     if (value.shelfLifeStorage.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         27 + descriptorOffset,
         ProductShelfLifeSerializer.listSerializer,
         value.shelfLifeStorage,
       )
     if (value.languageCode.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         28 + descriptorOffset,
         CodeableConceptSerializer.listSerializer,
         value.languageCode,
       )
     if (value.`property`.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         29 + descriptorOffset,
         DeviceDefinitionPropertySerializer.listSerializer,
         value.`property`,
       )
-    (value.owner)?.let {
-      encoder.encodeSerializableElement(descriptor, 30 + descriptorOffset, ReferenceSerializer, it)
-    }
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      30 + descriptorOffset,
+      ReferenceSerializer,
+      value.owner,
+    )
     if (value.contact.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         31 + descriptorOffset,
         ContactPointSerializer.listSerializer,
         value.contact,
       )
     if (value.link.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         32 + descriptorOffset,
         DeviceDefinitionLinkSerializer.listSerializer,
         value.link,
       )
     if (value.note.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         33 + descriptorOffset,
         AnnotationSerializer.listSerializer,
         value.note,
       )
     if (value.material.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         34 + descriptorOffset,
         DeviceDefinitionMaterialSerializer.listSerializer,
         value.material,
       )
-    (value.productionIdentifierInUDI.map { it.value?.code }.takeUnless { it.all { it == null } })
-      ?.let {
-        encoder.encodeSerializableElement(
-          descriptor,
-          35 + descriptorOffset,
-          stringNullableListSerializer,
-          it,
-        )
-      }
-    (value.productionIdentifierInUDI.map { it.toElement() }.takeUnless { it.all { it == null } })
-      ?.let {
-        encoder.encodeSerializableElement(
-          descriptor,
-          36 + descriptorOffset,
-          ElementSerializer.nullableListSerializer,
-          it,
-        )
-      }
-    (value.guideline)?.let {
-      encoder.encodeSerializableElement(
+    if (value.productionIdentifierInUDI.isNotEmpty()) {
+      compositeEncoder.encodeNullableListIfNotNull(
         descriptor,
-        37 + descriptorOffset,
-        DeviceDefinitionGuidelineSerializer,
-        it,
+        35 + descriptorOffset,
+        stringNullableListSerializer,
+        value.productionIdentifierInUDI.map { it.value?.code },
+      )
+      compositeEncoder.encodePrimitiveElementList(
+        descriptor,
+        36 + descriptorOffset,
+        value.productionIdentifierInUDI,
       )
     }
-    (value.correctiveAction)?.let {
-      encoder.encodeSerializableElement(
-        descriptor,
-        38 + descriptorOffset,
-        DeviceDefinitionCorrectiveActionSerializer,
-        it,
-      )
-    }
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      37 + descriptorOffset,
+      DeviceDefinitionGuidelineSerializer,
+      value.guideline,
+    )
+    compositeEncoder.encodeSerializableIfNotNull(
+      descriptor,
+      38 + descriptorOffset,
+      DeviceDefinitionCorrectiveActionSerializer,
+      value.correctiveAction,
+    )
     if (value.chargeItem.isNotEmpty())
-      encoder.encodeSerializableElement(
+      compositeEncoder.encodeSerializableElement(
         descriptor,
         39 + descriptorOffset,
         DeviceDefinitionChargeItemSerializer.listSerializer,
