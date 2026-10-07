@@ -30,6 +30,7 @@ import dev.ohs.fhir.model.r4b.ContactDetail
 import dev.ohs.fhir.model.r4b.DateTime
 import dev.ohs.fhir.model.r4b.Element
 import dev.ohs.fhir.model.r4b.Enumeration
+import dev.ohs.fhir.model.r4b.ExtensibleEnumeration
 import dev.ohs.fhir.model.r4b.Extension
 import dev.ohs.fhir.model.r4b.FhirDateTime
 import dev.ohs.fhir.model.r4b.FhirResourceSerializer
@@ -2053,11 +2054,7 @@ internal object ImplementationGuideSerializer : FhirResourceSerializer<Implement
           ?: throw SerializationException(
             "Missing required property 'packageId' on ImplementationGuide"
           ),
-      license =
-        Enumeration.of(
-          if (license != null) ImplementationGuide.SPDXLicense.fromCode(license) else null,
-          _license,
-        ),
+      license = ExtensibleEnumeration.of<ImplementationGuide.SPDXLicense>(license, _license),
       fhirVersion =
         (kotlin.collections.List(maxOf(fhirVersion?.size ?: 0, _fhirVersion?.size ?: 0)) { index ->
           Enumeration.of(
@@ -2190,11 +2187,7 @@ internal object ImplementationGuideSerializer : FhirResourceSerializer<Implement
     compositeEncoder.encodeElementIfNotNull(descriptor, 32 + descriptorOffset, value.copyright)
     compositeEncoder.encodeStringIfNotNull(descriptor, 33 + descriptorOffset, value.packageId.value)
     compositeEncoder.encodeElementIfNotNull(descriptor, 34 + descriptorOffset, value.packageId)
-    compositeEncoder.encodeStringIfNotNull(
-      descriptor,
-      35 + descriptorOffset,
-      value.license?.value?.code,
-    )
+    compositeEncoder.encodeStringIfNotNull(descriptor, 35 + descriptorOffset, value.license?.code)
     compositeEncoder.encodeElementIfNotNull(descriptor, 36 + descriptorOffset, value.license)
     if (value.fhirVersion.isNotEmpty()) {
       compositeEncoder.encodeNullableListIfNotNull(
