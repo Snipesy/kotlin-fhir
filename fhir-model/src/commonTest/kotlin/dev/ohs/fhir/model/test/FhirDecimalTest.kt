@@ -20,6 +20,7 @@ import com.ionspin.kotlin.bignum.decimal.BigDecimal
 import io.kotest.core.spec.style.FunSpec
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
+import kotlin.test.assertFalse
 
 class FhirDecimalTest :
   FunSpec({
@@ -49,11 +50,46 @@ class FhirDecimalTest :
         }
         test("large integer round-trips") { roundTrip(fromString, "1234567890123456789") }
 
-        // --- Unparseable input is rejected by the underlying BigDecimal parse. ---
+        // --- Unparseable input is rejected. ---
         test("rejects non-numeric") { reject(fromString, "abc") }
         test("rejects two decimal points") { reject(fromString, "1.2.3") }
         test("rejects comma separator") { reject(fromString, "1,5") }
         test("rejects hex notation") { reject(fromString, "0x10") }
+
+        // --- Only the FHIR decimal grammar is accepted, so the wire form is always valid JSON. ---
+        test("rejects explicit plus sign") { reject(fromString, "+1") }
+        test("rejects leading decimal point") { reject(fromString, ".5") }
+        test("rejects trailing decimal point") { reject(fromString, "5.") }
+        test("rejects leading zeros") { reject(fromString, "00012") }
+        test("rejects double exponent") { reject(fromString, "1e5e5") }
+        test("rejects dangling exponent marker") { reject(fromString, "1e") }
+        test("rejects surrounding whitespace") { reject(fromString, " 1") }
+        test("rejects special values") {
+          reject(fromString, "NaN")
+          reject(fromString, "Infinity")
+        }
+        test("accepts negative zero") { roundTrip(fromString, "-0") }
+        test("accepts explicit positive exponent") { roundTrip(fromString, "1E+5") }
+
+        // --- Implementation limits keep parsing, comparison and arithmetic cheap. ---
+        test("accepts a value at the length limit") {
+          roundTrip(fromString, "1." + "9".repeat(78))
+        }
+        test("rejects a value over the length limit") {
+          reject(fromString, "1." + "9".repeat(79))
+        }
+        test("rejects a very long digit string") { reject(fromString, "1".repeat(20_000)) }
+        test("accepts an exponent at the digit limit") { roundTrip(fromString, "1e9999") }
+        test("rejects an exponent over the digit limit") {
+          reject(fromString, "1e10000")
+          reject(fromString, "1e999999999")
+        }
+        test("extreme accepted exponents are comparable") {
+          val big = fromString("1e9999")
+          val small = fromString("1e-9999")
+          assertFalse(big == small)
+          assertFalse(small == big)
+        }
 
         // --- fromBigDecimal uses the plain-string form as the wire representation. ---
         test("fromBigDecimal formats wire as plain string") {

@@ -17,11 +17,13 @@
 package dev.ohs.fhir.model.r4b.serializers
 
 import dev.ohs.fhir.model.r4b.FhirDecimal
+import kotlin.IllegalArgumentException
 import kotlin.OptIn
 import kotlin.collections.List
 import kotlin.jvm.JvmField
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.nullable
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -33,7 +35,6 @@ import kotlinx.serialization.json.JsonDecoder
 import kotlinx.serialization.json.JsonEncoder
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.JsonUnquotedLiteral
-import kotlinx.serialization.json.jsonPrimitive
 
 /** Serializer for `FhirDecimal` which outputs unquoted JSON literals. */
 internal object FhirDecimalSerializer : KSerializer<FhirDecimal> {
@@ -53,10 +54,26 @@ internal object FhirDecimalSerializer : KSerializer<FhirDecimal> {
     }
   }
 
-  override fun deserialize(decoder: Decoder): FhirDecimal =
-    if (decoder is JsonDecoder) {
-      FhirDecimal.fromString(decoder.decodeJsonElement().jsonPrimitive.content)
-    } else {
-      FhirDecimal.fromString(decoder.decodeString())
+  /**
+   * Decodes a FHIR `decimal`. JSON input must be an unquoted number literal; anything else (a
+   * quoted string, object, array, or a literal outside the FHIR decimal grammar and the
+   * `FhirDecimal.fromString` limits) fails with a [SerializationException].
+   */
+  override fun deserialize(decoder: Decoder): FhirDecimal {
+    val string =
+      if (decoder is JsonDecoder) {
+        val element = decoder.decodeJsonElement()
+        if (element !is JsonPrimitive || element.isString) {
+          throw SerializationException("Expected a JSON number for decimal")
+        }
+        element.content
+      } else {
+        decoder.decodeString()
+      }
+    return try {
+      FhirDecimal.fromString(string)
+    } catch (e: IllegalArgumentException) {
+      throw SerializationException(e.message, e)
     }
+  }
 }

@@ -34,6 +34,7 @@ import kotlin.UByte
 import kotlin.UInt
 import kotlin.ULong
 import kotlin.UShort
+import kotlin.text.Regex
 
 /**
  * FHIR `decimal` value: a precision-preserving rational number backed by an ionspin `BigDecimal`.
@@ -123,6 +124,18 @@ private constructor(
   public operator fun rem(other: FhirDecimal): FhirDecimal = remainder(other)
 
   public companion object : BigNumber.Creator<FhirDecimal> {
+    /** Maximum accepted length of a lexical decimal (the spec's own examples top out at 26). */
+    public const val MAX_LENGTH: Int = 80
+
+    /** Maximum accepted exponent digits (the spec's own examples top out at 3). */
+    public const val MAX_EXPONENT_DIGITS: Int = 4
+
+    /**
+     * The FHIR `decimal` regex, verbatim from the R4 `StructureDefinition-decimal` (R5 adds digit
+     * limits that reject valid R4 data, so the R4 form is used for all versions).
+     */
+    private val LEXICAL_FORM: Regex = Regex("-?(0|[1-9][0-9]*)(\\.[0-9]+)?([eE][+-]?[0-9]+)?")
+
     override val ZERO: FhirDecimal = fromBigDecimal(BigDecimal.ZERO)
 
     override val ONE: FhirDecimal = fromBigDecimal(BigDecimal.ONE)
@@ -132,11 +145,32 @@ private constructor(
     override val TEN: FhirDecimal = fromBigDecimal(BigDecimal.TEN)
 
     /**
-     * Parses a wire/lexical decimal, preserving its exact lexical form for round-tripping. Throws
-     * if [string] is not a parseable decimal number.
+     * Parses a wire/lexical decimal, preserving its exact lexical form for round-tripping.
+     *
+     * [string] must match the FHIR `decimal` grammar
+     * (`-?(0|[1-9][0-9]*)(\.[0-9]+)?([eE][+-]?[0-9]+)?`) and stay within the implementation limits
+     * [MAX_LENGTH] characters and [MAX_EXPONENT_DIGITS] exponent digits, which keep parsing,
+     * comparison and arithmetic cheap for any accepted value.
+     *
+     * @throws IllegalArgumentException if [string] is not an accepted decimal.
      */
-    public fun fromString(string: String): FhirDecimal =
-      FhirDecimal(BigDecimal.parseString(string), string)
+    public fun fromString(string: String): FhirDecimal {
+      require(string.length <= MAX_LENGTH && LEXICAL_FORM.matches(string)) {
+        """Invalid decimal value: '${string.take(32)}'"""
+      }
+      require(exponentDigits(string) <= MAX_EXPONENT_DIGITS) {
+        """Decimal exponent exceeds $MAX_EXPONENT_DIGITS digits: '${string.take(32)}'"""
+      }
+      return FhirDecimal(BigDecimal.parseString(string), string)
+    }
+
+    /** Digit count of the exponent part of a [string] that matches [LEXICAL_FORM]. */
+    private fun exponentDigits(string: String): Int {
+      val marker = string.indexOfAny(charArrayOf('e', 'E'))
+      if (marker < 0) return 0
+      val sign = if (string[marker + 1] == '+' || string[marker + 1] == '-') 1 else 0
+      return string.length - marker - 1 - sign
+    }
 
     /** Wraps a [BigDecimal], using its plain-string form as the wire representation. */
     public fun fromBigDecimal(bigDecimal: BigDecimal): FhirDecimal =

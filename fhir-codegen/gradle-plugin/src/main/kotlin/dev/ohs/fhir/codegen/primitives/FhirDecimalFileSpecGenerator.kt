@@ -53,6 +53,10 @@ object FhirDecimalFileSpecGenerator {
     val boolean = Boolean::class.asClassName()
     val int = Int::class.asClassName()
     val long = Long::class.asClassName()
+    val regex = Regex::class.asClassName()
+    // Implementation limits exposed as companion constants and enforced after the regex match.
+    val maxLength = 80
+    val maxExponentDigits = 4
 
     // override fun <name>(other: FhirDecimal): FhirDecimal =
     // fromBigDecimal(bigDecimal.<delegate>(other.bigDecimal))
@@ -89,12 +93,67 @@ object FhirDecimalFileSpecGenerator {
         .addFunction(
           FunSpec.builder("fromString")
             .addKdoc(
-              "Parses a wire/lexical decimal, preserving its exact lexical form for round-tripping." +
-                " Throws if [string] is not a parseable decimal number."
+              "Parses a wire/lexical decimal, preserving its exact lexical form for round-tripping.\n" +
+                "\n" +
+                "[string] must match the FHIR `decimal` grammar" +
+                " (`-?(0|[1-9][0-9]*)(\\.[0-9]+)?([eE][+-]?[0-9]+)?`) and stay within the" +
+                " implementation limits [MAX_LENGTH] characters and [MAX_EXPONENT_DIGITS] exponent" +
+                " digits, which keep parsing, comparison and arithmetic cheap for any accepted value.\n" +
+                "\n" +
+                "@throws IllegalArgumentException if [string] is not an accepted decimal."
             )
             .addParameter("string", string)
             .returns(fd)
+            .addStatement(
+              "require(string.length <= MAX_LENGTH && LEXICAL_FORM.matches(string)) { %P }",
+              "Invalid decimal value: '\${string.take(32)}'",
+            )
+            .addStatement(
+              "require(exponentDigits(string) <= MAX_EXPONENT_DIGITS) { %P }",
+              "Decimal exponent exceeds \$MAX_EXPONENT_DIGITS digits: '\${string.take(32)}'",
+            )
             .addStatement("return FhirDecimal(%T.parseString(string), string)", bigDecimal)
+            .build()
+        )
+        .addFunction(
+          FunSpec.builder("exponentDigits")
+            .addModifiers(KModifier.PRIVATE)
+            .addKdoc("Digit count of the exponent part of a [string] that matches [LEXICAL_FORM].")
+            .addParameter("string", string)
+            .returns(int)
+            .addCode(
+              """
+              |val marker = string.indexOfAny(charArrayOf('e', 'E'))
+              |if (marker < 0) return 0
+              |val sign = if (string[marker + 1] == '+' || string[marker + 1] == '-') 1 else 0
+              |return string.length - marker - 1 - sign
+              |"""
+                .trimMargin()
+            )
+            .build()
+        )
+        .addProperty(
+          PropertySpec.builder("MAX_LENGTH", int, KModifier.CONST)
+            .addKdoc(
+              "Maximum accepted length of a lexical decimal (the spec's own examples top out at 26)."
+            )
+            .initializer("%L", maxLength)
+            .build()
+        )
+        .addProperty(
+          PropertySpec.builder("MAX_EXPONENT_DIGITS", int, KModifier.CONST)
+            .addKdoc("Maximum accepted exponent digits (the spec's own examples top out at 3).")
+            .initializer("%L", maxExponentDigits)
+            .build()
+        )
+        .addProperty(
+          PropertySpec.builder("LEXICAL_FORM", regex, KModifier.PRIVATE)
+            .addKdoc(
+              "The FHIR `decimal` regex, verbatim from the R4 `StructureDefinition-decimal`" +
+                " (R5 adds digit limits that reject valid R4 data, so the R4 form is used for all" +
+                " versions)."
+            )
+            .initializer("%T(%S)", regex, "-?(0|[1-9][0-9]*)(\\.[0-9]+)?([eE][+-]?[0-9]+)?")
             .build()
         )
         .addFunction(

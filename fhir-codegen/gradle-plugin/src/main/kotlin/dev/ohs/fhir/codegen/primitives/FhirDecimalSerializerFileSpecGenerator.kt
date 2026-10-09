@@ -44,7 +44,8 @@ object FhirDecimalSerializerFileSpecGenerator {
     val jsonDecoder = ClassName("kotlinx.serialization.json", "JsonDecoder")
     val jsonPrimitive = ClassName("kotlinx.serialization.json", "JsonPrimitive")
     val jsonUnquotedLiteral = MemberName("kotlinx.serialization.json", "JsonUnquotedLiteral")
-    val jsonPrimitiveAccessor = MemberName("kotlinx.serialization.json", "jsonPrimitive")
+    val serializationException = ClassName("kotlinx.serialization", "SerializationException")
+    val illegalArgumentException = ClassName("kotlin", "IllegalArgumentException")
     val experimentalOptIn = ClassName("kotlinx.serialization", "ExperimentalSerializationApi")
 
     val serializeFn =
@@ -73,14 +74,25 @@ object FhirDecimalSerializerFileSpecGenerator {
         .addModifiers(KModifier.OVERRIDE)
         .addParameter("decoder", decoder)
         .returns(fhirDecimal)
-        .beginControlFlow("return if (decoder is %T)", jsonDecoder)
-        .addStatement(
-          "%T.fromString(decoder.decodeJsonElement().%M.content)",
-          fhirDecimal,
-          jsonPrimitiveAccessor,
+        .addKdoc(
+          "Decodes a FHIR `decimal`. JSON input must be an unquoted number literal; anything else" +
+            " (a quoted string, object, array, or a literal outside the FHIR decimal grammar and" +
+            " the `FhirDecimal.fromString` limits) fails with a [%T].",
+          serializationException,
         )
+        .beginControlFlow("val string = if (decoder is %T)", jsonDecoder)
+        .addStatement("val element = decoder.decodeJsonElement()")
+        .beginControlFlow("if (element !is %T || element.isString)", jsonPrimitive)
+        .addStatement("throw %T(%S)", serializationException, "Expected a JSON number for decimal")
+        .endControlFlow()
+        .addStatement("element.content")
         .nextControlFlow("else")
-        .addStatement("%T.fromString(decoder.decodeString())", fhirDecimal)
+        .addStatement("decoder.decodeString()")
+        .endControlFlow()
+        .beginControlFlow("return try")
+        .addStatement("%T.fromString(string)", fhirDecimal)
+        .nextControlFlow("catch (e: %T)", illegalArgumentException)
+        .addStatement("throw %T(e.message, e)", serializationException)
         .endControlFlow()
         .build()
 
