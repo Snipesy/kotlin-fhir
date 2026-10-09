@@ -68,9 +68,9 @@ enum class FhirPathType(val uri: String, val fhirTypeCodes: List<String>) {
     override fun addCodeToDecodeWireElementToModel(
       codeBlock: CodeBlock.Builder,
       packageName: String,
-      wireExpr: CodeBlock,
+      wireExpression: CodeBlock,
     ) {
-      codeBlock.add("%L.toLong()", wireExpr)
+      codeBlock.add("%L.toLong()", wireExpression)
     }
 
     override fun addCodeToDecodeWireVarToModel(
@@ -127,9 +127,9 @@ enum class FhirPathType(val uri: String, val fhirTypeCodes: List<String>) {
     override fun addCodeToDecodeWireElementToModel(
       codeBlock: CodeBlock.Builder,
       packageName: String,
-      wireExpr: CodeBlock,
+      wireExpression: CodeBlock,
     ) {
-      codeBlock.add("%T.fromString(%L)", getDataModelType(packageName), wireExpr)
+      codeBlock.add("%T.fromString(%L)", getDataModelType(packageName), wireExpression)
     }
 
     override fun addCodeToDecodeWireVarToModel(
@@ -164,9 +164,9 @@ enum class FhirPathType(val uri: String, val fhirTypeCodes: List<String>) {
     override fun addCodeToDecodeWireElementToModel(
       codeBlock: CodeBlock.Builder,
       packageName: String,
-      wireExpr: CodeBlock,
+      wireExpression: CodeBlock,
     ) {
-      codeBlock.add("%T.fromString(%L)", getDataModelType(packageName), wireExpr)
+      codeBlock.add("%T.fromString(%L)", getDataModelType(packageName), wireExpression)
     }
 
     override fun addCodeToDecodeWireVarToModel(
@@ -205,9 +205,9 @@ enum class FhirPathType(val uri: String, val fhirTypeCodes: List<String>) {
   open fun addCodeToDecodeWireElementToModel(
     codeBlock: CodeBlock.Builder,
     packageName: String,
-    wireExpr: CodeBlock,
+    wireExpression: CodeBlock,
   ) {
-    codeBlock.add("%L", wireExpr)
+    codeBlock.add("%L", wireExpression)
   }
 
   /**

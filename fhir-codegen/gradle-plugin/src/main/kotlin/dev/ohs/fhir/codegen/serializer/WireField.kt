@@ -37,8 +37,7 @@ import dev.ohs.fhir.codegen.schema.getElementName
  *   value via the companion `from(…)` factory in `emitModelConstruction`.
  * - Complex / list → single `WireField`.
  *
- * For resource types, `resourceType` is handled separately as the last descriptor slot — NOT
- * included here.
+ * For resource types, `resourceType` is handled separately as descriptor[0] — NOT included here.
  */
 internal data class WireField(
   val name: String,
